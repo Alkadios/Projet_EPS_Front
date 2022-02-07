@@ -1,11 +1,10 @@
 (function () {
   'use strict'; // Start of use strict
-
+  const bootstrap = require('bootstrap');
   var sidebar = document.querySelector('.sidebar');
   var sidebarToggles = document.querySelectorAll('#sidebarToggle, #sidebarToggleTop');
 
   if (sidebar) {
-    var collapseEl = sidebar.querySelector('.collapse');
     var collapseElementList = [].slice.call(document.querySelectorAll('.sidebar .collapse'));
     var sidebarCollapseList = collapseElementList.map(function (collapseEl) {
       return new bootstrap.Collapse(collapseEl, { toggle: false });
@@ -13,7 +12,7 @@
 
     for (var toggle of sidebarToggles) {
       // Toggle the side navigation
-      toggle.addEventListener('click', function (e) {
+      toggle.addEventListener('click', function () {
         document.body.classList.toggle('sidebar-toggled');
         sidebar.classList.toggle('toggled');
 

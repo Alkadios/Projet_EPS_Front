@@ -17,9 +17,17 @@
           <a class="nav-link" href="#"><i class="fas fa-table"></i><span>Table</span></a>
         </li>
       </ul>
-      <div class="text-center d-none d-md-inline">
-        <button class="btn rounded-circle border-0" id="sidebarToggle" type="button"></button>
-      </div>
     </div>
   </nav>
 </template>
+<script lang="ts" setup>
+import { onMounted, ref } from 'vue';
+const displayMenu = ref(window.innerWidth >= 600);
+
+onMounted(function () {
+  // Evènement utilisé pour contrôler basculer le menu en mode ouvert ou fermé lors du passage de mobile à PC
+  window.addEventListener('resize', () => {
+    displayMenu.value = window.innerWidth >= 600;
+  });
+});
+</script>
