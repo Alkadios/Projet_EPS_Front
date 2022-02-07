@@ -1,31 +1,50 @@
 <template>
-  <ErrorDialog v-model:afficherModal="afficherModalErreur" v-model:libelleErreur="libelleErreur" />
-  <div class="flex justify-content-center">
-    <form @submit.prevent="validerFormulaire">
-      <div class="card">
-        <h4 class="ml-2">Authentification</h4>
-        <div class="p-fluid">
-          <div class="p-field">
-            <label for="identifiant">Identifiant</label>
-            <InputText id="identifiant" type="text" v-model="identifiant" />
+  <body class="bg-gradient-primary">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-9 col-lg-12 col-xl-10">
+          <div class="card shadow-lg o-hidden border-0 my-5">
+            <div class="card-body p-0">
+              <div class="row justify-content-center">
+                <div class="col-lg-6">
+                  <div class="p-5">
+                    <div class="text-center">
+                      <h4 class="text-dark mb-4">Bien le bonjour !</h4>
+                      <i class="fas fa-users" style="font-size: 9em; color: #375cc7; margin-bottom: 4%"></i>
+                    </div>
+                    <form class="user">
+                      <div class="mb-3">
+                        <input
+                          class="form-control form-control-user"
+                          type="email"
+                          id="exampleInputEmail"
+                          aria-describedby="emailHelp"
+                          placeholder="Enter Email Address..."
+                          name="email"
+                        />
+                      </div>
+                      <div class="mb-3">
+                        <input
+                          class="form-control form-control-user"
+                          type="password"
+                          id="exampleInputPassword"
+                          placeholder="Password"
+                          name="password"
+                        />
+                      </div>
+                      <div class="mb-3"></div>
+                      <button class="btn btn-primary d-block btn-user w-100" type="submit">Login</button>
+                      <hr />
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="p-field">
-            <label for="password">Mot de passe</label>
-            <InputText id="password" type="password" v-model="motDePasse" />
-          </div>
-        </div>
-        <div class="flex justify-content-end mt-3 mr-2">
-          <Button
-            id="confirmation-recherche"
-            class="p-button-raised p-button-rounded"
-            icon="pi pi-search"
-            label="Rechercher"
-            @click="validerFormulaire"
-          />
         </div>
       </div>
-    </form>
-  </div>
+    </div>
+  </body>
 </template>
 
 <script lang="ts" setup>
@@ -48,17 +67,17 @@ async function validerFormulaire() {
     afficherModalErreur.value = true;
   }
 
-  try {
-    await fetchUtilisateur(identifiant.value);
+  // try {
+  //   await fetchUtilisateur(identifiant.value);
 
-    router.push({ name: 'TableauDeBord' });
-  } catch (e: any) {
-    if (e.response && e.response.status === 500) {
-      afficherModalErreur.value = true;
-    } else {
-      libelleErreur.value = e.message;
-      afficherModalErreur.value = true;
-    }
-  }
+  //   router.push({ name: 'TableauDeBord' });
+  // } catch (e: any) {
+  //   if (e.response && e.response.status === 500) {
+  //     afficherModalErreur.value = true;
+  //   } else {
+  //     libelleErreur.value = e.message;
+  //     afficherModalErreur.value = true;
+  //   }
+  // }
 }
 </script>

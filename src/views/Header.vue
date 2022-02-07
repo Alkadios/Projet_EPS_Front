@@ -152,5 +152,5 @@ async function changerOrganisme() {
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/style/files/header.scss';
+//@import '@/assets/style/files/header.scss';
 </style>
