@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
-import { ApiUrlFiltre, ApiUrlFiltreContact, ApiUrlFiltreTechnicien, ApiUrlUtilisateur } from '@/constants/ApiUrls';
-import { Filtre, FiltreUtilisateur, ResponseModel } from '@/models';
+import { ApiUrlUtilisateur } from '@/constants/ApiUrls';
+import { ResponseModel } from '@/models';
 import { apiConfig } from '@/config/UtilisateurConfig';
 
 export default {
