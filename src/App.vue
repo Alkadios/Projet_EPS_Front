@@ -1,15 +1,15 @@
 <template>
-    <div id="wrapper">
-      <Sidebar />
-      <div class="d-flex flex-column" id="content-wrapper">
-        <div id="content">
-          <Navbar />
-          <div class="container-fluid">
-            <router-view />
-          </div>
+  <div id="wrapper">
+    <Sidebar />
+    <div class="d-flex flex-column" id="content-wrapper">
+      <div id="content">
+        <Navbar />
+        <div class="container-fluid">
+          <router-view />
         </div>
       </div>
     </div>
+  </div>
 </template>
 
 <script lang="ts" setup>
