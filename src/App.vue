@@ -1,5 +1,5 @@
 <template>
-  <div id="wrapper">
+  <div v-if="!isObjectEmpty(utilisateur)" id="wrapper">
     <Sidebar />
     <div class="d-flex flex-column" id="content-wrapper">
       <div id="content">
@@ -10,44 +10,35 @@
       </div>
     </div>
   </div>
+  <Authentification v-else />
 </template>
 
 <script lang="ts" setup>
-// import { onMounted } from 'vue';
-// import { useRouter } from 'vue-router';
+import { onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import Sidebar from './views/Sidebar.vue';
 import Navbar from './views/Navbar.vue';
+<<<<<<< HEAD
 //import UtilisateurService from './services/UtilisateurService';
+=======
+import Authentification from './views/Authentification.vue';
+//import Head from './views/_Head.vue';
+import UtilisateurService from './services/UtilisateurService';
+import ObjectUtils from './utils/ObjectUtils';
+import router from './router';
+>>>>>>> quentin
 
 // const router = useRouter();
 
-// const { isObjectEmpty } = ObjectUtils();
-
+const { isObjectEmpty } = ObjectUtils();
+const { utilisateur } = UtilisateurService();
 // const { storeOrganismesUtilisateur, organismeConnecte, storeOrganismeConnecte, listeOrganismesUtilisateur } =
 //   UtilisateurService();
 
-// onMounted(async () => {
-//   await storeOrganismesUtilisateur(listeOrganismesUtilisateur.value);
-
-//   if (listeOrganismesUtilisateur.value.length > 1 && isObjectEmpty(organismeConnecte.value)) {
-//     router.push({ name: 'TableauDeBord' });
-//     return;
-//   } else if (listeOrganismesUtilisateur.value.length === 0) {
-//     router.push({ name: 'TableauDeBord' });
-//     return;
-//   } else if (listeOrganismesUtilisateur.value.length === 1) {
-//     await storeOrganismeConnecte(listeOrganismesUtilisateur.value[0]);
-//   } else if (listeOrganismesUtilisateur.value.length > 1 && !isObjectEmpty(organismeConnecte.value)) {
-//     const organismeConnecteActualise = listeOrganismesUtilisateur.value.find(
-//       (o) => o.id_organisme === organismeConnecte.value.id_organisme
-//     );
-
-//     if (!organismeConnecteActualise) {
-//       router.push({ name: 'TableauDeBord' });
-//       return;
-//     }
-
-//     await storeOrganismeConnecte(organismeConnecteActualise);
-//   }
-//});
+onMounted(async () => {
+  console.log('toto', isObjectEmpty(utilisateur.value));
+  if (isObjectEmpty(utilisateur.value)) {
+    router.push({ name: 'Authentification' });
+  }
+});
 </script>

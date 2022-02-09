@@ -2,8 +2,7 @@ import { createStore } from 'vuex';
 import createPersistedState from 'vuex-persistedstate';
 import UtilisateurModule from '@/store/modules/utilisateur/index';
 
-
-const keyLocalStorage = 'ticketingstore';
+const keyLocalStorage = 'epsstore';
 
 export function getLocalStorage(module: string, property: string): any {
   const storage = localStorage.getItem(keyLocalStorage);
