@@ -1,6 +1,8 @@
-
+import { RoleUtilisateur } from '@/models'
 export interface Utilisateur {
-  id_utilisateur: number;
-  login: string;
-  
+  email: string;
+  prenom: string;
+  nom: string;
+  telephone: string;
+  role: RoleUtilisateur; 
 }
