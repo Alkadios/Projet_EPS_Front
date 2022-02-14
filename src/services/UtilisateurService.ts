@@ -8,16 +8,16 @@ export default function UtilisateurService() {
   const utilisateur = computed((): Utilisateur => {
     return store.getters['UtilisateurModule/getUtilisateur'];
   });
-  async function fetchUtilisateur(login: string) {
-    await store.dispatch('UtilisateurModule/fetchUtilisateur', { login });
+  async function loginUtilisateur(login: { username: string; password: string }) {
+    await store.dispatch('UtilisateurModule/loginUtilisateur', { login });
   }
-  async function deconnecterUtilisateur() {
-    await store.dispatch('UtilisateurModule/deconnecterOrganisme');
+  async function logoutUtilisateur() {
+    await store.dispatch('UtilisateurModule/logoutUtilisateur');
   }
 
   return {
     utilisateur,
-    fetchUtilisateur,
-    deconnecterUtilisateur,
+    loginUtilisateur,
+    logoutUtilisateur,
   };
 }

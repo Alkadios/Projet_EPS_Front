@@ -1,3 +1,2 @@
-export const ApiUrl = process.env.VUE_APP_TICKETING_API_BASE_URL;
+export const ApiUrl = 'http://127.0.0.1:8000/api';
 export const ApiUrlUtilisateur = `${ApiUrl}/utilisateur`;
-
