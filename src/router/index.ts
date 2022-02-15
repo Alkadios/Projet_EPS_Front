@@ -16,6 +16,11 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('../views/Authentification.vue'),
   },
   {
+    path: '/parametrage/ajoutQuantiteTravailEleve',
+    name: 'AjoutQuantiteTravailEleve',
+    component: () => import('../views/coordinateur/personnalisationEPS/AjoutQuantiteTravailEleve.vue'),
+  },
+  {
     path: '/:notFound(.*)',
     redirect: '/',
   },
