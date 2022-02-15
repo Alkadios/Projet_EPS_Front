@@ -8,19 +8,20 @@
               <div class="col-lg-6 d-none d-lg-flex">
                 <div
                   class="flex-grow-1 bg-login-image"
-                  style="background-image: url('@/assets/img/Sport_login.jpg')"
-                ></div>
+                  style="background-image: url('./src/assets/img/Sport_connexion.png')">
+                </div>
               </div>
               <div class="col-lg-6">
                 <div class="p-5">
                   <div class="text-center">
-                    <h4 class="text-dark mb-4">Bienvenue!</h4>
+                    <div class="sidebar-brand-icon rotate-n-15"><i class="fas fa-running" style="font-size: 35px;"></i></div>
+                    <h4 class="text-dark mb-4">OCPEPS</h4>
                   </div>
-                  <form class="user">
+                  <div class="user">
                     <div class="mb-3">
                       <input
+                        v-model="identifiant"
                         class="form-control form-control-user"
-                        type="email"
                         id="exampleInputEmail"
                         aria-describedby="emailHelp"
                         placeholder="Enter Email Address..."
@@ -29,6 +30,7 @@
                     </div>
                     <div class="mb-3">
                       <input
+                        v-model="motDePasse"
                         class="form-control form-control-user"
                         type="password"
                         id="exampleInputPassword"
@@ -38,26 +40,11 @@
                     </div>
                     <div class="mb-3">
                       <div class="custom-control custom-checkbox small">
-                        <div class="form-check">
-                          <input class="form-check-input custom-control-input" type="checkbox" id="formCheck-1" /><label
-                            class="form-check-label custom-control-label"
-                            for="formCheck-1"
-                            >Remember Me</label
-                          >
-                        </div>
                       </div>
                     </div>
-                    <button class="btn btn-primary d-block btn-user w-100" type="submit">Login</button>
+                    <button class="btn btn-primary d-block btn-user w-100" @click="login()">Login</button>
                     <hr />
-                    <a class="btn btn-primary d-block btn-google btn-user w-100 mb-2" role="button"
-                      ><i class="fab fa-google"></i>&nbsp; Login with Google</a
-                    ><a class="btn btn-primary d-block btn-facebook btn-user w-100" role="button"
-                      ><i class="fab fa-facebook-f"></i>&nbsp; Login with Facebook</a
-                    >
-                    <hr />
-                  </form>
-                  <div class="text-center"><a class="small" href="forgot-password.html">Forgot Password?</a></div>
-                  <div class="text-center"><a class="small" href="register.html">Create an Account!</a></div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -75,7 +62,7 @@ import UtilisateurService from '@/services/UtilisateurService';
 
 const router = useRouter();
 
-const { fetchUtilisateur } = UtilisateurService();
+const { utilisateur, loginUtilisateur } = UtilisateurService();
 
 const afficherModalErreur = ref(false);
 const libelleErreur = ref('');
@@ -87,18 +74,13 @@ async function validerFormulaire() {
     libelleErreur.value = 'Identifiant ou mot de passe invalide';
     afficherModalErreur.value = true;
   }
-
-  // try {
-  //   await fetchUtilisateur(identifiant.value);
-
-  //   router.push({ name: 'TableauDeBord' });
-  // } catch (e: any) {
-  //   if (e.response && e.response.status === 500) {
-  //     afficherModalErreur.value = true;
-  //   } else {
-  //     libelleErreur.value = e.message;
-  //     afficherModalErreur.value = true;
-  //   }
-  // }
+}
+async function login() {
+  const login = { username: identifiant.value, password: motDePasse.value };
+  console.log(login);
+  await loginUtilisateur(login);
+  if (utilisateur.value.prenom) {
+    router.push({ name: 'TableauDeBord' });
+  }
 }
 </script>

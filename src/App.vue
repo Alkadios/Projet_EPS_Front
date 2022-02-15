@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!isObjectEmpty(utilisateur)" id="wrapper">
+  <div id="wrapper">
     <Sidebar />
     <div class="d-flex flex-column" id="content-wrapper">
       <div id="content">
@@ -10,7 +10,6 @@
       </div>
     </div>
   </div>
-  <Authentification v-else />
 </template>
 
 <script lang="ts" setup>
@@ -33,9 +32,8 @@ const { utilisateur } = UtilisateurService();
 //   UtilisateurService();
 
 onMounted(async () => {
-  console.log('toto', isObjectEmpty(utilisateur.value));
-  if (isObjectEmpty(utilisateur.value)) {
-    router.push({ name: 'Authentification' });
-  }
+  // if (isObjectEmpty(utilisateur.value)) {
+  //   router.push({ name: 'Authentification' });
+  // }
 });
 </script>
