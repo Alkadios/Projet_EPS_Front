@@ -16,6 +16,11 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('../views/Authentification.vue'),
   },
   {
+    path: '/GestionAPSA',
+    name: 'GestionAPSA',
+    component: () => import('../views/coordinateur/personnalisationEPS/GestionAPSA.vue'),
+  },
+  {
     path: '/parametrage/ajoutQuantiteTravailEleve',
     name: 'AjoutQuantiteTravailEleve',
     component: () => import('../views/coordinateur/personnalisationEPS/AjoutQuantiteTravailEleve.vue'),
