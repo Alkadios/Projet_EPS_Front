@@ -7,8 +7,8 @@ const { isObjectEmpty } = ObjectUtils();
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
-    name: 'TableauDeBord',
-    component: () => import('../views/tableau-bord/TableauDeBord.vue'),
+    name: 'Login',
+    component: () => import('../views/authentification/Authentification.vue'),
   },
   {
     path: '/auth',

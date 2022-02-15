@@ -20,3 +20,14 @@
     </div>
   </nav>
 </template>
+<script lang="ts" setup>
+import { onMounted, ref } from 'vue';
+const displayMenu = ref(window.innerWidth >= 600);
+
+onMounted(function () {
+  // Evènement utilisé pour contrôler basculer le menu en mode ouvert ou fermé lors du passage de mobile à PC
+  window.addEventListener('resize', () => {
+    displayMenu.value = window.innerWidth >= 600;
+  });
+});
+</script>

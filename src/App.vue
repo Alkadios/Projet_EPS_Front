@@ -17,6 +17,7 @@ import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import Sidebar from './views/Sidebar.vue';
 import Navbar from './views/Navbar.vue';
+//import UtilisateurService from './services/UtilisateurService';
 import Authentification from './views/Authentification.vue';
 //import Head from './views/_Head.vue';
 import UtilisateurService from './services/UtilisateurService';
