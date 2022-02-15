@@ -8,13 +8,15 @@
               <div class="col-lg-6 d-none d-lg-flex">
                 <div
                   class="flex-grow-1 bg-login-image"
-                  style="background-image: url('./src/assets/img/Sport_connexion.png')">
-                </div>
+                  style="background-image: url('./src/assets/img/Sport_connexion.png')"
+                ></div>
               </div>
               <div class="col-lg-6">
                 <div class="p-5">
                   <div class="text-center">
-                    <div class="sidebar-brand-icon rotate-n-15"><i class="fas fa-running" style="font-size: 35px;"></i></div>
+                    <div class="sidebar-brand-icon rotate-n-15">
+                      <i class="fas fa-running" style="font-size: 35px"></i>
+                    </div>
                     <h4 class="text-dark mb-4">OCPEPS</h4>
                   </div>
                   <div class="user">
@@ -39,8 +41,7 @@
                       />
                     </div>
                     <div class="mb-3">
-                      <div class="custom-control custom-checkbox small">
-                      </div>
+                      <div class="custom-control custom-checkbox small"></div>
                     </div>
                     <button class="btn btn-primary d-block btn-user w-100" @click="login()">Login</button>
                     <hr />

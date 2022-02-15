@@ -1,8 +1,8 @@
-import { RoleUtilisateur } from '@/models'
+import { RoleUtilisateur } from '@/models';
 export interface Utilisateur {
   email: string;
   prenom: string;
   nom: string;
   telephone: string;
-  role: RoleUtilisateur; 
+  role: RoleUtilisateur;
 }
