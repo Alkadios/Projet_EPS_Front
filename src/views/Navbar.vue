@@ -34,7 +34,8 @@
         <li class="nav-item dropdown no-arrow">
           <div class="nav-item dropdown no-arrow">
             <a class="dropdown-toggle nav-link" aria-expanded="false" data-bs-toggle="dropdown" href="#"
-              ><span class="d-none d-lg-inline me-2 text-gray-600 small">Valerie Luna</span><i class="fas fa-user"></i
+              ><span class="d-none d-lg-inline me-2 text-gray-600 small">{{ utilisateur.prenom }}</span
+              ><i class="fas fa-user"></i
             ></a>
             <div class="dropdown-menu shadow dropdown-menu-end animated--grow-in">
               <a class="dropdown-item" href="#"
@@ -45,7 +46,7 @@
                 ><i class="fas fa-list fa-sm fa-fw me-2 text-gray-400"></i>&nbsp;Activity log</a
               >
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="#"
+              <a class="dropdown-item" @click="logoutUtilisateur"
                 ><i class="fas fa-sign-out-alt fa-sm fa-fw me-2 text-gray-400"></i>&nbsp;Logout</a
               >
             </div>
@@ -60,13 +61,13 @@
 import { onMounted, ref } from 'vue';
 //import { useRouter } from 'vue-router';
 //import ObjectUtils from '@/utils/ObjectUtils';
-//import UtilisateurService from '@/services/UtilisateurService';
+import UtilisateurService from '@/services/UtilisateurService';
 
 //const router = useRouter();
 
 //const { isObjectEmpty } = ObjectUtils();
 
-//const { organismesUtilisateur, organismeConnecte, deconnecterOrganisme } = UtilisateurService();
+const { utilisateur, logoutUtilisateur } = UtilisateurService();
 
 // Contrôle l'affichage du menu. Par défaut, est vrai si l'écran n'est pas un mobile, faux sinon.
 const displayMenu = ref(window.innerWidth >= 600);

@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!isObjectEmpty(utilisateur)" id="wrapper">
+  <div id="wrapper">
     <Sidebar />
     <div class="d-flex flex-column" id="content-wrapper">
       <div id="content">
@@ -10,7 +10,6 @@
       </div>
     </div>
   </div>
-  <Authentification v-else />
 </template>
 
 <script lang="ts" setup>
@@ -18,6 +17,7 @@ import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import Sidebar from './views/Sidebar.vue';
 import Navbar from './views/Navbar.vue';
+//import UtilisateurService from './services/UtilisateurService';
 import Authentification from './views/Authentification.vue';
 //import Head from './views/_Head.vue';
 import UtilisateurService from './services/UtilisateurService';
@@ -32,9 +32,8 @@ const { utilisateur } = UtilisateurService();
 //   UtilisateurService();
 
 onMounted(async () => {
-  console.log('toto', isObjectEmpty(utilisateur.value));
-  if (isObjectEmpty(utilisateur.value)) {
-    router.push({ name: 'Authentification' });
-  }
+  // if (isObjectEmpty(utilisateur.value)) {
+  //   router.push({ name: 'Authentification' });
+  // }
 });
 </script>

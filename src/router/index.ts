@@ -7,13 +7,18 @@ const { isObjectEmpty } = ObjectUtils();
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
-    name: 'TableauDeBord',
-    component: () => import('../views/tableau-bord/TableauDeBord.vue'),
+    name: 'Login',
+    component: () => import('../views/authentification/Authentification.vue'),
   },
   {
     path: '/auth',
     name: 'Authentification',
     component: () => import('../views/Authentification.vue'),
+  },
+  {
+    path: '/parametrage/ajoutQuantiteTravailEleve',
+    name: 'AjoutQuantiteTravailEleve',
+    component: () => import('../views/coordinateur/personnalisationEPS/AjoutQuantiteTravailEleve.vue'),
   },
   {
     path: '/:notFound(.*)',
