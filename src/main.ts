@@ -50,6 +50,7 @@ import store from './store';
 import UtilisateurService from './services/UtilisateurService';
 import ObjectUtils from './utils/ObjectUtils';
 
+
 const { isObjectEmpty } = ObjectUtils();
 const { utilisateur } = UtilisateurService();
 

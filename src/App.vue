@@ -22,6 +22,8 @@ import Authentification from './views/Authentification.vue';
 //import Head from './views/_Head.vue';
 import UtilisateurService from './services/UtilisateurService';
 import ObjectUtils from './utils/ObjectUtils';
+import SelectButton from 'primevue/selectbutton';
+
 import router from './router';
 
 // const router = useRouter();
