@@ -49,6 +49,7 @@ import router from './router';
 import store from './store';
 import UtilisateurService from './services/UtilisateurService';
 import ObjectUtils from './utils/ObjectUtils';
+import Locale_FR from './constants/Locale_FR';
 
 
 const { isObjectEmpty } = ObjectUtils();
@@ -88,6 +89,13 @@ app
   .component('InlineMessage', InlineMessage)
   .component('ColorPicker', ColorPicker);
 
+// Directives
+app.directive('tooltip', Tooltip);
+
 app.use(store);
 app.use(router);
+app.use(PrimeVue, { locale: Locale_FR });
+app.use(ToastService);
+app.use(ConfirmationService);
+
 app.mount('#app');
