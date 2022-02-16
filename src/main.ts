@@ -5,8 +5,8 @@ import './assets/fonts/font-awesome.min.css';
 import './assets/fonts/fontawesome5-overrides.min.css';
 import './assets/js/bootstrap.min.js';
 
+import '@/assets/css/theme.css';
 import 'primevue/resources/primevue.min.css';
-import 'primeicons/primeicons.css';
 import PrimeVue from 'primevue/config';
 import ToastService from 'primevue/toastservice';
 import ConfirmationService from 'primevue/confirmationservice';
@@ -19,7 +19,6 @@ import Calendar from 'primevue/calendar';
 import TreeSelect from 'primevue/treeselect';
 import Chips from 'primevue/chips';
 import MultiSelect from 'primevue/multiselect';
-import Editor from 'primevue/editor';
 import TriStateCheckbox from 'primevue/tristatecheckbox';
 import AutoComplete from 'primevue/autocomplete';
 import RadioButton from 'primevue/radiobutton';
@@ -50,7 +49,6 @@ import UtilisateurService from './services/UtilisateurService';
 import ObjectUtils from './utils/ObjectUtils';
 import Locale_FR from './constants/Locale_FR';
 
-
 const { isObjectEmpty } = ObjectUtils();
 const { utilisateur } = UtilisateurService();
 
@@ -67,7 +65,6 @@ app
   .component('Chips', Chips)
   .component('Chip', Chip)
   .component('MultiSelect', MultiSelect)
-  .component('Editor', Editor)
   .component('TriStateCheckbox', TriStateCheckbox)
   .component('AutoComplete', AutoComplete)
   .component('RadioButton', RadioButton)
