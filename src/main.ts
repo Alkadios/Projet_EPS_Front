@@ -7,7 +7,6 @@ import './assets/js/bootstrap.min.js';
 
 import 'primevue/resources/primevue.min.css';
 import 'primeicons/primeicons.css';
-import 'primeflex/primeflex.css';
 import PrimeVue from 'primevue/config';
 import ToastService from 'primevue/toastservice';
 import ConfirmationService from 'primevue/confirmationservice';
