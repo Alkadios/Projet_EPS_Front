@@ -78,7 +78,6 @@ async function validerFormulaire() {
 }
 async function login() {
   const login = { username: identifiant.value, password: motDePasse.value };
-  console.log(login);
   await loginUtilisateur(login);
   if (utilisateur.value.prenom) {
     router.push({ name: 'TableauDeBord' });

@@ -1,6 +1,4 @@
 export interface ResponseModel {
-  body: any;
-  metadata: any;
-  successful: boolean;
-  message: string;
+  'hydra:member': any;
+  'hydra:totalItems': number;
 }

@@ -6,7 +6,7 @@
         <div class="col-lg-10">
           <div class="p-5">
             <div class="text-center">
-              <p class="text-dark mb-2">
+              <p class="text-dark mb-2" @click="toto">
                 Personnalisation de l'équipe EPS <br />
                 au
               </p>
@@ -48,6 +48,9 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue';
+import ChampApprentissageService from '@/services/ChampApprentissageService';
+
+const { champsApprentissages, fetchChampsApprentissages } = ChampApprentissageService();
 const paymentOptions = ref([
   { name: 'Option 1', value: 1 },
   { name: 'Option 2', value: 2 },
@@ -67,13 +70,15 @@ const ListSelectedAPSA: string[] = [];
 function SelectAPSA(monAPSA: string) {
   if (!ListSelectedAPSA.find((apsa) => apsa == monAPSA)) {
     ListSelectedAPSA.push(monAPSA);
-    console.log("L'APSA " + monAPSA + ' à été ajouté !');
   } else {
     let monIndex = ListSelectedAPSA.indexOf(monAPSA);
     ListSelectedAPSA.splice(monIndex, 1);
-    console.log("L'APSA " + monAPSA + ' à été supprimé !');
   }
-  console.log(ListSelectedAPSA);
+}
+
+async function toto() {
+  await fetchChampsApprentissages();
+  console.log('maVariable', champsApprentissages.value);
 }
 </script>
 
