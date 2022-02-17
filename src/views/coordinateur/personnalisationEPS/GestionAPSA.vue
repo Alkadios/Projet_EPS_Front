@@ -20,11 +20,11 @@
       </div>
       <div id="mesCA">
         <div class="row">
-          <div class="d-flex p-2" style="align-items: center;" v-for="monCA in CA" :key="monCA.nom">
-            <div class="mr-2" style="padding: 9px;">
+          <div class="d-flex p-2" style="align-items: center" v-for="monCA in CA" :key="monCA.nom">
+            <div class="mr-2" style="padding: 9px">
               {{ monCA.nom }}
             </div>
-            <div class="mr-2 flex-grow-1 ">
+            <div class="mr-2 flex-grow-1">
               <SelectButton v-model="result" :options="monCA.APSA" optionLabel="nom" multiple />
             </div>
             <br />
@@ -58,7 +58,6 @@ const ListSelectedAPSA: string[] = [];
 
 async function toto() {
   await fetchChampsApprentissages();
-  console.log('maVariable', champsApprentissages.value);
 }
 </script>
 
