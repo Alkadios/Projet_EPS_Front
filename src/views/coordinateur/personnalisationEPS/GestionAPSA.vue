@@ -6,7 +6,7 @@
         <div class="col-lg-10">
           <div class="p-5">
             <div class="text-center">
-              <p class="text-dark mb-2">
+              <p class="text-dark mb-2" @click="toto">
                 Personnalisation de l'équipe EPS <br />
                 au
               </p>
@@ -36,17 +36,30 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from "vue";
+import { ref } from 'vue';
+import ChampApprentissageService from '@/services/ChampApprentissageService';
 
-const result = ref();
-const NomEtablissement = "Lycée Professionnel de St Joseph";
-const CA = ref([
-  { nom: "CA1", APSA: [{ nom: "Demi-fond" }, { nom: "Saut en hauteur" },{ nom: "Natation" }, { nom: "Step" },{ nom: "Natation" }, { nom: "Step" },{ nom: "Natation" }, { nom: "Step" },{ nom: "Natation" }, { nom: "Step" },{ nom: "Natation" }, { nom: "Step" },{ nom: "Natation" }, { nom: "Step" }], couleur: "red" },
-  { nom: "CA2", APSA: [{ nom: "Natation" }, { nom: "Step" }], couleur: "orange" },
-  { nom: "CA1", APSA: [{ nom: "Demi-fond" }, { nom: "Saut en hauteur" }], couleur: "red" },
-  { nom: "CA1", APSA: [{ nom: "Demi-fond" }, { nom: "Saut en hauteur" }], couleur: "red" },
-  { nom: "CA1", APSA: [{ nom: "Demi-fond" }, { nom: "Saut en hauteur" }], couleur: "red" }
+const { champsApprentissages, fetchChampsApprentissages } = ChampApprentissageService();
+const paymentOptions = ref([
+  { name: 'Option 1', value: 1 },
+  { name: 'Option 2', value: 2 },
+  { name: 'Option 3', value: 3 },
 ]);
+const result = ref();
+const NomEtablissement = 'Lycée Professionnel de St Joseph';
+const CA = [
+  { nom: 'CA1', APSA: [{ nom: 'Demi-fond' }, { nom: 'Saut en hauteur' }], couleur: 'red' },
+  { nom: 'CA2', APSA: [{ nom: 'Natation' }, { nom: 'Step' }], couleur: 'orange' },
+  { nom: 'CA1', APSA: [{ nom: 'Demi-fond' }, { nom: 'Saut en hauteur' }], couleur: 'red' },
+  { nom: 'CA1', APSA: [{ nom: 'Demi-fond' }, { nom: 'Saut en hauteur' }], couleur: 'red' },
+  { nom: 'CA1', APSA: [{ nom: 'Demi-fond' }, { nom: 'Saut en hauteur' }], couleur: 'red' },
+];
+const ListSelectedAPSA: string[] = [];
+
+async function toto() {
+  await fetchChampsApprentissages();
+  console.log('maVariable', champsApprentissages.value);
+}
 </script>
 
 <style>
