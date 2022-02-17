@@ -8,6 +8,7 @@ import '@/assets/css/theme.css';
 import 'primevue/resources/primevue.min.css';
 import PrimeVue from 'primevue/config';
 import ToastService from 'primevue/toastservice';
+import Card from 'primevue/card';
 import ConfirmationService from 'primevue/confirmationservice';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
@@ -50,10 +51,10 @@ import Locale_FR from './constants/Locale_FR';
 const { isObjectEmpty } = ObjectUtils();
 const { utilisateur } = UtilisateurService();
 
-
 const app = createApp(App);
 // PrimeVue components
 app
+  .component('Card', Card)
   .component('DataTable', DataTable)
   .component('Column', Column)
   .component('InputText', InputText)
@@ -93,4 +94,3 @@ app.use(PrimeVue, { locale: Locale_FR });
 app.use(ToastService);
 app.use(ConfirmationService);
 app.mount('#app');
-
