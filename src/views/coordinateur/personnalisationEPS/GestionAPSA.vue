@@ -1,4 +1,17 @@
 <template>
+  <Dialog v-model:visible="displayModal" :header="monCAModal.libelle" :style="{width: '50vw'}" :modal="true">
+    <MultiSelect v-model="selectedAPSA" :options="apsas" optionLabel="libelle" placeholder="Selectionner APSA" filter="true" display="chip" />
+    <template #option="slotProps">
+      <div class="country-item">
+        <img src="https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png" class="mr-2" width="18" />
+        <div>{{slotProps.option.name}}</div>
+      </div>
+    </template>
+    <template #footer>
+      <Button label="No" icon="pi pi-times" @click="closeModal" class="p-button-text"/>
+      <Button label="Yes" icon="pi pi-check" @click="closeModal" autofocus />
+    </template>
+  </Dialog>
   <div class="card shadow-lg o-hidden border-0 my-5">
     <div class="card-body p-0">
       <div class="row">
@@ -20,13 +33,13 @@
       </div>
       <div id="mesCA">
         <div class="row">
-          <div class="d-flex p-2" style="align-items: center;" v-for="monCA in CA" :key="monCA.nom">
+          <div v-for="monCA in champsApprentissages" :key="monCA.id" class="d-flex p-2" style="align-items: center;">
             <div class="mr-2" style="padding: 9px;">
-              {{ monCA.nom }}
-              <Button label="Ajouter APSA" icon="pi pi-external-link" @click="openModal" />
+              CA{{ monCA.id }}
+              <Button icon="pi pi-external-link" @click="RechercheModal(monCA)"><i class="fa fa-plus"></i></Button>
             </div>
             <div class="mr-2 flex-grow-1 ">
-              <SelectButton v-model="result" :options="monCA.APSA" optionLabel="nom" multiple />
+              <SelectButton v-model="result" :options="monCA.Apsa" optionLabel="libelle" multiple />
             </div>
             <br />
           </div>
@@ -34,42 +47,46 @@
       </div>
     </div>
   </div>
+
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import ChampApprentissageService from '@/services/ChampApprentissageService';
+import ApsaService from '@/services/ApsaService';
+import { APSA, ChampApprentissage } from "@/models";
 
 const { champsApprentissages, fetchChampsApprentissages } = ChampApprentissageService();
-const paymentOptions = ref([
-  { name: 'Option 1', value: 1 },
-  { name: 'Option 2', value: 2 },
-  { name: 'Option 3', value: 3 },
-]);
-const result = ref();
+const { apsas, fetchAllApsa } = ApsaService();
+
+const result = ref([]);
+const selectedAPSA = ref();
+
 const NomEtablissement = "Lycée Professionnel de St Joseph";
-const CA = ref([
-  { nom: "CA1", APSA: [{ nom: "Demi-fond" }, { nom: "Saut en hauteur" },{ nom: "Natation" }, { nom: "Step" },{ nom: "Natation" }, { nom: "Step" },{ nom: "Natation" }, { nom: "Step" },{ nom: "Natation" }, { nom: "Step" },{ nom: "Natation" }, { nom: "Step" },{ nom: "Natation" }, { nom: "Step" }], couleur: "red" },
-  { nom: "CA2", APSA: [{ nom: "Natation" }, { nom: "Step" }], couleur: "orange" },
-  { nom: "CA1", APSA: [{ nom: "Demi-fond" }, { nom: "Saut en hauteur" }], couleur: "red" },
-  { nom: "CA1", APSA: [{ nom: "Demi-fond" }, { nom: "Saut en hauteur" }], couleur: "red" },
-  { nom: "CA1", APSA: [{ nom: "Demi-fond" }, { nom: "Saut en hauteur" }], couleur: "red" }
-]);
 
 const displayModal = ref(false);
 const displayConfirmation = ref(false);
 const displayMaximizable = ref(false);
 const position = ref('center');
-const openModal = () => {
-  displayModal.value = true;
-};
+const monCAModal = ref<ChampApprentissage>({id: -1, libelle: "", Apsa:[]});
+
 const closeModal = () => {
   displayModal.value = false;
 }
-async function toto() {
-  await fetchChampsApprentissages();
-  console.log('maVariable', champsApprentissages.value);
+function toto() {
+  console.log('maVariable', result.value);
 }
+
+function RechercheModal(CA: ChampApprentissage){
+  displayModal.value = true;
+  monCAModal.value = CA;
+  console.log(monCAModal.value?.Apsa);
+}
+
+onMounted(async () => {
+  await fetchChampsApprentissages();
+  await fetchAllApsa();
+});
 </script>
 
 <style>
@@ -112,5 +129,15 @@ th {
 
 .p-dialog .p-button {
   min-width: 6rem;
+}
+
+.p-multiselect {
+  width: 100%;
+}
+
+@media screen and (max-width: 640px) {
+  .p-multiselect {
+    width: 100%;
+  }
 }
 </style>
