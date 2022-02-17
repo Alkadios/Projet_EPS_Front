@@ -10,7 +10,6 @@ export default {
     payload: { login: { username: string; password: string } }
   ) {
     const response = await UtilisateurAPI.loginUtilisateur(payload.login);
-    console.log('loginUtilisateur', response.data);
     if (response.data) {
       context.commit('setToken', response.data.token);
       const user: any = jwtDecode(response.data.token);
@@ -19,11 +18,9 @@ export default {
         prenom: user.prenom,
       } as Utilisateur;
       context.commit('setUtilisateur', utilisateur);
-      console.log('response successful', user, utilisateur);
       //context.commit('setUtilisateur', response.data.body);
     } else {
       context.commit('setUtilisateur', []);
-      console.log('utilisateur inconnu', response.data.successful);
       // if (response.data.message !== null) throw new Error(response.data.message);
       // else if (response.data.body === null) throw new Error('Erreur : utilisateur inconnu');
       // else throw new Error("Une erreur s'est produite");

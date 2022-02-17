@@ -1,6 +1,7 @@
 import { createStore } from 'vuex';
 import createPersistedState from 'vuex-persistedstate';
 import UtilisateurModule from '@/store/modules/utilisateur/index';
+import ChampApprentissageModule from '@/store/modules/champApprentissage/index';
 
 const keyLocalStorage = 'epsstore';
 
@@ -17,5 +18,6 @@ export function getLocalStorage(module: string, property: string): any {
 export default createStore({
   modules: {
     UtilisateurModule,
+    ChampApprentissageModule,
   },
 });
