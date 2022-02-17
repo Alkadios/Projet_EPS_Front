@@ -23,6 +23,7 @@
           <div class="d-flex p-2" style="align-items: center;" v-for="monCA in CA" :key="monCA.nom">
             <div class="mr-2" style="padding: 9px;">
               {{ monCA.nom }}
+              <Button label="Ajouter APSA" icon="pi pi-external-link" @click="openModal" />
             </div>
             <div class="mr-2 flex-grow-1 ">
               <SelectButton v-model="result" :options="monCA.APSA" optionLabel="nom" multiple />
@@ -46,16 +47,25 @@ const paymentOptions = ref([
   { name: 'Option 3', value: 3 },
 ]);
 const result = ref();
-const NomEtablissement = 'Lycée Professionnel de St Joseph';
-const CA = [
-  { nom: 'CA1', APSA: [{ nom: 'Demi-fond' }, { nom: 'Saut en hauteur' }], couleur: 'red' },
-  { nom: 'CA2', APSA: [{ nom: 'Natation' }, { nom: 'Step' }], couleur: 'orange' },
-  { nom: 'CA1', APSA: [{ nom: 'Demi-fond' }, { nom: 'Saut en hauteur' }], couleur: 'red' },
-  { nom: 'CA1', APSA: [{ nom: 'Demi-fond' }, { nom: 'Saut en hauteur' }], couleur: 'red' },
-  { nom: 'CA1', APSA: [{ nom: 'Demi-fond' }, { nom: 'Saut en hauteur' }], couleur: 'red' },
-];
-const ListSelectedAPSA: string[] = [];
+const NomEtablissement = "Lycée Professionnel de St Joseph";
+const CA = ref([
+  { nom: "CA1", APSA: [{ nom: "Demi-fond" }, { nom: "Saut en hauteur" },{ nom: "Natation" }, { nom: "Step" },{ nom: "Natation" }, { nom: "Step" },{ nom: "Natation" }, { nom: "Step" },{ nom: "Natation" }, { nom: "Step" },{ nom: "Natation" }, { nom: "Step" },{ nom: "Natation" }, { nom: "Step" }], couleur: "red" },
+  { nom: "CA2", APSA: [{ nom: "Natation" }, { nom: "Step" }], couleur: "orange" },
+  { nom: "CA1", APSA: [{ nom: "Demi-fond" }, { nom: "Saut en hauteur" }], couleur: "red" },
+  { nom: "CA1", APSA: [{ nom: "Demi-fond" }, { nom: "Saut en hauteur" }], couleur: "red" },
+  { nom: "CA1", APSA: [{ nom: "Demi-fond" }, { nom: "Saut en hauteur" }], couleur: "red" }
+]);
 
+const displayModal = ref(false);
+const displayConfirmation = ref(false);
+const displayMaximizable = ref(false);
+const position = ref('center');
+const openModal = () => {
+  displayModal.value = true;
+};
+const closeModal = () => {
+  displayModal.value = false;
+}
 async function toto() {
   await fetchChampsApprentissages();
   console.log('maVariable', champsApprentissages.value);
@@ -71,6 +81,7 @@ async function toto() {
   margin: 1%;
   border: 1px solid black !important;
   border-radius: 8px !important;
+  font-size: 13px;
 }
 
 th {
@@ -91,5 +102,15 @@ th {
   margin-right: 25px;
   bottom: 35px;
   position: relative;
+}
+
+.confirmation-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.p-dialog .p-button {
+  min-width: 6rem;
 }
 </style>
