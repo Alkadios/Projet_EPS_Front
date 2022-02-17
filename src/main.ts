@@ -4,7 +4,6 @@ import './assets/fonts/fontawesome-all.min.css';
 import './assets/fonts/font-awesome.min.css';
 import './assets/fonts/fontawesome5-overrides.min.css';
 import './assets/js/bootstrap.min.js';
-
 import '@/assets/css/theme.css';
 import 'primevue/resources/primevue.min.css';
 import PrimeVue from 'primevue/config';
@@ -40,7 +39,6 @@ import Textarea from 'primevue/textarea';
 import Message from 'primevue/message';
 import InlineMessage from 'primevue/inlinemessage';
 import ColorPicker from 'primevue/colorpicker';
-
 import App from './App.vue';
 import AppAuth from './views/AppAuth.vue';
 import router from './router';
@@ -51,6 +49,7 @@ import Locale_FR from './constants/Locale_FR';
 
 const { isObjectEmpty } = ObjectUtils();
 const { utilisateur } = UtilisateurService();
+
 
 const app = createApp(App);
 // PrimeVue components
@@ -93,5 +92,5 @@ app.use(router);
 app.use(PrimeVue, { locale: Locale_FR });
 app.use(ToastService);
 app.use(ConfirmationService);
-
 app.mount('#app');
+
