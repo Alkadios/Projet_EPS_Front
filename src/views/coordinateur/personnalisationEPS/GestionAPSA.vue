@@ -15,33 +15,22 @@
           </div>
         </div>
       </div>
-      <div class="mb-3"><button class="btn btn-primary btn-sm">Ajouter une APSA</button></div>
+      <div class="mb-3">
+        <button class="btn btn-primary btn-sm">Ajouter une APSA</button>
+      </div>
       <div id="mesCA">
         <div class="row">
-          <div class="col-sm" v-for="monCA in CA" :key="monCA.nom">
-            <table style="width: 100%">
-              <thead :style="'background-color: ' + monCA.couleur">
-                <tr>
-                  <th>{{ monCA.nom }}</th>
-                  <th>
-                    <a id="AjoutAPSAinCA" href="#"><i class="fa fa-plus"></i></a>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr class="SelectAPSA" v-for="monAPSA in monCA.APSA" :key="monAPSA.nom">
-                  <td>
-                    <a>{{ monAPSA.nom }}</a>
-                  </td>
-                  <td><input type="checkbox" @Click="SelectAPSA(monAPSA.nom)" class="form-check-input" /></td>
-                </tr>
-              </tbody>
-            </table>
+          <div class="d-flex p-2" style="align-items: center;" v-for="monCA in CA" :key="monCA.nom">
+            <div class="mr-2" style="padding: 9px;">
+              {{ monCA.nom }}
+            </div>
+            <div class="mr-2 flex-grow-1 ">
+              <SelectButton v-model="result" :options="monCA.APSA" optionLabel="nom" multiple />
+            </div>
             <br />
           </div>
         </div>
       </div>
-      <SelectButton v-model="result" :options="paymentOptions" optionLabel="name" multiple />
     </div>
   </div>
 </template>
@@ -67,15 +56,6 @@ const CA = [
 ];
 const ListSelectedAPSA: string[] = [];
 
-function SelectAPSA(monAPSA: string) {
-  if (!ListSelectedAPSA.find((apsa) => apsa == monAPSA)) {
-    ListSelectedAPSA.push(monAPSA);
-  } else {
-    let monIndex = ListSelectedAPSA.indexOf(monAPSA);
-    ListSelectedAPSA.splice(monIndex, 1);
-  }
-}
-
 async function toto() {
   await fetchChampsApprentissages();
   console.log('maVariable', champsApprentissages.value);
@@ -83,11 +63,14 @@ async function toto() {
 </script>
 
 <style>
-#AjoutAPSAinCA {
-  color: white;
-  padding: 5px;
-  right: 7px;
-  position: relative;
+.mr-2 {
+  padding-left: 30px;
+}
+
+.p-button.p-component {
+  margin: 1%;
+  border: 1px solid black !important;
+  border-radius: 8px !important;
 }
 
 th {
