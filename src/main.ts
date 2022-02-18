@@ -47,7 +47,7 @@ import store from './store';
 import UtilisateurService from './services/UtilisateurService';
 import ObjectUtils from './utils/ObjectUtils';
 import Locale_FR from './constants/Locale_FR';
-
+import './assets/css/monStyle.css';
 const { isObjectEmpty } = ObjectUtils();
 const { utilisateur } = UtilisateurService();
 
