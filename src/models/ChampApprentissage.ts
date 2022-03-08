@@ -3,5 +3,5 @@ export interface ChampApprentissage {
   id: number;
   libelle: string;
   color: string;
-  Apsa: APSA[];
+  apsas: APSA[];
 }
