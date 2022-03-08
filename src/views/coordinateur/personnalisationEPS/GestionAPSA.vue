@@ -45,7 +45,7 @@
               </p>
             </div>
             <div class="mr-2 flex-grow-1">
-              <SelectButton v-model="result" :options="monCA.Apsa" optionLabel="libelle" multiple />
+              <SelectButton v-model="result" :options="monCA.apsas" optionLabel="libelle" multiple />
             </div>
           </div>
         </div>
@@ -59,6 +59,7 @@
         @click="closeModal()"
         autofocus
       />
+      <Button label="TEST" style="right: 1rem" icon="pi pi-check" @click="test()" autofocus />
     </div>
   </div>
 </template>
@@ -83,6 +84,10 @@ const monCAModal = ref<ChampApprentissage>({ id: -1, libelle: '', color: '', Aps
 function closeModal() {
   displayModal.value = false;
   selectedAPSA.value = [];
+}
+
+function test() {
+  console.log(champsApprentissages.value);
 }
 
 function validerAjout() {}
