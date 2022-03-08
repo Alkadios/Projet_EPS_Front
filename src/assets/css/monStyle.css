@@ -17,7 +17,6 @@
   align-items: center;
   margin-bottom: 1rem;
   border-radius: 0.3rem;
-  background-color: lightgoldenrodyellow;
 }
 p.MonHeadButton {
   top: 0.5rem;
@@ -78,11 +77,6 @@ th {
   .p-multiselect {
     width: 100%;
   }
-}
-
-#settings-nav-btn {
-  width: auto !important;
-  position: relative;
 }
 
 .dropdown-menu {

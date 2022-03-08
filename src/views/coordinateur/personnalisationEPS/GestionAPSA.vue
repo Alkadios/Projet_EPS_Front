@@ -32,7 +32,12 @@
       </div>
       <div id="mesCA">
         <div class="row">
-          <div v-for="monCA in champsApprentissages" :key="monCA.id" class="d-flex p-2">
+          <div
+            v-for="monCA in champsApprentissages"
+            :key="monCA.id"
+            :style="'background-color:' + monCA.color"
+            class="d-flex p-2"
+          >
             <div class="mr-2" style="padding: 9px">
               <p class="MonHeadButton">
                 CA{{ monCA.id }}
@@ -73,7 +78,7 @@ const selectedAPSA = ref<APSA[]>([]);
 const NomEtablissement = 'Lycée Professionnel de St Joseph';
 
 const displayModal = ref(false);
-const monCAModal = ref<ChampApprentissage>({ id: -1, libelle: '', Apsa: [] });
+const monCAModal = ref<ChampApprentissage>({ id: -1, libelle: '', color: '', Apsa: [] });
 
 function closeModal() {
   displayModal.value = false;

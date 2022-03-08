@@ -12,6 +12,7 @@
               </p>
               <h4 class="text-dark mb-4">{{ NomEtablissement }}</h4>
             </div>
+            <p>Sélectionner les AF retenus :</p>
           </div>
         </div>
       </div>
