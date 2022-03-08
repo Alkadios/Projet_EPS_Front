@@ -1,8 +1,6 @@
 import { ActionContext } from 'vuex';
 import ChampApprentissageAPI from '@/api/ChampApprentissageAPI';
 import ChampApprentissageState from './stateInterface';
-import { Utilisateur } from '@/models';
-import jwtDecode from 'jwt-decode';
 
 export default {
   async fetchChampsApprentissages(context: ActionContext<ChampApprentissageState, any>) {

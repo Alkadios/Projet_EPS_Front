@@ -11,13 +11,24 @@
           <a class="nav-link active" href="#"><i class="fas fa-tachometer-alt"></i><span>Dashboard</span></a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#"><i class="fas fa-user"></i><span>Profile</span></a>
+          <div class="btn-group dropend">
+            <a class="nav-link" id="settings-nav-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="fas fa-cog"></i><span>Paramétrage</span>
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+              <li>
+                <router-link to="/GestionAPSA" class="dropdown-item">Gestion des APSAS</router-link>
+              </li>
+            </ul>
+          </div>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="#"><i class="fas fa-table"></i><span>Table</span></a>
         </li>
       </ul>
-      <div class="text-center d-none d-md-inline"><button class="btn rounded-circle border-0" id="sidebarToggle" type="button"></button></div>
+      <div class="text-center d-none d-md-inline">
+        <button class="btn rounded-circle border-0" id="sidebarToggle" type="button"></button>
+      </div>
     </div>
   </nav>
 </template>
