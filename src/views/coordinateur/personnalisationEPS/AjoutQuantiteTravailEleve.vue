@@ -4,7 +4,7 @@
       <div class="col">
         <Card>
           <template #header>
-            <h1>😭</h1>
+            <h1 style="text-align: center">😭</h1>
           </template>
           <template #title> Advanced Card </template>
           <template #subtitle> Card subtitle </template>
@@ -14,17 +14,13 @@
               numquam deserunt quisquam repellat libero asperiores earum nam nobis, culpa ratione quam perferendis esse,
               cupiditate neque quas!
             </p>
-          </template>
-          <template #footer>
-            <Button icon="pi pi-check" label="Save" />
-            <Button icon="pi pi-times" label="Cancel" class="p-button-secondary" style="margin-left: 0.5em" />
           </template>
         </Card>
       </div>
       <div class="col">
         <Card>
           <template #header>
-            <h1>😥</h1>
+            <h1 style="text-align: center">😥</h1>
           </template>
           <template #title> Advanced Card </template>
           <template #subtitle> Card subtitle </template>
@@ -34,17 +30,13 @@
               numquam deserunt quisquam repellat libero asperiores earum nam nobis, culpa ratione quam perferendis esse,
               cupiditate neque quas!
             </p>
-          </template>
-          <template #footer>
-            <Button icon="pi pi-check" label="Save" />
-            <Button icon="pi pi-times" label="Cancel" class="p-button-secondary" style="margin-left: 0.5em" />
           </template>
         </Card>
       </div>
       <div class="col">
         <Card>
           <template #header>
-            <h1>😄</h1>
+            <h1 style="text-align: center">😄</h1>
           </template>
           <template #title> Advanced Card </template>
           <template #subtitle> Card subtitle </template>
@@ -54,17 +46,13 @@
               numquam deserunt quisquam repellat libero asperiores earum nam nobis, culpa ratione quam perferendis esse,
               cupiditate neque quas!
             </p>
-          </template>
-          <template #footer>
-            <Button icon="pi pi-check" label="Save" />
-            <Button icon="pi pi-times" label="Cancel" class="p-button-secondary" style="margin-left: 0.5em" />
           </template>
         </Card>
       </div>
       <div class="col">
         <Card>
           <template #header>
-            <h1>😎</h1>
+            <h1 style="text-align: center">😎</h1>
           </template>
           <template #title> Advanced Card </template>
           <template #subtitle> Card subtitle </template>
@@ -74,14 +62,13 @@
               numquam deserunt quisquam repellat libero asperiores earum nam nobis, culpa ratione quam perferendis esse,
               cupiditate neque quas!
             </p>
-          </template>
-          <template #footer>
-            <Button icon="pi pi-check" label="Save" />
-            <Button icon="pi pi-times" label="Cancel" class="p-button-secondary" style="margin-left: 0.5em" />
           </template>
         </Card>
       </div>
     </div>
+  </div>
+  <div class="mb-3">
+    <Button label="Ajouter les APSA sélectionnés" style="right: 1rem; top: 3rem" icon="pi pi-check" autofocus />
   </div>
 </template>
 
