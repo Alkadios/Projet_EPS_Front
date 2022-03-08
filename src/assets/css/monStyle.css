@@ -1,0 +1,98 @@
+.dropdown-menu {
+  width: 96;
+  margin: 0% 2%;
+  background-color: #879be2;
+}
+
+.dropdown-item {
+  color: white;
+}
+
+.dropdown-item:hover {
+  background-color: transparent;
+  color: white;
+}
+
+.d-flex.p-2 {
+  align-items: center;
+  margin-bottom: 1rem;
+  border-radius: 0.3rem;
+  background-color: lightgoldenrodyellow;
+}
+p.MonHeadButton {
+  top: 0.5rem;
+  position: relative;
+}
+
+button.p-button.p-component.p-button-icon-only {
+  display: contents;
+  color: #858796 !important;
+}
+
+.mr-2 {
+  padding-left: 30px;
+}
+
+.p-button.p-component {
+  margin: 1%;
+  border: 1px solid black !important;
+  border-radius: 8px !important;
+  font-size: 13px;
+}
+
+th {
+  color: white;
+  padding-left: 5px;
+  height: 30px;
+}
+
+#mesCA {
+  margin-left: 25px;
+  margin-right: 25px;
+  bottom: 35px;
+  position: relative;
+}
+
+.mb-3 {
+  margin-left: 25px;
+  margin-right: 25px;
+  bottom: 35px;
+  position: relative;
+}
+
+.confirmation-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.p-dialog .p-button {
+  min-width: 6rem;
+}
+
+.p-multiselect {
+  width: 100%;
+}
+
+@media screen and (max-width: 640px) {
+  .p-multiselect {
+    width: 100%;
+  }
+}
+
+#settings-nav-btn {
+  width: auto !important;
+  position: relative;
+}
+
+.dropdown-menu {
+  position: absolute !important;
+  top: 0 !important;
+  left: 100% !important;
+  z-index: 100 !important;
+}
+
+.dropdown-menu.shadow.dropdown-menu-end.animated--grow-in.show {
+  top: unset !important;
+  left: unset !important;
+}
