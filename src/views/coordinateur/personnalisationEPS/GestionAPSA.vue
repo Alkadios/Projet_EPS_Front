@@ -79,7 +79,7 @@ const selectedAPSA = ref<APSA[]>([]);
 const NomEtablissement = 'Lycée Professionnel de St Joseph';
 
 const displayModal = ref(false);
-const monCAModal = ref<ChampApprentissage>({ id: -1, libelle: '', color: '', Apsa: [] });
+const monCAModal = ref<ChampApprentissage>({ id: -1, libelle: '', color: '', apsas: [] });
 
 function closeModal() {
   displayModal.value = false;
@@ -94,7 +94,7 @@ function validerAjout() {}
 
 function openModal(CA: ChampApprentissage) {
   monCAModal.value = CA;
-  selectedAPSA.value = CA.Apsa;
+  selectedAPSA.value = CA.apsas;
   displayModal.value = true;
 }
 

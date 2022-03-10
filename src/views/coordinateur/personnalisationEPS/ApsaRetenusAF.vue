@@ -23,7 +23,6 @@
               :value="category"
               style="margin-bottom: 0.5rem"
               v-model="selectedCategories"
-              :disabled="category.key === 'R'"
             />
             <label style="margin: 0.5rem" :for="category.key">{{ category.name }}</label>
           </div>

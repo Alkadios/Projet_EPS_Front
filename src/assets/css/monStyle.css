@@ -90,3 +90,7 @@ th {
   top: unset !important;
   left: unset !important;
 }
+
+.p-card-body {
+  margin-bottom: 1rem;
+}

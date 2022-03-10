@@ -8,7 +8,7 @@
       <hr class="sidebar-divider my-0" />
       <ul class="navbar-nav text-light" id="accordionSidebar">
         <li class="nav-item">
-          <a class="nav-link active" href="#"><i class="fas fa-tachometer-alt"></i><span>Dashboard</span></a>
+          <a class="nav-link" href="#"><i class="fas fa-tachometer-alt"></i><span>Dashboard</span></a>
         </li>
         <li class="nav-item">
           <div class="btn-group dropend">
@@ -23,7 +23,6 @@
             </ul>
           </div>
         </li>
-        <li class="nav-item"></li>
         <li class="nav-item">
           <router-link class="nav-link" to="/ajoutQuantiteTravailEleve"
             ><i class="fas fa-table"></i><span>Ajout Quantite Travail </span></router-link
