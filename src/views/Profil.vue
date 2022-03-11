@@ -4,9 +4,9 @@
     <div class="col-lg-4">
       <div class="card mb-3">
         <div class="card-body text-center shadow">
-          <i class="fas fa-user" style="font-size: 7rem"></i>
+          <img class="rounded-circle mb-3 mt-4" src="@/assets/img/man.png" width="160" height="160" />
           <div class="mb-3">
-            <button class="btn btn-primary btn-sm" style="display: none" type="button">Change Photo</button>
+            <button class="btn btn-primary btn-sm" type="button">Change Photo</button>
           </div>
         </div>
       </div>

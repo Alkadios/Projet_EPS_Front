@@ -31,6 +31,11 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('../views/coordinateur/personnalisationEPS/ApsaRetenusAF.vue'),
   },
   {
+    path: '/DeclinerAFRetenus',
+    name: 'DeclinerAFRetenus',
+    component: () => import('../views/coordinateur/personnalisationEPS/DeclinerAFRetenus.vue'),
+  },
+  {
     path: '/Profil',
     name: 'Profil',
     component: () => import('../views/Profil.vue'),
