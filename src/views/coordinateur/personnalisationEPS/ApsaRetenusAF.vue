@@ -16,15 +16,15 @@
           </div>
         </div>
         <div class="mb-3">
-          <div v-for="category of categories" :key="category.key" class="field-checkbox">
+          <div v-for="af of afs" :key="af.id" class="field-checkbox">
             <Checkbox
-              :id="category.key"
+              :id="af.id"
               name="category"
-              :value="category"
+              :value="af"
               style="margin-bottom: 0.5rem"
               v-model="selectedCategories"
             />
-            <label style="margin: 0.5rem" :for="category.key">{{ category.name }}</label>
+            <label style="margin: 0.5rem" :for="af.id.toString()">{{ af.libelle }}</label>
           </div>
         </div>
       </div>
@@ -37,7 +37,10 @@
 
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue';
+import { AF } from '@/models';
+import AfService from '@/services/AfService';
 
+const { afs, fetchAllAfs } = AfService();
 const categories = ref([
   { name: 'Accounting', key: 'A' },
   { name: 'Marketing', key: 'M' },
@@ -48,6 +51,10 @@ const categories = ref([
 const selectedCategories = ref([]);
 
 const NomEtablissement = 'Lycée Professionnel de St Joseph';
+
+onMounted(async () => {
+  await fetchAllAfs();
+});
 
 function verif() {
   console.log(selectedCategories.value);
