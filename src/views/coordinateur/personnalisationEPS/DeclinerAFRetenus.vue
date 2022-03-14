@@ -25,6 +25,18 @@
         <div class="mb-3"></div>
       </div>
       <div class="mb-3">
+        <div v-for="category of categories" :key="category.key" class="field-checkbox">
+          <Checkbox
+            :id="category.key"
+            name="category"
+            :value="category"
+            style="margin-bottom: 0.5rem"
+            v-model="selectedCategories"
+            :disabled="category"
+          />
+        </div>
+      </div>
+      <div class="mb-3">
         <Textarea class="w-100" :disabled="propertyDisable" v-model="value2" :autoResize="true" rows="5" />
         <Button label="Edit" icon="pi pi-pencil" style="float: right" @click="propertyDisable = !propertyDisable" />
       </div>
@@ -43,7 +55,15 @@ let monTextarea = ref('Yo le sang');
 
 const NomEtablissement = 'Lycée Professionnel de St Joseph';
 
-const value2 = ref('Romain le génie, je le suce !');
+const categories = ref([
+  { name: 'Accounting', key: 'A' },
+  { name: 'Marketing', key: 'M' },
+  { name: 'Production', key: 'P' },
+  { name: 'Research', key: 'R' },
+]);
+const selectedCategories = ref(categories.value);
+
+const value2 = ref('Text déjà écrit');
 const paymentOptions = ref([
   { name: 'Option 1', value: 1 },
   { name: 'Option 2', value: 2 },
