@@ -19,6 +19,7 @@
               <li>
                 <router-link to="/GestionAPSA" class="dropdown-item">Gestion des APSAS</router-link>
                 <router-link to="/ApsaRetenusAF" class="dropdown-item">AF des APSA Retenus</router-link>
+                <router-link to="/DeclinerAFRetenus" class="dropdown-item">Decliner les AF Retenus</router-link>
               </li>
             </ul>
           </div>

@@ -18,9 +18,18 @@
   margin-bottom: 1rem;
   border-radius: 0.3rem;
 }
-p.MonHeadButton {
+
+p.MonHead {
   top: 0.5rem;
   position: relative;
+}
+
+.fa-plus {
+  color: black;
+}
+
+button.ButtonHead {
+  border-radius: 0.5rem;
 }
 
 button.p-button.p-component.p-button-icon-only {
