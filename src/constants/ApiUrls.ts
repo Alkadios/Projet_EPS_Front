@@ -3,4 +3,5 @@ export const ApiUrlUtilisateur = `${ApiUrl}/utilisateur`;
 export const ApiUrlChampApprentissage = `${ApiUrl}/champ_apprentissages`;
 export const ApiURLAPSA = `${ApiUrl}/apsas`;
 export const ApiURLAf = `${ApiUrl}/afs`;
-export const ApiURLAfRetenus = `${ApiUrl}/afs`;
+export const ApiURLAfRetenus = `${ApiUrl}/af_retenus`;
+export const ApiURLApsaSelect = `${ApiUrl}/apsa_select_annees`;
