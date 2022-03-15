@@ -18,9 +18,18 @@
   margin-bottom: 1rem;
   border-radius: 0.3rem;
 }
-p.MonHeadButton {
+
+p.MonHead {
   top: 0.5rem;
   position: relative;
+}
+
+.fa-plus {
+  color: black;
+}
+
+button.ButtonHead {
+  border-radius: 0.5rem;
 }
 
 button.p-button.p-component.p-button-icon-only {
@@ -89,4 +98,8 @@ th {
 .dropdown-menu.shadow.dropdown-menu-end.animated--grow-in.show {
   top: unset !important;
   left: unset !important;
+}
+
+.p-card-body {
+  margin-bottom: 1rem;
 }

@@ -3,6 +3,9 @@ import createPersistedState from 'vuex-persistedstate';
 import UtilisateurModule from '@/store/modules/utilisateur/index';
 import ChampApprentissageModule from '@/store/modules/champApprentissage/index';
 import ApsaModule from '@/store/modules/apsa/index';
+import AfModule from '@/store/modules/af/index';
+import AfRetenusModule from '@/store/modules/afRetenus/index';
+import ApsaSelectAnneeModule from '@/store/modules/ApsaSelectAnnee/index';
 
 const keyLocalStorage = 'epsstore';
 
@@ -21,5 +24,8 @@ export default createStore({
     UtilisateurModule,
     ChampApprentissageModule,
     ApsaModule,
+    AfModule,
+    AfRetenusModule,
+    ApsaSelectAnneeModule,
   },
 });

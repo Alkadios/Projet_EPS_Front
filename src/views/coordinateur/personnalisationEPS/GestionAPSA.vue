@@ -1,7 +1,7 @@
 <template>
   <Dialog v-model:visible="displayModal" :header="monCAModal.libelle" :style="{ width: '50vw' }" :modal="true">
     <MultiSelect
-      v-model="selectedAPSA"
+      v-model="apsaFromCaSelectionnes"
       :options="apsas"
       dataKey="id"
       optionLabel="libelle"
@@ -11,7 +11,7 @@
     />
     <template #footer>
       <Button label="Annuler" icon="pi pi-times" @click="closeModal()" class="p-button-text" />
-      <Button label="Valider" icon="pi pi-check" @click="validerAjout()" autofocus />
+      <Button label="Valider" icon="pi pi-check" @click="AjoutApsaInCa()" autofocus />
     </template>
   </Dialog>
   <div class="card shadow-lg o-hidden border-0 my-5">
@@ -39,13 +39,20 @@
             class="d-flex p-2"
           >
             <div class="mr-2" style="padding: 9px">
-              <p class="MonHeadButton">
-                CA{{ monCA.id }}
-                <Button icon="pi pi-external-link" @click="openModal(monCA)"><i class="fa fa-plus"></i></Button>
-              </p>
+              <button class="ButtonHead" @click="openModal(monCA)">
+                <p class="MonHead">
+                  CA{{ monCA.id }}
+                  <Button icon="pi pi-external-link"><i class="fa fa-plus"></i></Button>
+                </p>
+              </button>
             </div>
             <div class="mr-2 flex-grow-1">
-              <SelectButton v-model="result" :options="monCA.Apsa" optionLabel="libelle" multiple />
+              <SelectButton
+                v-model="apsasSelectionnes"
+                :options="getApsasFromCa(monCA)"
+                optionLabel="libelle"
+                multiple
+              />
             </div>
           </div>
         </div>
@@ -67,30 +74,38 @@
 import { ref, onMounted } from 'vue';
 import ChampApprentissageService from '@/services/ChampApprentissageService';
 import ApsaService from '@/services/ApsaService';
-import { APSA, ChampApprentissage } from '@/models';
+import { APSA, ChampApprentissage, ChampsApprentissageApsa } from '@/models';
 
 const { champsApprentissages, fetchChampsApprentissages } = ChampApprentissageService();
 const { apsas, fetchAllApsa } = ApsaService();
 
-const result = ref([]);
-const selectedAPSA = ref<APSA[]>([]);
-
 const NomEtablissement = 'Lycée Professionnel de St Joseph';
-
 const displayModal = ref(false);
-const monCAModal = ref<ChampApprentissage>({ id: -1, libelle: '', color: '', Apsa: [] });
+const monCAModal = ref<ChampApprentissage>({ id: -1, libelle: '', color: '', champsApprentissageApsas: [] });
+const apsasSelectionnes = ref([]);
+const apsaFromCaSelectionnes = ref<APSA[]>([]);
 
-function closeModal() {
-  displayModal.value = false;
-  selectedAPSA.value = [];
+function getApsasFromCa(CA: ChampApprentissage) {
+  const maListeAPSA = ref<APSA[]>([]);
+  CA.champsApprentissageApsas.forEach((monCaApsas: ChampsApprentissageApsa) => maListeAPSA.value.push(monCaApsas.Apsa));
+  return maListeAPSA.value;
 }
-
-function validerAjout() {}
 
 function openModal(CA: ChampApprentissage) {
   monCAModal.value = CA;
-  selectedAPSA.value = CA.Apsa;
+  CA.champsApprentissageApsas.forEach((monCaApsas: ChampsApprentissageApsa) =>
+    apsaFromCaSelectionnes.value.push(monCaApsas.Apsa)
+  );
   displayModal.value = true;
+}
+
+function closeModal() {
+  displayModal.value = false;
+  apsaFromCaSelectionnes.value = [];
+}
+
+function AjoutApsaInCa() {
+  closeModal();
 }
 
 onMounted(async () => {

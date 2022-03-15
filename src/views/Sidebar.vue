@@ -8,7 +8,7 @@
       <hr class="sidebar-divider my-0" />
       <ul class="navbar-nav text-light" id="accordionSidebar">
         <li class="nav-item">
-          <a class="nav-link active" href="#"><i class="fas fa-tachometer-alt"></i><span>Dashboard</span></a>
+          <a class="nav-link" href="#"><i class="fas fa-tachometer-alt"></i><span>Dashboard</span></a>
         </li>
         <li class="nav-item">
           <div class="btn-group dropend">
@@ -18,12 +18,16 @@
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
               <li>
                 <router-link to="/GestionAPSA" class="dropdown-item">Gestion des APSAS</router-link>
+                <router-link to="/ApsaRetenusAF" class="dropdown-item">AF des APSA Retenus</router-link>
+                <router-link to="/DeclinerAFRetenus" class="dropdown-item">Decliner les AF Retenus</router-link>
               </li>
             </ul>
           </div>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#"><i class="fas fa-table"></i><span>Table</span></a>
+          <router-link class="nav-link" to="/ajoutQuantiteTravailEleve"
+            ><i class="fas fa-table"></i><span>Ajout Quantite Travail </span></router-link
+          >
         </li>
       </ul>
       <div class="text-center d-none d-md-inline">
