@@ -36,6 +36,11 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('../views/coordinateur/personnalisationEPS/DeclinerAFRetenus.vue'),
   },
   {
+    path: '/IndicateurAF',
+    name: 'IndicateurAF',
+    component: () => import('../views/coordinateur/personnalisationEPS/IndicateurAF.vue'),
+  },
+  {
     path: '/Profil',
     name: 'Profil',
     component: () => import('../views/Profil.vue'),

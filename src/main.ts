@@ -42,6 +42,7 @@ import Message from 'primevue/message';
 import InlineMessage from 'primevue/inlinemessage';
 import ColorPicker from 'primevue/colorpicker';
 import App from './App.vue';
+import Editor from 'primevue/editor';
 import AppAuth from './views/AppAuth.vue';
 import router from './router';
 import store from './store';
@@ -55,6 +56,7 @@ const { utilisateur } = UtilisateurService();
 const app = createApp(App);
 // PrimeVue components
 app
+  .component('Editor', Editor)
   .component('Card', Card)
   .component('DataTable', DataTable)
   .component('Column', Column)
