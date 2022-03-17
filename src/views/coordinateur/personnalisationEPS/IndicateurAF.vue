@@ -4,10 +4,10 @@
       <div class="col-8">
         <Card>
           <template #title>
-            <InputText id="Title" type="text" placeholder="Titre" />
+            <InputText id="Title" v-model="monTitleIndicateur" type="text" placeholder="Titre" />
           </template>
           <template #content>
-            <Editor v-model="value2" editorStyle="height: 130px" placeholder="Entrez vos critères">
+            <Editor v-model="maDescriptionIndicateur" editorStyle="height: 130px" placeholder="Entrez vos critères">
               <template v-slot:toolbar>
                 <span class="ql-formats">
                   <button class="ql-list" value="bullet" type="button"></button>
@@ -23,7 +23,7 @@
     </div>
     <template #footer>
       <Button label="No" icon="pi pi-times" @click="closeBasic" class="p-button-text" />
-      <Button label="Yes" icon="pi pi-check" @click="closeBasic" autofocus />
+      <Button label="Yes" icon="pi pi-check" @click="addIndicateur" autofocus />
     </template>
   </Dialog>
   <div class="card shadow-lg o-hidden border-0 my-5">
@@ -50,47 +50,11 @@
     </div>
     <div class="mb-3">
       <div class="row">
-        <div class="col-3">
+        <div class="col-3" v-for="monIndicateur in mesIndicateurs" v-bind:key="monIndicateur.id">
           <Card>
-            <template #title> Advanced Card </template>
+            <template #title> {{ monIndicateur.libelle }} </template>
             <template #content>
-              <p>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore sed consequuntur error repudiandae
-                numquam deserunt quisquam repellat.
-              </p>
-            </template>
-          </Card>
-        </div>
-        <div class="col-3">
-          <Card>
-            <template #title> Advanced Card </template>
-            <template #content>
-              <p>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore sed consequuntur error repudiandae
-                numquam deserunt quisquam repellat.
-              </p>
-            </template>
-          </Card>
-        </div>
-        <div class="col-3">
-          <Card>
-            <template #title> Advanced Card </template>
-            <template #content>
-              <p>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore sed consequuntur error repudiandae
-                numquam deserunt quisquam repellat.
-              </p>
-            </template>
-          </Card>
-        </div>
-        <div class="col-3">
-          <Card>
-            <template #title> Advanced Card </template>
-            <template #content>
-              <p>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore sed consequuntur error repudiandae
-                numquam deserunt quisquam repellat.
-              </p>
+              <p v-html="monIndicateur.description" />
             </template>
           </Card>
         </div>
@@ -118,10 +82,15 @@
 
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue';
+import { Indicateur } from '@/models';
+
 let propertyDisable = ref(true);
 const NomEtablissement = 'Lycée Professionnel de St Joseph';
-const value2 = ref();
+const maDescriptionIndicateur = ref();
+const monTitleIndicateur = ref();
 const monCritere = ref('Text déjà écrit');
+
+const mesIndicateurs = ref<Indicateur[]>([]);
 
 const displayBasic = ref(false);
 const openBasic = () => {
@@ -130,7 +99,6 @@ const openBasic = () => {
 
 const closeBasic = () => {
   displayBasic.value = false;
-  console.log(value2.value);
 };
 
 document.addEventListener('keydown', (e) => {
@@ -139,6 +107,18 @@ document.addEventListener('keydown', (e) => {
     propertyDisable.value = true;
   }
 });
+
+function addIndicateur() {
+  let monNouvelObjet = {
+    id: mesIndicateurs.value.length + 1,
+    libelle: monTitleIndicateur.value,
+    description: maDescriptionIndicateur.value,
+  };
+  mesIndicateurs.value.push(monNouvelObjet);
+  monTitleIndicateur.value = '';
+  maDescriptionIndicateur.value = '';
+  closeBasic();
+}
 
 function verif() {}
 

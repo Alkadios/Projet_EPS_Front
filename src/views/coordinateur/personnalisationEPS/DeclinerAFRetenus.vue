@@ -35,7 +35,13 @@
       </div>
     </div>
     <div class="mb-3">
-      <Button label="Valider" style="right: 1rem" icon="pi pi-check" @click="verif()" autofocus></Button>
+      <Button
+        label="Valider"
+        style="right: 1rem"
+        icon="pi pi-check"
+        @click="verif(), $router.push('IndicateurAF')"
+        autofocus
+      ></Button>
     </div>
   </div>
 </template>

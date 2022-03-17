@@ -9,3 +9,4 @@ export * from './ChoixAnnee';
 export * from './AfRetenus';
 export * from './apsaRetenus';
 export * from './ApsaSelectAnnee';
+export * from './Indicateur';
