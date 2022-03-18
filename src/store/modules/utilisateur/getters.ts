@@ -7,6 +7,9 @@ export default {
   getToken(state: UtilisateurState) {
     return state.token;
   },
+  getEtablissement(state: UtilisateurState) {
+    return state.etablissement;
+  },
   // getOrganismesUtilisateur(state: UtilisateurState) {
   //   return state.organismesUtilisateur;
   // },

@@ -1,6 +1,6 @@
 import { computed } from 'vue';
 import { useStore } from 'vuex';
-import { Utilisateur } from '@/models';
+import { Etablissement, Utilisateur } from '@/models';
 
 export default function UtilisateurService() {
   const store = useStore();
@@ -15,9 +15,14 @@ export default function UtilisateurService() {
     await store.dispatch('UtilisateurModule/logoutUtilisateur');
   }
 
+  const etablissement = computed((): Etablissement => {
+    return { nomEtablissement: 'Lycée Professionnel de St Joseph' } as Etablissement;
+  });
+
   return {
     utilisateur,
     loginUtilisateur,
     logoutUtilisateur,
+    etablissement,
   };
 }
