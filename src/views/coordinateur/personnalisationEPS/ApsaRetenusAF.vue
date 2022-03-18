@@ -10,20 +10,23 @@
                 Personnalisation de l'équipe EPS <br />
                 au
               </p>
-              <h4 class="text-dark mb-4">{{ NomEtablissement }}</h4>
+              <h4 class="text-dark mb-4">{{ etablissement.nomEtablissement }}</h4>
             </div>
             <p>Sélectionner les AF retenus :</p>
+            <font-awesome-icon icon="fa-regular fa-circle-plus" />
           </div>
         </div>
         <div class="mb-3">
+          <SelectButton
+            v-model="selectedAfs"
+            :options="champsApprentissages"
+            :optionLabel="(ca: ChampApprentissage) => 'CA'+ca.id"
+          >
+          </SelectButton>
+        </div>
+        <div class="mb-3">
           <div v-for="af of afs" :key="af.id" class="field-checkbox">
-            <Checkbox
-              :id="af.id"
-              name="category"
-              :value="af"
-              style="margin-bottom: 0.5rem"
-              v-model="selectedCategories"
-            />
+            <Checkbox :id="af.id" name="category" :value="af" style="margin-bottom: 0.5rem" v-model="selectedAfs" />
             <label style="margin: 0.5rem" :for="af.id.toString()">{{ af.libelle }}</label>
           </div>
         </div>
@@ -37,26 +40,24 @@
 
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue';
-import { AF } from '@/models';
+import { AF, ChampApprentissage } from '@/models';
 import AfService from '@/services/AfService';
+import ChampApprentissageService from '@/services/ChampApprentissageService';
+import UtilisateurService from '@/services/UtilisateurService';
 
 const { afs, fetchAllAfs } = AfService();
-const categories = ref([
-  { name: 'Accounting', key: 'A' },
-  { name: 'Marketing', key: 'M' },
-  { name: 'Production', key: 'P' },
-  { name: 'Research', key: 'R' },
-]);
+const { champsApprentissages, fetchChampsApprentissages } = ChampApprentissageService();
+const { etablissement } = UtilisateurService();
 
-const selectedCategories = ref([]);
-
-const NomEtablissement = 'Lycée Professionnel de St Joseph';
+const selectedAfs = ref([]);
 
 onMounted(async () => {
+  await fetchChampsApprentissages();
   await fetchAllAfs();
+  console.log('onMounted', etablissement.value);
 });
 
 function verif() {
-  console.log(selectedCategories.value);
+  console.log('selectedCategories.value');
 }
 </script>

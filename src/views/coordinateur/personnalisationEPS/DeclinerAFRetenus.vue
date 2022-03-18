@@ -10,7 +10,7 @@
                 Personnalisation de l'équipe EPS <br />
                 au
               </p>
-              <h4 class="text-dark mb-4">{{ NomEtablissement }}</h4>
+              <h4 class="text-dark mb-4">{{ etablissement.nomEtablissement }}</h4>
             </div>
             <div class="d-flex justify-content-center align-items-center align-content-center">
               <div class="col-3">
@@ -37,11 +37,12 @@
 
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue';
+import UtilisateurService from '@/services/UtilisateurService';
+
+const { etablissement } = UtilisateurService();
 
 let propertyDisable = ref(true);
 let monTextarea = ref('Yo le sang');
-
-const NomEtablissement = 'Lycée Professionnel de St Joseph';
 
 const value2 = ref('Romain le génie, je le suce !');
 const paymentOptions = ref([

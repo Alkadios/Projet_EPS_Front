@@ -25,7 +25,7 @@
                 Personnalisation de l'équipe EPS <br />
                 au
               </p>
-              <h4 class="text-dark mb-4">{{ NomEtablissement }}</h4>
+              <h4 class="text-dark mb-4">{{ etablissement.nomEtablissement }}</h4>
             </div>
           </div>
         </div>
@@ -74,12 +74,13 @@
 import { ref, onMounted } from 'vue';
 import ChampApprentissageService from '@/services/ChampApprentissageService';
 import ApsaService from '@/services/ApsaService';
+import UtilisateurService from '@/services/UtilisateurService';
 import { APSA, ChampApprentissage, ChampsApprentissageApsa } from '@/models';
 
 const { champsApprentissages, fetchChampsApprentissages } = ChampApprentissageService();
 const { apsas, fetchAllApsa } = ApsaService();
+const { etablissement } = UtilisateurService();
 
-const NomEtablissement = 'Lycée Professionnel de St Joseph';
 const displayModal = ref(false);
 const monCAModal = ref<ChampApprentissage>({ id: -1, libelle: '', color: '', champsApprentissageApsas: [] });
 const apsasSelectionnes = ref([]);
