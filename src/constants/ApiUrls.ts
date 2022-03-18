@@ -5,3 +5,4 @@ export const ApiURLAPSA = `${ApiUrl}/apsas`;
 export const ApiURLAf = `${ApiUrl}/afs`;
 export const ApiURLAfRetenus = `${ApiUrl}/af_retenus`;
 export const ApiURLApsaSelect = `${ApiUrl}/apsa_select_annees`;
+export const ApiURLNiveauScolaire = `${ApiUrl}/niveau_scolaires`;
