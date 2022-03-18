@@ -55,7 +55,9 @@
             <template #title> {{ monIndicateur.libelle }} </template>
             <template #content>
               <p v-html="monIndicateur.description" />
-              <Button class="p-button-rounded p-button-info"><i class="pi pi-pencil" /></Button>
+              <Button class="p-button-rounded p-button-info" @click="EditIndicateur(monIndicateur)"
+                ><i class="pi pi-pencil"
+              /></Button>
               <Button class="p-button-rounded p-button-danger" @click="deleteIndicateur(monIndicateur.id)"
                 ><i class="pi pi-times"
               /></Button>
@@ -113,6 +115,8 @@ document.addEventListener('keydown', (e) => {
 });
 
 function EditIndicateur(monIndicateur: Indicateur) {
+  let indexIndicateur = mesIndicateurs.value.findIndex((a) => a.id === monIndicateur.id);
+  mesIndicateurs.value.splice(indexIndicateur, 1);
   maDescriptionIndicateur.value = monIndicateur.description;
   monTitleIndicateur.value = monIndicateur.libelle;
   openBasic();
@@ -139,8 +143,3 @@ function verif() {}
 
 onMounted(async () => {});
 </script>
-<style>
-.p-card .p-card-body {
-  padding-top: 0rem;
-}
-</style>
