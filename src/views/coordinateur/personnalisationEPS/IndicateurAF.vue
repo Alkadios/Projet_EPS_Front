@@ -37,7 +37,7 @@
                 Personnalisation de l'équipe EPS <br />
                 au
               </p>
-              <h4 class="text-dark mb-4">{{ NomEtablissement }}</h4>
+              <h4 class="text-dark mb-4">{{ etablissement.nomEtablissement }}</h4>
             </div>
           </div>
         </div>
@@ -89,9 +89,10 @@
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue';
 import { Indicateur } from '@/models';
+import UtilisateurService from '@/services/UtilisateurService';
 
 let propertyDisable = ref(true);
-const NomEtablissement = 'Lycée Professionnel de St Joseph';
+const { etablissement } = UtilisateurService();
 const maDescriptionIndicateur = ref();
 const monTitleIndicateur = ref();
 const monCritere = ref('Text déjà écrit');
