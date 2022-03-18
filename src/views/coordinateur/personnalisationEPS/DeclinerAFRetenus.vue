@@ -50,12 +50,14 @@
 import { ref, onMounted, unref } from 'vue';
 import AfRetenusService from '@/services/AfRetenusService';
 import ApsaSelectAnnee from '@/services/ApsaSelectAnneeService';
+import UtilisateurService from '@/services/UtilisateurService';
 import { AfRetenus, APSA, AF } from '@/models';
 
 const { apsaSelectsAnnee, fetchAllApsaSelectAnnee } = ApsaSelectAnnee();
 const { afRetenus, fetchAllAfRetenus } = AfRetenusService();
+const { etablissement } = UtilisateurService();
+
 let propertyDisable = ref(true);
-const NomEtablissement = 'Lycée Professionnel de St Joseph';
 const apsaSelects = ref<APSA[]>([]);
 const monAPSA = ref<APSA>();
 

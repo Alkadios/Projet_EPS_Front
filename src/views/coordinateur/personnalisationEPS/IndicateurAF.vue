@@ -37,7 +37,7 @@
                 Personnalisation de l'équipe EPS <br />
                 au
               </p>
-              <h4 class="text-dark mb-4">{{ NomEtablissement }}</h4>
+              <h4 class="text-dark mb-4">{{ etablissement.nomEtablissement }}</h4>
             </div>
           </div>
         </div>
@@ -55,7 +55,9 @@
             <template #title> {{ monIndicateur.libelle }} </template>
             <template #content>
               <p v-html="monIndicateur.description" />
-              <Button class="p-button-rounded p-button-info"><i class="pi pi-pencil" /></Button>
+              <Button class="p-button-rounded p-button-info" @click="EditIndicateur(monIndicateur)"
+                ><i class="pi pi-pencil"
+              /></Button>
               <Button class="p-button-rounded p-button-danger" @click="deleteIndicateur(monIndicateur.id)"
                 ><i class="pi pi-times"
               /></Button>
@@ -87,9 +89,10 @@
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue';
 import { Indicateur } from '@/models';
+import UtilisateurService from '@/services/UtilisateurService';
 
 let propertyDisable = ref(true);
-const NomEtablissement = 'Lycée Professionnel de St Joseph';
+const { etablissement } = UtilisateurService();
 const maDescriptionIndicateur = ref();
 const monTitleIndicateur = ref();
 const monCritere = ref('Text déjà écrit');
@@ -113,6 +116,8 @@ document.addEventListener('keydown', (e) => {
 });
 
 function EditIndicateur(monIndicateur: Indicateur) {
+  let indexIndicateur = mesIndicateurs.value.findIndex((a) => a.id === monIndicateur.id);
+  mesIndicateurs.value.splice(indexIndicateur, 1);
   maDescriptionIndicateur.value = monIndicateur.description;
   monTitleIndicateur.value = monIndicateur.libelle;
   openBasic();
@@ -139,8 +144,3 @@ function verif() {}
 
 onMounted(async () => {});
 </script>
-<style>
-.p-card .p-card-body {
-  padding-top: 0rem;
-}
-</style>
