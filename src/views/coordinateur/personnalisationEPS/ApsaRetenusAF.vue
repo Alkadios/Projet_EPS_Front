@@ -47,12 +47,6 @@ import { AF } from '@/models';
 import AfService from '@/services/AfService';
 
 const { afs, fetchAllAfs } = AfService();
-const categories = ref([
-  { name: 'Accounting', key: 'A' },
-  { name: 'Marketing', key: 'M' },
-  { name: 'Production', key: 'P' },
-  { name: 'Research', key: 'R' },
-]);
 
 const selectedCategories = ref([]);
 
