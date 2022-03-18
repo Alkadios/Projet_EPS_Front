@@ -13,7 +13,6 @@
               <h4 class="text-dark mb-4">{{ etablissement.nomEtablissement }}</h4>
             </div>
             <p>Sélectionner les AF retenus :</p>
-            <font-awesome-icon icon="fa-regular fa-circle-plus" />
           </div>
         </div>
         <div class="mb-3">
@@ -32,13 +31,7 @@
         </div>
       </div>
       <div class="mb-3">
-        <Button
-          label="Valider"
-          style="right: 1rem"
-          icon="pi pi-check"
-          @click="verif(), $router.push('DeclinerAFRetenus')"
-          autofocus
-        />
+        <Button label="Valider" style="right: 1rem" icon="pi pi-check" @click="verif()" autofocus />
       </div>
     </div>
   </div>
