@@ -1,6 +1,7 @@
 import { ActionContext } from 'vuex';
 import ApsaSelectAnneeAPI from '@/api/ApsaSelectAnnee';
 import ApsaSelectAnneeState from './stateInterface';
+import { APSA } from '@/models';
 
 export default {
   async fetchAllApsaSelectAnnee(context: ActionContext<ApsaSelectAnneeState, any>) {
@@ -10,5 +11,9 @@ export default {
       context.commit('setApsaSelect', []);
       //throw new Error(response.data.message);
     }
+  },
+  async saveApsaSelectAnnee(context: ActionContext<ApsaSelectAnneeState, any>, payload: { listeApsa: APSA[] }) {
+    const response = await ApsaSelectAnneeAPI.saveApsaSelectAnnee(payload.listeApsa);
+    //if (!response.data.successful) throw new Error);
   },
 };

@@ -1,6 +1,6 @@
 import { computed } from 'vue';
 import { useStore } from 'vuex';
-import { ApsaSelectAnnee } from '@/models';
+import { APSA, ApsaSelectAnnee } from '@/models';
 
 export default function ApsaSelectAnnee() {
   const store = useStore();
@@ -11,9 +11,13 @@ export default function ApsaSelectAnnee() {
   async function fetchAllApsaSelectAnnee() {
     await store.dispatch('ApsaSelectAnneeModule/fetchAllApsaSelectAnnee');
   }
+  async function saveApsaSelectAnnee(listeApsa: APSA[]) {
+    await store.dispatch('ApsaSelectAnneeModule/saveApsaSelectAnnee', { listeApsa });
+  }
 
   return {
     apsaSelectsAnnee,
     fetchAllApsaSelectAnnee,
+    saveApsaSelectAnnee,
   };
 }
