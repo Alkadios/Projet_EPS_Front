@@ -84,7 +84,7 @@ const { etablissement } = UtilisateurService();
 
 const displayModal = ref(false);
 const monCAModal = ref<ChampApprentissage>({ id: -1, libelle: '', color: '', champsApprentissageApsas: [] });
-const apsasSelectionnes = ref([]);
+const apsasSelectionnes = ref<APSA[]>([]);
 const apsaFromCaSelectionnes = ref<APSA[]>([]);
 
 function getApsasFromCa(CA: ChampApprentissage) {
