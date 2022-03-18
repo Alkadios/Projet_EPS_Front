@@ -32,7 +32,13 @@
         </div>
       </div>
       <div class="mb-3">
-        <Button label="Valider" style="right: 1rem" icon="pi pi-check" @click="verif()" autofocus />
+        <Button
+          label="Valider"
+          style="right: 1rem"
+          icon="pi pi-check"
+          @click="verif(), $router.push('DeclinerAFRetenus')"
+          autofocus
+        />
       </div>
     </div>
   </div>

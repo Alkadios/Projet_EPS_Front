@@ -63,7 +63,7 @@
         label="Ajouter les APSA sélectionnés"
         style="right: 1rem"
         icon="pi pi-check"
-        @click="closeModal()"
+        @click="verif(), $router.push('ApsaRetenusAF')"
         autofocus
       />
     </div>
@@ -76,6 +76,7 @@ import ChampApprentissageService from '@/services/ChampApprentissageService';
 import ApsaService from '@/services/ApsaService';
 import UtilisateurService from '@/services/UtilisateurService';
 import { APSA, ChampApprentissage, ChampsApprentissageApsa } from '@/models';
+import { RouterLink } from 'vue-router';
 
 const { champsApprentissages, fetchChampsApprentissages } = ChampApprentissageService();
 const { apsas, fetchAllApsa } = ApsaService();
@@ -107,6 +108,10 @@ function closeModal() {
 
 function AjoutApsaInCa() {
   closeModal();
+}
+
+function verif() {
+  console.log(champsApprentissages.value);
 }
 
 onMounted(async () => {

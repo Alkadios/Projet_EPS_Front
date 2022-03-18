@@ -17,7 +17,7 @@
                 <p class="w-100 m-0">Sélectionner l'APSA :</p>
               </div>
               <div class="col-9">
-                <SelectButton v-model="value2" :options="paymentOptions" class="w-100 m-0" optionLabel="name" />
+                <SelectButton v-model="monAPSA" :options="apsaSelects" class="w-100 m-0" optionLabel="libelle" />
               </div>
             </div>
           </div>
@@ -25,31 +25,43 @@
         <div class="mb-3"></div>
       </div>
       <div class="mb-3">
-        <Textarea class="w-100" :disabled="propertyDisable" v-model="value2" :autoResize="true" rows="5" />
+        <div v-for="monAfRetenu of mesAfRetenus" :key="monAfRetenu.id" class="field-checkbox">
+          <i class="pi pi-check-square"></i>{{ '  ' + monAfRetenu.libelle }}
+        </div>
+      </div>
+      <div class="mb-3">
+        <Textarea class="w-100" :disabled="propertyDisable" v-model="monCritere" :autoResize="true" rows="5" />
         <Button label="Edit" icon="pi pi-pencil" style="float: right" @click="propertyDisable = !propertyDisable" />
       </div>
     </div>
     <div class="mb-3">
-      <Button label="Valider" style="right: 1rem" icon="pi pi-check" @click="verif()" autofocus></Button>
+      <Button
+        label="Valider"
+        style="right: 1rem"
+        icon="pi pi-check"
+        @click="verif(), $router.push('IndicateurAF')"
+        autofocus
+      ></Button>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue';
-import UtilisateurService from '@/services/UtilisateurService';
+import { ref, onMounted, unref } from 'vue';
+import AfRetenusService from '@/services/AfRetenusService';
+import ApsaSelectAnnee from '@/services/ApsaSelectAnneeService';
+import { AfRetenus, APSA, AF } from '@/models';
 
-const { etablissement } = UtilisateurService();
-
+const { apsaSelectsAnnee, fetchAllApsaSelectAnnee } = ApsaSelectAnnee();
+const { afRetenus, fetchAllAfRetenus } = AfRetenusService();
 let propertyDisable = ref(true);
-let monTextarea = ref('Yo le sang');
+const NomEtablissement = 'Lycée Professionnel de St Joseph';
+const apsaSelects = ref<APSA[]>([]);
+const monAPSA = ref<APSA>();
 
-const value2 = ref('Romain le génie, je le suce !');
-const paymentOptions = ref([
-  { name: 'Option 1', value: 1 },
-  { name: 'Option 2', value: 2 },
-  { name: 'Option 3', value: 3 },
-]);
+const mesAfRetenus = ref<AF[]>([]);
+
+const monCritere = ref('Text déjà écrit');
 
 document.addEventListener('keydown', (e) => {
   if (e.ctrlKey && e.key === 's') {
@@ -59,6 +71,21 @@ document.addEventListener('keydown', (e) => {
 });
 
 function verif() {
-  console.log(propertyDisable);
+  console.log(afRetenus.value);
 }
+
+onMounted(async () => {
+  await fetchAllAfRetenus();
+  await fetchAllApsaSelectAnnee();
+  apsaSelectsAnnee.value.forEach((a) => {
+    if (a.Ca.id === 1) {
+      apsaSelects.value.push(a.Apsa);
+    }
+  });
+  afRetenus.value.forEach((b) => {
+    if (b.ChoixAnnee.champApprentissage.id === 1) {
+      mesAfRetenus.value.push(b.Af);
+    }
+  });
+});
 </script>
