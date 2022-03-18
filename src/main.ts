@@ -7,6 +7,7 @@ import './assets/js/bootstrap.min.js';
 import '@/assets/css/theme.css';
 import 'primevue/resources/primevue.min.css';
 import PrimeVue from 'primevue/config';
+import 'primeicons/primeicons.css';
 import ToastService from 'primevue/toastservice';
 import Card from 'primevue/card';
 import ConfirmationService from 'primevue/confirmationservice';
@@ -41,19 +42,21 @@ import Message from 'primevue/message';
 import InlineMessage from 'primevue/inlinemessage';
 import ColorPicker from 'primevue/colorpicker';
 import App from './App.vue';
+import Editor from 'primevue/editor';
 import AppAuth from './views/AppAuth.vue';
 import router from './router';
 import store from './store';
 import UtilisateurService from './services/UtilisateurService';
 import ObjectUtils from './utils/ObjectUtils';
 import Locale_FR from './constants/Locale_FR';
-
+import './assets/css/monStyle.css';
 const { isObjectEmpty } = ObjectUtils();
 const { utilisateur } = UtilisateurService();
 
 const app = createApp(App);
 // PrimeVue components
 app
+  .component('Editor', Editor)
   .component('Card', Card)
   .component('DataTable', DataTable)
   .component('Column', Column)

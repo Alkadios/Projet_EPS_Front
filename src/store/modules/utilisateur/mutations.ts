@@ -1,4 +1,4 @@
-import { Utilisateur } from '@/models';
+import { Etablissement, Utilisateur } from '@/models';
 import UtilisateurState from './stateInterface';
 
 export default {
@@ -7,6 +7,9 @@ export default {
   },
   setToken(state: UtilisateurState, payload: string) {
     state.token = payload;
+  },
+  setEtablissement(state: UtilisateurState, payload: Etablissement) {
+    state.etablissement = payload;
   },
   // setOrganismesUtilisateur(state: UtilisateurState, payload: Organisme[]) {
   //   state.organismesUtilisateur = payload;

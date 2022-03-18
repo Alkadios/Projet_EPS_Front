@@ -1,6 +1,7 @@
-import { APSA } from '@/models';
+import { ChampsApprentissageApsa } from '@/models';
 export interface ChampApprentissage {
   id: number;
   libelle: string;
-  apsa: APSA[];
+  color: string;
+  champsApprentissageApsas: ChampsApprentissageApsa[];
 }

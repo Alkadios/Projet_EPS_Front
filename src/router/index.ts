@@ -21,9 +21,29 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('../views/coordinateur/personnalisationEPS/GestionAPSA.vue'),
   },
   {
-    path: '/parametrage/ajoutQuantiteTravailEleve',
+    path: '/ajoutQuantiteTravailEleve',
     name: 'AjoutQuantiteTravailEleve',
     component: () => import('../views/coordinateur/personnalisationEPS/AjoutQuantiteTravailEleve.vue'),
+  },
+  {
+    path: '/ApsaRetenusAF',
+    name: 'ApsaRetenusAF',
+    component: () => import('../views/coordinateur/personnalisationEPS/ApsaRetenusAF.vue'),
+  },
+  {
+    path: '/DeclinerAFRetenus',
+    name: 'DeclinerAFRetenus',
+    component: () => import('../views/coordinateur/personnalisationEPS/DeclinerAFRetenus.vue'),
+  },
+  {
+    path: '/IndicateurAF',
+    name: 'IndicateurAF',
+    component: () => import('../views/coordinateur/personnalisationEPS/IndicateurAF.vue'),
+  },
+  {
+    path: '/Profil',
+    name: 'Profil',
+    component: () => import('../views/Profil.vue'),
   },
   {
     path: '/:notFound(.*)',
