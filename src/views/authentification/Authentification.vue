@@ -6,15 +6,19 @@
           <div class="card-body p-0">
             <div class="row">
               <div class="col-lg-6 d-none d-lg-flex">
-                <div
-                  class="flex-grow-1 bg-login-image"
-                  style="background-image: url('./../../assets/img/Sport_login.jpg')"
-                ></div>
+                <div class="flex-grow-1 bg-login-image">
+                  <img
+                    src="./../../assets/img/Page_Accueil.png"
+                    style="width: 100%; position: relative; top: 15%; left: 10%"
+                  />
+                </div>
               </div>
               <div class="col-lg-6">
                 <div class="p-5">
                   <div class="text-center">
-                    <h4 class="text-dark mb-4">Bienvenue!</h4>
+                    <div class="mb-3">
+                      <h4 class="text-dark mb-4">Bienvenue!</h4>
+                    </div>
                   </div>
                   <form class="user">
                     <div class="mb-3">
@@ -49,15 +53,8 @@
                     </div>
                     <button class="btn btn-primary d-block btn-user w-100" type="submit">Login</button>
                     <hr />
-                    <a class="btn btn-primary d-block btn-google btn-user w-100 mb-2" role="button"
-                      ><i class="fab fa-google"></i>&nbsp; Login with Google</a
-                    ><a class="btn btn-primary d-block btn-facebook btn-user w-100" role="button"
-                      ><i class="fab fa-facebook-f"></i>&nbsp; Login with Facebook</a
-                    >
-                    <hr />
                   </form>
                   <div class="text-center"><a class="small" href="forgot-password.html">Forgot Password?</a></div>
-                  <div class="text-center"><a class="small" href="register.html">Create an Account!</a></div>
                 </div>
               </div>
             </div>
@@ -75,7 +72,7 @@ import UtilisateurService from '@/services/UtilisateurService';
 
 const router = useRouter();
 
-const { fetchUtilisateur } = UtilisateurService();
+//const { fetchUtilisateur } = UtilisateurService();
 
 const afficherModalErreur = ref(false);
 const libelleErreur = ref('');
