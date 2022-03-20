@@ -63,7 +63,9 @@ const monAPSA = ref<APSA>();
 
 const mesAfRetenus = ref<AF[]>([]);
 
-const monCritere = ref('Text déjà écrit');
+const monCritere =
+  ref(`Ex : Pour produire une performance maximale connue sur un 800m, utiliser préférentiellement des repères intérieurs afin de réaliser une course avec des variations d’allures optimales régulées par quelques repères extérieurs exprimés par un partenaire.
+`);
 
 document.addEventListener('keydown', (e) => {
   if (e.ctrlKey && e.key === 's') {

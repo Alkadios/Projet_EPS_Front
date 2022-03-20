@@ -95,7 +95,9 @@ let propertyDisable = ref(true);
 const { etablissement } = UtilisateurService();
 const maDescriptionIndicateur = ref();
 const monTitleIndicateur = ref();
-const monCritere = ref('Text déjà écrit');
+const monCritere =
+  ref(`Ex : Pour produire une performance maximale connue sur un 800m, utiliser préférentiellement des repères intérieurs afin de réaliser une course avec des variations d’allures optimales régulées par quelques repères extérieurs exprimés par un partenaire.
+`);
 
 const mesIndicateurs = ref<Indicateur[]>([]);
 
