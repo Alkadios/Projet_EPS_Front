@@ -16,7 +16,14 @@ export default function UtilisateurService() {
   }
 
   const etablissement = computed((): Etablissement => {
-    return { nomEtablissement: 'Lycée Professionnel de St Joseph' } as Etablissement;
+    return {
+      nomEtablissement: 'Lycée Professionnel de St Joseph',
+      niveauxScolaires: [
+        { id: 10, libelle: 'Seconde' },
+        { id: 11, libelle: 'Première' },
+        { id: 12, libelle: 'Terminale' },
+      ],
+    } as Etablissement;
   });
 
   return {

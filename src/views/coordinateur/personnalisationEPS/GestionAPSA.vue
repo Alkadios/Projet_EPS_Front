@@ -107,6 +107,13 @@ function closeModal() {
 }
 
 function AjoutApsaInCa() {
+  const caApsa = apsaFromCaSelectionnes.value.map((apsa) => {
+    return {
+      id: -1,
+      Apsa: apsa,
+    };
+  });
+  champsApprentissages.value.find((ca) => ca.id === monCAModal.value.id)!.champsApprentissageApsas = caApsa;
   closeModal();
 }
 
