@@ -1,6 +1,6 @@
 import { computed } from 'vue';
 import { useStore } from 'vuex';
-import { Etablissement, Utilisateur } from '@/models';
+import { Etablissement, Utilisateur, Annee } from '@/models';
 
 export default function UtilisateurService() {
   const store = useStore();
@@ -26,10 +26,13 @@ export default function UtilisateurService() {
     } as Etablissement;
   });
 
+  const annee: Annee = { '@id': '/api/annees/3', id: 3 };
+
   return {
     utilisateur,
     loginUtilisateur,
     logoutUtilisateur,
     etablissement,
+    annee,
   };
 }

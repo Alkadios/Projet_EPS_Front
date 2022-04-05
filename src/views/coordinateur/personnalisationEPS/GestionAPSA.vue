@@ -48,9 +48,9 @@
             </div>
             <div class="mr-2 flex-grow-1">
               <SelectButton
-                v-model="apsasSelectionnes"
-                :options="getApsasFromCa(monCA)"
-                optionLabel="libelle"
+                v-model="caApsasSelectionnes[monCA.id]"
+                :options="monCA.champsApprentissageApsas"
+                optionLabel="Apsa.libelle"
                 multiple
               />
             </div>
@@ -63,7 +63,7 @@
         label="Ajouter les APSA sélectionnés"
         style="right: 1rem"
         icon="pi pi-check"
-        @click="verif(), $router.push('ApsaRetenusAF')"
+        @click="saveApsasSelectionnees"
         autofocus
       />
     </div>
@@ -75,23 +75,21 @@ import { ref, onMounted } from 'vue';
 import ChampApprentissageService from '@/services/ChampApprentissageService';
 import ApsaService from '@/services/ApsaService';
 import UtilisateurService from '@/services/UtilisateurService';
+import ApsaSelectAnnee from '@/services/ApsaSelectAnneeService';
 import { APSA, ChampApprentissage, ChampsApprentissageApsa } from '@/models';
-import { RouterLink } from 'vue-router';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 const { champsApprentissages, fetchChampsApprentissages } = ChampApprentissageService();
 const { apsas, fetchAllApsa } = ApsaService();
-const { etablissement } = UtilisateurService();
+const { etablissement, annee } = UtilisateurService();
+const { saveApsaSelectAnnee, fetchAllApsaSelectAnneeByAnnee, apsaSelectsAnnee } = ApsaSelectAnnee();
 
 const displayModal = ref(false);
-const monCAModal = ref<ChampApprentissage>({ id: -1, libelle: '', color: '', champsApprentissageApsas: [] });
-const apsasSelectionnes = ref<APSA[]>([]);
+const monCAModal = ref<ChampApprentissage>({ '@id': '', id: -1, libelle: '', color: '', champsApprentissageApsas: [] });
+const caApsasSelectionnes = ref<any[]>([]);
 const apsaFromCaSelectionnes = ref<APSA[]>([]);
-
-function getApsasFromCa(CA: ChampApprentissage) {
-  const maListeAPSA = ref<APSA[]>([]);
-  CA.champsApprentissageApsas.forEach((monCaApsas: ChampsApprentissageApsa) => maListeAPSA.value.push(monCaApsas.Apsa));
-  return maListeAPSA.value;
-}
 
 function openModal(CA: ChampApprentissage) {
   monCAModal.value = CA;
@@ -109,6 +107,7 @@ function closeModal() {
 function AjoutApsaInCa() {
   const caApsa = apsaFromCaSelectionnes.value.map((apsa) => {
     return {
+      '@id': '',
       id: -1,
       Apsa: apsa,
     };
@@ -117,12 +116,23 @@ function AjoutApsaInCa() {
   closeModal();
 }
 
-function verif() {
-  console.log(champsApprentissages.value);
+async function saveApsasSelectionnees() {
+  caApsasSelectionnes.value.forEach((_, idCA) => {
+    let idCaString = champsApprentissages.value.find((ca) => ca.id === idCA)?.['@id']!;
+    caApsasSelectionnes.value[idCA].forEach(async (caApsa: ChampsApprentissageApsa) => {
+      await saveApsaSelectAnnee(idCaString, caApsa.Apsa['@id'], annee['@id']);
+    });
+  });
+
+  router.push('ApsaRetenusAF');
 }
 
 onMounted(async () => {
   await fetchChampsApprentissages();
   await fetchAllApsa();
+
+  await fetchAllApsaSelectAnneeByAnnee(annee.id);
+  if (apsaSelectsAnnee.value.length > 0) {
+  }
 });
 </script>
