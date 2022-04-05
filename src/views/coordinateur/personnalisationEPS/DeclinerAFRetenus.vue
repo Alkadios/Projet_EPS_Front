@@ -53,9 +53,9 @@ import ApsaSelectAnnee from '@/services/ApsaSelectAnneeService';
 import UtilisateurService from '@/services/UtilisateurService';
 import { AfRetenus, APSA, AF } from '@/models';
 
-const { apsaSelectsAnnee, fetchAllApsaSelectAnnee } = ApsaSelectAnnee();
+const { apsaSelectsAnnee, fetchAllApsaSelectAnneeByAnnee } = ApsaSelectAnnee();
 const { afRetenus, fetchAllAfRetenus } = AfRetenusService();
-const { etablissement } = UtilisateurService();
+const { etablissement, annee } = UtilisateurService();
 
 let propertyDisable = ref(true);
 const apsaSelects = ref<APSA[]>([]);
@@ -80,7 +80,7 @@ function verif() {
 
 onMounted(async () => {
   await fetchAllAfRetenus();
-  await fetchAllApsaSelectAnnee();
+  await fetchAllApsaSelectAnneeByAnnee(annee.id);
   apsaSelectsAnnee.value.forEach((a) => {
     if (a.Ca.id === 1) {
       apsaSelects.value.push(a.Apsa);
