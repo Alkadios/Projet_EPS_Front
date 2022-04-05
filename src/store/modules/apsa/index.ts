@@ -4,7 +4,7 @@ import mutations from './mutations';
 import actions from './actions';
 import getters from './getters';
 import { APSA } from '@/models';
-import ApsaState from "./stateInterface";
+import ApsaState from './stateInterface';
 
 export default {
   namespaced: true,

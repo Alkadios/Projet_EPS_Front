@@ -53,9 +53,9 @@ import ApsaSelectAnnee from '@/services/ApsaSelectAnneeService';
 import UtilisateurService from '@/services/UtilisateurService';
 import { AfRetenus, APSA, AF } from '@/models';
 
-const { apsaSelectsAnnee, fetchAllApsaSelectAnnee } = ApsaSelectAnnee();
+const { apsaSelectsAnnee, fetchAllApsaSelectAnneeByAnnee } = ApsaSelectAnnee();
 const { afRetenus, fetchAllAfRetenus } = AfRetenusService();
-const { etablissement } = UtilisateurService();
+const { etablissement, annee } = UtilisateurService();
 
 let propertyDisable = ref(true);
 const apsaSelects = ref<APSA[]>([]);
@@ -63,7 +63,9 @@ const monAPSA = ref<APSA>();
 
 const mesAfRetenus = ref<AF[]>([]);
 
-const monCritere = ref('Text déjà écrit');
+const monCritere =
+  ref(`Ex : Pour produire une performance maximale connue sur un 800m, utiliser préférentiellement des repères intérieurs afin de réaliser une course avec des variations d’allures optimales régulées par quelques repères extérieurs exprimés par un partenaire.
+`);
 
 document.addEventListener('keydown', (e) => {
   if (e.ctrlKey && e.key === 's') {
@@ -78,7 +80,7 @@ function verif() {
 
 onMounted(async () => {
   await fetchAllAfRetenus();
-  await fetchAllApsaSelectAnnee();
+  await fetchAllApsaSelectAnneeByAnnee(annee.id);
   apsaSelectsAnnee.value.forEach((a) => {
     if (a.Ca.id === 1) {
       apsaSelects.value.push(a.Apsa);
