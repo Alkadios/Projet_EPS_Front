@@ -2,7 +2,7 @@ import { computed } from 'vue';
 import { useStore } from 'vuex';
 import { ChoixAnnee } from '@/models';
 
-export default function ApsaSelectAnnee() {
+export default function ApsaSelectAnneeService() {
   const store = useStore();
 
   const choixAnnee = computed((): ChoixAnnee => {
