@@ -52,6 +52,10 @@ import AfRetenusService from '@/services/AfRetenusService';
 import ApsaSelectAnnee from '@/services/ApsaSelectAnneeService';
 import UtilisateurService from '@/services/UtilisateurService';
 import { AfRetenus, APSA, AF } from '@/models';
+import { useRoute } from 'vue-router';
+import router from '@/router';
+
+const route = useRoute();
 
 const { apsaSelectAnneeByAnnee, fetchAllApsaSelectAnneeByAnnee } = ApsaSelectAnnee();
 const { afRetenus, fetchAllAfRetenus } = AfRetenusService();
@@ -78,8 +82,10 @@ onMounted(async () => {
   await fetchAllAfRetenus();
   await fetchAllApsaSelectAnneeByAnnee(annee.value.id);
   apsaSelectAnneeByAnnee.value.forEach((a) => {
-    if (a.Ca.id === 1) {
-      apsaSelects.value.push(a.Apsa);
+    if (route.query.idCA) {
+      if (a.Ca.id === parseInt(route.query.idCA.toString())) {
+        apsaSelects.value.push(a.Apsa);
+      }
     }
   });
   afRetenus.value.forEach((b) => {
