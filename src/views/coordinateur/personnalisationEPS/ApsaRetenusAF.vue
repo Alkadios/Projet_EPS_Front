@@ -48,14 +48,11 @@
             <label style="margin: 0.5rem" :for="af.id.toString()">{{ af.libelle }}</label>
           </div>
         </div>
-
-        <div class="d-flex p-2">
-          <div v-if="afEnErreur">
-            <InlineMessage severity="error">Le nombre d'attendus finaux sélectionner doit être de 4</InlineMessage>
-          </div>
-        </div>
         <div class="d-flex p-2">
           <Button label="Valider" style="right: 1rem" icon="pi pi-check" @click="ajouterAfsRetenus()" autofocus />
+          <InlineMessage v-if="afEnErreur" severity="error"
+            >Le nombre d'attendus finaux sélectionner doit être de 4</InlineMessage
+          >
         </div>
       </div>
     </div>
