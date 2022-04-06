@@ -74,7 +74,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, unref } from 'vue';
 import ChampApprentissageService from '@/services/ChampApprentissageService';
 import ApsaService from '@/services/ApsaService';
 import UtilisateurService from '@/services/UtilisateurService';
@@ -155,10 +155,18 @@ onMounted(async () => {
   await fetchChampsApprentissages();
   await fetchAllApsa();
 
-  console.log('année', annee.value.id);
   await fetchAllApsaSelectAnneeByAnnee(1);
   if (apsaSelectAnneeByAnnee.value.length > 0) {
-    console.log('TA mère la pute', apsaFromCaSelectionnes.value);
+    champsApprentissages.value.forEach((ca) => {
+      caApsasSelectionnes.value[ca.id] = [];
+      apsaSelectAnneeByAnnee.value
+        .filter((apsaSelect) => apsaSelect.Ca.id === ca.id)
+        .forEach((as) => {
+          caApsasSelectionnes.value[as.Ca.id].push(
+            ca.champsApprentissageApsas.find((caa) => caa.Apsa.id === as.Apsa.id)
+          );
+        });
+    });
   }
 });
 </script>

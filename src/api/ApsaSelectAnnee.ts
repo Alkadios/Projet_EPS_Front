@@ -8,7 +8,6 @@ export default {
     const paramsString = `Annee.id=${idAnnee.toString()}`;
     const url = new URL(`${ApiURLApsaSelect}/`);
     url.search = new URLSearchParams(paramsString).toString();
-    console.log('API', axios.get(`${url.toString()}`, apiConfig.value));
     return axios.get(`${url.toString()}`, apiConfig.value);
   },
   async saveApsaSelectAnnee(payload: {
