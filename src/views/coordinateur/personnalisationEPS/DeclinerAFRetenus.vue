@@ -35,13 +35,7 @@
       </div>
     </div>
     <div class="mb-3">
-      <Button
-        label="Valider"
-        style="right: 1rem"
-        icon="pi pi-check"
-        @click="$router.push('IndicateurAF')"
-        autofocus
-      ></Button>
+      <Button label="Valider" style="right: 1rem" @click="AjoutApsaRetenu()" icon="pi pi-check" autofocus></Button>
     </div>
   </div>
 </template>
@@ -49,9 +43,10 @@
 <script lang="ts" setup>
 import { ref, onMounted, unref } from 'vue';
 import AfRetenusService from '@/services/AfRetenusService';
+import ApsaRetenuService from '@/services/ApsaRetenuService';
 import ApsaSelectAnnee from '@/services/ApsaSelectAnneeService';
 import UtilisateurService from '@/services/UtilisateurService';
-import { AfRetenus, APSA, AF } from '@/models';
+import { APSA, AF } from '@/models';
 import { useRoute } from 'vue-router';
 import router from '@/router';
 
@@ -59,6 +54,7 @@ const route = useRoute();
 
 const { apsaSelectAnneeByAnnee, fetchAllApsaSelectAnneeByAnnee } = ApsaSelectAnnee();
 const { afRetenus, fetchAllAfRetenus } = AfRetenusService();
+const { saveApsaRetenus } = ApsaRetenuService();
 const { etablissement, annee } = UtilisateurService();
 
 let propertyDisable = ref(true);
@@ -77,6 +73,11 @@ document.addEventListener('keydown', (e) => {
     propertyDisable.value = true;
   }
 });
+
+async function AjoutApsaRetenu() {
+  //await saveApsaRetenus()
+  //router.push('IndicateurAF');
+}
 
 onMounted(async () => {
   await fetchAllAfRetenus();
