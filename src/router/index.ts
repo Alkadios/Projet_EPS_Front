@@ -36,6 +36,11 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('../views/coordinateur/personnalisationEPS/DeclinerAFRetenus.vue'),
   },
   {
+    path: '/EvaluationEleves',
+    name: 'EvaluationEleves',
+    component: () => import('../views/professeur/evaluation/EvaluationEleves.vue'),
+  },
+  {
     path: '/IndicateurAF',
     name: 'IndicateurAF',
     component: () => import('../views/coordinateur/personnalisationEPS/IndicateurAF.vue'),
