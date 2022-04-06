@@ -26,7 +26,9 @@ export default function UtilisateurService() {
     } as Etablissement;
   });
 
-  const annee: Annee = { '@id': '/api/annees/3', id: 3 };
+  const annee = computed((): Annee => {
+    return { '@id': '/api/annees/1', id: 1 } as Annee;
+  });
 
   return {
     utilisateur,
