@@ -1,6 +1,6 @@
 import { computed } from 'vue';
 import { useStore } from 'vuex';
-import { Etablissement, Utilisateur } from '@/models';
+import { Etablissement, Utilisateur, Annee } from '@/models';
 
 export default function UtilisateurService() {
   const store = useStore();
@@ -16,13 +16,23 @@ export default function UtilisateurService() {
   }
 
   const etablissement = computed((): Etablissement => {
-    return { nomEtablissement: 'Lycée Professionnel de St Joseph' } as Etablissement;
+    return {
+      nomEtablissement: 'Lycée Professionnel de St Joseph',
+      niveauxScolaires: [
+        { id: 10, libelle: 'Seconde' },
+        { id: 11, libelle: 'Première' },
+        { id: 12, libelle: 'Terminale' },
+      ],
+    } as Etablissement;
   });
+
+  const annee: Annee = { '@id': '/api/annees/3', id: 3 };
 
   return {
     utilisateur,
     loginUtilisateur,
     logoutUtilisateur,
     etablissement,
+    annee,
   };
 }
