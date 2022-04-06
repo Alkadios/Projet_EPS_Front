@@ -1,4 +1,4 @@
-import { ChampApprentissage } from '@/models';
+import { ChampApprentissage, ChampsApprentissageApsa } from '@/models';
 import ChampApprentissageState from './stateInterface';
 
 export default {

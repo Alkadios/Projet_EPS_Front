@@ -53,7 +53,7 @@ import ApsaSelectAnnee from '@/services/ApsaSelectAnneeService';
 import UtilisateurService from '@/services/UtilisateurService';
 import { AfRetenus, APSA, AF } from '@/models';
 
-const { apsaSelectsAnnee, fetchAllApsaSelectAnneeByAnnee } = ApsaSelectAnnee();
+const { apsaSelectAnneeByAnnee, fetchAllApsaSelectAnneeByAnnee } = ApsaSelectAnnee();
 const { afRetenus, fetchAllAfRetenus } = AfRetenusService();
 const { etablissement, annee } = UtilisateurService();
 
@@ -80,8 +80,8 @@ function verif() {
 
 onMounted(async () => {
   await fetchAllAfRetenus();
-  await fetchAllApsaSelectAnneeByAnnee(annee.id);
-  apsaSelectsAnnee.value.forEach((a) => {
+  await fetchAllApsaSelectAnneeByAnnee(annee.value.id);
+  apsaSelectAnneeByAnnee.value.forEach((a) => {
     if (a.Ca.id === 1) {
       apsaSelects.value.push(a.Apsa);
     }
