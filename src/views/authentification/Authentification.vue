@@ -5,6 +5,11 @@
         <div class="card shadow-lg o-hidden border-0 my-5" style="top: 15%">
           <div class="card-body p-0">
             <div class="row">
+              <div class="text-center">
+                <div class="p-2">
+                  <h2 class="text-dark mb-4">Bienvenue!</h2>
+                </div>
+              </div>
               <div class="col-lg-6 d-none d-lg-flex">
                 <div class="flex-grow-1 bg-login-image">
                   <img
@@ -16,9 +21,7 @@
               <div class="col-lg-6">
                 <div class="p-5">
                   <div class="text-center">
-                    <div class="mb-3">
-                      <h4 class="text-dark mb-4">Bienvenue!</h4>
-                    </div>
+                    <div class="mb-3"></div>
                   </div>
                   <form class="user">
                     <div class="mb-3">
