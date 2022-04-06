@@ -74,11 +74,11 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, unref } from 'vue';
+import { ref, onMounted } from 'vue';
 import ChampApprentissageService from '@/services/ChampApprentissageService';
 import ApsaService from '@/services/ApsaService';
 import UtilisateurService from '@/services/UtilisateurService';
-import ApsaSelectAnnee from '@/services/ApsaSelectAnneeService';
+import ApsaSelectAnneeService from '@/services/ApsaSelectAnneeService';
 import { APSA, ChampApprentissage, ChampsApprentissageApsa } from '@/models';
 import { useRouter } from 'vue-router';
 
@@ -87,7 +87,7 @@ const router = useRouter();
 const { champsApprentissages, fetchChampsApprentissages, saveApsaInCa } = ChampApprentissageService();
 const { apsas, fetchAllApsa } = ApsaService();
 const { etablissement, annee } = UtilisateurService();
-const { saveApsaSelectAnnee, fetchAllApsaSelectAnneeByAnnee, apsaSelectAnneeByAnnee } = ApsaSelectAnnee();
+const { saveApsaSelectAnnee, fetchAllApsaSelectAnneeByAnnee, apsaSelectAnneeByAnnee } = ApsaSelectAnneeService();
 
 const displayModal = ref(false);
 const monCAModal = ref<ChampApprentissage>({ '@id': '', id: -1, libelle: '', color: '', champsApprentissageApsas: [] });
