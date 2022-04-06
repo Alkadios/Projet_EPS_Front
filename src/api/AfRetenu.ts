@@ -7,4 +7,7 @@ export default {
   async fetchAllAfRetenus(): Promise<AxiosResponse<ResponseModel>> {
     return axios.get(`${ApiURLAfRetenus}`, apiConfig.value);
   },
+  async saveAfRetenu(payload: { ChoixAnnee: string; Af: string }): Promise<AxiosResponse<ResponseModel>> {
+    return axios.post(`${ApiURLAfRetenus}`, payload, apiConfig.value);
+  },
 };
