@@ -46,12 +46,12 @@
             </div>
 
             <div class="d-flex p-2">
-              <div class="pt-3">
-                <div v-if="afEnErreur">
-                  <Message severity="error">Le nombre d'attendus finaux sélectionner doit être de 4</Message>
-                </div>
-                <Button label="Valider" style="right: 1rem" icon="pi pi-check" @click="ajouterAfsRetenus()" autofocus />
+              <div v-if="afEnErreur">
+                <InlineMessage severity="error">Le nombre d'attendus finaux sélectionner doit être de 4</InlineMessage>
               </div>
+            </div>
+            <div class="d-flex p-2">
+              <Button label="Valider" style="right: 1rem" icon="pi pi-check" @click="ajouterAfsRetenus()" autofocus />
             </div>
           </div>
         </div>
