@@ -39,7 +39,7 @@
         label="Valider"
         style="right: 1rem"
         icon="pi pi-check"
-        @click="verif(), $router.push('IndicateurAF')"
+        @click="$router.push('IndicateurAF')"
         autofocus
       ></Button>
     </div>
@@ -73,10 +73,6 @@ document.addEventListener('keydown', (e) => {
     propertyDisable.value = true;
   }
 });
-
-function verif() {
-  console.log(afRetenus.value);
-}
 
 onMounted(async () => {
   await fetchAllAfRetenus();
