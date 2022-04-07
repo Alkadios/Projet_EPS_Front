@@ -120,7 +120,10 @@ async function ajouterAfsRetenus() {
       await saveAfRetenu(choixAnnee.value['@id'], af['@id']);
       console.log("Ajout de l'AF ", af.libelle);
     });
-    router.push({ name: 'DeclinerAFRetenus', query: { idCA: selectedCa.value?.id } });
+    router.push({
+      name: 'DeclinerAFRetenus',
+      query: { idChoixAnnee: choixAnnee.value.id, idCA: selectedCa.value?.id },
+    });
   }
 }
 </script>

@@ -17,7 +17,7 @@
                 <p class="w-100 m-0">Sélectionner l'APSA :</p>
               </div>
               <div class="col-9">
-                <SelectButton v-model="monAPSA" :options="apsaSelects" class="w-100 m-0" optionLabel="libelle" />
+                <SelectButton v-model="monAPSA" :options="apsaSelects" class="w-100 m-0" optionLabel="Apsa.libelle" />
               </div>
             </div>
           </div>
@@ -26,7 +26,8 @@
       </div>
       <div class="mb-3">
         <div v-for="monAfRetenu of mesAfRetenus" :key="monAfRetenu.id" class="field-checkbox">
-          <i class="pi pi-check-square"></i>{{ '  ' + monAfRetenu.libelle }}
+          <RadioButton :id="monAfRetenu['@id']" name="monAfRetenu" :value="monAfRetenu" v-model="monAfRetenuSelected" />
+          <label style="margin-left: 1rem" :for="monAfRetenu['@id']">{{ monAfRetenu.Af.libelle }}</label>
         </div>
       </div>
       <div class="mb-3">
@@ -44,24 +45,24 @@
 import { ref, onMounted, unref } from 'vue';
 import AfRetenusService from '@/services/AfRetenusService';
 import ApsaRetenuService from '@/services/ApsaRetenuService';
-import ApsaSelectAnnee from '@/services/ApsaSelectAnneeService';
+import ApsaSelectAnneeService from '@/services/ApsaSelectAnneeService';
 import UtilisateurService from '@/services/UtilisateurService';
-import { APSA, AF } from '@/models';
+import { ApsaSelectAnnee, ApsaRetenus, AfRetenus } from '@/models';
 import { useRoute } from 'vue-router';
 import router from '@/router';
 
 const route = useRoute();
 
-const { apsaSelectAnneeByAnnee, fetchAllApsaSelectAnneeByAnnee } = ApsaSelectAnnee();
+const { apsaSelectAnneeByAnnee, fetchAllApsaSelectAnneeByAnnee } = ApsaSelectAnneeService();
 const { afRetenus, fetchAllAfRetenus } = AfRetenusService();
 const { saveApsaRetenus } = ApsaRetenuService();
 const { etablissement, annee } = UtilisateurService();
 
 let propertyDisable = ref(true);
-const apsaSelects = ref<APSA[]>([]);
-const monAPSA = ref<APSA>();
-
-const mesAfRetenus = ref<AF[]>([]);
+const apsaSelects = ref<ApsaSelectAnnee[]>([]);
+const monAPSA = ref<ApsaRetenus>();
+const monAfRetenuSelected = ref();
+const mesAfRetenus = ref<AfRetenus[]>([]);
 
 const monCritere =
   ref(`Ex : Pour produire une performance maximale connue sur un 800m, utiliser préférentiellement des repères intérieurs afin de réaliser une course avec des variations d’allures optimales régulées par quelques repères extérieurs exprimés par un partenaire.
@@ -75,8 +76,11 @@ document.addEventListener('keydown', (e) => {
 });
 
 async function AjoutApsaRetenu() {
-  //await saveApsaRetenus()
-  //router.push('IndicateurAF');
+  if ((monAfRetenuSelected.value['@id'], monCritere.value, monAPSA.value?.['@id'])) {
+    await saveApsaRetenus(monAfRetenuSelected.value['@id'], monCritere.value, monAPSA.value?.['@id']);
+    console.log("Ajout de l'AF ", monAfRetenuSelected.value['@id']);
+  }
+  router.push('Critere');
 }
 
 onMounted(async () => {
@@ -85,13 +89,17 @@ onMounted(async () => {
   apsaSelectAnneeByAnnee.value.forEach((a) => {
     if (route.query.idCA) {
       if (a.Ca.id === parseInt(route.query.idCA.toString())) {
-        apsaSelects.value.push(a.Apsa);
+        apsaSelects.value.push(a);
       }
     }
   });
+  console.log('mes apsa select : ', apsaSelects.value);
+
   afRetenus.value.forEach((b) => {
-    if (b.ChoixAnnee.champApprentissage.id === 1) {
-      mesAfRetenus.value.push(b.Af);
+    if (route.query.idChoixAnnee) {
+      if (b.ChoixAnnee['@id'] === '/api/choix_annees/' + route.query.idChoixAnnee) {
+        mesAfRetenus.value.push(b);
+      }
     }
   });
 });
