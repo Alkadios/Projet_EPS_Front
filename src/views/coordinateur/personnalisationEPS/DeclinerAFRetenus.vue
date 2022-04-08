@@ -78,7 +78,7 @@ document.addEventListener('keydown', (e) => {
 async function AjoutApsaRetenu() {
   if ((monAfRetenuSelected.value['@id'], monCritere.value, monAPSA.value?.['@id'])) {
     await saveApsaRetenus(monAfRetenuSelected.value['@id'], monCritere.value, monAPSA.value?.['@id']);
-    console.log("Ajout de l'AF ", monAfRetenuSelected.value['@id']);
+    //console.log("Ajout de l'AF ", monAfRetenuSelected.value['@id']);
   }
   router.push('Critere');
 }
@@ -93,7 +93,7 @@ onMounted(async () => {
       }
     }
   });
-  console.log('mes apsa select : ', apsaSelects.value);
+  //console.log('mes apsa select : ', apsaSelects.value);
 
   afRetenus.value.forEach((b) => {
     if (route.query.idChoixAnnee) {
