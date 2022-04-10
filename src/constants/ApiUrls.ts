@@ -7,3 +7,4 @@ export const ApiURLAfRetenus = `${ApiUrl}/af_retenus`;
 export const ApiURLApsaSelect = `${ApiUrl}/apsa_select_annees`;
 export const ApiURLNiveauScolaire = `${ApiUrl}/niveau_scolaires`;
 export const ApiURLChoixAnnee = `${ApiUrl}/choix_annees`;
+export const ApsaRetenuAPI = `${ApiUrl}/apsa_retenus`;

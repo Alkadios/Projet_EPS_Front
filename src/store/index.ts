@@ -7,6 +7,7 @@ import AfModule from '@/store/modules/af/index';
 import AfRetenusModule from '@/store/modules/afRetenus/index';
 import ApsaSelectAnneeModule from '@/store/modules/ApsaSelectAnnee/index';
 import ChoixAnneeModule from '@/store/modules/choixAnnee/index';
+import ApsaRetenuModule from '@/store/modules/ApsaRetenu/index';
 
 const keyLocalStorage = 'epsstore';
 
@@ -29,5 +30,6 @@ export default createStore({
     AfRetenusModule,
     ApsaSelectAnneeModule,
     ChoixAnneeModule,
+    ApsaRetenuModule,
   },
 });
