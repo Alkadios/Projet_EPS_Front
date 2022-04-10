@@ -10,11 +10,13 @@ export default {
     url.search = new URLSearchParams(paramsString).toString();
     return axios.get(`${url.toString()}`, apiConfig.value);
   },
-  async saveApsaSelectAnnee(payload: {
-    Ca: string;
-    Apsa: string;
-    Annee: string;
-  }): Promise<AxiosResponse<ResponseModel>> {
-    return axios.post(`${ApiURLApsaSelect}`, payload, apiConfig.value);
+  async saveApsaSelectAnnee(
+    payload: {
+      Ca: number;
+      Apsa: number;
+      Annee: number;
+    }[]
+  ): Promise<AxiosResponse> {
+    return axios.post(`${ApiURLApsaSelect}/deleteAndReplace`, payload, apiConfig.value);
   },
 };

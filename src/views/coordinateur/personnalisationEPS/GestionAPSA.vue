@@ -131,14 +131,19 @@ async function AjoutApsaInCa() {
 
 async function saveApsasSelectionnees() {
   if (!champsNonRempli()) {
+    let listForRequest: {
+      Ca: number;
+      Apsa: number;
+      Annee: number;
+    }[] = [];
     caApsasSelectionnes.value.forEach((_, idCA) => {
       const ca: ChampApprentissage = champsApprentissages.value.find((ca) => ca.id === idCA)!;
-
-      caApsasSelectionnes.value[idCA].forEach(async (caApsa: ChampsApprentissageApsa) => {
-        await saveApsaSelectAnnee(ca['@id'], caApsa.Apsa['@id'], annee.value['@id']);
+      caApsasSelectionnes.value[idCA].forEach((caApsa: ChampsApprentissageApsa) => {
+        listForRequest.push({ Ca: ca.id, Apsa: caApsa.Apsa.id, Annee: annee.value.id });
       });
     });
 
+    await saveApsaSelectAnnee(listForRequest);
     router.push('ApsaRetenusAF');
   }
 }
