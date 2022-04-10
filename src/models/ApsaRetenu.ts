@@ -1,5 +1,5 @@
 import { APSA, AfRetenus } from '@/models';
-export interface ApsaRetenus {
+export interface ApsaRetenu {
   '@id': string;
   id: number;
   Apsa: APSA;

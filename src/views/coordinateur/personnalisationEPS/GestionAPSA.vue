@@ -144,7 +144,7 @@ async function saveApsasSelectionnees() {
     });
 
     await saveApsaSelectAnnee(listForRequest);
-    router.push('ApsaRetenusAF');
+    router.push('ApsaRetenuAF');
   }
 }
 

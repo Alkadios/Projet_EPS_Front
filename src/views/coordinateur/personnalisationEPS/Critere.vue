@@ -1,5 +1,5 @@
 <template>
-  <Dialog header="Ajouter une carte" v-model:visible="displayBasic" :style="{ width: '50vw' }">
+  <Dialog header="Ajouter un indicateur" v-model:visible="displayBasic" :style="{ width: '50vw' }">
     <div class="row" style="place-content: center">
       <div class="col-8">
         <Card>
@@ -25,7 +25,27 @@
                 <p>Image :</p>
               </div>
               <div class="col-9">
-                <FileUpload mode="basic" name="demo[]" url="./upload.php" accept="image/*" :maxFileSize="1000000" />
+                <FileUpload
+                  v-if="!imageCritereIsSelected"
+                  v-model="imageCritere"
+                  mode="basic"
+                  accept="image/*"
+                  :maxFileSize="1000000"
+                  @select="onPhotoChange"
+                  :showUploadButton="false"
+                />
+                <img
+                  v-else
+                  :src="`data:${nouvelleImageCritere.type};base64,` + imageCritere"
+                  style="max-width: 10rem; max-height: 10rem"
+                  alt="Logo organisme"
+                />
+                <Button
+                  v-if="imageCritereIsSelected"
+                  icon="pi pi-trash"
+                  class="p-button-rounded p-button-danger"
+                  @click="supprimerImageCritere"
+                />
               </div>
             </div>
           </template>
@@ -68,16 +88,16 @@
               <Button class="p-button-rounded p-button-danger" @click="deleteIndicateur(monIndicateur.id)"
                 ><i class="pi pi-times"
               /></Button>
-              <Button class="p-button-rounded p-button-info" @click="EditIndicateur(monIndicateur)"
+              <Button class="p-button-rounded p-button-info" @click="editIndicateur(monIndicateur)"
                 ><i class="pi pi-pencil"
               /></Button>
-              <Button class="p-button-rounded p-button-info" @click="ToIndicateur()"><i class="pi pi-check" /></Button>
+              <Button class="p-button-rounded p-button-info" @click="toIndicateur()"><i class="pi pi-check" /></Button>
             </template>
           </Card>
         </div>
         <div class="col-3">
           <Card>
-            <template #title> <p style="text-align: center">Ajouter un indicateur</p></template>
+            <template #title> <p style="text-align: center">Ajouter un critère</p></template>
             <template #content>
               <p style="text-align: center">
                 <i
@@ -111,19 +131,22 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { Indicateur } from '@/models';
+import ObjectUtils from '@/utils/ObjectUtils';
 import UtilisateurService from '@/services/UtilisateurService';
-import { useRoute } from 'vue-router';
-import router from '@/router';
+import { useRoute, useRouter } from 'vue-router';
 
 const route = useRoute();
+const router = useRouter();
 
-let propertyDisable = ref(true);
+const { isObjectEmpty } = ObjectUtils();
 const { etablissement } = UtilisateurService();
+
 const maDescriptionIndicateur = ref();
 const monTitleIndicateur = ref();
-const monIamge = ref();
+const nouvelleImageCritere = ref<File>({} as File);
+const imageCritere = ref('');
 const monUrlVideo = ref();
 
 const mesIndicateurs = ref<Indicateur[]>([]);
@@ -137,7 +160,12 @@ const closeBasic = () => {
   displayBasic.value = false;
 };
 
-function EditIndicateur(monIndicateur: Indicateur) {
+const imageCritereIsSelected = computed(() => {
+  if (isObjectEmpty(nouvelleImageCritere.value) && imageCritere.value === '') return false;
+  else return true;
+});
+
+function editIndicateur(monIndicateur: Indicateur) {
   let indexIndicateur = mesIndicateurs.value.findIndex((a) => a.id === monIndicateur.id);
   mesIndicateurs.value.splice(indexIndicateur, 1);
   maDescriptionIndicateur.value = monIndicateur.description;
@@ -164,9 +192,30 @@ function deleteIndicateur(id: number) {
 
 function verif() {}
 
-function ToIndicateur() {
+function toIndicateur() {
   router.push('IndicateurAF');
 }
 
 onMounted(async () => {});
+
+function onPhotoChange(event: any) {
+  nouvelleImageCritere.value = event.files[0];
+  const reader = new FileReader();
+
+  reader.addEventListener(
+    'load',
+    function () {
+      const chainePhoto = reader.result as string;
+      const chaineFinale = chainePhoto.replace(`data:${nouvelleImageCritere.value.type};base64,`, '');
+      imageCritere.value = chaineFinale;
+    },
+    false
+  );
+
+  reader.readAsDataURL(nouvelleImageCritere.value);
+}
+function supprimerImageCritere() {
+  nouvelleImageCritere.value = {} as File;
+  imageCritere.value = '';
+}
 </script>
