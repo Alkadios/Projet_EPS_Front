@@ -7,7 +7,7 @@ export * from './ChampsApprentissageApsa';
 export * from './AF';
 export * from './ChoixAnnee';
 export * from './AfRetenus';
-export * from './ApsaRetenus';
+export * from './ApsaRetenu';
 export * from './ApsaSelectAnnee';
 export * from './Indicateur';
 export * from './Cycle';

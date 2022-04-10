@@ -11,8 +11,14 @@ export default function ApsaSelectAnneeService() {
   async function fetchAllApsaSelectAnneeByAnnee(idAnnee: number) {
     await store.dispatch('ApsaSelectAnneeModule/fetchAllApsaSelectAnneeByAnnee', { idAnnee });
   }
-  async function saveApsaSelectAnnee(Ca: string, Apsa: string, Annee: string) {
-    await store.dispatch('ApsaSelectAnneeModule/saveApsaSelectAnnee', { Ca, Apsa, Annee });
+  async function saveApsaSelectAnnee(
+    payload: {
+      Ca: number;
+      Apsa: number;
+      Annee: number;
+    }[]
+  ) {
+    await store.dispatch('ApsaSelectAnneeModule/saveApsaSelectAnnee', payload);
   }
   return {
     apsaSelectAnneeByAnnee,
