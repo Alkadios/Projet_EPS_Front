@@ -7,6 +7,9 @@ export default {
   async fetchAllApsaRetenu(): Promise<AxiosResponse<ResponseModel>> {
     return axios.get(`${ApsaRetenuAPI}`, apiConfig.value);
   },
+  async fetchApsaRetenu(idApsaRetenu: number): Promise<AxiosResponse<ResponseModel>> {
+    return axios.get(`${ApsaRetenuAPI}/${idApsaRetenu}`, apiConfig.value);
+  },
   async saveApsaRetenu(payload: {
     AfRetenu: string;
     ApsaSelectAnnee: string;
