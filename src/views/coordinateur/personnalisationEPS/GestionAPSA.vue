@@ -145,6 +145,8 @@ async function saveApsasSelectionnees() {
 
     await saveApsaSelectAnnee(listForRequest);
     router.push('ApsaRetenuAF');
+  } else {
+    console.log('erreur');
   }
 }
 

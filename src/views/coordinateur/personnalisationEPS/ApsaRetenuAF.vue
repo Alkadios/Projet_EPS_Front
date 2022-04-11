@@ -37,6 +37,8 @@
           :label="'CA' + ca.id"
           :style="selectedCa?.id != ca.id ? 'background-color:' + ca.color : ''"
           :class="selectedCa?.id === ca.id ? 'primary' : ''"
+          :icon="checkIfCaHasAfRetenu(ca) ? 'pi pi-check-circle' : ''"
+          :disabled="checkIfCaHasAfRetenu(ca)"
           @click="selectionnerCa(ca)"
         />
         <div class="row">
@@ -60,8 +62,8 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, watch, computed } from 'vue';
-import { AF, ChampApprentissage, NiveauScolaire, ChoixAnnee } from '@/models';
+import { ref, onMounted, watch } from 'vue';
+import { AF, ChampApprentissage, NiveauScolaire } from '@/models';
 import AfService from '@/services/AfService';
 import ChampApprentissageService from '@/services/ChampApprentissageService';
 import UtilisateurService from '@/services/UtilisateurService';
@@ -70,7 +72,7 @@ import ChoixAnneeService from '@/services/ChoixAnneeService';
 import router from '@/router';
 
 const { saveChoixAnnee, choixAnnee } = ChoixAnneeService();
-const { saveAfRetenu } = afRetenuService();
+const { saveAfRetenu, fetchAllAfRetenuByAnneeAndNiveauScolaire, afRetenuByAnneeAndNiveauScolaire } = afRetenuService();
 const { afs, fetchAllAfs } = AfService();
 const { champsApprentissages, fetchChampsApprentissages } = ChampApprentissageService();
 const { etablissement, annee } = UtilisateurService();
@@ -96,6 +98,26 @@ watch(
     } else afEnErreur.value = false;
   }
 );
+
+watch(
+  () => niveauScolaireSelectionne.value,
+  async () => {
+    console.log('watch1', niveauScolaireSelectionne.value);
+    if (niveauScolaireSelectionne.value) {
+      await fetchAllAfRetenuByAnneeAndNiveauScolaire(annee.value.id, niveauScolaireSelectionne.value?.id);
+      console.log('watch', afRetenuByAnneeAndNiveauScolaire);
+    }
+  }
+);
+
+function checkIfCaHasAfRetenu(ca: ChampApprentissage) {
+  if (afRetenuByAnneeAndNiveauScolaire.value.find((afRetenu) => afRetenu.ChoixAnnee.champApprentissage.id === ca.id)) {
+    console.log('Des af retenu ont déjà été saisie');
+    return true;
+  }
+  console.log('Aucune af pour ce niveau');
+  return false;
+}
 
 function selectionnerCa(ca: ChampApprentissage) {
   selectedCa.value = ca;

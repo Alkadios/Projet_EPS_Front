@@ -9,6 +9,7 @@ export default {
   state(): AfRetenusState {
     return {
       afRetenus: [] as AfRetenus[],
+      afRetenuByAnneeAndNiveauScolaire: [] as AfRetenus[],
     };
   },
   mutations,
