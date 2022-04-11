@@ -2,7 +2,7 @@ import { computed } from 'vue';
 import { useStore } from 'vuex';
 import { ApsaRetenu } from '@/models';
 
-export default function ApsaRetenuervice() {
+export default function ApsaRetenuService() {
   const store = useStore();
 
   const apsaRetenu = computed((): ApsaRetenu => {
@@ -14,6 +14,9 @@ export default function ApsaRetenuervice() {
   });
   async function fetchAllApsaRetenu() {
     await store.dispatch('ApsaRetenuModule/fetchAllApsaRetenu');
+  }
+  async function fetchApsaRetenu(idApsaRetenu: number) {
+    await store.dispatch('ApsaRetenuModule/fetchApsaRetenu', { idApsaRetenu: idApsaRetenu });
   }
 
   async function saveApsaRetenu(AfRetenu: string, SituationEvaluation: string, ApsaSelectAnnee: string) {
@@ -27,6 +30,7 @@ export default function ApsaRetenuervice() {
     apsaRetenu,
     apsasRetenus,
     fetchAllApsaRetenu,
+    fetchApsaRetenu,
     saveApsaRetenu,
   };
 }
