@@ -11,9 +11,13 @@ export default function AfService() {
   async function fetchAllAfRetenus() {
     await store.dispatch('AfRetenusModule/fetchAllAfRetenus');
   }
+  async function saveAfRetenu(ChoixAnnee: string, Af: string) {
+    await store.dispatch('AfRetenusModule/saveAfRetenu', { ChoixAnnee, Af });
+  }
 
   return {
     afRetenus,
     fetchAllAfRetenus,
+    saveAfRetenu,
   };
 }

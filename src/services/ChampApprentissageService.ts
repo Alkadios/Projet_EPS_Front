@@ -1,6 +1,6 @@
 import { computed } from 'vue';
 import { useStore } from 'vuex';
-import { ChampApprentissage } from '@/models';
+import { ChampApprentissage, APSA } from '@/models';
 
 export default function ChampApprentissageService() {
   const store = useStore();
@@ -11,9 +11,13 @@ export default function ChampApprentissageService() {
   async function fetchChampsApprentissages() {
     await store.dispatch('ChampApprentissageModule/fetchChampsApprentissages');
   }
+  async function saveApsaInCa(idCa: number, apsas: APSA[]) {
+    await store.dispatch('ChampApprentissageModule/saveApsaInCa', { idCa, apsas });
+  }
 
   return {
     champsApprentissages,
     fetchChampsApprentissages,
+    saveApsaInCa,
   };
 }

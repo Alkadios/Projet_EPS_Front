@@ -1,14 +1,15 @@
 import mutations from './mutations';
 import actions from './actions';
 import getters from './getters';
-import { ApsaSelectAnnee } from '@/models';
-import ApsaSelectAnneeState from './stateInterface';
+import { ApsaRetenu } from '@/models';
+import ApsaRetenuState from './stateInterface';
 
 export default {
   namespaced: true,
-  state(): ApsaSelectAnneeState {
+  state(): ApsaRetenuState {
     return {
-      apsaSelectAnneeByAnnee: [] as ApsaSelectAnnee[],
+      apsaRetenu: {} as ApsaRetenu,
+      apsasRetenus: [] as ApsaRetenu[],
     };
   },
   mutations,

@@ -1,7 +1,7 @@
 import ApsaSelectAnneeState from './stateInterface';
 
 export default {
-  getApsaSelectsAnnee(state: ApsaSelectAnneeState) {
-    return state.apsaSelectsAnnee;
+  getApsaSelectAnneeByAnnee(state: ApsaSelectAnneeState) {
+    return state.apsaSelectAnneeByAnnee;
   },
 };

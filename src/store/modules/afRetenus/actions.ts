@@ -11,4 +11,9 @@ export default {
       //throw new Error(response.data.message);
     }
   },
+  async saveAfRetenu(context: ActionContext<AfRetenusState, any>, payload: { ChoixAnnee: string; Af: string }) {
+    const response = await AfRetenuAPI.saveAfRetenu(payload);
+
+    //if (response.status !== 201) throw new Error);
+  },
 };
