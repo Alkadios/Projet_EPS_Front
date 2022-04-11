@@ -1,8 +1,8 @@
-import { ChoixAnnee, AF, ApsaRetenus } from '@/models';
+import { ChoixAnnee, AF, ApsaRetenu } from '@/models';
 export interface AfRetenus {
   '@id': string;
   id: number;
   ChoixAnnee: ChoixAnnee;
   Af: AF;
-  apsaRetenus: ApsaRetenus[];
+  ApsaRetenu: ApsaRetenu[];
 }

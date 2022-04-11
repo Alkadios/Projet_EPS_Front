@@ -26,14 +26,14 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('../views/coordinateur/personnalisationEPS/AjoutQuantiteTravailEleve.vue'),
   },
   {
-    path: '/ApsaRetenusAF',
-    name: 'ApsaRetenusAF',
-    component: () => import('../views/coordinateur/personnalisationEPS/ApsaRetenusAF.vue'),
+    path: '/ApsaRetenuAF',
+    name: 'ApsaRetenuAF',
+    component: () => import('../views/coordinateur/personnalisationEPS/ApsaRetenuAF.vue'),
   },
   {
     path: '/DeclinerAFRetenus',
     name: 'DeclinerAFRetenus',
-    component: () => import('../views/coordinateur/personnalisationEPS/DeclinerAFRetenus.vue'),
+    component: () => import('../views/coordinateur/personnalisationEPS/DeclinerAFRetenu.vue'),
   },
   {
     path: '/EvaluationEleves',

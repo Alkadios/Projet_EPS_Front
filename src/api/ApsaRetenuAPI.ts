@@ -4,7 +4,10 @@ import { ResponseModel } from '@/models';
 import { apiConfig } from '@/config/UtilisateurConfig';
 
 export default {
-  async saveApsaRetenus(payload: {
+  async fetchAllApsaRetenu(): Promise<AxiosResponse<ResponseModel>> {
+    return axios.get(`${ApsaRetenuAPI}`, apiConfig.value);
+  },
+  async saveApsaRetenu(payload: {
     AfRetenu: string;
     ApsaSelectAnnee: string;
     SituationEvaluation: string;

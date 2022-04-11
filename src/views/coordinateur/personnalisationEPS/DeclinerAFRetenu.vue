@@ -31,23 +31,31 @@
         </div>
       </div>
       <div class="mb-3">
-        <Textarea class="w-100" :disabled="propertyDisable" v-model="monCritere" :autoResize="true" rows="5" />
-        <Button label="Edit" icon="pi pi-pencil" style="float: right" @click="propertyDisable = !propertyDisable" />
+        <label style="margin-left: 1rem" for="situation-evaluation">Description de la situation d'évaluation :</label>
+        <Textarea
+          v-model="situationEvaluation"
+          id="situation-evaluation"
+          class="w-100"
+          :autoResize="true"
+          rows="5"
+          placeholder="Ex : Pour produire une performance maximale connue sur un 800m, utiliser préférentiellement des repères intérieurs afin de réaliser une course avec des variations d’allures optimales régulées par quelques repères extérieurs exprimés par un partenaire.
+"
+        />
       </div>
     </div>
     <div class="mb-3">
-      <Button label="Valider" style="right: 1rem" @click="AjoutApsaRetenu()" icon="pi pi-check" autofocus></Button>
+      <Button label="Valider" style="right: 1rem" @click="ajoutApsaRetenu()" icon="pi pi-check" autofocus></Button>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, unref } from 'vue';
+import { ref, onMounted } from 'vue';
 import AfRetenusService from '@/services/AfRetenusService';
 import ApsaRetenuService from '@/services/ApsaRetenuService';
 import ApsaSelectAnneeService from '@/services/ApsaSelectAnneeService';
 import UtilisateurService from '@/services/UtilisateurService';
-import { ApsaSelectAnnee, ApsaRetenus, AfRetenus } from '@/models';
+import { ApsaSelectAnnee, ApsaRetenu, AfRetenus } from '@/models';
 import { useRoute } from 'vue-router';
 import router from '@/router';
 
@@ -55,36 +63,26 @@ const route = useRoute();
 
 const { apsaSelectAnneeByAnnee, fetchAllApsaSelectAnneeByAnnee } = ApsaSelectAnneeService();
 const { afRetenus, fetchAllAfRetenus } = AfRetenusService();
-const { saveApsaRetenus } = ApsaRetenuService();
+const { apsaRetenu, apsasRetenus, saveApsaRetenu, fetchAllApsaRetenu } = ApsaRetenuService();
 const { etablissement, annee } = UtilisateurService();
 
-let propertyDisable = ref(true);
 const apsaSelects = ref<ApsaSelectAnnee[]>([]);
-const monAPSA = ref<ApsaRetenus>();
+const monAPSA = ref<ApsaRetenu>();
 const monAfRetenuSelected = ref();
 const mesAfRetenus = ref<AfRetenus[]>([]);
 
-const monCritere =
-  ref(`Ex : Pour produire une performance maximale connue sur un 800m, utiliser préférentiellement des repères intérieurs afin de réaliser une course avec des variations d’allures optimales régulées par quelques repères extérieurs exprimés par un partenaire.
-`);
+const situationEvaluation = ref('');
 
-document.addEventListener('keydown', (e) => {
-  if (e.ctrlKey && e.key === 's') {
-    e.preventDefault();
-    propertyDisable.value = true;
+async function ajoutApsaRetenu() {
+  if ((monAfRetenuSelected.value['@id'], situationEvaluation.value, monAPSA.value?.['@id'])) {
+    await saveApsaRetenu(monAfRetenuSelected.value['@id'], situationEvaluation.value, monAPSA.value?.['@id']);
+    router.push({ name: 'Critere', query: { idApsaRetenu: apsaRetenu.value.id } });
   }
-});
-
-async function AjoutApsaRetenu() {
-  if ((monAfRetenuSelected.value['@id'], monCritere.value, monAPSA.value?.['@id'])) {
-    await saveApsaRetenus(monAfRetenuSelected.value['@id'], monCritere.value, monAPSA.value?.['@id']);
-    //console.log("Ajout de l'AF ", monAfRetenuSelected.value['@id']);
-  }
-  router.push('Critere');
 }
 
 onMounted(async () => {
   await fetchAllAfRetenus();
+  await fetchAllApsaRetenu();
   await fetchAllApsaSelectAnneeByAnnee(annee.value.id);
   apsaSelectAnneeByAnnee.value.forEach((a) => {
     if (route.query.idCA) {

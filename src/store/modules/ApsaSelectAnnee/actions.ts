@@ -18,7 +18,11 @@ export default {
   },
   async saveApsaSelectAnnee(
     context: ActionContext<ApsaSelectAnneeState, any>,
-    payload: { Ca: string; Apsa: string; Annee: string }
+    payload: {
+      Ca: number;
+      Apsa: number;
+      Annee: number;
+    }[]
   ) {
     const response = await ApsaSelectAnneeAPI.saveApsaSelectAnnee(payload);
 
