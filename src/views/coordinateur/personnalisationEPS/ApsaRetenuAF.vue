@@ -31,7 +31,14 @@
             <strong>Sélectionner les champs apprentissages concernés :</strong>
           </div>
         </div>
+        <ProgressSpinner
+          v-if="champsApprentissagesIsLoading"
+          style="width: 50px; height: 50px"
+          strokeWidth="8"
+          animationDuration=".5s"
+        />
         <Button
+          v-else
           v-for="ca of champsApprentissages"
           :key="ca.id"
           :label="'CA' + ca.id"
@@ -77,6 +84,8 @@ const { afs, fetchAllAfs } = AfService();
 const { champsApprentissages, fetchChampsApprentissages } = ChampApprentissageService();
 const { etablissement, annee } = UtilisateurService();
 
+const champsApprentissagesIsLoading = ref(false);
+
 const selectedCa = ref<ChampApprentissage>();
 const selectedAfs = ref<AF[]>([]);
 const niveauScolaireSelectionne = ref<NiveauScolaire>();
@@ -104,7 +113,9 @@ watch(
   async () => {
     console.log('watch1', niveauScolaireSelectionne.value);
     if (niveauScolaireSelectionne.value) {
+      champsApprentissagesIsLoading.value = true;
       await fetchAllAfRetenuByAnneeAndNiveauScolaire(annee.value.id, niveauScolaireSelectionne.value?.id);
+      champsApprentissagesIsLoading.value = false;
       console.log('watch', afRetenuByAnneeAndNiveauScolaire);
     }
   }
