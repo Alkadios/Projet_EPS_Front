@@ -3,4 +3,6 @@ export interface Indicateur {
   id: number;
   libelle: string;
   description: string;
+  critere: string;
+  url_video: string;
 }

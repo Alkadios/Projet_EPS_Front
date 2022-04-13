@@ -77,6 +77,8 @@ async function ajoutApsaRetenu() {
   if ((monAfRetenuSelected.value['@id'], situationEvaluation.value, monAPSA.value?.['@id'])) {
     await saveApsaRetenu(monAfRetenuSelected.value['@id'], situationEvaluation.value, monAPSA.value?.['@id']);
     router.push({ name: 'Critere', query: { idApsaRetenu: apsaRetenu.value.id } });
+  } else {
+    console.log((monAfRetenuSelected.value['@id'], situationEvaluation.value, monAPSA.value?.['@id']));
   }
 }
 

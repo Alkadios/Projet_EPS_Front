@@ -14,6 +14,15 @@ export default {
       //throw new Error(response.data.message);
     }
   },
+  async fetchCritereById(context: ActionContext<CritereState, any>, idCritere: number) {
+    const response = await CritereAPI.fetchCritereById(idCritere);
+    if (response.status === 200) {
+      context.commit('setCritere', response.data);
+    } else {
+      context.commit('setCritere', {});
+      //throw new Error(response.data.message);
+    }
+  },
   async saveCritere(
     context: ActionContext<Critere, any>,
     payload: { titre: string; description: string; image: string; urlVideo: string; ApsaRetenu: string }

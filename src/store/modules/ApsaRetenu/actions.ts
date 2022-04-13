@@ -4,7 +4,7 @@ import ApsaRetenuState from './stateInterface';
 import { ApsaRetenu } from '@/models';
 
 export default {
-  async fetchAllApsaRetenus(context: ActionContext<ApsaRetenuState, any>) {
+  async fetchAllApsaRetenu(context: ActionContext<ApsaRetenuState, any>) {
     const response = await ApsaRetenuAPI.fetchAllApsaRetenu();
     if (response.data['hydra:totalItems'] > 0) context.commit('setApsasRetenus', response.data['hydra:member']);
     else {

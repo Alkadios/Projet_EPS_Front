@@ -8,6 +8,9 @@ export default {
   async fetchCriteres(): Promise<AxiosResponse<ResponseModel>> {
     return axios.get(`${ApiCritere}`, apiConfig.value);
   },
+  async fetchCritereById(idCritere: number): Promise<AxiosResponse<ResponseModel>> {
+    return axios.get(`${ApiCritere}/${idCritere}`, apiConfig.value);
+  },
   async saveCritere(payload: {
     titre: string;
     description: string;

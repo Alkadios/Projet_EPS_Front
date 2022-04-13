@@ -4,10 +4,14 @@
       <div class="col-8">
         <Card>
           <template #title>
-            <InputText id="Title" v-model="monTitleIndicateur" type="text" placeholder="Titre" />
+            <InputText id="Title" v-model="nouveauIndicateur.libelle" type="text" placeholder="Titre" />
           </template>
           <template #content>
-            <Editor v-model="maDescriptionIndicateur" editorStyle="height: 130px" placeholder="Entrez vos critères">
+            <Editor
+              v-model="nouveauIndicateur.description"
+              editorStyle="height: 130px"
+              placeholder="Entrez la description de l'indicateur"
+            >
               <template v-slot:toolbar>
                 <span class="ql-formats">
                   <button class="ql-list" value="bullet" type="button"></button>
@@ -17,6 +21,9 @@
                 </span>
               </template>
             </Editor>
+            <div>
+              <InputText id="UrlVideo" v-model="nouveauIndicateur.url_video" type="text" placeholder="URL vidéo" />
+            </div>
           </template>
         </Card>
       </div>
@@ -43,9 +50,10 @@
         </div>
         <div class="mb-3"></div>
       </div>
-      <div class="mb-3">
-        <Textarea class="w-100" :disabled="propertyDisable" v-model="monCritere" :autoResize="true" rows="5" />
-        <Button label="Edit" icon="pi pi-pencil" style="float: right" @click="propertyDisable = !propertyDisable" />
+      <div v-if="critere" class="mb-3">
+        <p>Titre du critère : {{ critere.titre }}</p>
+        <p>Description : {{ critere.description }}</p>
+        <!-- <Textarea class="w-100" :disabled="true" v-model="monCritere" :autoResize="true" rows="5" /> -->
       </div>
     </div>
     <div class="mb-3">
@@ -90,14 +98,14 @@
 import { ref, onMounted } from 'vue';
 import { Indicateur } from '@/models';
 import UtilisateurService from '@/services/UtilisateurService';
+import CritereService from '@/services/CritereService';
+import { useRoute } from 'vue-router';
 
-let propertyDisable = ref(true);
+const route = useRoute();
+
 const { etablissement } = UtilisateurService();
-const maDescriptionIndicateur = ref();
-const monTitleIndicateur = ref();
-const monCritere =
-  ref(`Ex : Pour produire une performance maximale connue sur un 800m, utiliser préférentiellement des repères intérieurs afin de réaliser une course avec des variations d’allures optimales régulées par quelques repères extérieurs exprimés par un partenaire.
-`);
+const { critere, fetchCritereById } = CritereService();
+const nouveauIndicateur = ref<Indicateur>({ libelle: '', description: '', critere: '', url_video: '' } as Indicateur);
 
 const mesIndicateurs = ref<Indicateur[]>([]);
 
@@ -108,32 +116,20 @@ const openBasic = () => {
 
 const closeBasic = () => {
   displayBasic.value = false;
+  resetIndicateur();
 };
-
-document.addEventListener('keydown', (e) => {
-  if (e.ctrlKey && e.key === 's') {
-    e.preventDefault();
-    propertyDisable.value = true;
-  }
-});
 
 function EditIndicateur(monIndicateur: Indicateur) {
   let indexIndicateur = mesIndicateurs.value.findIndex((a) => a.id === monIndicateur.id);
   mesIndicateurs.value.splice(indexIndicateur, 1);
-  maDescriptionIndicateur.value = monIndicateur.description;
-  monTitleIndicateur.value = monIndicateur.libelle;
+  nouveauIndicateur.value = monIndicateur;
   openBasic();
 }
 
 function addIndicateur() {
-  let monNouvelObjet = {
-    id: mesIndicateurs.value.length + 1,
-    libelle: monTitleIndicateur.value,
-    description: maDescriptionIndicateur.value,
-  };
-  mesIndicateurs.value.push(monNouvelObjet);
-  monTitleIndicateur.value = '';
-  maDescriptionIndicateur.value = '';
+  nouveauIndicateur.value.id = mesIndicateurs.value.length + 1;
+  mesIndicateurs.value.push(nouveauIndicateur.value);
+  resetIndicateur();
   closeBasic();
 }
 
@@ -142,7 +138,16 @@ function deleteIndicateur(id: number) {
   mesIndicateurs.value.splice(indexIndicateur, 1);
 }
 
+function resetIndicateur() {
+  nouveauIndicateur.value = { libelle: '', description: '', critere: '', url_video: '' } as Indicateur;
+}
+
 function verif() {}
 
-onMounted(async () => {});
+onMounted(async () => {
+  const idCritere = route.query.idCritere;
+  if (idCritere && typeof idCritere === 'string') {
+    fetchCritereById(parseInt(idCritere));
+  }
+});
 </script>
