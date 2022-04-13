@@ -9,8 +9,14 @@ export default function CritereService() {
     return store.getters['CritereModule/getCriteres'];
   });
   async function fetchCriteres() {
-    console.log('Service');
     await store.dispatch('CritereModule/fetchCriteres');
+  }
+
+  const critere = computed((): Critere => {
+    return store.getters['CritereModule/getCritere'];
+  });
+  async function fetchCritereById(idCritere: number) {
+    await store.dispatch('CritereModule/fetchCritereById', idCritere);
   }
   async function saveCritere(titre: string, description: string, image: string, urlVideo: string, ApsaRetenu: string) {
     await store.dispatch('CritereModule/saveCritere', { titre, description, image, urlVideo, ApsaRetenu });
@@ -21,6 +27,8 @@ export default function CritereService() {
   return {
     criteres,
     fetchCriteres,
+    critere,
+    fetchCritereById,
     saveCritere,
     deleteCritere,
   };

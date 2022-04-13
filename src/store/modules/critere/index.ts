@@ -11,6 +11,7 @@ export default {
   state(): CritereState {
     return {
       criteres: [] as Critere[],
+      critere: {} as Critere,
     };
   },
   mutations,
