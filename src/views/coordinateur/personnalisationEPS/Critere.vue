@@ -4,10 +4,10 @@
       <div class="col-8">
         <Card>
           <template #title>
-            <InputText id="Title" v-model="monTitleIndicateur" type="text" placeholder="Titre" />
+            <InputText id="Title" v-model="monTitleCritere" type="text" placeholder="Titre" />
           </template>
           <template #content>
-            <Editor v-model="maDescriptionIndicateur" editorStyle="height: 130px" placeholder="Entrez vos critères">
+            <Editor v-model="maDescriptionCritere" editorStyle="height: 130px" placeholder="Entrez vos critères">
               <template v-slot:toolbar>
                 <span class="ql-formats">
                   <button class="ql-list" value="bullet" type="button"></button>
@@ -54,7 +54,7 @@
     </div>
     <template #footer>
       <Button label="No" icon="pi pi-times" @click="closeBasic" class="p-button-text" />
-      <Button label="Yes" icon="pi pi-check" @click="addIndicateur" autofocus />
+      <Button label="Yes" icon="pi pi-check" @click="AddCritere" autofocus />
     </template>
   </Dialog>
   <div class="card shadow-lg o-hidden border-0 my-5">
@@ -75,22 +75,31 @@
         <div class="mb-3"></div>
       </div>
       <div class="mb-3">
-        <Textarea class="w-100" :disabled="true" value="TEST" :autoResize="true" rows="5" />
+        <p>{{ apsaRetenu.SituationEvaluation }}</p>
+        <!-- <Textarea class="w-100" :disabled="true" v-model="apsaRetenu.SituationEvaluation" :autoResize="true" rows="5" /> -->
       </div>
     </div>
     <div class="mb-3">
       <div class="row">
-        <div class="col-3" v-for="monIndicateur in mesIndicateurs" v-bind:key="monIndicateur.id">
+        <div class="col-3" v-for="monCritere in CritereByApsaRetenu" v-bind:key="monCritere['@id']">
           <Card>
-            <template #title> {{ monIndicateur.libelle }} </template>
+            <template #title> {{ monCritere.titre }} </template>
             <template #content>
-              <p v-html="monIndicateur.description" />
-              <Button class="p-button-rounded p-button-danger" @click="deleteIndicateur(monIndicateur.id)"
+              <div v-if="monCritere.image != null">
+                <img
+                  :src="`data:${nouvelleImageCritere.type};base64,` + monCritere.image"
+                  style="max-width: 100%"
+                  alt="Image critère"
+                />
+              </div>
+              <p v-html="monCritere.description" />
+              <div v-if="monCritere.url_video != null" style="margin-top: 1.5rem">
+                <InputText id="UrlVideo" v-model="monCritere.url_video" type="text" placeholder="URL vidéo" />
+              </div>
+              <Button class="p-button-rounded p-button-danger" @click="deleteCritere(monCritere.id)"
                 ><i class="pi pi-times"
               /></Button>
-              <Button class="p-button-rounded p-button-info" @click="editIndicateur(monIndicateur)"
-                ><i class="pi pi-pencil"
-              /></Button>
+              <Button class="p-button-rounded p-button-info"><i class="pi pi-pencil" /></Button>
               <Button class="p-button-rounded p-button-info" @click="toIndicateur()"><i class="pi pi-check" /></Button>
             </template>
           </Card>
@@ -112,44 +121,42 @@
       </div>
     </div>
     <div class="mb-3">
-      <div class="row">
-        <div class="col-2">
-          <Button label="Terminer" icon="pi pi-check" @click="verif()" autofocus></Button>
-        </div>
-        <div class="col-3">
-          <Button
-            label="Retour aux AF"
-            style="right: 1rem"
-            icon="pi pi-check"
-            @click="router.push('DeclinerAFRetenus')"
-            autofocus
-          ></Button>
-        </div>
-      </div>
+      <Button label="Terminer" icon="pi pi-check" @click="verif()" autofocus></Button>
+      <Button
+        label="Retour aux AF"
+        icon="pi pi-check"
+        style="left: 1rem"
+        @click="router.push('DeclinerAFRetenus')"
+        autofocus
+      ></Button>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { ref, onMounted, computed } from 'vue';
-import { Indicateur } from '@/models';
+import { Critere } from '@/models';
+import CritereService from '@/services/CritereService';
 import ObjectUtils from '@/utils/ObjectUtils';
 import UtilisateurService from '@/services/UtilisateurService';
-import { useRoute, useRouter } from 'vue-router';
+import ApsaRetenuService from '@/services/ApsaRetenuService';
+import { useRoute } from 'vue-router';
+import router from '@/router';
 
 const route = useRoute();
-const router = useRouter();
 
 const { isObjectEmpty } = ObjectUtils();
 const { etablissement } = UtilisateurService();
+const { saveCritere, fetchCriteres, deleteCritere, criteres } = CritereService();
+const { apsaRetenu, fetchApsaRetenu } = ApsaRetenuService();
 
-const maDescriptionIndicateur = ref();
-const monTitleIndicateur = ref();
+const maDescriptionCritere = ref();
+const monTitleCritere = ref();
 const nouvelleImageCritere = ref<File>({} as File);
 const imageCritere = ref('');
 const monUrlVideo = ref();
 
-const mesIndicateurs = ref<Indicateur[]>([]);
+const CritereByApsaRetenu = ref<Critere[]>([]);
 
 const displayBasic = ref(false);
 const openBasic = () => {
@@ -165,30 +172,44 @@ const imageCritereIsSelected = computed(() => {
   else return true;
 });
 
-function editIndicateur(monIndicateur: Indicateur) {
-  let indexIndicateur = mesIndicateurs.value.findIndex((a) => a.id === monIndicateur.id);
-  mesIndicateurs.value.splice(indexIndicateur, 1);
-  maDescriptionIndicateur.value = monIndicateur.description;
-  monTitleIndicateur.value = monIndicateur.libelle;
-  openBasic();
-}
-
-function addIndicateur() {
-  let monNouvelObjet = {
-    id: mesIndicateurs.value.length + 1,
-    libelle: monTitleIndicateur.value,
-    description: maDescriptionIndicateur.value,
-  };
-  mesIndicateurs.value.push(monNouvelObjet);
-  monTitleIndicateur.value = '';
-  maDescriptionIndicateur.value = '';
+async function AddCritere() {
+  if (route.query.idApsaRetenu) {
+    await saveCritere(
+      monTitleCritere.value,
+      maDescriptionCritere.value,
+      imageCritere.value,
+      monUrlVideo.value,
+      '/api/apsa_retenus/' + route.query.idApsaRetenu?.toString()
+    );
+  }
   closeBasic();
 }
 
-function deleteIndicateur(id: number) {
-  let indexIndicateur = mesIndicateurs.value.findIndex((a) => a.id === id);
-  mesIndicateurs.value.splice(indexIndicateur, 1);
-}
+// function editIndicateur(monIndicateur: Critere) {
+//   let indexIndicateur = mesIndicateurs.value.findIndex((a) => a.id === monIndicateur.id);
+//   mesIndicateurs.value.splice(indexIndicateur, 1);
+//   maDescriptionIndicateur.value = monIndicateur.description;
+//   monTitleIndicateur.value = monIndicateur.libelle;
+//   openBasic();
+// }
+
+// function addIndicateur() {
+//   let monNouvelObjet = {
+//     titre: mesIndicateurs.value.length + 1,
+//     description: monTitleIndicateur.value,
+//     image: maDescriptionIndicateur.value,
+//     url_video:
+//   };
+//   mesIndicateurs.value.push(monNouvelObjet);
+//   monTitleIndicateur.value = '';
+//   maDescriptionIndicateur.value = '';
+//   closeBasic();
+// }
+
+// function deleteIndicateur(id: number) {
+//   let indexIndicateur = mesIndicateurs.value.findIndex((a) => a.id === id);
+//   mesIndicateurs.value.splice(indexIndicateur, 1);
+// }
 
 function verif() {}
 
@@ -196,7 +217,21 @@ function toIndicateur() {
   router.push('IndicateurAF');
 }
 
-onMounted(async () => {});
+onMounted(async () => {
+  if (route.query.idApsaRetenu) {
+    await fetchCriteres();
+    await fetchApsaRetenu(parseInt(route.query.idApsaRetenu.toString()));
+    console.log(criteres.value);
+    criteres.value.forEach((a) => {
+      if (route.query.idApsaRetenu) {
+        if (a.ApsaRetenu.id === parseInt(route.query.idApsaRetenu.toString())) {
+          CritereByApsaRetenu.value.push(a);
+        }
+      }
+    });
+  }
+  console.log('test', apsaRetenu.value);
+});
 
 function onPhotoChange(event: any) {
   nouvelleImageCritere.value = event.files[0];

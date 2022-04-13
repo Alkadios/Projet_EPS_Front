@@ -11,13 +11,18 @@ export default {
       context.commit('setApsasRetenus', []);
     }
   },
+  async fetchApsaRetenu(context: ActionContext<ApsaRetenuState, any>, payload: { idApsaRetenu: number }) {
+    const response = await ApsaRetenuAPI.fetchApsaRetenu(payload.idApsaRetenu);
+    if (response.status === 200) context.commit('setApsaRetenu', response.data);
+    else {
+      context.commit('setApsaRetenu', {});
+    }
+  },
   async saveApsaRetenu(
     context: ActionContext<ApsaRetenuState, any>,
     payload: { AfRetenu: string; SituationEvaluation: string; ApsaSelectAnnee: string }
   ) {
     const response = await ApsaRetenuAPI.saveApsaRetenu(payload);
-
-    console.log('saveApsaRetenu', response);
     if (response.status === 201) {
       context.commit('setApsaRetenu', response.data);
     }
