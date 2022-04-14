@@ -31,7 +31,9 @@
         </div>
       </div>
       <div class="mb-3">
-        <label style="margin-left: 1rem" for="situation-evaluation">Description de la situation d'évaluation :</label>
+        <div class="p-3">
+          <label style="margin-left: 1rem" for="situation-evaluation">Description de la situation d'évaluation :</label>
+        </div>
         <Textarea
           v-model="situationEvaluation"
           id="situation-evaluation"
@@ -45,6 +47,14 @@
     </div>
     <div class="mb-3">
       <Button label="Valider" style="right: 1rem" @click="ajoutApsaRetenu()" icon="pi pi-check" autofocus></Button>
+    </div>
+    <div>
+      <ProgressSpinner
+        v-if="isLoading"
+        style="float: right; width: 50px; height: 50px"
+        strokeWidth="8"
+        animationDuration=".5s"
+      />
     </div>
   </div>
 </template>
@@ -70,7 +80,7 @@ const apsaSelects = ref<ApsaSelectAnnee[]>([]);
 const monAPSA = ref<ApsaRetenu>();
 const monAfRetenuSelected = ref();
 const mesAfRetenus = ref<AfRetenus[]>([]);
-
+const isLoading = ref(false);
 const situationEvaluation = ref('');
 
 async function ajoutApsaRetenu() {
@@ -83,6 +93,7 @@ async function ajoutApsaRetenu() {
 }
 
 onMounted(async () => {
+  isLoading.value = true;
   await fetchAllAfRetenus();
   await fetchAllApsaRetenu();
   await fetchAllApsaSelectAnneeByAnnee(annee.value.id);
@@ -102,5 +113,6 @@ onMounted(async () => {
       }
     }
   });
+  isLoading.value = false;
 });
 </script>
