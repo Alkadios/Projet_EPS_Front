@@ -41,8 +41,10 @@ import Textarea from 'primevue/textarea';
 import Message from 'primevue/message';
 import InlineMessage from 'primevue/inlinemessage';
 import ColorPicker from 'primevue/colorpicker';
+import ProgressSpinner from 'primevue/progressspinner';
 import App from './App.vue';
 import Editor from 'primevue/editor';
+import Skeleton from 'primevue/skeleton';
 import AppAuth from './views/AppAuth.vue';
 import router from './router';
 import store from './store';
@@ -86,7 +88,9 @@ app
   .component('Textarea', Textarea)
   .component('Message', Message)
   .component('InlineMessage', InlineMessage)
-  .component('ColorPicker', ColorPicker);
+  .component('ColorPicker', ColorPicker)
+  .component('ProgressSpinner', ProgressSpinner)
+  .component('Skeleton', Skeleton);
 
 // Directives
 app.directive('tooltip', Tooltip);

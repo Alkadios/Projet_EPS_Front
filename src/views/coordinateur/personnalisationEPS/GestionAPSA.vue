@@ -139,12 +139,14 @@ async function saveApsasSelectionnees() {
     caApsasSelectionnes.value.forEach((_, idCA) => {
       const ca: ChampApprentissage = champsApprentissages.value.find((ca) => ca.id === idCA)!;
       caApsasSelectionnes.value[idCA].forEach((caApsa: ChampsApprentissageApsa) => {
-        listForRequest.push({ Ca: ca.id, Apsa: caApsa.Apsa.id, Annee: annee.value.id });
+        if (caApsa) listForRequest.push({ Ca: ca.id, Apsa: caApsa.Apsa.id, Annee: annee.value.id });
       });
     });
 
     await saveApsaSelectAnnee(listForRequest);
     router.push('ApsaRetenuAF');
+  } else {
+    console.log('erreur');
   }
 }
 
