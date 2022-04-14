@@ -148,7 +148,7 @@ function verifFormulaire(): Boolean {
   let nbErreur = 0;
   if (!selectedCa.value?.id) nbErreur++;
   if (!niveauScolaireSelectionne.value) nbErreur++;
-  if (afEnErreur.value || selectedAfs.value.length < 4) {
+  if (afEnErreur.value || selectedAfs.value.length < 0) {
     afEnErreur.value = true;
     nbErreur++;
   }
