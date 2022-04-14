@@ -130,6 +130,14 @@
         autofocus
       ></Button>
     </div>
+    <div>
+      <ProgressSpinner
+        v-if="isLoading"
+        style="float: right; width: 50px; height: 50px"
+        strokeWidth="8"
+        animationDuration=".5s"
+      />
+    </div>
   </div>
 </template>
 
@@ -155,7 +163,7 @@ const monTitleCritere = ref();
 const nouvelleImageCritere = ref<File>({} as File);
 const imageCritere = ref('');
 const monUrlVideo = ref();
-
+const isLoading = ref(false);
 const CritereByApsaRetenu = ref<Critere[]>([]);
 
 const displayBasic = ref(false);
@@ -221,7 +229,6 @@ onMounted(async () => {
   if (route.query.idApsaRetenu) {
     await fetchCriteres();
     await fetchApsaRetenu(parseInt(route.query.idApsaRetenu.toString()));
-    console.log(criteres.value);
     criteres.value.forEach((a) => {
       if (route.query.idApsaRetenu) {
         if (a.ApsaRetenu.id === parseInt(route.query.idApsaRetenu.toString())) {
@@ -230,7 +237,6 @@ onMounted(async () => {
       }
     });
   }
-  console.log('test', apsaRetenu.value);
 });
 
 function onPhotoChange(event: any) {

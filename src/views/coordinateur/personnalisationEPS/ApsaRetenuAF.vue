@@ -31,21 +31,15 @@
             <strong>Sélectionner les champs apprentissages concernés :</strong>
           </div>
         </div>
-        <ProgressSpinner
-          v-if="champsApprentissagesIsLoading"
-          style="width: 50px; height: 50px"
-          strokeWidth="8"
-          animationDuration=".5s"
-        />
         <Button
-          v-else
           v-for="ca of champsApprentissages"
+          :title="checkIfCaHasAfRetenu(ca) ? 'Configuration déjà effectuée pour ce CA !' : 'TEST'"
           :key="ca.id"
           :label="'CA' + ca.id"
           :style="selectedCa?.id != ca.id ? 'background-color:' + ca.color : ''"
           :class="selectedCa?.id === ca.id ? 'primary' : ''"
-          :icon="checkIfCaHasAfRetenu(ca) ? 'pi pi-check-circle' : ''"
-          :disabled="checkIfCaHasAfRetenu(ca)"
+          :icon="checkIfCaHasAfRetenu(ca) ? 'pi pi-check-circle' : checkIfCaHasNotApsaSelect(ca) ? 'pi pi-times' : ''"
+          :disabled="checkIfCaHasAfRetenu(ca) || checkIfCaHasNotApsaSelect(ca)"
           @click="selectionnerCa(ca)"
         />
         <div class="row">
@@ -60,51 +54,63 @@
         <div class="d-flex p-2">
           <Button label="Valider" style="right: 1rem" icon="pi pi-check" @click="ajouterAfsRetenus()" autofocus />
           <InlineMessage v-if="afEnErreur" severity="error"
-            >Le nombre d'attendus finaux sélectionner doit être de 4</InlineMessage
+            >Vous devez sélectionner au moins 1 attendu final</InlineMessage
           >
         </div>
       </div>
+    </div>
+    <div>
+      <ProgressSpinner
+        v-if="isLoading"
+        style="float: right; width: 50px; height: 50px"
+        strokeWidth="8"
+        animationDuration=".5s"
+      />
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { ref, onMounted, watch } from 'vue';
-import { AF, ChampApprentissage, NiveauScolaire } from '@/models';
+import { AF, ApsaSelectAnnee, ChampApprentissage, NiveauScolaire } from '@/models';
 import AfService from '@/services/AfService';
 import ChampApprentissageService from '@/services/ChampApprentissageService';
 import UtilisateurService from '@/services/UtilisateurService';
 import afRetenuService from '@/services/AfRetenusService';
 import ChoixAnneeService from '@/services/ChoixAnneeService';
 import router from '@/router';
+import ApsaSelectAnneeService from '@/services/ApsaSelectAnneeService';
 
+const { apsaSelectAnneeByAnnee, fetchAllApsaSelectAnneeByAnnee } = ApsaSelectAnneeService();
 const { saveChoixAnnee, choixAnnee } = ChoixAnneeService();
 const { saveAfRetenu, fetchAllAfRetenuByAnneeAndNiveauScolaire, afRetenuByAnneeAndNiveauScolaire } = afRetenuService();
 const { afs, fetchAllAfs } = AfService();
 const { champsApprentissages, fetchChampsApprentissages } = ChampApprentissageService();
 const { etablissement, annee } = UtilisateurService();
 
-const champsApprentissagesIsLoading = ref(false);
-
 const selectedCa = ref<ChampApprentissage>();
 const selectedAfs = ref<AF[]>([]);
 const niveauScolaireSelectionne = ref<NiveauScolaire>();
+const isLoading = ref(false);
 
 //Gestion des erreurs
 const afEnErreur = ref(false);
 const formulaireEnErreur = ref(false);
 
 onMounted(async () => {
+  isLoading.value = true;
   await fetchChampsApprentissages();
   await fetchAllAfs();
+  await fetchAllApsaSelectAnneeByAnnee(annee.value.id);
+  isLoading.value = false;
 });
 
 watch(
   () => selectedAfs.value.length,
   (count) => {
-    if (count > 4) {
-      afEnErreur.value = true;
-    } else afEnErreur.value = false;
+    if (count > 0) {
+      afEnErreur.value = false;
+    }
   }
 );
 
@@ -113,20 +119,25 @@ watch(
   async () => {
     console.log('watch1', niveauScolaireSelectionne.value);
     if (niveauScolaireSelectionne.value) {
-      champsApprentissagesIsLoading.value = true;
+      isLoading.value = true;
       await fetchAllAfRetenuByAnneeAndNiveauScolaire(annee.value.id, niveauScolaireSelectionne.value?.id);
-      champsApprentissagesIsLoading.value = false;
+      isLoading.value = false;
       console.log('watch', afRetenuByAnneeAndNiveauScolaire);
     }
   }
 );
 
-function checkIfCaHasAfRetenu(ca: ChampApprentissage) {
-  if (afRetenuByAnneeAndNiveauScolaire.value.find((afRetenu) => afRetenu.ChoixAnnee.champApprentissage.id === ca.id)) {
-    console.log('Des af retenu ont déjà été saisie');
+function checkIfCaHasNotApsaSelect(ca: ChampApprentissage) {
+  if (!apsaSelectAnneeByAnnee.value.find((monAPSASelect) => ca.id === monAPSASelect.Ca.id)) {
     return true;
   }
-  console.log('Aucune af pour ce niveau');
+  return false;
+}
+
+function checkIfCaHasAfRetenu(ca: ChampApprentissage) {
+  if (afRetenuByAnneeAndNiveauScolaire.value.find((afRetenu) => afRetenu.ChoixAnnee.champApprentissage.id === ca.id)) {
+    return true;
+  }
   return false;
 }
 
@@ -146,17 +157,20 @@ function verifFormulaire(): Boolean {
   else return false;
 }
 async function ajouterAfsRetenus() {
-  if (!verifFormulaire()) {
-    let monNiveau = '/api/niveau_scolaires/' + niveauScolaireSelectionne.value?.id;
-    await saveChoixAnnee(selectedCa.value?.['@id']!, monNiveau, annee.value['@id']);
-    selectedAfs.value.forEach(async (af: AF) => {
-      await saveAfRetenu(choixAnnee.value['@id'], af['@id']);
-      console.log("Ajout de l'AF ", af.libelle);
-    });
-    router.push({
-      name: 'DeclinerAFRetenus',
-      query: { idChoixAnnee: choixAnnee.value.id, idCA: selectedCa.value?.id },
-    });
+  if (selectedAfs.value.length > 0) {
+    if (!verifFormulaire()) {
+      let monNiveau = '/api/niveau_scolaires/' + niveauScolaireSelectionne.value?.id;
+      await saveChoixAnnee(selectedCa.value?.['@id']!, monNiveau, annee.value['@id']);
+      selectedAfs.value.forEach(async (af: AF) => {
+        await saveAfRetenu(choixAnnee.value['@id'], af['@id']);
+      });
+      router.push({
+        name: 'DeclinerAFRetenus',
+        query: { idChoixAnnee: choixAnnee.value.id, idCA: selectedCa.value?.id },
+      });
+    }
+  } else {
+    afEnErreur.value = true;
   }
 }
 </script>

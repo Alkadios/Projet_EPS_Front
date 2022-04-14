@@ -70,6 +70,14 @@
         </span>
       </div>
     </div>
+    <div>
+      <ProgressSpinner
+        v-if="isLoading"
+        style="float: right; width: 50px; height: 50px"
+        strokeWidth="8"
+        animationDuration=".5s"
+      />
+    </div>
   </div>
 </template>
 
@@ -93,7 +101,7 @@ const displayModal = ref(false);
 const monCAModal = ref<ChampApprentissage>({ '@id': '', id: -1, libelle: '', color: '', champsApprentissageApsas: [] });
 const caApsasSelectionnes = ref<any[]>([]);
 const apsaFromCaSelectionnes = ref<APSA[]>([]);
-
+const isLoading = ref(false);
 const apsaSelectAnneeEnErreur = ref(false);
 
 function openModal(CA: ChampApprentissage) {
@@ -159,6 +167,7 @@ function champsNonRempli() {
 }
 
 onMounted(async () => {
+  isLoading.value = true;
   await fetchChampsApprentissages();
   await fetchAllApsa();
 
@@ -175,5 +184,6 @@ onMounted(async () => {
         });
     });
   }
+  isLoading.value = false;
 });
 </script>
