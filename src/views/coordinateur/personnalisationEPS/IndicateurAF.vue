@@ -91,6 +91,14 @@
     <div class="mb-3">
       <Button label="Valider" style="right: 1rem" icon="pi pi-check" @click="verif()" autofocus></Button>
     </div>
+    <div>
+      <ProgressSpinner
+        v-if="isLoading"
+        style="float: right; width: 50px; height: 50px"
+        strokeWidth="8"
+        animationDuration=".5s"
+      />
+    </div>
   </div>
 </template>
 
@@ -106,7 +114,7 @@ const route = useRoute();
 const { etablissement } = UtilisateurService();
 const { critere, fetchCritereById } = CritereService();
 const nouveauIndicateur = ref<Indicateur>({ libelle: '', description: '', critere: '', url_video: '' } as Indicateur);
-
+const isLoading = ref(false);
 const mesIndicateurs = ref<Indicateur[]>([]);
 
 const displayBasic = ref(false);
@@ -145,9 +153,11 @@ function resetIndicateur() {
 function verif() {}
 
 onMounted(async () => {
+  isLoading.value = true;
   const idCritere = route.query.idCritere;
   if (idCritere && typeof idCritere === 'string') {
     fetchCritereById(parseInt(idCritere));
   }
+  isLoading.value = false;
 });
 </script>
