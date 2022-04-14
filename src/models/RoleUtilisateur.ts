@@ -1,5 +1,5 @@
 export interface RoleUtilisateur {
-    id: number;
-    label: string;
-  }
-  
+  '@id': string;
+  id: number;
+  label: string;
+}

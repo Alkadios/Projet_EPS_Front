@@ -2,18 +2,27 @@ import { computed } from 'vue';
 import { useStore } from 'vuex';
 import { ApsaSelectAnnee } from '@/models';
 
-export default function ApsaSelectAnnee() {
+export default function ApsaSelectAnneeService() {
   const store = useStore();
 
-  const apsaSelectsAnnee = computed((): ApsaSelectAnnee[] => {
-    return store.getters['ApsaSelectAnneeModule/getApsaSelectsAnnee'];
+  const apsaSelectAnneeByAnnee = computed((): ApsaSelectAnnee[] => {
+    return store.getters['ApsaSelectAnneeModule/getApsaSelectAnneeByAnnee'];
   });
-  async function fetchAllApsaSelectAnnee() {
-    await store.dispatch('ApsaSelectAnneeModule/fetchAllApsaSelectAnnee');
+  async function fetchAllApsaSelectAnneeByAnnee(idAnnee: number) {
+    await store.dispatch('ApsaSelectAnneeModule/fetchAllApsaSelectAnneeByAnnee', { idAnnee });
   }
-
+  async function saveApsaSelectAnnee(
+    payload: {
+      Ca: number;
+      Apsa: number;
+      Annee: number;
+    }[]
+  ) {
+    await store.dispatch('ApsaSelectAnneeModule/saveApsaSelectAnnee', payload);
+  }
   return {
-    apsaSelectsAnnee,
-    fetchAllApsaSelectAnnee,
+    apsaSelectAnneeByAnnee,
+    fetchAllApsaSelectAnneeByAnnee,
+    saveApsaSelectAnnee,
   };
 }

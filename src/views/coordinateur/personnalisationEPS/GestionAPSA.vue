@@ -48,24 +48,27 @@
             </div>
             <div class="mr-2 flex-grow-1">
               <SelectButton
-                v-model="apsasSelectionnes"
-                :options="getApsasFromCa(monCA)"
-                optionLabel="libelle"
+                v-model="caApsasSelectionnes[monCA.id]"
+                :options="monCA.champsApprentissageApsas"
+                optionLabel="Apsa.libelle"
                 multiple
               />
             </div>
           </div>
         </div>
       </div>
-    </div>
-    <div class="mb-3">
-      <Button
-        label="Ajouter les APSA sélectionnés"
-        style="right: 1rem"
-        icon="pi pi-check"
-        @click="verif(), $router.push('ApsaRetenusAF')"
-        autofocus
-      />
+      <div class="mt-3 ms-3">
+        <Button
+          label="Ajouter les APSA sélectionnés"
+          style="right: 1rem"
+          icon="pi pi-check"
+          @click="saveApsasSelectionnees"
+          autofocus
+        />
+        <span v-if="apsaSelectAnneeEnErreur">
+          <InlineMessage severity="error"> Veuillez sélectionnez au moins un APSA </InlineMessage>
+        </span>
+      </div>
     </div>
   </div>
 </template>
@@ -75,23 +78,23 @@ import { ref, onMounted } from 'vue';
 import ChampApprentissageService from '@/services/ChampApprentissageService';
 import ApsaService from '@/services/ApsaService';
 import UtilisateurService from '@/services/UtilisateurService';
+import ApsaSelectAnneeService from '@/services/ApsaSelectAnneeService';
 import { APSA, ChampApprentissage, ChampsApprentissageApsa } from '@/models';
-import { RouterLink } from 'vue-router';
+import { useRouter } from 'vue-router';
 
-const { champsApprentissages, fetchChampsApprentissages } = ChampApprentissageService();
+const router = useRouter();
+
+const { champsApprentissages, fetchChampsApprentissages, saveApsaInCa } = ChampApprentissageService();
 const { apsas, fetchAllApsa } = ApsaService();
-const { etablissement } = UtilisateurService();
+const { etablissement, annee } = UtilisateurService();
+const { saveApsaSelectAnnee, fetchAllApsaSelectAnneeByAnnee, apsaSelectAnneeByAnnee } = ApsaSelectAnneeService();
 
 const displayModal = ref(false);
-const monCAModal = ref<ChampApprentissage>({ id: -1, libelle: '', color: '', champsApprentissageApsas: [] });
-const apsasSelectionnes = ref([]);
+const monCAModal = ref<ChampApprentissage>({ '@id': '', id: -1, libelle: '', color: '', champsApprentissageApsas: [] });
+const caApsasSelectionnes = ref<any[]>([]);
 const apsaFromCaSelectionnes = ref<APSA[]>([]);
 
-function getApsasFromCa(CA: ChampApprentissage) {
-  const maListeAPSA = ref<APSA[]>([]);
-  CA.champsApprentissageApsas.forEach((monCaApsas: ChampsApprentissageApsa) => maListeAPSA.value.push(monCaApsas.Apsa));
-  return maListeAPSA.value;
-}
+const apsaSelectAnneeEnErreur = ref(false);
 
 function openModal(CA: ChampApprentissage) {
   monCAModal.value = CA;
@@ -106,16 +109,71 @@ function closeModal() {
   apsaFromCaSelectionnes.value = [];
 }
 
-function AjoutApsaInCa() {
+async function AjoutApsaInCa() {
+  const caApsa = apsaFromCaSelectionnes.value.map((apsa) => {
+    return {
+      '@id': '',
+      id: -1,
+      Apsa: apsa,
+    };
+  });
+
+  const listeApsa = ref<APSA[]>([]);
+  caApsa.forEach((caApsa) => {
+    listeApsa.value.push(caApsa.Apsa);
+  });
+  await saveApsaInCa(monCAModal.value.id, listeApsa.value);
+
+  champsApprentissages.value.find((ca) => ca.id === monCAModal.value.id)!.champsApprentissageApsas = caApsa;
+
   closeModal();
 }
 
-function verif() {
-  console.log(champsApprentissages.value);
+async function saveApsasSelectionnees() {
+  if (!champsNonRempli()) {
+    let listForRequest: {
+      Ca: number;
+      Apsa: number;
+      Annee: number;
+    }[] = [];
+    caApsasSelectionnes.value.forEach((_, idCA) => {
+      const ca: ChampApprentissage = champsApprentissages.value.find((ca) => ca.id === idCA)!;
+      caApsasSelectionnes.value[idCA].forEach((caApsa: ChampsApprentissageApsa) => {
+        if (caApsa) listForRequest.push({ Ca: ca.id, Apsa: caApsa.Apsa.id, Annee: annee.value.id });
+      });
+    });
+
+    await saveApsaSelectAnnee(listForRequest);
+    router.push('ApsaRetenuAF');
+  } else {
+    console.log('erreur');
+  }
+}
+
+function champsNonRempli() {
+  if (caApsasSelectionnes.value.length < 1) {
+    apsaSelectAnneeEnErreur.value = true;
+    return true;
+  }
+  return false;
 }
 
 onMounted(async () => {
   await fetchChampsApprentissages();
   await fetchAllApsa();
+
+  await fetchAllApsaSelectAnneeByAnnee(1);
+  if (apsaSelectAnneeByAnnee.value.length > 0) {
+    champsApprentissages.value.forEach((ca) => {
+      caApsasSelectionnes.value[ca.id] = [];
+      apsaSelectAnneeByAnnee.value
+        .filter((apsaSelect) => apsaSelect.Ca.id === ca.id)
+        .forEach((as) => {
+          caApsasSelectionnes.value[as.Ca.id].push(
+            ca.champsApprentissageApsas.find((caa) => caa.Apsa.id === as.Apsa.id)
+          );
+        });
+    });
+  }
 });
 </script>

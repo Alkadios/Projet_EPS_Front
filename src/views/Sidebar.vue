@@ -18,8 +18,9 @@
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
               <li>
                 <router-link to="/GestionAPSA" class="dropdown-item">Gestion des APSAS</router-link>
-                <router-link to="/ApsaRetenusAF" class="dropdown-item">AF des APSA Retenus</router-link>
+                <router-link to="/ApsaRetenuAF" class="dropdown-item">AF des APSA Retenus</router-link>
                 <router-link to="/DeclinerAFRetenus" class="dropdown-item">Decliner les AF Retenus</router-link>
+                <router-link to="/Critere" class="dropdown-item">Critères</router-link>
                 <router-link to="/IndicateurAF" class="dropdown-item">Indicateur AF</router-link>
               </li>
             </ul>
@@ -28,6 +29,11 @@
         <li class="nav-item">
           <router-link class="nav-link" to="/ajoutQuantiteTravailEleve"
             ><i class="fas fa-table"></i><span>Ajout Quantite Travail </span></router-link
+          >
+        </li>
+        <li class="nav-item">
+          <router-link class="nav-link" to="/EvaluationEleves"
+            ><i class="fas fa-table"></i><span>Evaluation</span></router-link
           >
         </li>
       </ul>
