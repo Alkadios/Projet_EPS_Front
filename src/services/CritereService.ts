@@ -8,6 +8,9 @@ export default function CritereService() {
   const criteres = computed((): Critere[] => {
     return store.getters['CritereModule/getCriteres'];
   });
+  const criteresByApsaRetenu = computed((): Critere[] => {
+    return store.getters['CritereModule/getCriteresByApsaRetenu'];
+  });
   async function fetchCriteres() {
     await store.dispatch('CritereModule/fetchCriteres');
   }
@@ -17,6 +20,9 @@ export default function CritereService() {
   });
   async function fetchCritereById(idCritere: number) {
     await store.dispatch('CritereModule/fetchCritereById', idCritere);
+  }
+  async function fetchCriteresByApsaRetenu(idApsaRetenu: number) {
+    await store.dispatch('CritereModule/fetchCritereByApsaRetenu', idApsaRetenu);
   }
   async function saveCritere(titre: string, description: string, image: string, urlVideo: string, ApsaRetenu: string) {
     await store.dispatch('CritereModule/saveCritere', { titre, description, image, urlVideo, ApsaRetenu });
@@ -31,5 +37,7 @@ export default function CritereService() {
     fetchCritereById,
     saveCritere,
     deleteCritere,
+    fetchCriteresByApsaRetenu,
+    criteresByApsaRetenu,
   };
 }
