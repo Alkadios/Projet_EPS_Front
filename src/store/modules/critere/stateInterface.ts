@@ -4,4 +4,5 @@ export default interface CritereState {
   criteres: Critere[];
   criteresByApsaRetenu: Critere[];
   critere: Critere;
+  criteresByAnneeApsaRetenuAndAfRetenu: Critere[];
 }

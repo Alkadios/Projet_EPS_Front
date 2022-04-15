@@ -60,7 +60,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import AfRetenusService from '@/services/AfRetenusService';
 import ApsaRetenuService from '@/services/ApsaRetenuService';
 import ApsaSelectAnneeService from '@/services/ApsaSelectAnneeService';
@@ -91,6 +91,20 @@ async function ajoutApsaRetenu() {
     console.log((monAfRetenuSelected.value['@id'], situationEvaluation.value, monAPSA.value?.['@id']));
   }
 }
+
+watch(
+  () => monAPSA.value,
+  async () => {
+    console.log('watch1', monAPSA.value);
+    if (monAPSA.value) {
+      isLoading.value = true;
+      //await fetchAllAfRetenuByAnneeAndNiveauScolaire(annee.value.id, niveauScolaireSelectionne.value?.id);
+
+      //Mettre fonction
+      isLoading.value = false;
+    }
+  }
+);
 
 onMounted(async () => {
   isLoading.value = true;

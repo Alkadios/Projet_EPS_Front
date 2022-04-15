@@ -12,6 +12,7 @@ export default {
     return {
       criteres: [] as Critere[],
       criteresByApsaRetenu: [] as Critere[],
+      criteresByAnneeApsaRetenuAndAfRetenu: [] as Critere[],
       critere: {} as Critere,
     };
   },
