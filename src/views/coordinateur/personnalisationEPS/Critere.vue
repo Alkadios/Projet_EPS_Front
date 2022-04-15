@@ -54,7 +54,7 @@
     </div>
     <template #footer>
       <Button label="No" icon="pi pi-times" @click="closeBasic" class="p-button-text" />
-      <Button label="Yes" icon="pi pi-check" @click="AddCritere" autofocus />
+      <Button label="Oui" icon="pi pi-check" @click="AddCritere" autofocus />
     </template>
   </Dialog>
   <div class="card shadow-lg o-hidden border-0 my-5">
@@ -72,20 +72,25 @@
             </div>
           </div>
         </div>
-        <div class="mb-3"></div>
+        <div class="mb-3">
+          <div class="p-3">
+            <label style="margin-left: 1rem" for="situation-evaluation"
+              >Description de la situation d'évaluation :</label
+            >
+          </div>
+        </div>
       </div>
       <div class="mb-3">
         <p>{{ apsaRetenu.SituationEvaluation }}</p>
-        <!-- <Textarea class="w-100" :disabled="true" v-model="apsaRetenu.SituationEvaluation" :autoResize="true" rows="5" /> -->
       </div>
     </div>
     <div class="mb-3">
       <div class="row">
-        <div class="col-3" v-for="monCritere in CritereByApsaRetenu" v-bind:key="monCritere['@id']">
+        <div class="col-3" v-for="monCritere in criteresByApsaRetenu" v-bind:key="monCritere['@id']">
           <Card>
             <template #title> {{ monCritere.titre }} </template>
             <template #content>
-              <div v-if="monCritere.image != null">
+              <div v-if="monCritere.image != ''">
                 <img
                   :src="`data:${nouvelleImageCritere.type};base64,` + monCritere.image"
                   style="max-width: 100%"
@@ -94,7 +99,9 @@
               </div>
               <p v-html="monCritere.description" />
               <div v-if="monCritere.url_video != null" style="margin-top: 1.5rem">
-                <InputText id="UrlVideo" v-model="monCritere.url_video" type="text" placeholder="URL vidéo" />
+                <a :href="monCritere.url_video"
+                  ><p>{{ monCritere.url_video }}</p></a
+                >
               </div>
               <Button class="p-button-rounded p-button-danger" @click="deleteCritere(monCritere.id)"
                 ><i class="pi pi-times"
@@ -130,7 +137,7 @@
         autofocus
       ></Button>
     </div>
-    <div>
+    <div style="position: fixed; bottom: 0; right: 2rem">
       <ProgressSpinner
         v-if="isLoading"
         style="float: right; width: 50px; height: 50px"
@@ -155,7 +162,7 @@ const route = useRoute();
 
 const { isObjectEmpty } = ObjectUtils();
 const { etablissement } = UtilisateurService();
-const { saveCritere, fetchCriteres, deleteCritere, criteres } = CritereService();
+const { saveCritere, fetchCriteres, deleteCritere, fetchCriteresByApsaRetenu, criteresByApsaRetenu } = CritereService();
 const { apsaRetenu, fetchApsaRetenu } = ApsaRetenuService();
 
 const maDescriptionCritere = ref();
@@ -164,7 +171,6 @@ const nouvelleImageCritere = ref<File>({} as File);
 const imageCritere = ref('');
 const monUrlVideo = ref();
 const isLoading = ref(false);
-const CritereByApsaRetenu = ref<Critere[]>([]);
 
 const displayBasic = ref(false);
 const openBasic = () => {
@@ -193,32 +199,6 @@ async function AddCritere() {
   closeBasic();
 }
 
-// function editIndicateur(monIndicateur: Critere) {
-//   let indexIndicateur = mesIndicateurs.value.findIndex((a) => a.id === monIndicateur.id);
-//   mesIndicateurs.value.splice(indexIndicateur, 1);
-//   maDescriptionIndicateur.value = monIndicateur.description;
-//   monTitleIndicateur.value = monIndicateur.libelle;
-//   openBasic();
-// }
-
-// function addIndicateur() {
-//   let monNouvelObjet = {
-//     titre: mesIndicateurs.value.length + 1,
-//     description: monTitleIndicateur.value,
-//     image: maDescriptionIndicateur.value,
-//     url_video:
-//   };
-//   mesIndicateurs.value.push(monNouvelObjet);
-//   monTitleIndicateur.value = '';
-//   maDescriptionIndicateur.value = '';
-//   closeBasic();
-// }
-
-// function deleteIndicateur(id: number) {
-//   let indexIndicateur = mesIndicateurs.value.findIndex((a) => a.id === id);
-//   mesIndicateurs.value.splice(indexIndicateur, 1);
-// }
-
 function verif() {}
 
 function toIndicateur() {
@@ -226,17 +206,12 @@ function toIndicateur() {
 }
 
 onMounted(async () => {
+  isLoading.value = true;
   if (route.query.idApsaRetenu) {
-    await fetchCriteres();
     await fetchApsaRetenu(parseInt(route.query.idApsaRetenu.toString()));
-    criteres.value.forEach((a) => {
-      if (route.query.idApsaRetenu) {
-        if (a.ApsaRetenu.id === parseInt(route.query.idApsaRetenu.toString())) {
-          CritereByApsaRetenu.value.push(a);
-        }
-      }
-    });
+    await fetchCriteresByApsaRetenu(parseInt(route.query.idApsaRetenu.toString()));
   }
+  isLoading.value = false;
 });
 
 function onPhotoChange(event: any) {
