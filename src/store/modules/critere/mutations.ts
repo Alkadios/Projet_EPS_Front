@@ -8,6 +8,9 @@ export default {
   setCriteresByApsaRetenu(state: CritereState, payload: Critere[]) {
     state.criteresByApsaRetenu = payload;
   },
+  setCriteresByAnneeApsaRetenuAndAfRetenu(state: CritereState, payload: Critere[]) {
+    state.criteresByAnneeApsaRetenuAndAfRetenu = payload;
+  },
   setCritere(state: CritereState, payload: Critere) {
     state.critere = payload;
   },
