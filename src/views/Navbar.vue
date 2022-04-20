@@ -6,12 +6,13 @@
       </button>
       <form class="d-none d-sm-inline-block me-auto ms-md-3 my-2 my-md-0 mw-100 navbar-search">
         <div class="input-group">
-          <input class="bg-light form-control border-0 small" type="text" placeholder="Search for ..." /><button
-            class="btn btn-primary py-0"
-            type="button"
-          >
-            <i class="fas fa-search"></i>
-          </button>
+          <Dropdown
+            v-model="nouvelAnneeEnConfig"
+            :options="annees"
+            optionLabel="annee"
+            dataKey="id"
+            @change="storeAnneeEnConfig(nouvelAnneeEnConfig)"
+          />
         </div>
       </form>
       <ul class="navbar-nav flex-nowrap ms-auto">
@@ -59,24 +60,47 @@
 
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue';
-//import { useRouter } from 'vue-router';
-//import ObjectUtils from '@/utils/ObjectUtils';
+import { Annee } from '@/models';
 import UtilisateurService from '@/services/UtilisateurService';
+import AnneeService from '@/services/AnneeService';
+//import { useRouter } from 'vue-router';
+import ObjectUtils from '@/utils/ObjectUtils';
 
 //const router = useRouter();
 
-//const { isObjectEmpty } = ObjectUtils();
+const { isObjectEmpty } = ObjectUtils();
 
-const { utilisateur, logoutUtilisateur } = UtilisateurService();
-
+const {
+  utilisateur,
+  logoutUtilisateur,
+  etablissement,
+  anneeEnConfig,
+  storeAnneeEnConfig,
+  fetchAnneeEnCours,
+  anneeEnCours,
+} = UtilisateurService();
+const { annees, fetchAllAnnee } = AnneeService();
 // Contrôle l'affichage du menu. Par défaut, est vrai si l'écran n'est pas un mobile, faux sinon.
 const displayMenu = ref(window.innerWidth >= 600);
 
-onMounted(function () {
+const isLoading = ref(false);
+
+const nouvelAnneeEnConfig = ref<Annee>(anneeEnConfig.value);
+
+onMounted(async () => {
   // Evènement utilisé pour contrôler basculer le menu en mode ouvert ou fermé lors du passage de mobile à PC
   window.addEventListener('resize', () => {
     displayMenu.value = window.innerWidth >= 600;
   });
+  isLoading.value = true;
+  await fetchAllAnnee();
+  if (isObjectEmpty(nouvelAnneeEnConfig.value)) {
+    await fetchAnneeEnCours();
+    storeAnneeEnConfig(anneeEnCours.value);
+    nouvelAnneeEnConfig.value = anneeEnConfig.value;
+  }
+
+  isLoading.value = false;
 });
 
 // function toggleMenu() {

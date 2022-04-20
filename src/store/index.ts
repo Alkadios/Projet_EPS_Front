@@ -9,6 +9,7 @@ import ApsaSelectAnneeModule from '@/store/modules/ApsaSelectAnnee/index';
 import ChoixAnneeModule from '@/store/modules/choixAnnee/index';
 import ApsaRetenuModule from '@/store/modules/ApsaRetenu/index';
 import CritereModule from '@/store/modules/critere/index';
+import AnneeModule from '@/store/modules/annee/index';
 
 const keyLocalStorage = 'epsstore';
 
@@ -33,5 +34,6 @@ export default createStore({
     ChoixAnneeModule,
     ApsaRetenuModule,
     CritereModule,
+    AnneeModule,
   },
 });
