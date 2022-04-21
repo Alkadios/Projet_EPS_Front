@@ -56,6 +56,11 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('../views/Profil.vue'),
   },
   {
+    path: '/CreerEleve',
+    name: 'CreerEleve',
+    component: () => import('../views/coordinateur/personnalisationEPS/CreerEleve.vue'),
+  },
+  {
     path: '/:notFound(.*)',
     redirect: '/',
   },

@@ -14,3 +14,4 @@ export * from './Cycle';
 export * from './Etablissement';
 export * from './NiveauScolaire';
 export * from './Annee';
+export * from './Eleve';

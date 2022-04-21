@@ -1,7 +1,7 @@
-import AfState from './stateInterface';
+import EleveState from './stateInterface';
 
 export default {
-  getAfs(state: AfState) {
-    return state.afs;
+  getEleves(state: EleveState) {
+    return state.eleves;
   },
 };

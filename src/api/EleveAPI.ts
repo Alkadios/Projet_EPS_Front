@@ -4,24 +4,19 @@ import { ResponseModel } from '@/models';
 import { apiConfig } from '@/config/UtilisateurConfig';
 
 export default {
-
- async fetchAllEleves(): Promise<AxiosResponse<ResponseModel>> {
+  async fetchAllEleves(): Promise<AxiosResponse<ResponseModel>> {
     return axios.get(`${ApiURLEleve}`, apiConfig.value);
- },
-
+  },
 
   async saveEleve(payload: {
     nom: string;
     prenom: string;
     telephone: string;
-    mailParent1enom: string;
-    dateNaiss: Date;
+    mailParent1: string;
+    mailParent2: string;
     sexeEleve: string;
     user: string;
-    }): Promise<AxiosResponse> {
+  }): Promise<AxiosResponse> {
     return axios.post(`${ApiURLEleve}`, payload, apiConfig.value);
   },
-
-
-
 };

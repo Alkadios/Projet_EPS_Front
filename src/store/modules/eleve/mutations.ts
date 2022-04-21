@@ -2,7 +2,7 @@ import { Eleve } from '@/models';
 import EleveState from './stateInterface';
 
 export default {
-  setAfs(state: EleveState, payload: Eleve[]) {
+  setEleve(state: EleveState, payload: Eleve[]) {
     state.eleves = payload;
   },
 };
