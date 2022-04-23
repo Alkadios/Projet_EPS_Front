@@ -33,7 +33,6 @@
         </div>
         <Button
           v-for="ca of champsApprentissages"
-          :title="checkIfCaHasAfRetenu(ca) ? 'Configuration déjà effectuée pour ce CA !' : 'TEST'"
           :key="ca.id"
           :label="'CA' + ca.id"
           :style="selectedCa?.id != ca.id ? 'background-color:' + ca.color : ''"
@@ -59,7 +58,7 @@
         </div>
       </div>
     </div>
-    <div>
+    <div style="position: fixed; bottom: 0; right: 0">
       <ProgressSpinner
         v-if="isLoading"
         style="float: right; width: 50px; height: 50px"
@@ -148,7 +147,7 @@ function verifFormulaire(): Boolean {
   let nbErreur = 0;
   if (!selectedCa.value?.id) nbErreur++;
   if (!niveauScolaireSelectionne.value) nbErreur++;
-  if (afEnErreur.value || selectedAfs.value.length < 4) {
+  if (afEnErreur.value || selectedAfs.value.length < 0) {
     afEnErreur.value = true;
     nbErreur++;
   }

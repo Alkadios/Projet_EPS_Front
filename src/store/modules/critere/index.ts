@@ -11,6 +11,8 @@ export default {
   state(): CritereState {
     return {
       criteres: [] as Critere[],
+      criteresByApsaRetenu: [] as Critere[],
+      criteresByAnneeApsaRetenuAndAfRetenu: [] as Critere[],
       critere: {} as Critere,
     };
   },

@@ -70,7 +70,7 @@
         </span>
       </div>
     </div>
-    <div>
+    <div style="position: fixed; bottom: 0; right: 0">
       <ProgressSpinner
         v-if="isLoading"
         style="float: right; width: 50px; height: 50px"
