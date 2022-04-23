@@ -9,6 +9,7 @@ export default {
   state(): AnneeState {
     return {
       annees: [] as Annee[],
+      annee: {} as Annee,
     };
   },
   mutations,

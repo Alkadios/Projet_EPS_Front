@@ -11,7 +11,7 @@ import ApsaRetenuModule from '@/store/modules/ApsaRetenu/index';
 import CritereModule from '@/store/modules/critere/index';
 import AnneeModule from '@/store/modules/annee/index';
 
-const keyLocalStorage = 'epsstore';
+const keyLocalStorage = 'ocpepsstore';
 
 export function getLocalStorage(module: string, property: string): any {
   const storage = localStorage.getItem(keyLocalStorage);

@@ -10,4 +10,7 @@ export default {
   async fetchAllAnnee(): Promise<AxiosResponse<ResponseModel>> {
     return axios.get(`${ApiAnnee}`, apiConfig.value);
   },
+  async fetchAnneeById(idAnnee: number): Promise<AxiosResponse<ResponseModel>> {
+    return axios.get(`${ApiAnnee}/${idAnnee.toString()}`, apiConfig.value);
+  },
 };

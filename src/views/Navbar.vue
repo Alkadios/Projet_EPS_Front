@@ -79,7 +79,7 @@ const {
   fetchAnneeEnCours,
   anneeEnCours,
 } = UtilisateurService();
-const { annees, fetchAllAnnee } = AnneeService();
+const { annees, fetchAllAnnee, annee, fetchAnneeById } = AnneeService();
 // Contrôle l'affichage du menu. Par défaut, est vrai si l'écran n'est pas un mobile, faux sinon.
 const displayMenu = ref(window.innerWidth >= 600);
 
@@ -95,8 +95,14 @@ onMounted(async () => {
   isLoading.value = true;
   await fetchAllAnnee();
   if (isObjectEmpty(nouvelAnneeEnConfig.value)) {
-    await fetchAnneeEnCours();
-    storeAnneeEnConfig(anneeEnCours.value);
+    const anneeLocal = localStorage.getItem('anneeEnConfig');
+    if (anneeLocal != undefined && anneeLocal != null) {
+      await fetchAnneeById(parseInt(anneeLocal));
+      storeAnneeEnConfig(annee.value);
+    } else {
+      await fetchAnneeEnCours();
+      storeAnneeEnConfig(anneeEnCours.value);
+    }
     nouvelAnneeEnConfig.value = anneeEnConfig.value;
   }
 
