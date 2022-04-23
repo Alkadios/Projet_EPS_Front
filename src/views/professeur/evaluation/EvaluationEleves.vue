@@ -3,7 +3,7 @@
     <div class="card-body p-0">
       <div class="row">
         <div class="col-lg-1"></div>
-        <div class="col-lg-10">
+        <div id="ContentScreen" class="col-lg-10">
           <div class="p-5">
             <div class="text-center">
               <p class="text-dark mb-2">
@@ -15,70 +15,82 @@
           </div>
           <div id="mesClasses">
             <div class="row">
-              <div class="d-flex p-2">
-                <div>Mes Classes :</div>
-                <div style="position: relative; left: 0.5rem">
-                  <Dropdown
-                    v-model="maClasseSelect"
-                    :options="cities"
-                    optionLabel="name"
-                    optionValue="code"
-                    placeholder="Ma Classe"
-                    @change="maClasse()"
-                  />
+              <div id="EvaluationClasse" class="col-md-5">
+                <div class="d-flex">
+                  <div class="p-2">Mes Classes :</div>
+                  <div>
+                    <Dropdown
+                      v-model="maClasseSelect"
+                      :options="classesByProfesseur"
+                      optionLabel="classe.libelleClasse"
+                      optionValue="classe.id"
+                      placeholder="Ma Classe"
+                      @change="maClasse()"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-5">
+                <div class="d-flex" v-if="maClasseSelect != null">
+                  <div class="p-2">Mes sports :</div>
+                  <div>
+                    <Dropdown
+                      v-model="monSportSelect"
+                      :options="apsaSelectAnneeByAnneeAndClasse"
+                      optionLabel="Apsa.libelle"
+                      optionValue="Apsa.id"
+                      placeholder="Ma Classe"
+                      @change="maClasse()"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-          <div id="myTable">
+          <div id="myTableEleves">
             <div class="row">
-              <div>
-                <InputText id="mySearch" v-model="mySearch" v-on:keyup="filterTable()" placeholder="Keyword Search" />
-              </div>
-              <div class="d-flex p-2">
-                <div class="col-12">
-                  <DataTable
-                    :value="filteredProduct"
-                    :paginator="true"
-                    :rows="15"
-                    showGridlines
-                    responsiveLayout="scroll"
+              <div class="d-flex justify-content-start">
+                <div id="mesEleves" class="col-md-4 p-2">
+                  <Button style="margin-bottom: 1rem; width: 100%" label="Tous" />
+                  <Listbox
+                    v-model="monEleveSelect"
+                    :options="elevesByClasse"
+                    :filter="true"
+                    optionLabel="nom"
+                    listStyle="max-height:250px"
+                    style="width: 100%; overflow-y: scroll; max-height: 380px"
+                    filterPlaceholder="Search"
                   >
-                    <Column field="name" header="Name"></Column>
-                    <Column header="Code">
-                      <template #body="slotProps">
-                        <Dropdown
-                          v-model="slotProps.data.Dropdown"
-                          :options="cities"
-                          optionLabel="name"
-                          optionValue="code"
-                          placeholder="Ma Classe"
-                          @change="maClasse()"
-                        /> </template
-                    ></Column>
-                    <Column field="category" header="Category">
-                      <template #body="slotProps">
-                        <Dropdown
-                          v-model="slotProps.data.Dropdown"
-                          :options="cities"
-                          optionLabel="name"
-                          optionValue="code"
-                          placeholder="Ma Classe"
-                          @change="maClasse()"
-                        /> </template
-                    ></Column>
-                    <Column field="quantity" header="Quantity">
-                      <template #body="slotProps">
-                        <Dropdown
-                          v-model="slotProps.data.Dropdown"
-                          :options="cities"
-                          optionLabel="name"
-                          optionValue="code"
-                          placeholder="Ma Classe"
-                          @change="maClasse()"
-                        /> </template
-                    ></Column>
-                  </DataTable>
+                    <template #option="monEleve">
+                      <div class="Eleve-item">
+                        <div>{{ monEleve.option.nom }} {{ monEleve.option.prenom }}</div>
+                      </div>
+                    </template>
+                  </Listbox>
+                </div>
+                <div class="offset-md-1 col-md-7">
+                  <div class="card" id="CriteresEvaluations">
+                    <Divider align="center" type="dashed">
+                      <b>Center</b>
+                    </Divider>
+                    <p>
+                      At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum
+                      deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non
+                      provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum
+                      fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta
+                      nobis est eligendi optio cumque nihil impedit quo minus.
+                    </p>
+                    <Divider align="center" type="dashed">
+                      <b>Center</b>
+                    </Divider>
+                    <p>
+                      At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum
+                      deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non
+                      provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum
+                      fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta
+                      nobis est eligendi optio cumque nihil impedit quo minus.
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -86,23 +98,34 @@
         </div>
       </div>
     </div>
+    <div style="position: fixed; bottom: 0; right: 2rem">
+      <ProgressSpinner
+        v-if="isLoading"
+        style="float: right; width: 50px; height: 50px"
+        strokeWidth="8"
+        animationDuration=".5s"
+      />
+    </div>
   </div>
-  <div class="mb-3"></div>
+  <div class="mb-3">
+    <button @click="maClasse">TEST</button>
+  </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import UtilisateurService from '@/services/UtilisateurService';
+import ApsaSelectAnneeService from '@/services/ApsaSelectAnneeService';
+import ProfesseurClassesService from '@/services/ProfesseurClassesService';
+import EleveService from '@/services/EleveService';
+const { fetchAllApsaSelectAnneeByAnneeAndClasse, apsaSelectAnneeByAnneeAndClasse } = ApsaSelectAnneeService();
+const { fetchElevesByClasse, elevesByClasse } = EleveService();
+const { classesByProfesseur, fetchClassesByProfesseur } = ProfesseurClassesService();
 const mySearch = ref();
-const { etablissement } = UtilisateurService();
-const products = ref([
-  { name: 'New York', code: '', category: '', quantity: '' },
-  { name: 'Rome', code: '', category: '', quantity: '' },
-  { name: 'London', code: '', category: '', quantity: '' },
-  { name: 'Istanbul', code: '', category: '', quantity: '' },
-  { name: 'Paris', code: '', category: '', quantity: '' },
-]);
-const filteredProduct = ref(products.value);
+const { etablissement, annee } = UtilisateurService();
+const isLoading = ref(false);
+
+const filteredProduct = ref(classesByProfesseur.value);
 const cities = ref([
   { name: 'New York', code: 'NY' },
   { name: 'Rome', code: 'RM' },
@@ -120,17 +143,40 @@ const mesIndicateurs = ref([
 ]);
 
 const maClasseSelect = ref();
+const monSportSelect = ref();
+const monEleveSelect = ref();
 
 function filterTable() {
   if (mySearch.value) {
-    filteredProduct.value = products.value.filter((data) => data.name.includes(mySearch.value));
+    filteredProduct.value = classesByProfesseur.value.filter((data) =>
+      data.classe.libelleClasse.includes(mySearch.value)
+    );
   } else {
-    filteredProduct.value = products.value;
+    filteredProduct.value = classesByProfesseur.value;
   }
 }
 
-function maClasse() {
-  console.log('ma Classe : ', maClasseSelect.value);
-}
-onMounted(async () => {});
+async function maClasse() {}
+
+onMounted(async () => {
+  isLoading.value = true;
+  if (annee) {
+    await fetchClassesByProfesseur(1);
+  }
+  isLoading.value = false;
+});
+
+watch(
+  () => maClasseSelect.value,
+  async () => {
+    if (maClasseSelect.value) {
+      isLoading.value = true;
+      await fetchAllApsaSelectAnneeByAnneeAndClasse(annee.value.id, maClasseSelect.value);
+      await fetchElevesByClasse(maClasseSelect.value);
+      isLoading.value = false;
+      console.log('apsaSelectAnneeByAnneeAndClasse : ', apsaSelectAnneeByAnneeAndClasse.value);
+      console.log('elevesByClasse : ', elevesByClasse.value);
+    }
+  }
+);
 </script>

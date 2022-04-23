@@ -9,3 +9,6 @@ export const ApiURLNiveauScolaire = `${ApiUrl}/niveau_scolaires`;
 export const ApiURLChoixAnnee = `${ApiUrl}/choix_annees`;
 export const ApsaRetenuAPI = `${ApiUrl}/apsa_retenus`;
 export const ApiCritere = `${ApiUrl}/criteres`;
+export const ApiClasse = `${ApiUrl}/classes`;
+export const ApiProfesseurClasses = `${ApiUrl}/professeur_classes`;
+export const ApiEleve = `${ApiUrl}/eleves`;

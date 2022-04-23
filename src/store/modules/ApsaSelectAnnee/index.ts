@@ -9,6 +9,7 @@ export default {
   state(): ApsaSelectAnneeState {
     return {
       apsaSelectAnneeByAnnee: [] as ApsaSelectAnnee[],
+      apsaSelectAnneeByAnneeAndClasse: [] as ApsaSelectAnnee[],
     };
   },
   mutations,

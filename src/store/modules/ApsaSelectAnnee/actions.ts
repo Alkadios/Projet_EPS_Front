@@ -16,6 +16,21 @@ export default {
       //throw new Error(response.data.message);
     }
   },
+  async fetchAllApsaSelectAnneeByAnneeAndClasse(
+    context: ActionContext<ApsaSelectAnneeState, any>,
+    payload: { idAnnee: number; idClasse: number }
+  ) {
+    const response = await ApsaSelectAnneeAPI.fetchAllApsaSelectAnneeByAnneeAndClasse(
+      payload.idAnnee,
+      payload.idClasse
+    );
+    if (response.data['hydra:totalItems'] > 0)
+      context.commit('setApsaSelectAnneeByAnneeAndClasse', response.data['hydra:member']);
+    else {
+      context.commit('setApsaSelectAnneeByAnneeAndClasse', []);
+      //throw new Error(response.data.message);
+    }
+  },
   async saveApsaSelectAnnee(
     context: ActionContext<ApsaSelectAnneeState, any>,
     payload: {
