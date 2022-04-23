@@ -1,3 +1,5 @@
+import { Etablissement } from "./Etablissement";
+
 export interface Eleve {
   '@id': string;
   id: number;
@@ -8,5 +10,5 @@ export interface Eleve {
   mailParent2: string;
   sexeEleve: string;
   user: string;
-  etablissement: string;
+  etablissement: Etablissement;
 }

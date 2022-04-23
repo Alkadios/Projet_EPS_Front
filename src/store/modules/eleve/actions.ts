@@ -1,6 +1,7 @@
 import { ActionContext } from 'vuex';
 import EleveApi from '@/api/EleveAPI';
 import EleveState from './stateInterface';
+import { Etablissement } from '@/models';
 
 export default {
   async fetchAllEleves(context: ActionContext<EleveState, any>) {
@@ -15,15 +16,17 @@ export default {
   async saveEleve(
     context: ActionContext<EleveState, any>,
     payload: {
+      email: string;
+      roles:string;
+      password:string;
       nom: string;
       prenom: string;
       telephone: string;
       mailParent1: string;
       mailParent2: string;
-      dateNaiss: Date;
       sexeEleve: string;
-      user: string;
-      etablissement: string;
+      etablissement: Etablissement;
+  
     }
   ) {
     const response = await EleveApi.saveEleve(payload);
