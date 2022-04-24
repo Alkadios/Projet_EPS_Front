@@ -12,7 +12,7 @@ export default {
     return {
       utilisateur: {} as Utilisateur,
       token: '',
-      etablissement: { nomEtablissement: 'Lycée Professionnel de St Joseph' } as Etablissement,
+      etablissement: {} as Etablissement,
       anneeEnConfig: {} as Annee,
       anneeEnCours: {} as Annee,
     };

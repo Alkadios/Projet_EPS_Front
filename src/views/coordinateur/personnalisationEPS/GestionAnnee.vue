@@ -10,7 +10,7 @@
                 Personnalisation de l'équipe EPS <br />
                 au
               </p>
-              <h4 class="text-dark mb-4">{{ etablissement.nomEtablissement }}</h4>
+              <h4 class="text-dark mb-4">{{ etablissement.nom }}</h4>
             </div>
           </div>
         </div>

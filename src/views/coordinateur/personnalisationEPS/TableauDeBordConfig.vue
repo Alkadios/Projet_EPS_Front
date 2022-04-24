@@ -10,7 +10,7 @@
                 Tableau de bord de la configuration <br />
                 au
               </p>
-              <h4 class="text-dark mb-4">{{ etablissement.nomEtablissement }}</h4>
+              <h4 class="text-dark mb-4">{{ etablissement.nom }}</h4>
             </div>
           </div>
         </div>
@@ -38,11 +38,10 @@
       <div>
         <p>Niveau scolaire :</p>
         <Dropdown
-          v-model="nouvelAnneeEnConfig"
-          :options="annees"
-          optionLabel="annee"
+          v-model="niveauScolaireSelectionne"
+          :options="etablissement.niveauScolaire"
+          optionLabel="libelle"
           dataKey="id"
-          @change="storeAnneeEnConfig(nouvelAnneeEnConfig)"
         />
       </div>
     </div>
@@ -62,7 +61,7 @@
 
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue';
-import { Annee } from '@/models';
+import { Annee, NiveauScolaire } from '@/models';
 import UtilisateurService from '@/services/UtilisateurService';
 import AnneeService from '@/services/AnneeService';
 import ApsaSelectAnneeService from '@/services/ApsaSelectAnneeService';
@@ -88,6 +87,7 @@ const { apsaSelectAnneeByAnnee, fetchAllApsaSelectAnneeByAnnee } = ApsaSelectAnn
 // Contrôle l'affichage du menu. Par défaut, est vrai si l'écran n'est pas un mobile, faux sinon.
 const displayMenu = ref(window.innerWidth >= 600);
 const nouvelAnneeEnConfig = ref<Annee>(anneeEnConfig.value);
+const niveauScolaireSelectionne = ref<NiveauScolaire>();
 const isLoading = ref(false);
 
 onMounted(async () => {
@@ -106,6 +106,7 @@ onMounted(async () => {
   }
   fetchConfigAnnee();
   isLoading.value = false;
+  console.log('nivo', etablissement.value.niveauScolaire);
 });
 
 async function fetchConfigAnnee() {

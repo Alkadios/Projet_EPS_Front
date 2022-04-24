@@ -16,17 +16,10 @@ export default function UtilisateurService() {
   }
 
   const etablissement = computed((): Etablissement => {
-    return {
-      nomEtablissement: 'Lycée Professionnel de St Joseph',
-      niveauxScolaires: [
-        { id: 10, libelle: 'Seconde' },
-        { id: 11, libelle: 'Première' },
-        { id: 12, libelle: 'Terminale' },
-      ],
-    } as Etablissement;
+    return store.getters['UtilisateurModule/getEtablissement'];
   });
-  async function storeEtablissement(anneeEnConfig: Etablissement) {
-    await store.dispatch('UtilisateurModule/storeAnneeEnConfig', { anneeEnConfig });
+  async function fetchEtablissementById(idEtablissement: number) {
+    await store.dispatch('UtilisateurModule/fetchEtablissementById', { idEtablissement });
   }
 
   const anneeEnConfig = computed((): Annee => {
@@ -48,6 +41,7 @@ export default function UtilisateurService() {
     loginUtilisateur,
     logoutUtilisateur,
     etablissement,
+    fetchEtablissementById,
     anneeEnConfig,
     storeAnneeEnConfig,
     anneeEnCours,
