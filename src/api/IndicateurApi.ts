@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
 import { ApiIndicateur } from '@/constants/ApiUrls';
-import { Critere, Indicateur } from '@/models';
+import { Indicateur } from '@/models';
 import { ResponseModel } from '@/models';
 import { apiConfig } from '@/config/UtilisateurConfig';
 
@@ -12,7 +12,7 @@ export default {
     return axios.get(`${ApiIndicateur}/${idIndicateur}`, apiConfig.value);
   },
   async fetchIndicateursByCritere(idCritere: number): Promise<AxiosResponse<ResponseModel>> {
-    return axios.get(`${ApiIndicateur}?ApsaRetenu.id=${idCritere}`, apiConfig.value);
+    return axios.get(`${ApiIndicateur}?Critere.id=${idCritere}`, apiConfig.value);
   },
   async saveIndicateur(payload: {
     libelle: string;

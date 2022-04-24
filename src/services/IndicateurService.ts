@@ -6,7 +6,7 @@ export default function IndicateurService() {
   const store = useStore();
 
   const indicateurs = computed((): Indicateur[] => {
-    return store.getters['IndicateurModule/getIndicateur'];
+    return store.getters['IndicateurModule/getIndicateurs'];
   });
   async function fetchIndicateurs() {
     await store.dispatch('IndicateurModule/fetchIndicateurs');

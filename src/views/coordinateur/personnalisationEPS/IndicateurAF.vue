@@ -134,7 +134,7 @@ const closeBasic = () => {
 
 async function addIndicateur() {
   try {
-    const critere = await axios.post('https://localhost:8000/api/indicateur', {
+    const critere = await axios.post('https://localhost:8000/api/indicateurs', {
       libelle: nouveauIndicateur.value.libelle,
       description: nouveauIndicateur.value.description,
       image: nouveauIndicateur.value.image,
@@ -183,8 +183,8 @@ onMounted(async () => {
     await fetchIndicateurs();
     await fetchIndicateursByCritere(parseInt(route.query.idCritere.toString()));
     indicateurs.value.forEach((a) => {
-      if (route.query.idApsaRetenu) {
-        if (a.Critere.id === parseInt(route.query.idApsaRetenu.toString())) {
+      if (route.query.idCritere) {
+        if (a.Critere.id === parseInt(route.query.idCritere.toString())) {
           IndicateurByCritere.value.push(a);
         }
       }

@@ -301,6 +301,7 @@ function toIndicateur() {
 }
 
 onMounted(async () => {
+  isLoading.value = true;
   if (route.query.idApsaRetenu) {
     await fetchCriteres();
     await fetchApsaRetenu(parseInt(route.query.idApsaRetenu.toString()));
