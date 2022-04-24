@@ -54,7 +54,7 @@
     </div>
     <template #footer>
       <Button label="No" icon="pi pi-times" @click="closeBasic" class="p-button-text" />
-      <Button label="Yes" icon="pi pi-check" @click="AddCritere" autofocus />
+      <Button label="Yes" icon="pi pi-check" @click="addCritere" autofocus />
     </template>
   </Dialog>
   <Dialog header="Modifier un critère" v-model:visible="displayEdit" :style="{ width: '50vw' }">
@@ -112,7 +112,17 @@
     </div>
     <template #footer>
       <Button label="Annuler" icon="pi pi-times" @click="closeEdit" class="p-button-text" />
-      <Button label="Modifier" icon="pi pi-check" @click="editCritere(nouveauCritere)" autofocus />
+      <Button
+        label="Ajouter des indicateurs"
+        icon="pi pi-plus"
+        @click="
+          router.push({
+            name: 'IndicateurAF',
+            query: { idCritere: nouveauCritere.id },
+          })
+        "
+      />
+      <Button label="Modifier" icon="pi pi-check" @click="closeEdit(), editCritere(nouveauCritere)" autofocus> </Button>
     </template>
   </Dialog>
   <div class="card shadow-lg o-hidden border-0 my-5">
@@ -241,7 +251,7 @@ const imageCritereIsSelected = computed(() => {
   else return true;
 });
 
-async function AddCritere() {
+async function addCritere() {
   try {
     const critere = await axios.post('https://localhost:8000/api/criteres', {
       titre: nouveauCritere.value.titre,
