@@ -1,11 +1,11 @@
 import { ActionContext } from 'vuex';
-import EleveApi from '@/api/EleveAPI';
 import EleveState from './stateInterface';
 import { Etablissement } from '@/models';
+import EleveAPI from '@/api/EleveAPI';
 
 export default {
   async fetchAllEleves(context: ActionContext<EleveState, any>) {
-    const response = await EleveApi.fetchAllEleves();
+    const response = await EleveAPI.fetchAllEleves();
     if (response.data['hydra:totalItems'] > 0) context.commit('setEleves', response.data['hydra:member']);
     else {
       context.commit('setEleves', []);
@@ -29,7 +29,7 @@ export default {
   
     }
   ) {
-    const response = await EleveApi.saveEleve(payload);
+    const response = await EleveAPI.saveEleve(payload);
     if (response.status === 200) {
     } else {
       //throw new Error(response.data.message);

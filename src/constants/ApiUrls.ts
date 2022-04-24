@@ -11,4 +11,7 @@ export const ApsaRetenuAPI = `${ApiUrl}/apsa_retenus`;
 export const ApiURLEleve = `${ApiUrl}/eleves`;
 export const ApiURLUser = `${ApiUrl}/utilisateur`;
 export const ApiURLCreateEleve = `${ApiUrl}/eleve/create`;
+export const ApiURLEtablissement = `${ApiUrl}/etablissements`;
+export const ApiURLClasse = `${ApiUrl}/classes`;
+
 

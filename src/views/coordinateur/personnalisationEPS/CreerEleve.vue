@@ -1,9 +1,6 @@
- <template>
-
+<template>
   <div class="row mb-3">
-    <div class="col-lg-4">
-      
-    </div>
+    <div class="col-lg-4"></div>
     <div class="col-lg-12 col-md-12">
       <div class="row mb-3 d-none">
         <div class="col">
@@ -153,11 +150,11 @@
                   </div>
                   <div class="col">
                     <div class="mb-3">
-                      <input type="radio" id="M" value="M"  name="sexeEleve" v-model="nouveauEleve.sexeEleve">
-                        <label for="M">M</label>
-                        <br>
-                        <input  type="radio" id="F" value="F"  name="sexeEleve" v-model="nouveauEleve.sexeEleve">
-                        <label for="F">F</label>
+                      <input type="radio" id="M" value="M" name="sexeEleve" v-model="nouveauEleve.sexeEleve" />
+                      <label for="M">M</label>
+                      <br />
+                      <input type="radio" id="F" value="F" name="sexeEleve" v-model="nouveauEleve.sexeEleve" />
+                      <label for="F">F</label>
                     </div>
                   </div>
                 </div>
@@ -193,8 +190,10 @@
   </div>
 </template>
 <script lang="ts" setup>
+import EtablissementAPI from '@/api/EtablissementAPI';
 import { Eleve, User, Utilisateur } from '@/models';
 import EleveService from '@/services/EleveService';
+import EtablissementService from '@/services/EtablissementService';
 import UserService from '@/services/UserService';
 import user from '@/store/modules/user';
 import { ref, onMounted } from 'vue';
@@ -208,17 +207,16 @@ const categories = ref([
 
 const selectedCategories = ref([]);
 const { saveEleve } = EleveService();
-const { saveUser } = UserService();
+
+const { fetchAllEtablissements, etablissements } = EtablissementService();
 
 const NomEleve = 'Laura GUICHON';
 
-const nouveauUtilisateur= ref<User>({
+const nouveauUtilisateur = ref<User>({
   email: '',
-  roles: ["Eleve"],
+  roles: ['Eleve'],
   password: '',
 });
-
-
 
 const nouveauEleve = ref<Eleve>({
   id: '',
@@ -231,7 +229,6 @@ const nouveauEleve = ref<Eleve>({
   user: '',
   etablissement: 1,
 });
-
 
 function CreerEleve() {
   saveEleve(
@@ -246,7 +243,6 @@ function CreerEleve() {
     nouveauEleve.value.sexeEleve,
     nouveauEleve.value.etablissement
   );
-
 }
 
 function verif() {
@@ -256,6 +252,10 @@ function verif() {
 function onSubmitUtil() {
   CreerEleve();
 }
+
+onMounted(async () => {
+  await fetchAllEtablissements();
+});
 </script>
 <style>
 .mb-3 {

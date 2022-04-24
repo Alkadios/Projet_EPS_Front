@@ -1,9 +1,19 @@
-import { Etablissement } from '@/models';
+import { Eleve, Etablissement } from '@/models';
 import { computed } from 'vue';
 import { useStore } from 'vuex';
 
 export default function EleveService() {
   const store = useStore();
+
+  async function fetchAllEleves() {
+    await store.dispatch('EleveModule/fetchAllEleves');
+  }
+
+  const eleves = computed((): Eleve[] => {
+    return store.getters['EleveModule/getEleves'];
+  });
+
+
 
   async function saveEleve(
     email: string,
@@ -33,5 +43,7 @@ export default function EleveService() {
 
   return {
     saveEleve,
+    fetchAllEleves,
+    eleves
   };
 }
