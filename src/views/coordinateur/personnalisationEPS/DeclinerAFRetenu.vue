@@ -74,7 +74,7 @@ const route = useRoute();
 const { apsaSelectAnneeByAnnee, fetchAllApsaSelectAnneeByAnnee } = ApsaSelectAnneeService();
 const { afRetenus, fetchAllAfRetenus } = AfRetenusService();
 const { apsaRetenu, apsasRetenus, saveApsaRetenu, fetchAllApsaRetenu } = ApsaRetenuService();
-const { etablissement, annee } = UtilisateurService();
+const { etablissement, anneeEnConfig } = UtilisateurService();
 
 const apsaSelects = ref<ApsaSelectAnnee[]>([]);
 const monAPSA = ref<ApsaRetenu>();
@@ -110,7 +110,7 @@ onMounted(async () => {
   isLoading.value = true;
   await fetchAllAfRetenus();
   await fetchAllApsaRetenu();
-  await fetchAllApsaSelectAnneeByAnnee(annee.value.id);
+  await fetchAllApsaSelectAnneeByAnnee(anneeEnConfig.value.id);
   apsaSelectAnneeByAnnee.value.forEach((a) => {
     if (route.query.idCA) {
       if (a.Ca.id === parseInt(route.query.idCA.toString())) {

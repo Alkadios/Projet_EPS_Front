@@ -5,15 +5,7 @@
         <i class="fas fa-bars"></i>
       </button>
       <form class="d-none d-sm-inline-block me-auto ms-md-3 my-2 my-md-0 mw-100 navbar-search">
-        <div class="input-group">
-          <Dropdown
-            v-model="nouvelAnneeEnConfig"
-            :options="annees"
-            optionLabel="annee"
-            dataKey="id"
-            @change="storeAnneeEnConfig(nouvelAnneeEnConfig)"
-          />
-        </div>
+        <div class="input-group">Année en configuration: {{ anneeEnConfig.annee }}</div>
       </form>
       <ul class="navbar-nav flex-nowrap ms-auto">
         <li class="nav-item dropdown d-sm-none no-arrow">
@@ -64,11 +56,6 @@ import { Annee } from '@/models';
 import UtilisateurService from '@/services/UtilisateurService';
 import AnneeService from '@/services/AnneeService';
 //import { useRouter } from 'vue-router';
-import ObjectUtils from '@/utils/ObjectUtils';
-
-//const router = useRouter();
-
-const { isObjectEmpty } = ObjectUtils();
 
 const {
   utilisateur,
@@ -85,26 +72,12 @@ const displayMenu = ref(window.innerWidth >= 600);
 
 const isLoading = ref(false);
 
-const nouvelAnneeEnConfig = ref<Annee>(anneeEnConfig.value);
-
 onMounted(async () => {
   // Evènement utilisé pour contrôler basculer le menu en mode ouvert ou fermé lors du passage de mobile à PC
   window.addEventListener('resize', () => {
     displayMenu.value = window.innerWidth >= 600;
   });
   isLoading.value = true;
-  await fetchAllAnnee();
-  if (isObjectEmpty(nouvelAnneeEnConfig.value)) {
-    const anneeLocal = localStorage.getItem('anneeEnConfig');
-    if (anneeLocal != undefined && anneeLocal != null) {
-      await fetchAnneeById(parseInt(anneeLocal));
-      storeAnneeEnConfig(annee.value);
-    } else {
-      await fetchAnneeEnCours();
-      storeAnneeEnConfig(anneeEnCours.value);
-    }
-    nouvelAnneeEnConfig.value = anneeEnConfig.value;
-  }
 
   isLoading.value = false;
 });

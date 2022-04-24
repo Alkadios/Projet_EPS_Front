@@ -94,7 +94,7 @@ const router = useRouter();
 
 const { champsApprentissages, fetchChampsApprentissages, saveApsaInCa } = ChampApprentissageService();
 const { apsas, fetchAllApsa } = ApsaService();
-const { etablissement, annee } = UtilisateurService();
+const { etablissement, anneeEnConfig } = UtilisateurService();
 const { saveApsaSelectAnnee, fetchAllApsaSelectAnneeByAnnee, apsaSelectAnneeByAnnee } = ApsaSelectAnneeService();
 
 const displayModal = ref(false);
@@ -147,7 +147,7 @@ async function saveApsasSelectionnees() {
     caApsasSelectionnes.value.forEach((_, idCA) => {
       const ca: ChampApprentissage = champsApprentissages.value.find((ca) => ca.id === idCA)!;
       caApsasSelectionnes.value[idCA].forEach((caApsa: ChampsApprentissageApsa) => {
-        if (caApsa) listForRequest.push({ Ca: ca.id, Apsa: caApsa.Apsa.id, Annee: annee.value.id });
+        if (caApsa) listForRequest.push({ Ca: ca.id, Apsa: caApsa.Apsa.id, Annee: anneeEnConfig.value.id });
       });
     });
 
@@ -171,7 +171,7 @@ onMounted(async () => {
   await fetchChampsApprentissages();
   await fetchAllApsa();
 
-  await fetchAllApsaSelectAnneeByAnnee(1);
+  await fetchAllApsaSelectAnneeByAnnee(anneeEnConfig.value.id);
   if (apsaSelectAnneeByAnnee.value.length > 0) {
     champsApprentissages.value.forEach((ca) => {
       caApsasSelectionnes.value[ca.id] = [];

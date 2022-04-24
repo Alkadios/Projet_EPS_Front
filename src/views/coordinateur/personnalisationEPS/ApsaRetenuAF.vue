@@ -85,7 +85,7 @@ const { saveChoixAnnee, choixAnnee } = ChoixAnneeService();
 const { saveAfRetenu, fetchAllAfRetenuByAnneeAndNiveauScolaire, afRetenuByAnneeAndNiveauScolaire } = afRetenuService();
 const { afs, fetchAllAfs } = AfService();
 const { champsApprentissages, fetchChampsApprentissages } = ChampApprentissageService();
-const { etablissement, annee } = UtilisateurService();
+const { etablissement, anneeEnConfig } = UtilisateurService();
 
 const selectedCa = ref<ChampApprentissage>();
 const selectedAfs = ref<AF[]>([]);
@@ -100,7 +100,7 @@ onMounted(async () => {
   isLoading.value = true;
   await fetchChampsApprentissages();
   await fetchAllAfs();
-  await fetchAllApsaSelectAnneeByAnnee(annee.value.id);
+  await fetchAllApsaSelectAnneeByAnnee(anneeEnConfig.value.id);
   isLoading.value = false;
 });
 
@@ -116,12 +116,10 @@ watch(
 watch(
   () => niveauScolaireSelectionne.value,
   async () => {
-    console.log('watch1', niveauScolaireSelectionne.value);
     if (niveauScolaireSelectionne.value) {
       isLoading.value = true;
-      await fetchAllAfRetenuByAnneeAndNiveauScolaire(annee.value.id, niveauScolaireSelectionne.value?.id);
+      await fetchAllAfRetenuByAnneeAndNiveauScolaire(anneeEnConfig.value.id, niveauScolaireSelectionne.value?.id);
       isLoading.value = false;
-      console.log('watch', afRetenuByAnneeAndNiveauScolaire);
     }
   }
 );
@@ -159,7 +157,7 @@ async function ajouterAfsRetenus() {
   if (selectedAfs.value.length > 0) {
     if (!verifFormulaire()) {
       let monNiveau = '/api/niveau_scolaires/' + niveauScolaireSelectionne.value?.id;
-      await saveChoixAnnee(selectedCa.value?.['@id']!, monNiveau, annee.value['@id']);
+      await saveChoixAnnee(selectedCa.value?.['@id']!, monNiveau, anneeEnConfig.value['@id']);
       selectedAfs.value.forEach(async (af: AF) => {
         await saveAfRetenu(choixAnnee.value['@id'], af['@id']);
       });

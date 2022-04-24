@@ -1,9 +1,7 @@
 import { computed } from 'vue';
 import { useStore } from 'vuex';
 import { Etablissement, Utilisateur, Annee } from '@/models';
-import ObjectUtils from '@/utils/ObjectUtils';
 
-const { isObjectEmpty } = ObjectUtils();
 export default function UtilisateurService() {
   const store = useStore();
 
@@ -27,10 +25,9 @@ export default function UtilisateurService() {
       ],
     } as Etablissement;
   });
-
-  const annee = computed((): Annee => {
-    return { '@id': '/api/annees/1', id: 1 } as Annee;
-  });
+  async function storeEtablissement(anneeEnConfig: Etablissement) {
+    await store.dispatch('UtilisateurModule/storeAnneeEnConfig', { anneeEnConfig });
+  }
 
   const anneeEnConfig = computed((): Annee => {
     return store.getters['UtilisateurModule/getAnneeEnConfig'];
@@ -51,7 +48,6 @@ export default function UtilisateurService() {
     loginUtilisateur,
     logoutUtilisateur,
     etablissement,
-    annee,
     anneeEnConfig,
     storeAnneeEnConfig,
     anneeEnCours,
