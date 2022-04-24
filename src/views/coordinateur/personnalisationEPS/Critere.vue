@@ -112,16 +112,6 @@
     </div>
     <template #footer>
       <Button label="Annuler" icon="pi pi-times" @click="closeEdit" class="p-button-text" />
-      <Button
-        label="Ajouter des indicateurs"
-        icon="pi pi-plus"
-        @click="
-          router.push({
-            name: 'IndicateurAF',
-            query: { idCritere: nouveauCritere.id },
-          })
-        "
-      />
       <Button label="Modifier" icon="pi pi-check" @click="closeEdit(), editCritere(nouveauCritere)" autofocus> </Button>
     </template>
   </Dialog>
@@ -161,6 +151,16 @@
               <Button class="p-button-rounded p-button-danger" @click="deleteCritere(monCritere.id)"
                 ><i class="pi pi-times"
               /></Button>
+              <Button
+                label="Ajouter des indicateurs"
+                icon="pi pi-plus"
+                @click="
+                  router.push({
+                    name: 'IndicateurAF',
+                    query: { idCritere: nouveauCritere.id },
+                  })
+                "
+              />
             </template>
           </Card>
         </div>
@@ -184,7 +184,7 @@
       <Button label="Terminer" icon="pi pi-check" @click="verif()" autofocus></Button>
       <Button
         label="Retour aux AF"
-        icon="pi pi-check"
+        icon="pi pi-backward"
         style="left: 1rem"
         @click="router.push('DeclinerAFRetenus')"
         autofocus
