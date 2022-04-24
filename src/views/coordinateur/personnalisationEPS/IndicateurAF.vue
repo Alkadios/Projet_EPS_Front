@@ -58,7 +58,7 @@
     </div>
     <div class="mb-3">
       <div class="row">
-        <div class="col-3" v-for="monIndicateur in mesIndicateurs" v-bind:key="monIndicateur.id">
+        <div class="col-3" v-for="monIndicateur in indicateurs" v-bind:key="monIndicateur.id">
           <Card>
             <template #title> {{ monIndicateur.libelle }} </template>
             <template #content>
@@ -115,8 +115,8 @@ import indicateur from '@/store/modules/indicateur';
 const route = useRoute();
 
 const { etablissement } = UtilisateurService();
-const { critere, fetchCritereById } = CritereService();
-const { saveIndicateur, fetchIndicateurs, fetchIndicateursByCritere, indicateurs } = IndicateurService();
+const { critere, fetchCriteres, fetchCritereById } = CritereService();
+const { saveIndicateur, fetchIndicateurs, indicateurs } = IndicateurService();
 const IndicateurByCritere = ref<Indicateur[]>([]);
 const nouveauIndicateur = ref<Indicateur>({ libelle: '', description: '', url_video: '', id: -1 } as Indicateur);
 const isLoading = ref(false);
@@ -181,14 +181,7 @@ onMounted(async () => {
   isLoading.value = true;
   if (route.query.idCritere) {
     await fetchIndicateurs();
-    await fetchIndicateursByCritere(parseInt(route.query.idCritere.toString()));
-    indicateurs.value.forEach((a) => {
-      if (route.query.idCritere) {
-        if (a.Critere.id === parseInt(route.query.idCritere.toString())) {
-          IndicateurByCritere.value.push(a);
-        }
-      }
-    });
+    await fetchCritereById(parseInt(route.query.idCritere.toString()));
   }
 });
 </script>
