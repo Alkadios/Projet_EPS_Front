@@ -11,6 +11,7 @@ import ApsaRetenuModule from '@/store/modules/ApsaRetenu/index';
 import CritereModule from '@/store/modules/critere/index';
 import ProfesseurClassesModule from '@/store/modules/professeurClasses/index';
 import EleveModule from '@/store/modules/eleve/index';
+import ClasseModule from '@/store/modules/classe/index';
 
 const keyLocalStorage = 'epsstore';
 
@@ -37,5 +38,6 @@ export default createStore({
     CritereModule,
     ProfesseurClassesModule,
     EleveModule,
+    ClasseModule,
   },
 });

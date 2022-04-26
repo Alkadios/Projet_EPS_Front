@@ -5,7 +5,7 @@ import { Eleve } from '@/models';
 export default function EleveService() {
   const store = useStore();
 
-  const eleves = computed((): Eleve => {
+  const eleves = computed((): Eleve[] => {
     return store.getters['EleveModule/getEleves'];
   });
 

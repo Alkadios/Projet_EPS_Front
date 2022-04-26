@@ -1,4 +1,6 @@
 import { ElevesClasse, Etablissement, Annee, NiveauScolaire } from '@/models';
+import { Eleve } from './Eleve';
+import { Professeur } from './Professeur';
 
 export interface Classe {
   '@id': string;
@@ -7,5 +9,6 @@ export interface Classe {
   NiveauScolaire: NiveauScolaire;
   Annee: Annee;
   etablissement: Etablissement;
-  eleveClasses: ElevesClasse;
+  eleves: Eleve[];
+  professeurs: Professeur[];
 }

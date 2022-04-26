@@ -21,11 +21,10 @@
                   <div>
                     <Dropdown
                       v-model="maClasseSelect"
-                      :options="classesByProfesseur"
-                      optionLabel="classe.libelleClasse"
-                      optionValue="classe.id"
+                      :options="classesByAnneeAndProfesseur"
+                      optionLabel="libelleClasse"
+                      optionValue="id"
                       placeholder="Ma Classe"
-                      @change="maClasse()"
                     />
                   </div>
                 </div>
@@ -36,11 +35,10 @@
                   <div>
                     <Dropdown
                       v-model="monSportSelect"
-                      :options="apsaSelectAnneeByAnneeAndClasse"
+                      :options="mesAPSAs"
                       optionLabel="Apsa.libelle"
                       optionValue="Apsa.id"
                       placeholder="Ma Classe"
-                      @change="maClasse()"
                     />
                   </div>
                 </div>
@@ -54,12 +52,12 @@
                   <Button style="margin-bottom: 1rem; width: 100%" label="Tous" />
                   <Listbox
                     v-model="monEleveSelect"
-                    :options="elevesByClasse"
+                    :options="mesEleves"
                     :filter="true"
                     optionLabel="nom"
                     listStyle="max-height:250px"
                     style="width: 100%; overflow-y: scroll; max-height: 380px"
-                    filterPlaceholder="Search"
+                    filterPlaceholder="Recherche"
                   >
                     <template #option="monEleve">
                       <div class="Eleve-item">
@@ -116,23 +114,20 @@
 import { ref, onMounted, watch } from 'vue';
 import UtilisateurService from '@/services/UtilisateurService';
 import ApsaSelectAnneeService from '@/services/ApsaSelectAnneeService';
-import ProfesseurClassesService from '@/services/ProfesseurClassesService';
-import EleveService from '@/services/EleveService';
+import ApsaRetenuService from '@/services/ApsaRetenuService';
+import CritereService from '@/services/CritereService';
+import ClasseService from '@/services/ClasseService';
+import { ApsaSelectAnnee, Eleve } from '@/models';
+import { useRoute } from 'vue-router';
+import router from '@/router';
+
+const route = useRoute();
+const { criteres, fetchCriteres } = CritereService();
+const { apsasRetenusByEtablissementAndAnnee, fetchApsaRetenuByAnneeAndEtablissement } = ApsaRetenuService();
 const { fetchAllApsaSelectAnneeByAnneeAndClasse, apsaSelectAnneeByAnneeAndClasse } = ApsaSelectAnneeService();
-const { fetchElevesByClasse, elevesByClasse } = EleveService();
-const { classesByProfesseur, fetchClassesByProfesseur } = ProfesseurClassesService();
-const mySearch = ref();
+const { classesByAnneeAndProfesseur, fetchClasseByAnneeAndProf } = ClasseService();
 const { etablissement, annee } = UtilisateurService();
 const isLoading = ref(false);
-
-const filteredProduct = ref(classesByProfesseur.value);
-const cities = ref([
-  { name: 'New York', code: 'NY' },
-  { name: 'Rome', code: 'RM' },
-  { name: 'London', code: 'LDN' },
-  { name: 'Istanbul', code: 'IST' },
-  { name: 'Paris', code: 'PRS' },
-]);
 
 const mesIndicateurs = ref([
   { name: 'Test non réalisé', code: '0' },
@@ -142,26 +137,22 @@ const mesIndicateurs = ref([
   { name: 'Très bonne maitrise', code: '4' },
 ]);
 
+const mesEleves = ref<Eleve[]>([]);
+const mesAPSAs = ref<ApsaSelectAnnee[]>([]);
 const maClasseSelect = ref();
 const monSportSelect = ref();
 const monEleveSelect = ref();
 
-function filterTable() {
-  if (mySearch.value) {
-    filteredProduct.value = classesByProfesseur.value.filter((data) =>
-      data.classe.libelleClasse.includes(mySearch.value)
-    );
-  } else {
-    filteredProduct.value = classesByProfesseur.value;
-  }
+async function maClasse() {
+  console.log('criteres : ', criteres.value);
 }
-
-async function maClasse() {}
 
 onMounted(async () => {
   isLoading.value = true;
   if (annee) {
-    await fetchClassesByProfesseur(1);
+    await fetchClasseByAnneeAndProf(1, 1);
+    await fetchApsaRetenuByAnneeAndEtablissement(1, 1);
+    await fetchCriteres();
   }
   isLoading.value = false;
 });
@@ -172,11 +163,26 @@ watch(
     if (maClasseSelect.value) {
       isLoading.value = true;
       await fetchAllApsaSelectAnneeByAnneeAndClasse(annee.value.id, maClasseSelect.value);
-      await fetchElevesByClasse(maClasseSelect.value);
+      mesElevesByClasse(maClasseSelect.value);
+      mesApsaByAnneeAndClasseAndEtablissement(maClasseSelect.value);
       isLoading.value = false;
-      console.log('apsaSelectAnneeByAnneeAndClasse : ', apsaSelectAnneeByAnneeAndClasse.value);
-      console.log('elevesByClasse : ', elevesByClasse.value);
     }
   }
 );
+
+function mesElevesByClasse(idClasse: number) {
+  mesEleves.value = classesByAnneeAndProfesseur.value.find((a) => a.id === idClasse)!.eleves;
+}
+
+function mesApsaByAnneeAndClasseAndEtablissement(idClasse: number) {
+  apsasRetenusByEtablissementAndAnnee.value.forEach((a) => {
+    if (idClasse) {
+      if (a.AfRetenu.ChoixAnnee.Niveau === '/api/niveau_scolaires/' + idClasse) {
+        if (a.AfRetenu.ChoixAnnee.Annee === annee.value['@id']) {
+          mesAPSAs.value.push(a.ApsaSelectAnnee);
+        }
+      }
+    }
+  });
+}
 </script>
