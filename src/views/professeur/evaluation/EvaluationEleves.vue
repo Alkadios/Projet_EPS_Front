@@ -95,25 +95,32 @@
           </div>
         </div>
       </div>
+      <div class="mt-3 ms-3">
+        <Button label="Annuler" icon="pi pi-check" @click="verif()" autofocus></Button>
+        <Button
+          label="Terminer l'évaluation"
+          icon="pi pi-check"
+          style="left: 1rem"
+          @click="router.push('DeclinerAFRetenus')"
+          autofocus
+        ></Button>
+      </div>
+      <div class="mb-3"></div>
+      <div style="position: fixed; bottom: 0; right: 2rem">
+        <ProgressSpinner
+          v-if="isLoading"
+          style="float: right; width: 50px; height: 50px"
+          strokeWidth="8"
+          animationDuration=".5s"
+        />
+      </div>
     </div>
-    <div style="position: fixed; bottom: 0; right: 2rem">
-      <ProgressSpinner
-        v-if="isLoading"
-        style="float: right; width: 50px; height: 50px"
-        strokeWidth="8"
-        animationDuration=".5s"
-      />
-    </div>
-  </div>
-  <div class="mb-3">
-    <button @click="maClasse">TEST</button>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { ref, onMounted, watch } from 'vue';
 import UtilisateurService from '@/services/UtilisateurService';
-import ApsaSelectAnneeService from '@/services/ApsaSelectAnneeService';
 import ApsaRetenuService from '@/services/ApsaRetenuService';
 import CritereService from '@/services/CritereService';
 import ClasseService from '@/services/ClasseService';
@@ -124,7 +131,6 @@ import router from '@/router';
 const route = useRoute();
 const { criteres, fetchCriteres } = CritereService();
 const { apsasRetenusByEtablissementAndAnnee, fetchApsaRetenuByAnneeAndEtablissement } = ApsaRetenuService();
-const { fetchAllApsaSelectAnneeByAnneeAndClasse, apsaSelectAnneeByAnneeAndClasse } = ApsaSelectAnneeService();
 const { classesByAnneeAndProfesseur, fetchClasseByAnneeAndProf } = ClasseService();
 const { etablissement, annee } = UtilisateurService();
 const isLoading = ref(false);
@@ -143,7 +149,7 @@ const maClasseSelect = ref();
 const monSportSelect = ref();
 const monEleveSelect = ref();
 
-async function maClasse() {
+async function verif() {
   console.log('criteres : ', criteres.value);
 }
 
@@ -162,10 +168,10 @@ watch(
   async () => {
     if (maClasseSelect.value) {
       isLoading.value = true;
-      await fetchAllApsaSelectAnneeByAnneeAndClasse(annee.value.id, maClasseSelect.value);
       mesElevesByClasse(maClasseSelect.value);
       mesApsaByAnneeAndClasseAndEtablissement(maClasseSelect.value);
       isLoading.value = false;
+      console.log('apsasRetenusByEtablissementAndAnnee : ', apsasRetenusByEtablissementAndAnnee.value);
     }
   }
 );
@@ -178,9 +184,7 @@ function mesApsaByAnneeAndClasseAndEtablissement(idClasse: number) {
   apsasRetenusByEtablissementAndAnnee.value.forEach((a) => {
     if (idClasse) {
       if (a.AfRetenu.ChoixAnnee.Niveau === '/api/niveau_scolaires/' + idClasse) {
-        if (a.AfRetenu.ChoixAnnee.Annee === annee.value['@id']) {
-          mesAPSAs.value.push(a.ApsaSelectAnnee);
-        }
+        mesAPSAs.value.push(a.ApsaSelectAnnee);
       }
     }
   });

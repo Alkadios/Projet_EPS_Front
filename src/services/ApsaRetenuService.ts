@@ -19,7 +19,7 @@ export default function ApsaRetenuService() {
     await store.dispatch('ApsaRetenuModule/fetchApsaRetenu', { idApsaRetenu: idApsaRetenu });
   }
 
-  const apsasRetenusByEtablissementAndAnnee = computed((): ApsaRetenu => {
+  const apsasRetenusByEtablissementAndAnnee = computed((): ApsaRetenu[] => {
     return store.getters['ApsaRetenuModule/getApsasRetenusByEtablissementAndAnnee'];
   });
 
