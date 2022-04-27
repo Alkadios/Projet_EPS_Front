@@ -1,11 +1,11 @@
 import axios, { AxiosResponse } from 'axios';
-import { ApiURLCreateEleve } from '@/constants/ApiUrls';
+import { ApiURLCreateEleve, ApiURLEleve } from '@/constants/ApiUrls';
 import { Etablissement, ResponseModel } from '@/models';
 import { apiConfig } from '@/config/UtilisateurConfig';
 
 export default {
   async fetchAllEleves(): Promise<AxiosResponse<ResponseModel>> {
-    return axios.get(`${ApiURLCreateEleve}`, apiConfig.value);
+    return axios.get(`${ApiURLEleve}`, apiConfig.value);
   },
 
   async saveEleve(payload: {

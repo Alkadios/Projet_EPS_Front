@@ -9,6 +9,7 @@ export default {
   state(): ClasseState {
     return {
       classes: [] as Classe[],
+      classesByAnnee: [] as Classe[],
     };
   },
   mutations,

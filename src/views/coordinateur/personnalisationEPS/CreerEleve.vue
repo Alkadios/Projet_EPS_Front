@@ -256,6 +256,11 @@ function onSubmitUtil() {
 onMounted(async () => {
   await fetchAllEtablissements();
 });
+
+
+
+
+
 </script>
 <style>
 .mb-3 {

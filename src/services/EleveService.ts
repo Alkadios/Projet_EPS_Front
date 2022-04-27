@@ -44,6 +44,6 @@ export default function EleveService() {
   return {
     saveEleve,
     fetchAllEleves,
-    eleves
+    eleves,
   };
 }

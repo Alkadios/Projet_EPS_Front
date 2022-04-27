@@ -5,4 +5,7 @@ export default {
   setClasses(state: ClasseState, payload: Classe[]) {
     state.classes = payload;
   },
+  setClassesByAnnee(state: ClasseState, payload: Classe[]) {
+    state.classesByAnnee = payload;
+  },
 };

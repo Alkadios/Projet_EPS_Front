@@ -17,8 +17,8 @@ export default {
     context: ActionContext<EleveState, any>,
     payload: {
       email: string;
-      roles:string;
-      password:string;
+      roles: string;
+      password: string;
       nom: string;
       prenom: string;
       telephone: string;
@@ -26,7 +26,6 @@ export default {
       mailParent2: string;
       sexeEleve: string;
       etablissement: Etablissement;
-  
     }
   ) {
     const response = await EleveAPI.saveEleve(payload);

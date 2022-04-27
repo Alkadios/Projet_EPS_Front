@@ -9,4 +9,13 @@ export default {
   },
 
 
+  async fetchClasseByAnnee(idAnnee: number): Promise<AxiosResponse<ResponseModel>> {
+    const paramsString = `Annee.id=${idAnnee.toString()}`;
+    const url = new URL(`${ApiURLClasse}/`);
+    url.search = new URLSearchParams(paramsString).toString();
+    return axios.get(`${url.toString()}`, apiConfig.value);
+  },
+
+
+
 };

@@ -1,3 +1,4 @@
+import { Classe } from "./Classe";
 import { Etablissement } from "./Etablissement";
 
 export interface Eleve {
@@ -11,4 +12,5 @@ export interface Eleve {
   sexeEleve: string;
   user: string;
   etablissement: Etablissement;
+  classe : Classe[];
 }
