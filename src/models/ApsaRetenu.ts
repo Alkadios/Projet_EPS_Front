@@ -1,4 +1,4 @@
-import { APSA, AfRetenus } from '@/models';
+import { APSA, AfRetenus, Critere } from '@/models';
 import { ApsaSelectAnnee } from './ApsaSelectAnnee';
 export interface ApsaRetenu {
   '@id': string;
@@ -7,4 +7,5 @@ export interface ApsaRetenu {
   SituationEvaluation: String;
   AfRetenu: AfRetenus;
   ApsaSelectAnnee: ApsaSelectAnnee;
+  criteres: Critere[];
 }

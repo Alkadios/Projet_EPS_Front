@@ -38,7 +38,7 @@
                       :options="mesAPSAs"
                       optionLabel="Apsa.libelle"
                       optionValue="Apsa.id"
-                      placeholder="Ma Classe"
+                      placeholder="Mes sports"
                     />
                   </div>
                 </div>
@@ -51,13 +51,12 @@
                 <div id="mesEleves" class="col-md-4 p-2">
                   <Button style="margin-bottom: 1rem; width: 100%" label="Tous" />
                   <Listbox
+                    @change="reinitialiserIndicateur()"
                     v-model="monEleveSelect"
                     :options="mesEleves"
-                    :filter="true"
                     optionLabel="nom"
                     listStyle="max-height:250px"
                     style="width: 100%; overflow-y: scroll; max-height: 380px"
-                    filterPlaceholder="Recherche"
                   >
                     <template #option="monEleve">
                       <div class="Eleve-item">
@@ -67,27 +66,22 @@
                   </Listbox>
                 </div>
                 <div class="offset-md-1 col-md-7">
-                  <div class="card" id="CriteresEvaluations">
-                    <Divider align="center" type="dashed">
-                      <b>Center</b>
-                    </Divider>
-                    <p>
-                      At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum
-                      deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non
-                      provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum
-                      fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta
-                      nobis est eligendi optio cumque nihil impedit quo minus.
-                    </p>
-                    <Divider align="center" type="dashed">
-                      <b>Center</b>
-                    </Divider>
-                    <p>
-                      At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum
-                      deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non
-                      provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum
-                      fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta
-                      nobis est eligendi optio cumque nihil impedit quo minus.
-                    </p>
+                  <div id="CriteresEvaluations">
+                    <div class="card" v-for="monCritere in mesCriteres" :key="monCritere.id">
+                      <Divider align="center" type="dashed">
+                        <b>{{ monCritere.titre }}</b>
+                      </Divider>
+                      <div>
+                        <SelectButton
+                          class="d-flex justify-content-around"
+                          style="padding-bottom: 1rem"
+                          v-model="monIndicateur[monCritere.id]"
+                          @click="addEvaluation(monCritere)"
+                          :options="monCritere.Indicateur"
+                          optionLabel="libelle"
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -97,13 +91,7 @@
       </div>
       <div class="mt-3 ms-3">
         <Button label="Annuler" icon="pi pi-check" @click="verif()" autofocus></Button>
-        <Button
-          label="Terminer l'évaluation"
-          icon="pi pi-check"
-          style="left: 1rem"
-          @click="router.push('DeclinerAFRetenus')"
-          autofocus
-        ></Button>
+        <Button label="Terminer l'évaluation" icon="pi pi-check" style="left: 1rem" @click="verif()" autofocus></Button>
       </div>
       <div class="mb-3"></div>
       <div style="position: fixed; bottom: 0; right: 2rem">
@@ -124,33 +112,68 @@ import UtilisateurService from '@/services/UtilisateurService';
 import ApsaRetenuService from '@/services/ApsaRetenuService';
 import CritereService from '@/services/CritereService';
 import ClasseService from '@/services/ClasseService';
-import { ApsaSelectAnnee, Eleve } from '@/models';
+import { ApsaSelectAnnee, Critere, Eleve, EvaluationEleve, Indicateur } from '@/models';
 import { useRoute } from 'vue-router';
 import router from '@/router';
 
 const route = useRoute();
-const { criteres, fetchCriteres } = CritereService();
 const { apsasRetenusByEtablissementAndAnnee, fetchApsaRetenuByAnneeAndEtablissement } = ApsaRetenuService();
 const { classesByAnneeAndProfesseur, fetchClasseByAnneeAndProf } = ClasseService();
 const { etablissement, annee } = UtilisateurService();
 const isLoading = ref(false);
 
-const mesIndicateurs = ref([
-  { name: 'Test non réalisé', code: '0' },
-  { name: 'Maitrise insuffisante', code: '1' },
-  { name: 'Maitrise fragile', code: '2' },
-  { name: 'Maitrise satisfaisante', code: '3' },
-  { name: 'Très bonne maitrise', code: '4' },
-]);
-
 const mesEleves = ref<Eleve[]>([]);
 const mesAPSAs = ref<ApsaSelectAnnee[]>([]);
+const mesCriteres = ref<Critere[]>([]);
+const monIndicateur = ref([]);
 const maClasseSelect = ref();
 const monSportSelect = ref();
-const monEleveSelect = ref();
+const monEleveSelect = ref<Eleve>();
+const idIndicateurTrouve = ref<number>();
 
-async function verif() {
-  console.log('criteres : ', criteres.value);
+const monEvaluation = ref<newEvaluation>({ evaluationEleve: [] as newEvaluationEleve[] } as newEvaluation);
+interface newEvaluationEleve {
+  Indicateur: number;
+  Eleve: number;
+  autoEval: boolean;
+}
+interface newEvaluation {
+  Date: Date;
+  evaluationEleve: newEvaluationEleve[];
+}
+function verif() {}
+
+async function addEvaluation(critere: Critere) {
+  // if(monEvaluation.value.evaluationEleve.find(e => e.Indicateur))
+  // monEvaluation.value.evaluationEleve
+  if (checkIfCritereExist(critere)) {
+    console.log('critere trouvé');
+    const indexEvaluationEleve = monEvaluation.value.evaluationEleve.findIndex(
+      (e) => e.Indicateur === idIndicateurTrouve.value && e.Eleve === monEleveSelect.value?.id
+    );
+    monEvaluation.value.evaluationEleve.splice(indexEvaluationEleve, 1);
+  }
+  const monEvalEleve = {
+    Indicateur: monIndicateur.value[critere.id]?.id,
+    Eleve: monEleveSelect.value?.id,
+    autoEval: false,
+  } as newEvaluationEleve;
+  monEvaluation.value.evaluationEleve.push(monEvalEleve);
+
+  console.log(' monEvaluation : ', monEvaluation.value.evaluationEleve);
+}
+function checkIfCritereExist(critere: Critere): boolean {
+  const trouve = ref(false);
+  critere.Indicateur.forEach((indicateur) => {
+    const evalEleve = monEvaluation.value.evaluationEleve.find(
+      (e) => e.Indicateur === indicateur.id && monEleveSelect.value?.id === e.Eleve
+    );
+    if (evalEleve) {
+      trouve.value = true;
+      idIndicateurTrouve.value = evalEleve.Indicateur;
+    }
+  });
+  return trouve.value;
 }
 
 onMounted(async () => {
@@ -158,8 +181,8 @@ onMounted(async () => {
   if (annee) {
     await fetchClasseByAnneeAndProf(1, 1);
     await fetchApsaRetenuByAnneeAndEtablissement(1, 1);
-    await fetchCriteres();
   }
+
   isLoading.value = false;
 });
 
@@ -176,6 +199,17 @@ watch(
   }
 );
 
+watch(
+  () => monSportSelect.value,
+  () => {
+    if (monSportSelect.value) {
+      isLoading.value = true;
+      mesCriteres.value = getMesCriteres(monSportSelect.value);
+      isLoading.value = false;
+    }
+  }
+);
+
 function mesElevesByClasse(idClasse: number) {
   mesEleves.value = classesByAnneeAndProfesseur.value.find((a) => a.id === idClasse)!.eleves;
 }
@@ -188,5 +222,23 @@ function mesApsaByAnneeAndClasseAndEtablissement(idClasse: number) {
       }
     }
   });
+}
+
+function reinitialiserIndicateur() {
+  const evalEleve = monEvaluation.value.evaluationEleve.find((e) => e.Eleve === monEleveSelect.value?.id);
+  if (evalEleve) {
+    apsasRetenusByEtablissementAndAnnee.value
+      .find((a) => a.ApsaSelectAnnee.Apsa.id === monSportSelect.value)
+      ?.criteres.forEach((c) => (monIndicateur.value[c.id] = c.Indicateur.find((i) => evalEleve.Indicateur === i.id)));
+  } else {
+    apsasRetenusByEtablissementAndAnnee.value
+      .find((a) => a.ApsaSelectAnnee.Apsa.id === monSportSelect.value)
+      ?.criteres.forEach((c) => (monIndicateur.value[c.id] = {}));
+  }
+}
+
+function getMesCriteres(idApsaRetenu: number) {
+  reinitialiserIndicateur();
+  return apsasRetenusByEtablissementAndAnnee.value.find((a) => a.ApsaSelectAnnee.Apsa.id === idApsaRetenu)!.criteres;
 }
 </script>
