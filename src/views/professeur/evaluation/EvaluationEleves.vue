@@ -20,25 +20,27 @@
                   <div class="p-2">Mes Classes :</div>
                   <div>
                     <Dropdown
-                      v-model="maClasseSelect"
+                      v-model="classeSelectionner"
                       :options="classesByAnneeAndProfesseur"
                       optionLabel="libelleClasse"
-                      optionValue="id"
-                      placeholder="Ma Classe"
+                      dataKey="id"
+                      placeholder="Choisir une classe"
+                      @change="onClasseChange()"
                     />
                   </div>
                 </div>
               </div>
               <div class="col-md-5">
-                <div class="d-flex" v-if="maClasseSelect != null">
-                  <div class="p-2">Mes sports :</div>
+                <div class="d-flex" v-if="classeSelectionner != null">
+                  <div class="p-2">Mes Apsas :</div>
                   <div>
                     <Dropdown
-                      v-model="monSportSelect"
-                      :options="mesAPSAs"
-                      optionLabel="Apsa.libelle"
-                      optionValue="Apsa.id"
-                      placeholder="Mes sports"
+                      v-model="apsaRetenuSelectionner"
+                      :options="apsasRetenusByNiveauScolaire"
+                      optionLabel="ApsaSelectAnnee.Apsa.libelle"
+                      dataKey="id"
+                      placeholder="Choisir une Apsa"
+                      @change="onApsaRetenuChange()"
                     />
                   </div>
                 </div>
@@ -48,12 +50,11 @@
           <div id="myTableEleves">
             <div class="row">
               <div class="d-flex justify-content-start">
-                <div id="mesEleves" class="col-md-4 p-2">
+                <div id="elevesByClasse" class="col-md-4 p-2">
                   <Button style="margin-bottom: 1rem; width: 100%" label="Tous" />
                   <Listbox
-                    @change="reinitialiserIndicateur()"
-                    v-model="monEleveSelect"
-                    :options="mesEleves"
+                    v-model="eleveSelectionne"
+                    :options="elevesByClasse"
                     optionLabel="nom"
                     listStyle="max-height:250px"
                     style="width: 100%; overflow-y: scroll; max-height: 380px"
@@ -67,18 +68,18 @@
                 </div>
                 <div class="offset-md-1 col-md-7">
                   <div id="CriteresEvaluations">
-                    <div class="card" v-for="monCritere in mesCriteres" :key="monCritere.id">
+                    <div v-for="monCritere in criteresByApsaSelectionner" :key="monCritere.id" class="card">
                       <Divider align="center" type="dashed">
                         <b>{{ monCritere.titre }}</b>
                       </Divider>
                       <div>
-                        <SelectButton
-                          class="d-flex justify-content-around"
-                          style="padding-bottom: 1rem"
-                          v-model="monIndicateur[monCritere.id]"
-                          @click="addEvaluation(monCritere)"
-                          :options="monCritere.Indicateur"
-                          optionLabel="libelle"
+                        <Button
+                          v-for="indicateur of monCritere.Indicateur"
+                          :key="indicateur.id"
+                          :label="indicateur.libelle"
+                          :style="!checkIfIndicateurIsSelectionner(indicateur) ? 'background-color: bisque' : ''"
+                          :class="checkIfIndicateurIsSelectionner(indicateur) ? 'primary' : ''"
+                          @click="addIndicateurInEvaluation(monCritere, indicateur)"
                         />
                       </div>
                     </div>
@@ -90,8 +91,8 @@
         </div>
       </div>
       <div class="mt-3 ms-3">
-        <Button label="Annuler" icon="pi pi-check" @click="verif()" autofocus></Button>
-        <Button label="Terminer l'évaluation" icon="pi pi-check" style="left: 1rem" @click="verif()" autofocus></Button>
+        <Button label="Annuler" icon="pi pi-check" @click="verif()"></Button>
+        <Button label="Terminer l'évaluation" icon="pi pi-check" style="left: 1rem" @click="verif()"></Button>
       </div>
       <div class="mb-3"></div>
       <div style="position: fixed; bottom: 0; right: 2rem">
@@ -107,28 +108,39 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, toRaw } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import UtilisateurService from '@/services/UtilisateurService';
 import ApsaRetenuService from '@/services/ApsaRetenuService';
 import CritereService from '@/services/CritereService';
 import ClasseService from '@/services/ClasseService';
-import { ApsaSelectAnnee, Critere, Eleve, EvaluationEleve, Indicateur } from '@/models';
-import { useRoute } from 'vue-router';
-import router from '@/router';
+import {
+  ApsaSelectAnnee,
+  Critere,
+  Eleve,
+  EvaluationEleve,
+  Indicateur,
+  APSA,
+  Classe,
+  ApsaRetenu,
+  NiveauScolaire,
+} from '@/models';
 
 const route = useRoute();
+const router = useRouter();
+
 const { apsasRetenusByEtablissementAndAnnee, fetchApsaRetenuByAnneeAndEtablissement } = ApsaRetenuService();
 const { classesByAnneeAndProfesseur, fetchClasseByAnneeAndProf } = ClasseService();
 const { etablissement, annee } = UtilisateurService();
 const isLoading = ref(false);
 
-const mesEleves = ref<Eleve[]>([]);
-const mesAPSAs = ref<ApsaSelectAnnee[]>([]);
-const mesCriteres = ref<Critere[]>([]);
-const monIndicateur = ref([]);
-const maClasseSelect = ref();
-const monSportSelect = ref();
-const monEleveSelect = ref<Eleve>();
+const elevesByClasse = ref<Eleve[]>([]);
+const apsasRetenusByNiveauScolaire = ref<ApsaRetenu[]>([]);
+const criteresByApsaSelectionner = ref<Critere[]>([]);
+const indicateursEleveSelectionner = ref<indicateurEleve[]>([]);
+const classeSelectionner = ref<Classe>();
+const apsaRetenuSelectionner = ref<ApsaRetenu>();
+const eleveSelectionne = ref<Eleve>();
 const idIndicateurTrouve = ref<number>();
 
 const monEvaluation = ref<newEvaluation>({ evaluationEleve: [] as newEvaluationEleve[] } as newEvaluation);
@@ -141,104 +153,85 @@ interface newEvaluation {
   Date: Date;
   evaluationEleve: newEvaluationEleve[];
 }
+
+interface indicateurEleve {
+  critere: Critere;
+  indicateur: Indicateur;
+  eleve: Eleve;
+}
 function verif() {}
 
-async function addEvaluation(critere: Critere) {
-  // if(monEvaluation.value.evaluationEleve.find(e => e.Indicateur))
-  // monEvaluation.value.evaluationEleve
-  if (checkIfCritereExist(critere)) {
-    console.log('critere trouvé');
-    const indexEvaluationEleve = monEvaluation.value.evaluationEleve.findIndex(
-      (e) => e.Indicateur === idIndicateurTrouve.value && e.Eleve === monEleveSelect.value?.id
-    );
-    monEvaluation.value.evaluationEleve.splice(indexEvaluationEleve, 1);
-  }
-  const monEvalEleve = {
-    Indicateur: monIndicateur.value[critere.id]?.id,
-    Eleve: monEleveSelect.value?.id,
-    autoEval: false,
-  } as newEvaluationEleve;
-  monEvaluation.value.evaluationEleve.push(monEvalEleve);
+async function addIndicateurInEvaluation(unCritere: Critere, unIndicateur: Indicateur) {
+  const nouveauIndicateurEleve = {
+    critere: unCritere,
+    indicateur: unIndicateur,
+    eleve: eleveSelectionne.value,
+  } as indicateurEleve;
 
-  console.log(' monEvaluation : ', monEvaluation.value.evaluationEleve);
-}
-function checkIfCritereExist(critere: Critere): boolean {
-  const trouve = ref(false);
-  critere.Indicateur.forEach((indicateur) => {
-    const evalEleve = monEvaluation.value.evaluationEleve.find(
-      (e) => e.Indicateur === indicateur.id && monEleveSelect.value?.id === e.Eleve
-    );
-    if (evalEleve) {
-      trouve.value = true;
-      idIndicateurTrouve.value = evalEleve.Indicateur;
-    }
-  });
-  return trouve.value;
+  const indexIndicateurEleveAlreadyExist = indicateursEleveSelectionner.value.findIndex(
+    (ies) =>
+      ies.critere.id === nouveauIndicateurEleve.critere.id &&
+      ies.eleve.id === nouveauIndicateurEleve.eleve.id &&
+      ies.indicateur.id != nouveauIndicateurEleve.indicateur.id
+  );
+  //Si un indicateurEleve existe déjà (même élève & même critère mais l'indicateur est différent) -> on le remplace
+  if (indexIndicateurEleveAlreadyExist != -1) {
+    indicateursEleveSelectionner.value[indexIndicateurEleveAlreadyExist] = nouveauIndicateurEleve;
+  } else {
+    // Sinon on l'ajoute
+    indicateursEleveSelectionner.value.push(nouveauIndicateurEleve);
+  }
 }
 
 onMounted(async () => {
   isLoading.value = true;
-  if (annee) {
-    await fetchClasseByAnneeAndProf(1, 1);
-    await fetchApsaRetenuByAnneeAndEtablissement(1, 1);
-  }
 
+  await fetchClasseByAnneeAndProf(1, 1);
+  await fetchApsaRetenuByAnneeAndEtablissement(1, 1);
   isLoading.value = false;
 });
 
-watch(
-  () => maClasseSelect.value,
-  async () => {
-    if (maClasseSelect.value) {
-      isLoading.value = true;
-      mesElevesByClasse(maClasseSelect.value);
-      mesApsaByAnneeAndClasseAndEtablissement(maClasseSelect.value);
-      isLoading.value = false;
-      console.log('apsasRetenusByEtablissementAndAnnee : ', apsasRetenusByEtablissementAndAnnee.value);
-    }
+function onClasseChange() {
+  if (classeSelectionner.value) {
+    isLoading.value = true;
+    elevesByClasse.value = getElevesByClasse(classeSelectionner.value)!;
+    apsasRetenusByNiveauScolaire.value = getApsasRetenusByNiveauScolaire(classeSelectionner.value.NiveauScolaire);
+    isLoading.value = false;
   }
-);
-
-watch(
-  () => monSportSelect.value,
-  () => {
-    if (monSportSelect.value) {
-      isLoading.value = true;
-      mesCriteres.value = getMesCriteres(monSportSelect.value);
-      isLoading.value = false;
-    }
-  }
-);
-
-function mesElevesByClasse(idClasse: number) {
-  mesEleves.value = classesByAnneeAndProfesseur.value.find((a) => a.id === idClasse)!.eleves;
 }
-
-function mesApsaByAnneeAndClasseAndEtablissement(idClasse: number) {
-  apsasRetenusByEtablissementAndAnnee.value.forEach((a) => {
-    if (idClasse) {
-      if (a.AfRetenu.ChoixAnnee.Niveau === '/api/niveau_scolaires/' + idClasse) {
-        mesAPSAs.value.push(a.ApsaSelectAnnee);
-      }
-    }
-  });
-}
-
-function reinitialiserIndicateur() {
-  const evalEleve = monEvaluation.value.evaluationEleve.find((e) => e.Eleve === monEleveSelect.value?.id);
-  if (evalEleve) {
-    apsasRetenusByEtablissementAndAnnee.value
-      .find((a) => a.ApsaSelectAnnee.Apsa.id === monSportSelect.value)
-      ?.criteres.forEach((c) => (monIndicateur.value[c.id] = c.Indicateur.find((i) => evalEleve.Indicateur === i.id)));
-  } else {
-    apsasRetenusByEtablissementAndAnnee.value
-      .find((a) => a.ApsaSelectAnnee.Apsa.id === monSportSelect.value)
-      ?.criteres.forEach((c) => (monIndicateur.value[c.id] = {}));
+function onApsaRetenuChange() {
+  if (apsaRetenuSelectionner.value) {
+    isLoading.value = true;
+    criteresByApsaSelectionner.value = getcriteresByApsaSelectionner(apsaRetenuSelectionner.value);
+    isLoading.value = false;
   }
 }
 
-function getMesCriteres(idApsaRetenu: number) {
-  reinitialiserIndicateur();
-  return apsasRetenusByEtablissementAndAnnee.value.find((a) => a.ApsaSelectAnnee.Apsa.id === idApsaRetenu)!.criteres;
+function getElevesByClasse(uneClasse: Classe) {
+  return classesByAnneeAndProfesseur.value.find((classeProf) => classeProf.id === uneClasse.id)?.eleves;
+}
+
+function getApsasRetenusByNiveauScolaire(unNiveauScolaire: string | NiveauScolaire) {
+  return apsasRetenusByEtablissementAndAnnee.value
+    .filter((apsaRetenu) => apsaRetenu.AfRetenu.ChoixAnnee.Niveau === unNiveauScolaire)
+    .map((apsaR) => {
+      return toRaw(apsaR);
+    });
+}
+
+function checkIfIndicateurIsSelectionner(unIndicateur: Indicateur) {
+  if (
+    indicateursEleveSelectionner.value.find(
+      (ies) => toRaw(ies).indicateur.id === unIndicateur.id && ies.eleve.id === eleveSelectionne.value?.id
+    )
+  )
+    return true;
+  else return false;
+}
+
+function getcriteresByApsaSelectionner(ApsaRetenu: ApsaRetenu) {
+  return apsasRetenusByEtablissementAndAnnee.value.find(
+    (a) => a.ApsaSelectAnnee['@id'] === ApsaRetenu.ApsaSelectAnnee['@id']
+  )!.criteres;
 }
 </script>

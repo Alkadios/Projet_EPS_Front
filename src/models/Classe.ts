@@ -6,7 +6,7 @@ export interface Classe {
   '@id': string;
   id: number;
   libelleClasse: string;
-  NiveauScolaire: NiveauScolaire;
+  NiveauScolaire: NiveauScolaire | string;
   Annee: Annee;
   etablissement: Etablissement;
   eleves: Eleve[];
