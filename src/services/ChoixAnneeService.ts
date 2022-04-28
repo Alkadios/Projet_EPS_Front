@@ -11,6 +11,9 @@ export default function ApsaSelectAnneeService() {
   async function saveChoixAnnee(champApprentissage: string, Niveau: string, Annee: string) {
     await store.dispatch('ChoixAnneeModule/saveChoixAnnee', { champApprentissage, Niveau, Annee });
   }
+  async function fetchAllChoixAnneeByAnneeAndEtablissement(champApprentissage: string, Niveau: string, Annee: string) {
+    await store.dispatch('ChoixAnneeModule/saveChoixAnnee', { champApprentissage, Niveau, Annee });
+  }
 
   return {
     choixAnnee,
