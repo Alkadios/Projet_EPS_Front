@@ -9,6 +9,22 @@ export default function EleveService() {
     await store.dispatch('EleveModule/fetchAllEleves');
   }
 
+  async function fetchEleveById(idEleve: number) {
+    await store.dispatch('EleveModule/fetchEleveById',{
+      idEleve: idEleve,
+    });
+  }
+
+  const eleveById = computed((): Eleve => {
+    return store.getters['EleveModule/getEleveById'];
+  });
+
+  async function deleteEleve(idEleve: number) {
+    await store.dispatch('EleveModule/deleteEleve', {
+      idEleve: idEleve,
+    });
+  }
+
   const eleves = computed((): Eleve[] => {
     return store.getters['EleveModule/getEleves'];
   });
@@ -41,9 +57,41 @@ export default function EleveService() {
     });
   }
 
+  async function updateEleve(
+    idEleve: number,
+    email: string,
+    roles:string,
+    password:string,
+    nom: string,
+    prenom: string,
+    telephone: string,
+    mailParent1: string,
+    mailParent2: string,
+    sexeEleve: string,
+    etablissement: Etablissement
+  ) {
+    await store.dispatch('EleveModule/updateEleve', {
+      idEleve: idEleve,
+      email,
+      roles,
+      password,
+      nom,
+      prenom,
+      telephone,
+      mailParent1,
+      mailParent2,
+      sexeEleve,
+      etablissement
+    });
+  }
+
   return {
     saveEleve,
     fetchAllEleves,
+    fetchEleveById,
+    deleteEleve,
+    updateEleve,
     eleves,
+    eleveById
   };
 }

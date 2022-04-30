@@ -9,6 +9,7 @@ export default {
   state(): EleveState {
     return {
       eleves: [] as Eleve[],
+      eleveById: {} as Eleve,
     };
   },
   mutations,
