@@ -4,5 +4,5 @@ export interface NiveauScolaire {
   '@id': string;
   id: number | string;
   libelle: string;
-  cycle: Cycle;
+  cycle?: Cycle;
 }

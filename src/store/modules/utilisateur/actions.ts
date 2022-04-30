@@ -1,7 +1,9 @@
 import { ActionContext } from 'vuex';
 import UtilisateurAPI from '@/api/UtilisateurAPI';
+import AnneeAPI from '@/api/AnneeAPI';
+import EtablissementAPI from '@/api/EtablissementAPI';
 import UtilisateurState from './stateInterface';
-import { Utilisateur } from '@/models';
+import { Annee, Utilisateur } from '@/models';
 import jwtDecode from 'jwt-decode';
 
 export default {
@@ -39,6 +41,26 @@ export default {
   // },
   async storeToken(context: ActionContext<UtilisateurState, any>, payload: { token: string }) {
     context.commit('setToken', payload.token);
+  },
+  async storeAnneeEnConfig(context: ActionContext<UtilisateurState, any>, payload: { anneeEnConfig: Annee }) {
+    localStorage.setItem('anneeEnConfig', payload.anneeEnConfig.id.toString());
+    context.commit('setAnneeEnConfig', payload.anneeEnConfig);
+  },
+  async fetchAnneeEnCours(context: ActionContext<UtilisateurState, any>) {
+    const response = await AnneeAPI.fetchAnneeEnCours();
+    if (response.data['hydra:totalItems'] > 0) {
+      context.commit('setAnneeEnCours', response.data['hydra:member'][0]);
+    } else {
+      context.commit('setAnneeEnCours', {});
+    }
+  },
+  async fetchEtablissementById(context: ActionContext<UtilisateurState, any>, payload: { idEtablissement: number }) {
+    const response = await EtablissementAPI.fetchEtablissementById(payload.idEtablissement);
+    if (response.status === 200) {
+      context.commit('setEtablissement', response.data);
+    } else {
+      context.commit('setEtablissement', {});
+    }
   },
   // async storeOrganismesUtilisateur(
   //   context: ActionContext<UtilisateurState, any>,

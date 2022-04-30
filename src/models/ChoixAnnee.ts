@@ -1,11 +1,9 @@
-import { ChampApprentissage } from '@/models';
-import { Annee } from './Annee';
-import { NiveauScolaire } from './NiveauScolaire';
-
+import { ChampApprentissage, AfRetenus, NiveauScolaire, Annee } from '@/models';
 export interface ChoixAnnee {
   '@id': string;
   id: number;
-  Annee: String;
-  Niveau: String | NiveauScolaire;
+  Annee: string;
+  Niveau: string | NiveauScolaire;
   champApprentissage: ChampApprentissage;
+  afRetenus: AfRetenus[];
 }

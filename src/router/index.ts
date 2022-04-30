@@ -51,9 +51,9 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('../views/coordinateur/personnalisationEPS/IndicateurAF.vue'),
   },
   {
-    path: '/Annee',
-    name: 'Annnee',
-    component: () => import('../views/coordinateur/personnalisationEPS/Annee.vue'),
+    path: '/coordinateur/TableauDeBord',
+    name: 'TableauDeBordConfig',
+    component: () => import('../views/coordinateur/personnalisationEPS/TableauDeBordConfig.vue'),
   },
   {
     path: '/Profil',

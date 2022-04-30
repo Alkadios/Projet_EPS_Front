@@ -10,7 +10,7 @@
                 Personnalisation de l'équipe EPS <br />
                 au
               </p>
-              <h4 class="text-dark mb-4">{{ etablissement.nomEtablissement }}</h4>
+              <h4 class="text-dark mb-4">{{ etablissement.nom }}</h4>
             </div>
             <div class="d-flex justify-content-center align-items-center align-content-center">
               <div class="col-3">
@@ -74,7 +74,7 @@ const route = useRoute();
 const { apsaSelectAnneeByAnnee, fetchAllApsaSelectAnneeByAnnee } = ApsaSelectAnneeService();
 const { afRetenus, fetchAllAfRetenus } = AfRetenusService();
 const { apsaRetenu, apsasRetenus, saveApsaRetenu, fetchAllApsaRetenu } = ApsaRetenuService();
-const { etablissement, annee } = UtilisateurService();
+const { etablissement, anneeEnConfig } = UtilisateurService();
 
 const apsaSelects = ref<ApsaSelectAnnee[]>([]);
 const monAPSA = ref<ApsaRetenu>();
@@ -110,7 +110,7 @@ onMounted(async () => {
   isLoading.value = true;
   await fetchAllAfRetenus();
   await fetchAllApsaRetenu();
-  await fetchAllApsaSelectAnneeByAnnee(annee.value.id);
+  await fetchAllApsaSelectAnneeByAnnee(anneeEnConfig.value.id);
   apsaSelectAnneeByAnnee.value.forEach((a) => {
     if (route.query.idCA) {
       if (a.Ca.id === parseInt(route.query.idCA.toString())) {

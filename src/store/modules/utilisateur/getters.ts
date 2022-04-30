@@ -10,6 +10,12 @@ export default {
   getEtablissement(state: UtilisateurState) {
     return state.etablissement;
   },
+  getAnneeEnConfig(state: UtilisateurState) {
+    return state.anneeEnConfig;
+  },
+  getAnneeEnCours(state: UtilisateurState) {
+    return state.anneeEnCours;
+  },
   // getOrganismesUtilisateur(state: UtilisateurState) {
   //   return state.organismesUtilisateur;
   // },
