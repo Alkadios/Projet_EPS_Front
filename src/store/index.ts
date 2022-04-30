@@ -9,15 +9,12 @@ import ApsaSelectAnneeModule from '@/store/modules/ApsaSelectAnnee/index';
 import ChoixAnneeModule from '@/store/modules/choixAnnee/index';
 import ApsaRetenuModule from '@/store/modules/ApsaRetenu/index';
 import CritereModule from '@/store/modules/critere/index';
-<<<<<<< HEAD
 import ProfesseurClassesModule from '@/store/modules/professeurClasses/index';
 import EleveModule from '@/store/modules/eleve/index';
 import ClasseModule from '@/store/modules/classe/index';
 import EvaluationEleveModule from '@/store/modules/evaluationEleve/index';
-=======
 import IndicateurModule from '@/store/modules/indicateur/index';
 import AnneeModule from '@/store/modules/annee/index';
->>>>>>> dev
 
 const keyLocalStorage = 'ocpepsstore';
 
@@ -42,14 +39,11 @@ export default createStore({
     ChoixAnneeModule,
     ApsaRetenuModule,
     CritereModule,
-<<<<<<< HEAD
     ProfesseurClassesModule,
     EleveModule,
     ClasseModule,
     EvaluationEleveModule,
-=======
     IndicateurModule,
     AnneeModule,
->>>>>>> dev
   },
 });

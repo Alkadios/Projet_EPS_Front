@@ -139,7 +139,7 @@ const { apsasRetenusByEtablissementAndAnnee, fetchApsaRetenuByAnneeAndEtablissem
 const { classesByAnneeAndProfesseur, fetchClasseByAnneeAndProf } = ClasseService();
 const { apsaSelectAnneeByAnneeAndEtablissement, fetchAllApsaSelectAnneeByAnneeAndEtablissement } =
   ApsaSelectAnneeService();
-const { etablissement, annee } = UtilisateurService();
+const { etablissement, anneeEnCours } = UtilisateurService();
 const isLoading = ref(false);
 
 const elevesByClasse = ref<Eleve[]>([]);
@@ -263,5 +263,11 @@ function checkIfIndicateurIsSelectionner(unIndicateur: Indicateur) {
   )
     return true;
   else return false;
+}
+
+function getEvaluationEleveForRequest(listeIndicateurEleve: indicateurEleve[]) {
+  return listeIndicateurEleve.map((ie) => {
+    return { Indicateur: ie.indicateur.id, Eleve: ie.eleve.id, AutoEval: false };
+  });
 }
 </script>
