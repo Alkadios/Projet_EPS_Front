@@ -35,12 +35,12 @@
                   <div class="p-2">Mes Apsas :</div>
                   <div>
                     <Dropdown
-                      v-model="apsaRetenuSelectionner"
-                      :options="apsasRetenusByNiveauScolaire"
-                      optionLabel="ApsaSelectAnnee.Apsa.libelle"
+                      v-model="apsaSelectionner"
+                      :options="listeApsa"
+                      optionLabel="libelle"
                       dataKey="id"
                       placeholder="Choisir une Apsa"
-                      @change="onApsaRetenuChange()"
+                      @change="onApsaChange()"
                     />
                   </div>
                 </div>
@@ -50,15 +50,14 @@
           <div>
             <div class="p-5">
               <div class="col-md-12">
-                <div class="d-flex" v-if="apsaRetenuSelectionner != null">
+                <div class="d-flex" v-if="apsaSelectionner != null">
                   <div class="p-2">Mes Situation d'évaluation :</div>
                   <Dropdown
-                    v-model="ApsaRetenuBySituationEvaluation"
+                    v-model="apsaRetenuSelectionner"
                     :options="situationsEvaluationByNiveauScolaireAndApsa"
                     optionLabel="SituationEvaluation"
                     dataKey="id"
                     placeholder="Choisir une situation d'évaluation"
-                    @change="onSituationEvaluationChange()"
                   />
                 </div>
               </div>
@@ -67,7 +66,7 @@
           <div id="myTableEleves">
             <div class="row">
               <div class="d-flex justify-content-start">
-                <div id="elevesByClasse" v-if="ApsaRetenuBySituationEvaluation != null" class="col-md-4 p-2">
+                <div id="elevesByClasse" v-if="apsaRetenuSelectionner != null" class="col-md-4 p-2">
                   <Button style="margin-bottom: 1rem; width: 100%" label="Tous" />
                   <Listbox
                     v-model="eleveSelectionne"
@@ -84,8 +83,8 @@
                   </Listbox>
                 </div>
                 <div class="offset-md-1 col-md-7">
-                  <div id="CriteresEvaluations" v-if="ApsaRetenuBySituationEvaluation != null">
-                    <div v-for="monCritere in criteresByApsaSelectionner" :key="monCritere.id" class="card">
+                  <div id="CriteresEvaluations" v-if="apsaRetenuSelectionner != null">
+                    <div v-for="monCritere in apsaRetenuSelectionner.criteres" :key="monCritere.id" class="card">
                       <Divider align="center" type="dashed">
                         <b>{{ monCritere.titre }}</b>
                       </Divider>
@@ -125,13 +124,13 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, toRaw } from 'vue';
+import { ref, onMounted, toRaw, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import UtilisateurService from '@/services/UtilisateurService';
 import ApsaRetenuService from '@/services/ApsaRetenuService';
 import ApsaSelectAnneeService from '@/services/ApsaSelectAnneeService';
 import ClasseService from '@/services/ClasseService';
-import { Critere, Eleve, Indicateur, Classe, ApsaRetenu, NiveauScolaire } from '@/models';
+import { Critere, Eleve, Indicateur, Classe, ApsaRetenu, NiveauScolaire, APSA } from '@/models';
 
 const route = useRoute();
 const router = useRouter();
@@ -146,14 +145,15 @@ const isLoading = ref(false);
 const elevesByClasse = ref<Eleve[]>([]);
 const apsasRetenusByNiveauScolaire = ref<ApsaRetenu[]>([]);
 const situationsEvaluationByNiveauScolaireAndApsa = ref<ApsaRetenu[]>([]);
-const criteresByApsaSelectionner = ref<Critere[]>([]);
+const criteresByApsaRetenuSelectionner = ref<Critere[]>([]);
 const indicateursEleveSelectionner = ref<indicateurEleve[]>([]);
 const ApsaRetenuBySituationEvaluation = ref<ApsaRetenu>();
 const classeSelectionner = ref<Classe>();
+const apsaSelectionner = ref<APSA>();
 const apsaRetenuSelectionner = ref<ApsaRetenu>();
 const eleveSelectionne = ref<Eleve>();
 const idIndicateurTrouve = ref<number>();
-
+const listeApsa = ref<APSA[]>([]);
 const monEvaluation = ref<newEvaluation>({ evaluationEleve: [] as newEvaluationEleve[] } as newEvaluation);
 interface newEvaluationEleve {
   Indicateur: number;
@@ -170,10 +170,11 @@ interface indicateurEleve {
   indicateur: Indicateur;
   eleve: Eleve;
 }
+
 function verif() {
   console.log('elevesByClasse : ', elevesByClasse.value);
   console.log('apsasRetenusByNiveauScolaire : ', apsasRetenusByNiveauScolaire.value);
-  console.log('criteresByApsaSelectionner : ', criteresByApsaSelectionner.value);
+  console.log('criteresByApsaRetenuSelectionner : ', criteresByApsaRetenuSelectionner.value);
   console.log('indicateursEleveSelectionner : ', indicateursEleveSelectionner.value);
   console.log('classeSelectionner : ', classeSelectionner.value);
   console.log('apsaRetenuSelectionner : ', apsaRetenuSelectionner.value);
@@ -216,28 +217,28 @@ function onClasseChange() {
   if (classeSelectionner.value) {
     isLoading.value = true;
     elevesByClasse.value = getElevesByClasse(classeSelectionner.value)!;
+
     apsasRetenusByNiveauScolaire.value = getApsasRetenusByNiveauScolaire(classeSelectionner.value.NiveauScolaire);
-    isLoading.value = false;
-  }
-}
 
-function onSituationEvaluationChange() {
-  if (ApsaRetenuBySituationEvaluation.value) {
-    isLoading.value = true;
-    criteresByApsaSelectionner.value = getcriteresByApsaSelectionner(ApsaRetenuBySituationEvaluation.value);
-    isLoading.value = false;
-  }
-}
+    listeApsa.value = [];
+    //Evite les doublons si une apsa à plusiers situation d'évaluation
 
-function onApsaRetenuChange() {
-  if (apsaRetenuSelectionner.value) {
-    isLoading.value = true;
-    situationsEvaluationByNiveauScolaireAndApsa.value = [];
-    apsasRetenusByNiveauScolaire.value.forEach((a) => {
-      if (a.ApsaSelectAnnee['@id'] === apsaRetenuSelectionner.value?.ApsaSelectAnnee['@id']) {
-        situationsEvaluationByNiveauScolaireAndApsa.value.push(a);
+    apsasRetenusByNiveauScolaire.value.forEach((ar) => {
+      if (!listeApsa.value.find((a) => a.id === ar.ApsaSelectAnnee.Apsa.id)) {
+        listeApsa.value.push(ar.ApsaSelectAnnee.Apsa);
       }
     });
+    isLoading.value = false;
+  }
+}
+
+function onApsaChange() {
+  if (apsaSelectionner.value) {
+    isLoading.value = true;
+
+    situationsEvaluationByNiveauScolaireAndApsa.value = apsasRetenusByNiveauScolaire.value.filter(
+      (ar) => ar.ApsaSelectAnnee.Apsa.id === apsaSelectionner.value?.id
+    );
     isLoading.value = false;
   }
 }
@@ -262,11 +263,5 @@ function checkIfIndicateurIsSelectionner(unIndicateur: Indicateur) {
   )
     return true;
   else return false;
-}
-
-function getcriteresByApsaSelectionner(ApsaRetenu: ApsaRetenu) {
-  return apsasRetenusByEtablissementAndAnnee.value.find(
-    (a) => a.ApsaSelectAnnee['@id'] === ApsaRetenu.ApsaSelectAnnee['@id']
-  )!.criteres;
 }
 </script>
