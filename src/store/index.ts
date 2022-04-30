@@ -12,6 +12,7 @@ import CritereModule from '@/store/modules/critere/index';
 import ProfesseurClassesModule from '@/store/modules/professeurClasses/index';
 import EleveModule from '@/store/modules/eleve/index';
 import ClasseModule from '@/store/modules/classe/index';
+import EvaluationEleveModule from '@/store/modules/evaluationEleve/index';
 
 const keyLocalStorage = 'epsstore';
 
@@ -39,5 +40,6 @@ export default createStore({
     ProfesseurClassesModule,
     EleveModule,
     ClasseModule,
+    EvaluationEleveModule,
   },
 });

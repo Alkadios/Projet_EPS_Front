@@ -31,6 +31,22 @@ export default {
       //throw new Error(response.data.message);
     }
   },
+
+  async fetchAllApsaSelectAnneeByAnneeAndEtablissement(
+    context: ActionContext<ApsaSelectAnneeState, any>,
+    payload: { idAnnee: number; idEtablissement: number }
+  ) {
+    const response = await ApsaSelectAnneeAPI.fetchAllApsaSelectAnneeByAnneeAndEtablissement(
+      payload.idAnnee,
+      payload.idEtablissement
+    );
+    if (response.data['hydra:totalItems'] > 0)
+      context.commit('setApsaSelectAnneeByAnneeAndEtablissement', response.data['hydra:member']);
+    else {
+      context.commit('setApsaSelectAnneeByAnneeAndEtablissement', []);
+      //throw new Error(response.data.message);
+    }
+  },
   async saveApsaSelectAnnee(
     context: ActionContext<ApsaSelectAnneeState, any>,
     payload: {

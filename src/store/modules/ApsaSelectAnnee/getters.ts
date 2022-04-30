@@ -7,4 +7,7 @@ export default {
   getApsaSelectAnneeByAnneeAndClasse(state: ApsaSelectAnneeState) {
     return state.apsaSelectAnneeByAnneeAndClasse;
   },
+  getApsaSelectAnneeByAnneeAndEtablissement(state: ApsaSelectAnneeState) {
+    return state.apsaSelectAnneeByAnneeAndEtablissement;
+  },
 };

@@ -8,4 +8,7 @@ export default {
   setApsaSelectAnneeByAnneeAndClasse(state: ApsaSelectAnneeState, payload: ApsaSelectAnnee[]) {
     state.apsaSelectAnneeByAnneeAndClasse = payload;
   },
+  setApsaSelectAnneeByAnneeAndEtablissement(state: ApsaSelectAnneeState, payload: ApsaSelectAnnee[]) {
+    state.apsaSelectAnneeByAnneeAndEtablissement = payload;
+  },
 };
