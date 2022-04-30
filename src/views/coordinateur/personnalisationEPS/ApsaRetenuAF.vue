@@ -143,7 +143,12 @@ async function ajouterAfsRetenus() {
   if (selectedAfs.value.length > 0) {
     if (!verifFormulaire()) {
       let monNiveau = '/api/niveau_scolaires/' + niveauScolaireSelectionne.value?.id;
-      await saveChoixAnnee(selectedCa.value?.['@id']!, monNiveau, anneeEnConfig.value['@id']);
+      await saveChoixAnnee(
+        selectedCa.value?.['@id']!,
+        monNiveau,
+        anneeEnConfig.value['@id'],
+        etablissement.value['@id']
+      );
       selectedAfs.value.forEach(async (af: AF) => {
         await saveAfRetenu(choixAnnee.value['@id'], af['@id']);
       });

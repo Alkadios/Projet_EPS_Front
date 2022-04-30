@@ -4,7 +4,12 @@ import { ResponseModel } from '@/models';
 import { apiConfig } from '@/config/UtilisateurConfig';
 
 export default {
-  async saveChoixAnnee(payload: { champApprentissage: string; Niveau: string; Annee: string }): Promise<AxiosResponse> {
+  async saveChoixAnnee(payload: {
+    champApprentissage: string;
+    Niveau: string;
+    Annee: string;
+    etablissement: string;
+  }): Promise<AxiosResponse> {
     return axios.post(`${ApiURLChoixAnnee}`, payload, apiConfig.value);
   },
   async fetchAllChoixAnneeByAnneeAndEtablissement(

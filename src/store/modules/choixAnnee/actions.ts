@@ -5,7 +5,7 @@ import ChoixAnneeState from './stateInterface';
 export default {
   async saveChoixAnnee(
     context: ActionContext<ChoixAnneeState, any>,
-    payload: { champApprentissage: string; Niveau: string; Annee: string }
+    payload: { champApprentissage: string; Niveau: string; Annee: string; etablissement: string }
   ) {
     const response = await ChoixAnneeAPI.saveChoixAnnee(payload);
     if (response.status === 201) {
