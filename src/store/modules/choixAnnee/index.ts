@@ -9,6 +9,7 @@ export default {
   state(): ChoixAnneeState {
     return {
       choixAnnee: {} as ChoixAnnee,
+      choixAnneeByAnneeAndEtablissement: [] as ChoixAnnee[],
     };
   },
   mutations,

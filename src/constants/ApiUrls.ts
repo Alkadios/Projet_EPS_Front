@@ -10,3 +10,5 @@ export const ApiURLChoixAnnee = `${ApiUrl}/choix_annees`;
 export const ApsaRetenuAPI = `${ApiUrl}/apsa_retenus`;
 export const ApiCritere = `${ApiUrl}/criteres`;
 export const ApiIndicateur = `${ApiUrl}/indicateurs`;
+export const ApiAnnee = `${ApiUrl}/annees`;
+export const ApiEtablissement = `${ApiUrl}/etablissements`;
