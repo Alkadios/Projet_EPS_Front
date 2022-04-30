@@ -1,13 +1,13 @@
 <template>
-  <Dialog header="Ajouter un indicateur" v-model:visible="displayBasic" :style="{ width: '50vw' }">
+  <Dialog header="Ajouter un critère" v-model:visible="displayBasic" :style="{ width: '50vw' }">
     <div class="row" style="place-content: center">
       <div class="col-8">
         <Card>
           <template #title>
-            <InputText id="Title" v-model="monTitleCritere" type="text" placeholder="Titre" />
+            <InputText id="Title" v-model="nouveauCritere.titre" type="text" placeholder="Titre" />
           </template>
           <template #content>
-            <Editor v-model="maDescriptionCritere" editorStyle="height: 130px" placeholder="Entrez vos critères">
+            <Editor v-model="nouveauCritere.description" editorStyle="height: 130px" placeholder="Entrez vos critères">
               <template v-slot:toolbar>
                 <span class="ql-formats">
                   <button class="ql-list" value="bullet" type="button"></button>
@@ -18,7 +18,7 @@
               </template>
             </Editor>
             <div style="margin-top: 1.5rem">
-              <InputText id="UrlVideo" v-model="monUrlVideo" type="text" placeholder="URL vidéo" />
+              <InputText id="UrlVideo" v-model="nouveauCritere.url_video" type="text" placeholder="URL vidéo" />
             </div>
             <div class="row" style="margin-top: 1.5rem">
               <div class="col-3">
@@ -27,7 +27,7 @@
               <div class="col-9">
                 <FileUpload
                   v-if="!imageCritereIsSelected"
-                  v-model="imageCritere"
+                  v-model="nouveauCritere.image"
                   mode="basic"
                   accept="image/*"
                   :maxFileSize="1000000"
@@ -36,7 +36,7 @@
                 />
                 <img
                   v-else
-                  :src="`data:${nouvelleImageCritere.type};base64,` + imageCritere"
+                  :src="`data:${nouvelleImageCritere.type};base64,` + nouveauCritere.image"
                   style="max-width: 10rem; max-height: 10rem"
                   alt="Logo organisme"
                 />
@@ -54,7 +54,65 @@
     </div>
     <template #footer>
       <Button label="No" icon="pi pi-times" @click="closeBasic" class="p-button-text" />
-      <Button label="Oui" icon="pi pi-check" @click="AddCritere" autofocus />
+      <Button label="Yes" icon="pi pi-check" @click="addCritere" autofocus />
+    </template>
+  </Dialog>
+  <Dialog header="Modifier un critère" v-model:visible="displayEdit" :style="{ width: '50vw' }">
+    <div class="row" style="place-content: center">
+      <div class="col-8">
+        <Card>
+          <template #title>
+            <InputText id="Title" v-model="nouveauCritere.titre" type="text" placeholder="Titre" />
+          </template>
+          <template #content>
+            <Editor v-model="nouveauCritere.description" editorStyle="height: 130px" placeholder="Entrez vos critères">
+              <template v-slot:toolbar>
+                <span class="ql-formats">
+                  <button class="ql-list" value="bullet" type="button"></button>
+                  <button class="ql-bold" v-tooltip.bottom="'Bold'"></button>
+                  <button class="ql-italic" v-tooltip.bottom="'Italic'"></button>
+                  <button class="ql-underline" v-tooltip.bottom="'Underline'"></button>
+                </span>
+              </template>
+            </Editor>
+            <div style="margin-top: 1.5rem">
+              <InputText id="UrlVideo" v-model="nouveauCritere.url_video" type="text" placeholder="URL vidéo" />
+            </div>
+            <div class="row" style="margin-top: 1.5rem">
+              <div class="col-3">
+                <p>Image :</p>
+              </div>
+              <div class="col-9">
+                <FileUpload
+                  v-if="!imageCritereIsSelected"
+                  v-model="nouveauCritere.image"
+                  mode="basic"
+                  accept="image/*"
+                  :maxFileSize="1000000"
+                  @select="onPhotoChange"
+                  :showUploadButton="false"
+                />
+                <img
+                  v-else
+                  :src="`data:${nouvelleImageCritere.type};base64,` + nouveauCritere.image"
+                  style="max-width: 10rem; max-height: 10rem"
+                  alt="Logo organisme"
+                />
+                <Button
+                  v-if="imageCritereIsSelected"
+                  icon="pi pi-trash"
+                  class="p-button-rounded p-button-danger"
+                  @click="supprimerImageCritere"
+                />
+              </div>
+            </div>
+          </template>
+        </Card>
+      </div>
+    </div>
+    <template #footer>
+      <Button label="Annuler" icon="pi pi-times" @click="closeEdit" class="p-button-text" />
+      <Button label="Modifier" icon="pi pi-check" @click="closeEdit(), editCritere(nouveauCritere)" autofocus> </Button>
     </template>
   </Dialog>
   <div class="card shadow-lg o-hidden border-0 my-5">
@@ -72,42 +130,37 @@
             </div>
           </div>
         </div>
-        <div class="mb-3">
-          <div class="p-3">
-            <label style="margin-left: 1rem" for="situation-evaluation"
-              >Description de la situation d'évaluation :</label
-            >
-          </div>
-        </div>
+        <div class="mb-3"></div>
       </div>
       <div class="mb-3">
         <p>{{ apsaRetenu.SituationEvaluation }}</p>
+        <!-- <Textarea class="w-100" :disabled="true" v-model="apsaRetenu.SituationEvaluation" :autoResize="true" rows="5" /> -->
       </div>
     </div>
     <div class="mb-3">
       <div class="row">
-        <div class="col-3" v-for="monCritere in criteresByApsaRetenu" v-bind:key="monCritere['@id']">
+        <div class="col-3" v-for="monCritere in criteres" v-bind:key="monCritere.id">
           <Card>
             <template #title> {{ monCritere.titre }} </template>
             <template #content>
-              <div v-if="monCritere.image != ''">
-                <img
-                  :src="`data:${nouvelleImageCritere.type};base64,` + monCritere.image"
-                  style="max-width: 100%"
-                  alt="Image critère"
-                />
-              </div>
               <p v-html="monCritere.description" />
-              <div v-if="monCritere.url_video != null" style="margin-top: 1.5rem">
-                <a :href="monCritere.url_video"
-                  ><p>{{ monCritere.url_video }}</p></a
-                >
-              </div>
+              <p v-html="monCritere.url_video" />
+              <Button class="p-button-rounded p-button-info" @click="editCritere(monCritere)"
+                ><i class="pi pi-pencil" @click="openEdit"
+              /></Button>
               <Button class="p-button-rounded p-button-danger" @click="deleteCritere(monCritere.id)"
                 ><i class="pi pi-times"
               /></Button>
-              <Button class="p-button-rounded p-button-info"><i class="pi pi-pencil" /></Button>
-              <Button class="p-button-rounded p-button-info" @click="toIndicateur()"><i class="pi pi-check" /></Button>
+              <Button
+                label="Ajouter des indicateurs"
+                icon="pi pi-plus"
+                @click="
+                  router.push({
+                    name: 'IndicateurAF',
+                    query: { idCritere: nouveauCritere.id },
+                  })
+                "
+              />
             </template>
           </Card>
         </div>
@@ -131,13 +184,13 @@
       <Button label="Terminer" icon="pi pi-check" @click="verif()" autofocus></Button>
       <Button
         label="Retour aux AF"
-        icon="pi pi-check"
+        icon="pi pi-backward"
         style="left: 1rem"
         @click="router.push('DeclinerAFRetenus')"
         autofocus
       ></Button>
     </div>
-    <div style="position: fixed; bottom: 0; right: 2rem">
+    <div>
       <ProgressSpinner
         v-if="isLoading"
         style="float: right; width: 50px; height: 50px"
@@ -155,48 +208,90 @@ import CritereService from '@/services/CritereService';
 import ObjectUtils from '@/utils/ObjectUtils';
 import UtilisateurService from '@/services/UtilisateurService';
 import ApsaRetenuService from '@/services/ApsaRetenuService';
-import { useRoute } from 'vue-router';
-import router from '@/router';
+import { useRoute, useRouter } from 'vue-router';
+import axios from 'axios';
+import critere from '@/store/modules/critere';
 
 const route = useRoute();
+const router = useRouter();
 
 const { isObjectEmpty } = ObjectUtils();
 const { etablissement } = UtilisateurService();
-const { saveCritere, fetchCriteres, deleteCritere, fetchCriteresByApsaRetenu, criteresByApsaRetenu } = CritereService();
+const { saveCritere, fetchCriteres, criteres } = CritereService();
 const { apsaRetenu, fetchApsaRetenu } = ApsaRetenuService();
 
-const maDescriptionCritere = ref();
 const monTitleCritere = ref();
 const nouvelleImageCritere = ref<File>({} as File);
-const imageCritere = ref('');
 const monUrlVideo = ref();
 const isLoading = ref(false);
+const mesCriteres = ref<Critere[]>([]);
+const CritereByApsaRetenu = ref<Critere[]>([]);
+const nouveauCritere = ref<Critere>({ titre: '', description: '', url_video: '', image: '', id: -1 } as Critere);
 
 const displayBasic = ref(false);
 const openBasic = () => {
   displayBasic.value = true;
 };
 
+const displayEdit = ref(false);
+const openEdit = () => {
+  displayEdit.value = true;
+};
+
 const closeBasic = () => {
   displayBasic.value = false;
 };
 
+const closeEdit = () => {
+  displayEdit.value = false;
+};
+
 const imageCritereIsSelected = computed(() => {
-  if (isObjectEmpty(nouvelleImageCritere.value) && imageCritere.value === '') return false;
+  if (isObjectEmpty(nouvelleImageCritere.value) && nouveauCritere.value.image === '') return false;
   else return true;
 });
 
-async function AddCritere() {
-  if (route.query.idApsaRetenu) {
-    await saveCritere(
-      monTitleCritere.value,
-      maDescriptionCritere.value,
-      imageCritere.value,
-      monUrlVideo.value,
-      '/api/apsa_retenus/' + route.query.idApsaRetenu?.toString()
-    );
+async function addCritere() {
+  try {
+    const critere = await axios.post('https://localhost:8000/api/criteres', {
+      titre: nouveauCritere.value.titre,
+      description: nouveauCritere.value.description,
+      image: nouveauCritere.value.image,
+      urlVideo: nouveauCritere.value.url_video,
+      apsaRetenu: '/api/apsa_retenus/' + route.query.idApsaRetenu?.toString(),
+    });
+    closeBasic();
+  } catch (e) {
+    console.log(e);
   }
-  closeBasic();
+}
+
+async function editCritere(monCritere: Critere) {
+  try {
+    let indexCritere = mesCriteres.value.findIndex((a) => a.id === monCritere.id);
+    mesCriteres.value.splice(indexCritere, 1);
+    nouveauCritere.value = monCritere;
+    const critere = await axios.put('https://localhost:8000/api/criteres/' + monCritere.id, {
+      titre: monCritere.titre,
+      description: monCritere.description,
+      image: monCritere.image,
+      urlVideo: monCritere.url_video,
+    });
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+async function deleteCritere(id: number) {
+  let x = window.confirm('Voulez vous vraiment supprimer ce critère ?');
+
+  if (x) {
+    const user = await axios.delete('https://localhost:8000/api/criteres/' + id);
+  }
+}
+
+function resetCritere() {
+  nouveauCritere.value = { titre: '', description: '', url_video: '', image: '' } as Critere;
 }
 
 function verif() {}
@@ -208,10 +303,16 @@ function toIndicateur() {
 onMounted(async () => {
   isLoading.value = true;
   if (route.query.idApsaRetenu) {
+    await fetchCriteres();
     await fetchApsaRetenu(parseInt(route.query.idApsaRetenu.toString()));
-    await fetchCriteresByApsaRetenu(parseInt(route.query.idApsaRetenu.toString()));
+    criteres.value.forEach((a) => {
+      if (route.query.idApsaRetenu) {
+        if (a.ApsaRetenu.id === parseInt(route.query.idApsaRetenu.toString())) {
+          CritereByApsaRetenu.value.push(a);
+        }
+      }
+    });
   }
-  isLoading.value = false;
 });
 
 function onPhotoChange(event: any) {
@@ -223,15 +324,16 @@ function onPhotoChange(event: any) {
     function () {
       const chainePhoto = reader.result as string;
       const chaineFinale = chainePhoto.replace(`data:${nouvelleImageCritere.value.type};base64,`, '');
-      imageCritere.value = chaineFinale;
+      nouveauCritere.value.image = chaineFinale;
     },
     false
   );
 
   reader.readAsDataURL(nouvelleImageCritere.value);
 }
+
 function supprimerImageCritere() {
   nouvelleImageCritere.value = {} as File;
-  imageCritere.value = '';
+  nouveauCritere.value.image = '';
 }
 </script>
