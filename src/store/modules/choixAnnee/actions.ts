@@ -15,4 +15,19 @@ export default {
     }
     //if (response.status !== 201) throw new Error);
   },
+  async fetchAllChoixAnneeByAnneeAndEtablissement(
+    context: ActionContext<ChoixAnneeState, any>,
+    payload: { idAnnee: number; idEtablissement: number }
+  ) {
+    const response = await ChoixAnneeAPI.fetchAllChoixAnneeByAnneeAndEtablissement(
+      payload.idAnnee,
+      payload.idEtablissement
+    );
+    if (response.data['hydra:totalItems'] > 0) {
+      context.commit('setChoixAnneeByAnneeAndEtablissement', response.data['hydra:member']);
+    } else {
+      context.commit('setChoixAnneeByAnneeAndEtablissement', []);
+    }
+    //if (response.status !== 201) throw new Error);
+  },
 };

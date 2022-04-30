@@ -44,6 +44,13 @@
           dataKey="id"
         />
       </div>
+      <!-- 
+      <DataTable :value="choixAnneeByAnneeAndEtablissement">
+        <Column field="vin" header="Vin"></Column>
+        <Column field="year" header="Year"></Column>
+        <Column field="brand" header="Brand"></Column>
+        <Column field="color" header="Color"></Column>
+      </DataTable> -->
     </div>
     <div class="mb-3">
       <Button label="Valider" style="right: 1rem" icon="pi pi-check" autofocus></Button>
@@ -65,6 +72,7 @@ import { Annee, NiveauScolaire } from '@/models';
 import UtilisateurService from '@/services/UtilisateurService';
 import AnneeService from '@/services/AnneeService';
 import ApsaSelectAnneeService from '@/services/ApsaSelectAnneeService';
+import ChoixAnneeService from '@/services/ChoixAnneeService';
 import ObjectUtils from '@/utils/ObjectUtils';
 import { useRoute } from 'vue-router';
 
@@ -84,6 +92,7 @@ const {
 } = UtilisateurService();
 const { annees, fetchAllAnnee, annee, fetchAnneeById } = AnneeService();
 const { apsaSelectAnneeByAnnee, fetchAllApsaSelectAnneeByAnnee } = ApsaSelectAnneeService();
+const { fetchAllChoixAnneeByAnneeAndEtablissement, choixAnneeByAnneeAndEtablissement } = ChoixAnneeService();
 // Contrôle l'affichage du menu. Par défaut, est vrai si l'écran n'est pas un mobile, faux sinon.
 const displayMenu = ref(window.innerWidth >= 600);
 const nouvelAnneeEnConfig = ref<Annee>(anneeEnConfig.value);
@@ -106,11 +115,11 @@ onMounted(async () => {
   }
   fetchConfigAnnee();
   isLoading.value = false;
-  console.log('nivo', etablissement.value.niveauScolaire);
 });
 
 async function fetchConfigAnnee() {
   await fetchAllApsaSelectAnneeByAnnee(nouvelAnneeEnConfig.value.id);
+  await fetchAllChoixAnneeByAnneeAndEtablissement(nouvelAnneeEnConfig.value.id, etablissement.value.id);
 }
 
 function getStringApsaByIdCa(idCa: number) {
