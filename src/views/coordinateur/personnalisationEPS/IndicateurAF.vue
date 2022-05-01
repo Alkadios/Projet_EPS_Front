@@ -117,7 +117,7 @@
                 Personnalisation de l'équipe EPS <br />
                 au
               </p>
-              <h4 class="text-dark mb-4">{{ etablissement.nom }}</h4>
+              <h4 class="text-dark mb-4">{{ etablissement.nomEtablissement }}</h4>
             </div>
           </div>
         </div>
@@ -211,6 +211,7 @@ const openBasic = () => {
 
 const closeBasic = () => {
   displayBasic.value = false;
+  window.location.reload();
 };
 
 const displayEdit = ref(false);
@@ -220,6 +221,8 @@ const openEdit = () => {
 
 const closeEdit = () => {
   displayEdit.value = false;
+  window.alert('L\indicateur a bien été modifié !');
+  window.location.reload();
 };
 
 async function addIndicateur() {
@@ -232,6 +235,7 @@ async function addIndicateur() {
       critere: '/api/criteres/' + route.query.idCritere?.toString(),
     });
     closeBasic();
+    window.alert('L\indicateur a bien été ajouté !');
   } catch (e) {
     console.log(e);
   }
@@ -258,6 +262,7 @@ async function deleteIndicateur(id: number) {
 
   if (x) {
     const user = await axios.delete('https://localhost:8000/api/indicateurs/' + id);
+    window.location.reload();
   }
 }
 

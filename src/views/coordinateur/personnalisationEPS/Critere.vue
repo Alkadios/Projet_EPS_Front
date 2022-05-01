@@ -126,7 +126,7 @@
                 Personnalisation de l'équipe EPS <br />
                 au
               </p>
-              <h4 class="text-dark mb-4">{{ etablissement.nom }}</h4>
+              <h4 class="text-dark mb-4">{{ etablissement.nomEtablissement }}</h4>
             </div>
           </div>
         </div>
@@ -226,7 +226,7 @@ const monUrlVideo = ref();
 const isLoading = ref(false);
 const mesCriteres = ref<Critere[]>([]);
 const CritereByApsaRetenu = ref<Critere[]>([]);
-const nouveauCritere = ref<Critere>({ titre: '', description: '', url_video: '', image: '', id: -1 } as Critere);
+const nouveauCritere = ref<Critere>({ titre: '', description: '', url_video: '', image: '' } as Critere);
 
 const displayBasic = ref(false);
 const openBasic = () => {
@@ -239,10 +239,13 @@ const openEdit = () => {
 };
 
 const closeBasic = () => {
+  window.location.reload();
   displayBasic.value = false;
 };
 
 const closeEdit = () => {
+  window.alert('Le critère a bien été modifié !');
+  window.location.reload();
   displayEdit.value = false;
 };
 
@@ -261,6 +264,7 @@ async function addCritere() {
       apsaRetenu: '/api/apsa_retenus/' + route.query.idApsaRetenu?.toString(),
     });
     closeBasic();
+    window.alert('Le critère a bien été ajouté !');
   } catch (e) {
     console.log(e);
   }
@@ -287,6 +291,7 @@ async function deleteCritere(id: number) {
 
   if (x) {
     const user = await axios.delete('https://localhost:8000/api/criteres/' + id);
+    window.location.reload();
   }
 }
 
