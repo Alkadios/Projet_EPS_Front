@@ -1,21 +1,6 @@
 <template>
   <div class="card shadow-lg o-hidden border-0 my-5">
-    <div class="card-body p-0">
-      <div class="row">
-        <div class="col-lg-1"></div>
-        <div class="col-lg-10">
-          <div class="p-5" style="padding-bottom: 1rem !important">
-            <div class="text-center">
-              <p class="text-dark mb-2">
-                Personnalisation de l'équipe EPS <br />
-                au
-              </p>
-              <h4 class="text-dark mb-4">{{ etablissement.nomEtablissement }}</h4>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <EnTetePersonalisation />
     <div class="container-fluid">
       <div id="mesClasses">
         <div class="row">
@@ -24,7 +9,7 @@
           </div>
           <SelectButton
             v-model="niveauScolaireSelectionne"
-            :options="etablissement.niveauxScolaires"
+            :options="etablissement.niveauScolaire"
             optionLabel="libelle"
           />
           <div class="d-flex p-2">
@@ -79,13 +64,14 @@ import afRetenuService from '@/services/AfRetenusService';
 import ChoixAnneeService from '@/services/ChoixAnneeService';
 import router from '@/router';
 import ApsaSelectAnneeService from '@/services/ApsaSelectAnneeService';
+import EnTetePersonalisation from './EnTetePersonalisation.vue';
 
 const { apsaSelectAnneeByAnnee, fetchAllApsaSelectAnneeByAnnee } = ApsaSelectAnneeService();
 const { saveChoixAnnee, choixAnnee } = ChoixAnneeService();
 const { saveAfRetenu, fetchAllAfRetenuByAnneeAndNiveauScolaire, afRetenuByAnneeAndNiveauScolaire } = afRetenuService();
 const { afs, fetchAllAfs } = AfService();
 const { champsApprentissages, fetchChampsApprentissages } = ChampApprentissageService();
-const { etablissement, annee } = UtilisateurService();
+const { etablissement, anneeEnConfig } = UtilisateurService();
 
 const selectedCa = ref<ChampApprentissage>();
 const selectedAfs = ref<AF[]>([]);
@@ -100,7 +86,7 @@ onMounted(async () => {
   isLoading.value = true;
   await fetchChampsApprentissages();
   await fetchAllAfs();
-  await fetchAllApsaSelectAnneeByAnnee(annee.value.id);
+  await fetchAllApsaSelectAnneeByAnnee(anneeEnConfig.value.id);
   isLoading.value = false;
 });
 
@@ -116,12 +102,10 @@ watch(
 watch(
   () => niveauScolaireSelectionne.value,
   async () => {
-    console.log('watch1', niveauScolaireSelectionne.value);
     if (niveauScolaireSelectionne.value) {
       isLoading.value = true;
-      await fetchAllAfRetenuByAnneeAndNiveauScolaire(annee.value.id, niveauScolaireSelectionne.value?.id);
+      await fetchAllAfRetenuByAnneeAndNiveauScolaire(anneeEnConfig.value.id, niveauScolaireSelectionne.value?.id);
       isLoading.value = false;
-      console.log('watch', afRetenuByAnneeAndNiveauScolaire);
     }
   }
 );
@@ -159,7 +143,12 @@ async function ajouterAfsRetenus() {
   if (selectedAfs.value.length > 0) {
     if (!verifFormulaire()) {
       let monNiveau = '/api/niveau_scolaires/' + niveauScolaireSelectionne.value?.id;
-      await saveChoixAnnee(selectedCa.value?.['@id']!, monNiveau, annee.value['@id']);
+      await saveChoixAnnee(
+        selectedCa.value?.['@id']!,
+        monNiveau,
+        anneeEnConfig.value['@id'],
+        etablissement.value['@id']
+      );
       selectedAfs.value.forEach(async (af: AF) => {
         await saveAfRetenu(choixAnnee.value['@id'], af['@id']);
       });

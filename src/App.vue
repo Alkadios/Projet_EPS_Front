@@ -29,13 +29,18 @@ import router from './router';
 // const router = useRouter();
 
 const { isObjectEmpty } = ObjectUtils();
-const { utilisateur } = UtilisateurService();
+const { utilisateur, fetchAnneeEnCours, anneeEnCours, storeAnneeEnConfig, fetchEtablissementById } =
+  UtilisateurService();
 // const { storeOrganismesUtilisateur, organismeConnecte, storeOrganismeConnecte, listeOrganismesUtilisateur } =
 //   UtilisateurService();
 onMounted(async () => {
   // if (isObjectEmpty(utilisateur.value)) {
   //   router.push({ name: 'Authentification' });
   // }
+
+  await fetchAnneeEnCours();
+  storeAnneeEnConfig(anneeEnCours.value);
+  await fetchEtablissementById(1);
 
   var sidebar = document.querySelector('.sidebar');
   var sidebarToggles = document.querySelectorAll('#sidebarToggle, #sidebarToggleTop');
