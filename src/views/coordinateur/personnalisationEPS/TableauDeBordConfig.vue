@@ -44,13 +44,49 @@
           dataKey="id"
         />
       </div>
-      <!-- 
-      <DataTable :value="choixAnneeByAnneeAndEtablissement">
-        <Column field="vin" header="Vin"></Column>
-        <Column field="year" header="Year"></Column>
-        <Column field="brand" header="Brand"></Column>
-        <Column field="color" header="Color"></Column>
-      </DataTable> -->
+
+      <DataTable
+        :value="choixAnneeByAnneeAndEtablissement"
+        v-model:expandedRows="expandedRows"
+        dataKey="id"
+        responsiveLayout="scroll"
+        ><Column :expander="true" headerStyle="width: 3rem" />
+        <Column field="Niveau.libelle" header="Niveau scolaire"></Column>
+
+        <Column
+          :field="(item: ChoixAnnee) =>'CA'+ item.id + ' - ' + item.champApprentissage.libelle"
+          header="CA"
+        ></Column>
+        <Column headerStyle="width:4rem">
+          <template #body="slotProps">
+            <Button
+              icon="pi pi-pencil"
+              @click="
+                router.push({
+                  name: 'ApsaRetenuAF',
+                  query: { idNiveau: slotProps.data.Niveau.id, idCa: slotProps.data.champApprentissage.id },
+                })
+              "
+            />
+          </template>
+        </Column>
+        <template #expansion="slotProps">
+          <div class="table-responsive">
+            <table class="table table-striped table-sm">
+              <thead>
+                <tr>
+                  <th class="text-dark">Attendus finaux</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="afRetenu in slotProps.data.afRetenus" :key="afRetenu.id">
+                  <td>{{ afRetenu.Af.libelle }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </template>
+      </DataTable>
     </div>
     <div class="mb-3">
       <Button label="Valider" style="right: 1rem" icon="pi pi-check" autofocus></Button>
@@ -68,18 +104,19 @@
 
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue';
-import { Annee, NiveauScolaire } from '@/models';
+import { Annee, NiveauScolaire, ChoixAnnee } from '@/models';
 import UtilisateurService from '@/services/UtilisateurService';
 import AnneeService from '@/services/AnneeService';
 import ApsaSelectAnneeService from '@/services/ApsaSelectAnneeService';
 import ChoixAnneeService from '@/services/ChoixAnneeService';
 import ObjectUtils from '@/utils/ObjectUtils';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 //const router = useRouter();
 
 const { isObjectEmpty } = ObjectUtils();
 const route = useRoute();
+const router = useRouter();
 
 const {
   utilisateur,
@@ -95,6 +132,7 @@ const { apsaSelectAnneeByAnnee, fetchAllApsaSelectAnneeByAnnee } = ApsaSelectAnn
 const { fetchAllChoixAnneeByAnneeAndEtablissement, choixAnneeByAnneeAndEtablissement } = ChoixAnneeService();
 // Contrôle l'affichage du menu. Par défaut, est vrai si l'écran n'est pas un mobile, faux sinon.
 const displayMenu = ref(window.innerWidth >= 600);
+const expandedRows = ref([]);
 const nouvelAnneeEnConfig = ref<Annee>(anneeEnConfig.value);
 const niveauScolaireSelectionne = ref<NiveauScolaire>();
 const isLoading = ref(false);
@@ -120,6 +158,7 @@ onMounted(async () => {
 async function fetchConfigAnnee() {
   await fetchAllApsaSelectAnneeByAnnee(nouvelAnneeEnConfig.value.id);
   await fetchAllChoixAnneeByAnneeAndEtablissement(nouvelAnneeEnConfig.value.id, etablissement.value.id);
+  console.log('choixAnneeByAnneeAndEtablissement', choixAnneeByAnneeAndEtablissement.value);
 }
 
 function getStringApsaByIdCa(idCa: number) {
