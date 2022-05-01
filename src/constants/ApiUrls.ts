@@ -12,3 +12,7 @@ export const ApiCritere = `${ApiUrl}/criteres`;
 export const ApiIndicateur = `${ApiUrl}/indicateurs`;
 export const ApiAnnee = `${ApiUrl}/annees`;
 export const ApiEtablissement = `${ApiUrl}/etablissements`;
+export const ApiClasse = `${ApiUrl}/classes`;
+export const ApiProfesseurClasses = `${ApiUrl}/professeur_classes`;
+export const ApiEleve = `${ApiUrl}/eleves`;
+export const ApiEvaluationEleve = `${ApiUrl}/evaluation_eleves`;

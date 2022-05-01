@@ -11,6 +11,24 @@ export default function ApsaSelectAnneeService() {
   async function fetchAllApsaSelectAnneeByAnnee(idAnnee: number) {
     await store.dispatch('ApsaSelectAnneeModule/fetchAllApsaSelectAnneeByAnnee', { idAnnee });
   }
+
+  const apsaSelectAnneeByAnneeAndClasse = computed((): ApsaSelectAnnee[] => {
+    return store.getters['ApsaSelectAnneeModule/getApsaSelectAnneeByAnneeAndClasse'];
+  });
+  async function fetchAllApsaSelectAnneeByAnneeAndClasse(idAnnee: number, idClasse: number) {
+    await store.dispatch('ApsaSelectAnneeModule/fetchAllApsaSelectAnneeByAnneeAndClasse', { idAnnee, idClasse });
+  }
+
+  const apsaSelectAnneeByAnneeAndEtablissement = computed((): ApsaSelectAnnee[] => {
+    return store.getters['ApsaSelectAnneeModule/getApsaSelectAnneeByAnneeAndEtablissement'];
+  });
+  async function fetchAllApsaSelectAnneeByAnneeAndEtablissement(idAnnee: number, idEtablissement: number) {
+    await store.dispatch('ApsaSelectAnneeModule/fetchAllApsaSelectAnneeByAnneeAndEtablissement', {
+      idAnnee,
+      idEtablissement,
+    });
+  }
+
   async function saveApsaSelectAnnee(
     payload: {
       Ca: number;
@@ -23,6 +41,10 @@ export default function ApsaSelectAnneeService() {
   return {
     apsaSelectAnneeByAnnee,
     fetchAllApsaSelectAnneeByAnnee,
+    apsaSelectAnneeByAnneeAndClasse,
+    fetchAllApsaSelectAnneeByAnneeAndClasse,
     saveApsaSelectAnnee,
+    fetchAllApsaSelectAnneeByAnneeAndEtablissement,
+    apsaSelectAnneeByAnneeAndEtablissement,
   };
 }

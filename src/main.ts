@@ -51,6 +51,9 @@ import store from './store';
 import UtilisateurService from './services/UtilisateurService';
 import ObjectUtils from './utils/ObjectUtils';
 import Locale_FR from './constants/Locale_FR';
+import Accordion from 'primevue/accordion';
+import AccordionTab from 'primevue/accordiontab';
+import Fieldset from 'primevue/fieldset';
 import './assets/css/monStyle.css';
 const { isObjectEmpty } = ObjectUtils();
 const { utilisateur } = UtilisateurService();
@@ -58,6 +61,9 @@ const { utilisateur } = UtilisateurService();
 const app = createApp(App);
 // PrimeVue components
 app
+  .component('Fieldset', Fieldset)
+  .component('Accordion', Accordion)
+  .component('AccordionTab', AccordionTab)
   .component('Editor', Editor)
   .component('Card', Card)
   .component('DataTable', DataTable)
