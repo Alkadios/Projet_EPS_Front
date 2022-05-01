@@ -25,7 +25,7 @@
           :options="annees"
           optionLabel="annee"
           dataKey="id"
-          @change="storeAnneeEnConfig(nouvelAnneeEnConfig)"
+          @change="onAnneeEnConfigChange()"
         />
       </div>
       <div class="row">
@@ -36,20 +36,18 @@
       </div>
 
       <div>
-        <p>Niveau scolaire :</p>
+        <p>Filtrer la configuration par niveau scolaire :</p>
         <Dropdown
           v-model="niveauScolaireSelectionne"
           :options="etablissement.niveauScolaire"
           optionLabel="libelle"
           dataKey="id"
+          placeholder="Tous"
+          :showClear="true"
         />
       </div>
 
-      <DataTable
-        :value="choixAnneeByAnneeAndEtablissement"
-        v-model:expandedRows="expandedRows"
-        dataKey="id"
-        responsiveLayout="scroll"
+      <DataTable :value="choixAnneeFiltree" v-model:expandedRows="expandedRows" dataKey="id" responsiveLayout="scroll"
         ><Column :expander="true" headerStyle="width: 3rem" />
         <Column field="Niveau.libelle" header="Niveau scolaire"></Column>
 
@@ -87,6 +85,47 @@
           </div>
         </template>
       </DataTable>
+      <DataTable
+        :value="apsasRetenusFiltree"
+        v-model:expandedRows="expandedRowsApsaRetenu"
+        dataKey="id"
+        responsiveLayout="scroll"
+        :paginator="true"
+        :rows="5"
+      >
+        <template #header> Situations d'évaluations </template>
+        <Column :expander="true" headerStyle="width: 3rem" />
+        <Column :field="(item: ApsaRetenu) => 'CA' + item.AfRetenu.ChoixAnnee.champApprentissage.id" header="CA" />
+        <Column field="ApsaSelectAnnee.Apsa.libelle" header="APSA" />
+        <Column field="AfRetenu.Af.libelle" header="AF" />
+        <Column field="SituationEvaluation" header="Situation d'évaluation" />
+        <Column headerStyle="width:4rem">
+          <template #body>
+            <Button icon="pi pi-pencil" />
+          </template>
+        </Column>
+        <template #expansion="slotProps">
+          <DataTable
+            :value="slotProps.data.criteres"
+            v-model:expandedRows="expandedRowsCritere"
+            dataKey="id"
+            responsiveLayout="scroll"
+          >
+            <template #header> Critères </template>
+            <Column :expander="true" headerStyle="width: 3rem" />
+            <Column field="titre" header="Titre" />
+            <Column field="description" header="Description" />
+            <template #expansion="slotProps">
+              <DataTable :value="slotProps.data.criteres" responsiveLayout="scroll">
+                <template #header> Indicateurs </template>
+
+                <Column field="libelle" header="Titre" />
+                <Column field="description" header="Description" />
+              </DataTable>
+            </template>
+          </DataTable>
+        </template>
+      </DataTable>
     </div>
     <div class="mb-3">
       <Button label="Valider" style="right: 1rem" icon="pi pi-check" autofocus></Button>
@@ -103,12 +142,13 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue';
-import { Annee, NiveauScolaire, ChoixAnnee } from '@/models';
+import { ref, onMounted, computed } from 'vue';
+import { Annee, NiveauScolaire, ChoixAnnee, ApsaRetenu } from '@/models';
 import UtilisateurService from '@/services/UtilisateurService';
 import AnneeService from '@/services/AnneeService';
 import ApsaSelectAnneeService from '@/services/ApsaSelectAnneeService';
 import ChoixAnneeService from '@/services/ChoixAnneeService';
+import ApsaRetenuService from '@/services/ApsaRetenuService';
 import ObjectUtils from '@/utils/ObjectUtils';
 import { useRoute, useRouter } from 'vue-router';
 
@@ -130,12 +170,32 @@ const {
 const { annees, fetchAllAnnee, annee, fetchAnneeById } = AnneeService();
 const { apsaSelectAnneeByAnnee, fetchAllApsaSelectAnneeByAnnee } = ApsaSelectAnneeService();
 const { fetchAllChoixAnneeByAnneeAndEtablissement, choixAnneeByAnneeAndEtablissement } = ChoixAnneeService();
+const { fetchApsaRetenuByAnneeAndEtablissement, apsasRetenusByEtablissementAndAnnee } = ApsaRetenuService();
 // Contrôle l'affichage du menu. Par défaut, est vrai si l'écran n'est pas un mobile, faux sinon.
 const displayMenu = ref(window.innerWidth >= 600);
 const expandedRows = ref([]);
+const expandedRowsApsaRetenu = ref([]);
+const expandedRowsCritere = ref([]);
 const nouvelAnneeEnConfig = ref<Annee>(anneeEnConfig.value);
 const niveauScolaireSelectionne = ref<NiveauScolaire>();
 const isLoading = ref(false);
+
+const choixAnneeFiltree = computed((): ChoixAnnee[] => {
+  if (!niveauScolaireSelectionne.value) {
+    return choixAnneeByAnneeAndEtablissement.value;
+  } else {
+    return choixAnneeByAnneeAndEtablissement.value.filter((c) => c.Niveau.id === niveauScolaireSelectionne.value?.id);
+  }
+});
+const apsasRetenusFiltree = computed((): ApsaRetenu[] => {
+  if (!niveauScolaireSelectionne.value) {
+    return apsasRetenusByEtablissementAndAnnee.value;
+  } else {
+    return apsasRetenusByEtablissementAndAnnee.value.filter(
+      (ar) => ar.AfRetenu.ChoixAnnee.Niveau.id === niveauScolaireSelectionne.value?.id
+    );
+  }
+});
 
 onMounted(async () => {
   isLoading.value = true;
@@ -151,14 +211,18 @@ onMounted(async () => {
     }
     nouvelAnneeEnConfig.value = anneeEnConfig.value;
   }
-  fetchConfigAnnee();
+  await fetchConfigAnnee();
   isLoading.value = false;
 });
 
 async function fetchConfigAnnee() {
+  isLoading.value = true;
+
   await fetchAllApsaSelectAnneeByAnnee(nouvelAnneeEnConfig.value.id);
   await fetchAllChoixAnneeByAnneeAndEtablissement(nouvelAnneeEnConfig.value.id, etablissement.value.id);
-  console.log('choixAnneeByAnneeAndEtablissement', choixAnneeByAnneeAndEtablissement.value);
+  await fetchApsaRetenuByAnneeAndEtablissement(anneeEnConfig.value.id, etablissement.value.id);
+  console.log('apsaRetenu', apsasRetenusByEtablissementAndAnnee.value);
+  isLoading.value = false;
 }
 
 function getStringApsaByIdCa(idCa: number) {
@@ -167,4 +231,11 @@ function getStringApsaByIdCa(idCa: number) {
     .map((e) => e.Apsa.libelle)
     .join(', ');
 }
+
+async function onAnneeEnConfigChange() {
+  await storeAnneeEnConfig(nouvelAnneeEnConfig.value);
+  await fetchConfigAnnee();
+}
+
+function onNiveauChange() {}
 </script>
