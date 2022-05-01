@@ -4,4 +4,10 @@ export default {
   getApsaSelectAnneeByAnnee(state: ApsaSelectAnneeState) {
     return state.apsaSelectAnneeByAnnee;
   },
+  getApsaSelectAnneeByAnneeAndClasse(state: ApsaSelectAnneeState) {
+    return state.apsaSelectAnneeByAnneeAndClasse;
+  },
+  getApsaSelectAnneeByAnneeAndEtablissement(state: ApsaSelectAnneeState) {
+    return state.apsaSelectAnneeByAnneeAndEtablissement;
+  },
 };

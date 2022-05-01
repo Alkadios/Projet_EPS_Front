@@ -10,6 +10,7 @@ export default {
     return {
       apsaRetenu: {} as ApsaRetenu,
       apsasRetenus: [] as ApsaRetenu[],
+      apsasRetenusByEtablissementAndAnnee: [] as ApsaRetenu[],
     };
   },
   mutations,

@@ -3,7 +3,7 @@
     <div class="card-body p-0">
       <div class="row">
         <div class="col-lg-1"></div>
-        <div class="col-lg-10">
+        <div id="ContentScreen" class="col-lg-10">
           <div class="p-5">
             <div class="text-center">
               <p class="text-dark mb-2">
@@ -15,122 +15,259 @@
           </div>
           <div id="mesClasses">
             <div class="row">
-              <div class="d-flex p-2">
-                <div>Mes Classes :</div>
-                <div style="position: relative; left: 0.5rem">
+              <div id="EvaluationClasse" class="col-md-5">
+                <div class="d-flex">
+                  <div class="p-2">Mes Classes :</div>
+                  <div>
+                    <Dropdown
+                      v-model="classeSelectionner"
+                      :options="classesByAnneeAndProfesseur"
+                      optionLabel="libelleClasse"
+                      dataKey="id"
+                      placeholder="Choisir une classe"
+                      @change="onClasseChange()"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-5 offset-md-2">
+                <div class="d-flex" v-if="classeSelectionner != null">
+                  <div class="p-2">Mes Apsas :</div>
+                  <div>
+                    <Dropdown
+                      v-model="apsaSelectionner"
+                      :options="listeApsa"
+                      optionLabel="libelle"
+                      dataKey="id"
+                      placeholder="Choisir une Apsa"
+                      @change="onApsaChange()"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="p-5">
+              <div class="col-md-12">
+                <div class="d-flex" v-if="apsaSelectionner != null">
+                  <div class="p-2">Mes Situation d'évaluation :</div>
                   <Dropdown
-                    v-model="maClasseSelect"
-                    :options="cities"
-                    optionLabel="name"
-                    optionValue="code"
-                    placeholder="Ma Classe"
-                    @change="maClasse()"
+                    v-model="apsaRetenuSelectionner"
+                    :options="situationsEvaluationByNiveauScolaireAndApsa"
+                    optionLabel="SituationEvaluation"
+                    dataKey="id"
+                    placeholder="Choisir une situation d'évaluation"
                   />
                 </div>
               </div>
             </div>
           </div>
-          <div id="myTable">
+          <div id="myTableEleves">
             <div class="row">
-              <div>
-                <InputText id="mySearch" v-model="mySearch" v-on:keyup="filterTable()" placeholder="Keyword Search" />
-              </div>
-              <div class="d-flex p-2">
-                <div class="col-12">
-                  <DataTable
-                    :value="filteredProduct"
-                    :paginator="true"
-                    :rows="15"
-                    showGridlines
-                    responsiveLayout="scroll"
+              <div class="d-flex justify-content-start">
+                <div id="elevesByClasse" v-if="apsaRetenuSelectionner != null" class="col-md-4 p-2">
+                  <Button style="margin-bottom: 1rem; width: 100%" label="Tous" />
+                  <Listbox
+                    v-model="eleveSelectionne"
+                    :options="elevesByClasse"
+                    optionLabel="nom"
+                    listStyle="max-height:250px"
+                    style="width: 100%; overflow-y: scroll; max-height: 380px"
                   >
-                    <Column field="name" header="Name"></Column>
-                    <Column header="Code">
-                      <template #body="slotProps">
-                        <Dropdown
-                          v-model="slotProps.data.Dropdown"
-                          :options="cities"
-                          optionLabel="name"
-                          optionValue="code"
-                          placeholder="Ma Classe"
-                          @change="maClasse()"
-                        /> </template
-                    ></Column>
-                    <Column field="category" header="Category">
-                      <template #body="slotProps">
-                        <Dropdown
-                          v-model="slotProps.data.Dropdown"
-                          :options="cities"
-                          optionLabel="name"
-                          optionValue="code"
-                          placeholder="Ma Classe"
-                          @change="maClasse()"
-                        /> </template
-                    ></Column>
-                    <Column field="quantity" header="Quantity">
-                      <template #body="slotProps">
-                        <Dropdown
-                          v-model="slotProps.data.Dropdown"
-                          :options="cities"
-                          optionLabel="name"
-                          optionValue="code"
-                          placeholder="Ma Classe"
-                          @change="maClasse()"
-                        /> </template
-                    ></Column>
-                  </DataTable>
+                    <template #option="monEleve">
+                      <div class="Eleve-item">
+                        <div>{{ monEleve.option.nom }} {{ monEleve.option.prenom }}</div>
+                      </div>
+                    </template>
+                  </Listbox>
+                </div>
+                <div class="offset-md-1 col-md-7">
+                  <div id="CriteresEvaluations" v-if="apsaRetenuSelectionner != null">
+                    <div v-for="monCritere in apsaRetenuSelectionner.criteres" :key="monCritere.id" class="card">
+                      <Divider align="center" type="dashed">
+                        <b>{{ monCritere.titre }}</b>
+                      </Divider>
+                      <div>
+                        <Button
+                          v-for="indicateur of monCritere.Indicateur"
+                          :key="indicateur.id"
+                          :label="indicateur.libelle"
+                          :style="!checkIfIndicateurIsSelectionner(indicateur) ? 'background-color: bisque' : ''"
+                          :class="checkIfIndicateurIsSelectionner(indicateur) ? 'primary' : ''"
+                          @click="addIndicateurInEvaluation(monCritere, indicateur)"
+                        />
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+      <div class="mt-3 ms-3">
+        <Button label="Annuler" icon="pi pi-check" @click="verif()"></Button>
+        <Button label="Terminer l'évaluation" icon="pi pi-check" style="left: 1rem" @click="verif()"></Button>
+      </div>
+      <div class="mb-3"></div>
+      <div style="position: fixed; bottom: 0; right: 2rem">
+        <ProgressSpinner
+          v-if="isLoading"
+          style="float: right; width: 50px; height: 50px"
+          strokeWidth="8"
+          animationDuration=".5s"
+        />
+      </div>
     </div>
   </div>
-  <div class="mb-3"></div>
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, toRaw, computed } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import UtilisateurService from '@/services/UtilisateurService';
-const mySearch = ref();
-const { etablissement } = UtilisateurService();
-const products = ref([
-  { name: 'New York', code: '', category: '', quantity: '' },
-  { name: 'Rome', code: '', category: '', quantity: '' },
-  { name: 'London', code: '', category: '', quantity: '' },
-  { name: 'Istanbul', code: '', category: '', quantity: '' },
-  { name: 'Paris', code: '', category: '', quantity: '' },
-]);
-const filteredProduct = ref(products.value);
-const cities = ref([
-  { name: 'New York', code: 'NY' },
-  { name: 'Rome', code: 'RM' },
-  { name: 'London', code: 'LDN' },
-  { name: 'Istanbul', code: 'IST' },
-  { name: 'Paris', code: 'PRS' },
-]);
+import ApsaRetenuService from '@/services/ApsaRetenuService';
+import ApsaSelectAnneeService from '@/services/ApsaSelectAnneeService';
+import ClasseService from '@/services/ClasseService';
+import type { Critere, Eleve, Indicateur, Classe, ApsaRetenu, NiveauScolaire, APSA } from '@/models';
 
-const mesIndicateurs = ref([
-  { name: 'Test non réalisé', code: '0' },
-  { name: 'Maitrise insuffisante', code: '1' },
-  { name: 'Maitrise fragile', code: '2' },
-  { name: 'Maitrise satisfaisante', code: '3' },
-  { name: 'Très bonne maitrise', code: '4' },
-]);
+const route = useRoute();
+const router = useRouter();
 
-const maClasseSelect = ref();
+const { apsasRetenusByEtablissementAndAnnee, fetchApsaRetenuByAnneeAndEtablissement } = ApsaRetenuService();
+const { classesByAnneeAndProfesseur, fetchClasseByAnneeAndProf } = ClasseService();
+const { apsaSelectAnneeByAnneeAndEtablissement, fetchAllApsaSelectAnneeByAnneeAndEtablissement } =
+  ApsaSelectAnneeService();
+const { etablissement, anneeEnCours } = UtilisateurService();
+const isLoading = ref(false);
 
-function filterTable() {
-  if (mySearch.value) {
-    filteredProduct.value = products.value.filter((data) => data.name.includes(mySearch.value));
+const elevesByClasse = ref<Eleve[]>([]);
+const apsasRetenusByNiveauScolaire = ref<ApsaRetenu[]>([]);
+const situationsEvaluationByNiveauScolaireAndApsa = ref<ApsaRetenu[]>([]);
+const criteresByApsaRetenuSelectionner = ref<Critere[]>([]);
+const indicateursEleveSelectionner = ref<indicateurEleve[]>([]);
+const ApsaRetenuBySituationEvaluation = ref<ApsaRetenu>();
+const classeSelectionner = ref<Classe>();
+const apsaSelectionner = ref<APSA>();
+const apsaRetenuSelectionner = ref<ApsaRetenu>();
+const eleveSelectionne = ref<Eleve>();
+const idIndicateurTrouve = ref<number>();
+const listeApsa = ref<APSA[]>([]);
+const monEvaluation = ref<newEvaluation>({ evaluationEleve: [] as newEvaluationEleve[] } as newEvaluation);
+interface newEvaluationEleve {
+  Indicateur: number;
+  Eleve: number;
+  autoEval: boolean;
+}
+interface newEvaluation {
+  Date: Date;
+  evaluationEleve: newEvaluationEleve[];
+}
+
+interface indicateurEleve {
+  critere: Critere;
+  indicateur: Indicateur;
+  eleve: Eleve;
+}
+
+function verif() {
+  console.log('elevesByClasse : ', elevesByClasse.value);
+  console.log('apsasRetenusByNiveauScolaire : ', apsasRetenusByNiveauScolaire.value);
+  console.log('criteresByApsaRetenuSelectionner : ', criteresByApsaRetenuSelectionner.value);
+  console.log('indicateursEleveSelectionner : ', indicateursEleveSelectionner.value);
+  console.log('classeSelectionner : ', classeSelectionner.value);
+  console.log('apsaRetenuSelectionner : ', apsaRetenuSelectionner.value);
+  console.log('eleveSelectionne : ', eleveSelectionne.value);
+  console.log('apsasRetenusByEtablissementAndAnnee : ', apsasRetenusByEtablissementAndAnnee.value);
+  console.log('situationsEvaluationByNiveauScolaireAndApsa : ', situationsEvaluationByNiveauScolaireAndApsa.value);
+}
+
+async function addIndicateurInEvaluation(unCritere: Critere, unIndicateur: Indicateur) {
+  const nouveauIndicateurEleve = {
+    critere: unCritere,
+    indicateur: unIndicateur,
+    eleve: eleveSelectionne.value,
+  } as indicateurEleve;
+
+  const indexIndicateurEleveAlreadyExist = indicateursEleveSelectionner.value.findIndex(
+    (ies) =>
+      ies.critere.id === nouveauIndicateurEleve.critere.id &&
+      ies.eleve.id === nouveauIndicateurEleve.eleve.id &&
+      ies.indicateur.id != nouveauIndicateurEleve.indicateur.id
+  );
+  //Si un indicateurEleve existe déjà (même élève & même critère mais l'indicateur est différent) -> on le remplace
+  if (indexIndicateurEleveAlreadyExist != -1) {
+    indicateursEleveSelectionner.value[indexIndicateurEleveAlreadyExist] = nouveauIndicateurEleve;
   } else {
-    filteredProduct.value = products.value;
+    // Sinon on l'ajoute
+    indicateursEleveSelectionner.value.push(nouveauIndicateurEleve);
   }
 }
 
-function maClasse() {
-  console.log('ma Classe : ', maClasseSelect.value);
+onMounted(async () => {
+  isLoading.value = true;
+  await fetchAllApsaSelectAnneeByAnneeAndEtablissement(1, 1);
+  await fetchClasseByAnneeAndProf(1, 1);
+  await fetchApsaRetenuByAnneeAndEtablissement(1, 1);
+  isLoading.value = false;
+});
+
+function onClasseChange() {
+  if (classeSelectionner.value) {
+    isLoading.value = true;
+    elevesByClasse.value = getElevesByClasse(classeSelectionner.value)!;
+
+    apsasRetenusByNiveauScolaire.value = getApsasRetenusByNiveauScolaire(classeSelectionner.value.NiveauScolaire);
+
+    listeApsa.value = [];
+    //Evite les doublons si une apsa à plusiers situation d'évaluation
+
+    apsasRetenusByNiveauScolaire.value.forEach((ar) => {
+      if (!listeApsa.value.find((a) => a.id === ar.ApsaSelectAnnee.Apsa.id)) {
+        listeApsa.value.push(ar.ApsaSelectAnnee.Apsa);
+      }
+    });
+    isLoading.value = false;
+  }
 }
-onMounted(async () => {});
+
+function onApsaChange() {
+  if (apsaSelectionner.value) {
+    isLoading.value = true;
+
+    situationsEvaluationByNiveauScolaireAndApsa.value = apsasRetenusByNiveauScolaire.value.filter(
+      (ar) => ar.ApsaSelectAnnee.Apsa.id === apsaSelectionner.value?.id
+    );
+    isLoading.value = false;
+  }
+}
+
+function getElevesByClasse(uneClasse: Classe) {
+  return classesByAnneeAndProfesseur.value.find((classeProf) => classeProf.id === uneClasse.id)?.eleves;
+}
+
+function getApsasRetenusByNiveauScolaire(unNiveauScolaire: string | NiveauScolaire) {
+  return apsasRetenusByEtablissementAndAnnee.value
+    .filter((apsaRetenu) => apsaRetenu.AfRetenu.ChoixAnnee.Niveau === unNiveauScolaire)
+    .map((apsaR) => {
+      return toRaw(apsaR);
+    });
+}
+
+function checkIfIndicateurIsSelectionner(unIndicateur: Indicateur) {
+  if (
+    indicateursEleveSelectionner.value.find(
+      (ies) => toRaw(ies).indicateur.id === unIndicateur.id && ies.eleve.id === eleveSelectionne.value?.id
+    )
+  )
+    return true;
+  else return false;
+}
+
+function getEvaluationEleveForRequest(listeIndicateurEleve: indicateurEleve[]) {
+  return listeIndicateurEleve.map((ie) => {
+    return { Indicateur: ie.indicateur.id, Eleve: ie.eleve.id, AutoEval: false };
+  });
+}
 </script>

@@ -1,3 +1,38 @@
+@media screen and (max-width: 767px) {
+  #mesEleves,
+  #EvaluationClasse {
+    margin-bottom: 1rem;
+  }
+
+  /* #TableEleve {
+    overflow-y: scroll;
+    max-height: 15rem !important;
+    max-width: 100%;
+  } */
+}
+
+/* #TableEleve {
+  overflow-y: scroll;
+  max-height: 24rem;
+  max-width: 100%;
+}  */
+
+#myTableEleves {
+  margin-top: 3rem;
+}
+
+@media screen and (max-width: 992px) {
+  #ContentScreen {
+    padding: 2rem;
+  }
+}
+
+#CriteresEvaluations {
+  overflow-y: scroll;
+  max-height: 445px;
+  max-width: 100%;
+}
+
 .dropdown-menu {
   width: 96;
   margin: 0% 2%;

@@ -18,6 +18,21 @@ export default {
       context.commit('setApsaRetenu', {});
     }
   },
+  async fetchApsaRetenuByAnneeAndEtablissement(
+    context: ActionContext<ApsaRetenuState, any>,
+    payload: { idAnnee: number; idEtablissement: number }
+  ) {
+    const response = await ApsaRetenuAPI.fetchApsaRetenuByAnneeAndEtablissement(
+      payload.idAnnee,
+      payload.idEtablissement
+    );
+    if (response.data['hydra:totalItems'] > 0) {
+      context.commit('setApsasRetenusByEtablissementAndAnnee', response.data['hydra:member']);
+    } else {
+      context.commit('setApsasRetenusByEtablissementAndAnnee', []);
+      //throw new Error(response.data.message);
+    }
+  },
   async saveApsaRetenu(
     context: ActionContext<ApsaRetenuState, any>,
     payload: { AfRetenu: string; SituationEvaluation: string; ApsaSelectAnnee: string }
