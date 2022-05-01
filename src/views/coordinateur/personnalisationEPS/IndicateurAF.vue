@@ -139,7 +139,7 @@
               <Button class="p-button-rounded p-button-info" @click="editIndicateur(monIndicateur)"
                 ><i class="pi pi-pencil" @click="openEdit"
               /></Button>
-              <Button class="p-button-rounded p-button-danger" @click="deleteIndicateur(monIndicateur.id)"
+              <Button class="p-button-rounded p-button-danger" @click="removeIndicateur(monIndicateur.id)"
                 ><i class="pi pi-times"
               /></Button>
             </template>
@@ -197,7 +197,7 @@ const router = useRouter();
 
 const { etablissement } = UtilisateurService();
 const { critere, fetchCriteres, fetchCritereById } = CritereService();
-const { saveIndicateur, fetchIndicateurs, indicateurs } = IndicateurService();
+const { saveIndicateur, deleteIndicateur, fetchIndicateurs, indicateurs } = IndicateurService();
 const IndicateurByCritere = ref<Indicateur[]>([]);
 const nouvelleImageIndicateur = ref<File>({} as File);
 const nouveauIndicateur = ref<Indicateur>({ libelle: '', description: '', url_video: '', id: -1 } as Indicateur);
@@ -258,12 +258,16 @@ async function editIndicateur(monIndicateur: Indicateur) {
   }
 }
 
-async function deleteIndicateur(id: number) {
+async function removeIndicateur(indicateurId: number) {
   let x = window.confirm('Voulez vous vraiment supprimer cet indicateur ?');
-
   if (x) {
-    const user = await axios.delete('https://localhost:8000/api/indicateurs/' + id);
-    window.location.reload();
+    try {
+      await deleteIndicateur(indicateurId);
+      window.alert("L'indicateur a bien été supprimé !");
+      window.location.reload();
+    } catch (e) {
+      console.log(e);
+    }
   }
 }
 

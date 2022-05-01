@@ -48,7 +48,9 @@ export default function CritereService() {
   }
 
   async function deleteCritere(idCritere: number) {
-    await store.dispatch('CritereModule/deleteCritere');
+    await store.dispatch('CritereModule/deleteCritere', {
+      idCritere,
+    });
   }
   return {
     criteres,

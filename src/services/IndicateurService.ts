@@ -36,7 +36,9 @@ export default function IndicateurService() {
   }
 
   async function deleteIndicateur(idIndicateur: number) {
-    await store.dispatch('IndicateurModule/deleteIndicateur');
+    await store.dispatch('IndicateurModule/deleteIndicateur', {
+      idIndicateur,
+    });
   }
   return {
     indicateurs,

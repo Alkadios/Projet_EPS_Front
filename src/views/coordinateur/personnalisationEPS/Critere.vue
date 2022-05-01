@@ -148,7 +148,7 @@
               <Button class="p-button-rounded p-button-info" @click="editCritere(monCritere)"
                 ><i class="pi pi-pencil" @click="openEdit"
               /></Button>
-              <Button class="p-button-rounded p-button-danger" @click="deleteCritere(monCritere.id)"
+              <Button class="p-button-rounded p-button-danger" @click="removeCritere(monCritere.id)"
                 ><i class="pi pi-times"
               /></Button>
               <Button
@@ -217,7 +217,7 @@ const router = useRouter();
 
 const { isObjectEmpty } = ObjectUtils();
 const { etablissement } = UtilisateurService();
-const { saveCritere, fetchCriteres, criteres } = CritereService();
+const { saveCritere, fetchCriteres, deleteCritere, criteres } = CritereService();
 const { apsaRetenu, fetchApsaRetenu } = ApsaRetenuService();
 
 const monTitleCritere = ref();
@@ -287,12 +287,16 @@ async function editCritere(monCritere: Critere) {
   }
 }
 
-async function deleteCritere(id: number) {
+async function removeCritere(critereId: number) {
   let x = window.confirm('Voulez vous vraiment supprimer ce critère ?');
-
   if (x) {
-    const user = await axios.delete('https://localhost:8000/api/criteres/' + id);
-    window.location.reload();
+    try {
+      await deleteCritere(critereId);
+      window.alert('Le critère a bien été supprimé !');
+      window.location.reload();
+    } catch (e) {
+      console.log(e);
+    }
   }
 }
 
