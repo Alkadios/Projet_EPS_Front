@@ -130,7 +130,7 @@ import UtilisateurService from '@/services/UtilisateurService';
 import ApsaRetenuService from '@/services/ApsaRetenuService';
 import ApsaSelectAnneeService from '@/services/ApsaSelectAnneeService';
 import ClasseService from '@/services/ClasseService';
-import { Critere, Eleve, Indicateur, Classe, ApsaRetenu, NiveauScolaire, APSA } from '@/models';
+import type { Critere, Eleve, Indicateur, Classe, ApsaRetenu, NiveauScolaire, APSA } from '@/models';
 
 const route = useRoute();
 const router = useRouter();
