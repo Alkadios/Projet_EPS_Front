@@ -227,15 +227,16 @@ const closeEdit = () => {
 
 async function addIndicateur() {
   try {
-    const critere = await axios.post('https://localhost:8000/api/indicateurs', {
-      libelle: nouveauIndicateur.value.libelle,
-      description: nouveauIndicateur.value.description,
-      image: nouveauIndicateur.value.image,
-      urlVideo: nouveauIndicateur.value.url_video,
-      critere: '/api/criteres/' + route.query.idCritere?.toString(),
-    });
+    await saveIndicateur(
+      nouveauIndicateur.value['@id'],
+      nouveauIndicateur.value.libelle,
+      nouveauIndicateur.value.description,
+      nouveauIndicateur.value.image,
+      nouveauIndicateur.value.url_video,
+      critere.value['@id']
+    );
     closeBasic();
-    window.alert('L\indicateur a bien été ajouté !');
+    window.alert("L'indicateur a bien été ajouté !");
   } catch (e) {
     console.log(e);
   }

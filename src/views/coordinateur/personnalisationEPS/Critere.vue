@@ -157,7 +157,7 @@
                 @click="
                   router.push({
                     name: 'IndicateurAF',
-                    query: { idCritere: nouveauCritere.id },
+                    query: { idCritere: monCritere.id },
                   })
                 "
               />
@@ -256,13 +256,14 @@ const imageCritereIsSelected = computed(() => {
 
 async function addCritere() {
   try {
-    const critere = await axios.post('https://localhost:8000/api/criteres', {
-      titre: nouveauCritere.value.titre,
-      description: nouveauCritere.value.description,
-      image: nouveauCritere.value.image,
-      urlVideo: nouveauCritere.value.url_video,
-      apsaRetenu: '/api/apsa_retenus/' + route.query.idApsaRetenu?.toString(),
-    });
+    await saveCritere(
+      nouveauCritere.value['@id'],
+      nouveauCritere.value.titre,
+      nouveauCritere.value.description,
+      nouveauCritere.value.image,
+      nouveauCritere.value.url_video,
+      apsaRetenu.value['@id']
+    );
     closeBasic();
     window.alert('Le critère a bien été ajouté !');
   } catch (e) {

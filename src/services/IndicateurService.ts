@@ -16,13 +16,14 @@ export default function IndicateurService() {
     return store.getters['IndicateurModule/getIndicateur'];
   });
   async function saveIndicateur(
+    id: string,
     libelle: string,
     description: string,
     image: string,
     urlVideo: string,
-    Critere: string
+    critere: string
   ) {
-    await store.dispatch('CritereModule/saveCritere', { libelle, description, image, urlVideo, Critere });
+    await store.dispatch('IndicateurModule/saveIndicateur', { id, libelle, description, image, urlVideo, critere });
   }
   async function fetchIndicateurById(idIndicateur: number) {
     await store.dispatch('IndicateurModule/fetchIndicateurById', idIndicateur);
