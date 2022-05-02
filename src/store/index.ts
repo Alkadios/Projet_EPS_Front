@@ -12,6 +12,8 @@ import EleveModule from '@/store/modules/eleve/index';
 import UserModule from '@/store/modules/user/index';
 import EtablissementModule from '@/store/modules/etablissement/index';
 import ClasseModule from '@/store/modules/classe/index';
+import AnneeModule from '@/store/modules/annee/index';
+import NiveauScolaireModule from '@/store/modules/niveauScolaire/index';
 
 const keyLocalStorage = 'epsstore';
 
@@ -38,6 +40,8 @@ export default createStore({
     EleveModule,
     UserModule,
     EtablissementModule,
-    ClasseModule
+    ClasseModule,
+    AnneeModule,
+    NiveauScolaireModule
   },
 });

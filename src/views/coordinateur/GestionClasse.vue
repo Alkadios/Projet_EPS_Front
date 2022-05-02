@@ -39,36 +39,47 @@
             <form>
               <div class="container">
                 <div class="row">
-                  <div class="offset-lg-2 offset-md-2 col-lg-4 col-md-4 col-sm-12">
-                    <label for="nom">Nom</label>
-                    <InputText id="nom" v-model="eleveById.nom" required="true" autofocus />
-                  </div>
-                  <div class="col-lg-4 col-md-4 col-sm-12">
-                    <label for="prenom">Prenom</label>
-                    <InputText v-model="eleveById.prenom" id="prenom" required="true" autofocus />
-                  </div>
+                  <center>
+                    <div class="col-lg-12 col-md-12 col-sm-12 mt-3">
+                      <input
+                        class="form-control"
+                        v-model="nouvelleClasse.libelleClasse"
+                        type="libelleClasse"
+                        id="libelleClasse"
+                        name="libelleClasse"
+                        placeholder="Nom Classe"
+                      />
+                    </div>
+                    <div class="col-lg-12 col-md-12 col-sm-12 mt-3">
+                      <Dropdown
+                        v-model="selectedNiveauScolaire"
+                        :options="niveauxScolaires"
+                        optionLabel="libelle"
+                        optionValue="id"
+                        placeholder="Selectionner un NiveauScolaire"
+                      />
+                    </div>
+                    <div class="col-lg-12 col-md-12 col-sm-12 mt-3">
+                      <Dropdown
+                        v-model="selectedAnnee"
+                        :options="annees"
+                        optionLabel="annee"
+                        optionValue="id"
+                        placeholder="Selectionner une Annee"
+                      />
+                    </div>
+                    <div class="col-lg-12 col-md-12 col-sm-12 mt-3">
+                      <Dropdown
+                        v-model="selectedEtablissement"
+                        :options="etablissements"
+                        optionLabel="nom"
+                        optionValue="id"
+                        placeholder="Selectionner un Etablissement"
+                      />
+                    </div>
+                  </center>
                 </div>
-                <div class="row mt-3">
-                  <div class="offset-lg-2 offset-md-2 col-lg-4 col-md-4 col-sm-12">
-                    <label for="telephone">Telephone</label>
-                    <InputText id="telephone" v-model="eleveById.telephone" required="true" autofocus />
-                  </div>
-                  <div class="col-lg-4 col-md-4 col-sm-12">
-                    <label for="mailParent1">mail Parent 1</label>
-                    <InputText v-model="eleveById.mailParent1" id="mailParent1" required="true" autofocus />
-                  </div>
-                </div>
-                <div class="row mt-3">
-                  <div class="offset-lg-2 offset-md-2 col-lg-4 col-md-4 col-sm-12">
-                    <label for="mailParent2">mail Parent 2</label>
-                    <InputText id="mailParent2" v-model="eleveById.mailParent2" required="true" autofocus />
-                  </div>
-                  <div class="col-lg-4 col-md-4 col-sm-12">
-                    <label for="sexeEleve">sexe Eleve</label>
-                    <InputText v-model="eleveById.sexeEleve" id="sexeEleve" required="true" autofocus />
-                  </div>
-                </div>
-                <button type="button" class="btn btn-primary" @click="editEleve(eleveById.id)">Update</button>
+                <button type="button" class="btn btn-primary" @click="CreerClasse()">Créer</button>
               </div>
             </form>
           </template>
@@ -84,15 +95,25 @@
 
 <script lang="ts" setup>
 import { Classe, Eleve, User, Utilisateur } from '@/models';
+import AnneeService from '@/services/AnneeService';
 import ClasseService from '@/services/ClasseService';
+import EtablissementService from '@/services/EtablissementService';
+import NiveauScolaireService from '@/services/NiveauScolaireService';
 import { Class } from '@babel/types';
 import { ref, onMounted, watch } from 'vue';
 
 const { fetchClasseByAnnee, classesByAnnee, saveClasse } = ClasseService();
+const { etablissements, fetchAllEtablissements } = EtablissementService();
+const { niveauxScolaires, fetchAllNiveauxScolaires } = NiveauScolaireService();
+const { annees, fetchAllAnnees } = AnneeService();
 
-console.log(ref<Classe[]>([]));
+const selectedNiveauScolaire = ref();
+const selectedAnnee = ref();
+const selectedEtablissement = ref();
 
-let columns;
+console.log('eta', etablissements.value);
+console.log('Niv', niveauxScolaires.value);
+console.log('Annee', annees.value);
 
 const nouvelleClasse = ref<Classe>({
   libelleClasse: '',
@@ -101,18 +122,21 @@ const nouvelleClasse = ref<Classe>({
   etablissement: '',
 });
 
-
-function CreerEleve() {
+function CreerClasse() {
   saveClasse(
     nouvelleClasse.value.libelleClasse,
-
+    'api/niveau_scolaires/' + selectedNiveauScolaire.value,
+    'api/annees/' + selectedAnnee.value,
+    'api/etablissements/' + selectedEtablissement.value
   );
+  alert('Votre Classe à ete créer');
 }
-
-
 
 onMounted(async () => {
   await fetchClasseByAnnee(1);
+  await fetchAllEtablissements();
+  await fetchAllNiveauxScolaires();
+  await fetchAllAnnees();
 });
 
 const displayBasic = ref(false);

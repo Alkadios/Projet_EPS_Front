@@ -23,21 +23,15 @@ export default function ClasseService() {
     });
   }
 
-  async function updateClasse(idClasse: number, eleves: Eleve[]) {
-    await store.dispatch('EleveModule/updateEleve', {
+  async function updateClasse(idClasse: number, eleves: string[]) {
+    await store.dispatch('ClasseModule/updateClasse', {
       idClasse: idClasse,
       eleves,
     });
   }
 
-
-  async function saveClasse(
-    libelleClasse: string,
-    NiveauScolaire: NiveauScolaire,
-    Annee: Annee,
-    etablissement: Etablissement,
-  ) {
-    await store.dispatch('EleveModule/saveEleve', {
+  async function saveClasse(libelleClasse: string, NiveauScolaire: string, Annee: string, etablissement: string) {
+    await store.dispatch('ClasseModule/saveClasse', {
       libelleClasse,
       NiveauScolaire,
       Annee,
@@ -51,6 +45,6 @@ export default function ClasseService() {
     classes,
     classesByAnnee,
     updateClasse,
-    saveClasse
+    saveClasse,
   };
 }

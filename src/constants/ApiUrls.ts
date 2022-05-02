@@ -13,5 +13,6 @@ export const ApiURLUser = `${ApiUrl}/utilisateur`;
 export const ApiURLCreateEleve = `${ApiUrl}/eleve/create`;
 export const ApiURLEtablissement = `${ApiUrl}/etablissements`;
 export const ApiURLClasse = `${ApiUrl}/classes`;
+export const ApiURLAnnee = `${ApiUrl}/annees`;
 
 

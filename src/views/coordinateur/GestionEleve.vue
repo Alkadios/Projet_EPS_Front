@@ -59,7 +59,7 @@
                 </template>
               </Column>
             </DataTable>
-            <button type="button" class="btn btn-primary" @click="updateClasse(selectedClasse.value)">Ajouter</button>
+            <button type="button" class="btn btn-primary" @click="editClasse(selectedClasse)">Ajouter</button>
           </template>
         </Card>
       </div>
@@ -155,7 +155,7 @@ let deleteProductDialog = ref(false);
 const eleveDialog = ref(false);
 let monEleve = ref<Eleve>();
 const selectedClasse = ref();
-const selectedEleve = ref<Eleve>();
+const selectedEleve = ref();
 
 
 function confirmDeleteEleve() {}
@@ -192,7 +192,7 @@ function editEleve(idEleve: number) {
 }
 
 function editClasse(idClasse: number) {
-  updateClasse(idClasse,["api/eleves/1"]
+  updateClasse(idClasse,["api/eleves/" + selectedEleve.value.id]
   );
   alert('Votre Eleve à ete ajouté à cette classe');
   eleveDialog.value = false;

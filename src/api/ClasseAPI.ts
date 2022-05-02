@@ -17,9 +17,9 @@ export default {
 
   async saveClasse(payload: {
     libelleClasse: string;
-    NiveauScolaire: NiveauScolaire;
-    Annee: Annee;
-    etablissement: Etablissement;
+    NiveauScolaire: string;
+    Annee: string;
+    etablissement: string;
   }): Promise<AxiosResponse> {
     return axios.post(`${ApiURLClasse}`, payload, apiConfig.value);
   },
@@ -27,7 +27,7 @@ export default {
   async updateClasse(
     idClasse: number,
     payload: {
-      eleves: Eleve[];
+      eleves: string[];
     }
   ): Promise<AxiosResponse> {
     return axios.put(`${ApiURLClasse}/` + idClasse, payload, apiConfig.value);

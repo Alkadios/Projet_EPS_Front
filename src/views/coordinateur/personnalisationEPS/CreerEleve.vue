@@ -243,6 +243,7 @@ function CreerEleve() {
     nouveauEleve.value.sexeEleve,
     nouveauEleve.value.etablissement
   );
+  alert('Votre Eleve à ete créer');
 }
 
 function verif() {
@@ -256,10 +257,6 @@ function onSubmitUtil() {
 onMounted(async () => {
   await fetchAllEtablissements();
 });
-
-
-
-
 
 </script>
 <style>

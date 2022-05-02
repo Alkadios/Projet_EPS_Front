@@ -28,9 +28,9 @@ export default {
     context: ActionContext<ClasseState, any>,
     payload: {
       libelleClasse: string;
-      NiveauScolaire: NiveauScolaire;
-      Annee: Annee;
-      etablissement: Etablissement;
+      NiveauScolaire: string;
+      Annee: string;
+      etablissement: string;
     }
   ) {
     const response = await ClasseAPI.saveClasse(payload);
@@ -45,7 +45,7 @@ export default {
     context: ActionContext<ClasseState, any>,
     payload: {
       idClasse: number;
-      eleves: Eleve[];
+      eleves: string[];
     }
   ) {
     const response = await ClasseAPI.updateClasse(payload.idClasse, payload);
