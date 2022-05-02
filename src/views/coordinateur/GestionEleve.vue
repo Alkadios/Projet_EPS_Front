@@ -1,0 +1,221 @@
+<template>
+  <Dropdown
+    v-model="selectedClasse"
+    :options="classesByAnnee"
+    optionLabel="libelleClasse"
+    optionValue="id"
+    placeholder="Selectionner une classe"
+  />
+
+  <div>
+    <DataTable :value="mesEleves" responsiveLayout="scroll" dataKey="id">
+      <Button label="Ajouter un Eleve" @click="openBasic" style="right: 1rem" icon="pi pi-plus" autofocus />
+      <Column selectionMode="single" style="width: 3rem" :exportable="false"></Column>
+
+      <Column field="nom" header="nom" :sortable="true" style="min-width: 12rem"></Column>
+      <Column field="prenom" header="prenom" :sortable="true" style="min-width: 12rem"></Column>
+      <Column field="telephone" header="telephone" :sortable="true" style="min-width: 12rem"></Column>
+      <Column field="mailParent1" header="mailParent1" :sortable="true" style="min-width: 12rem"></Column>
+      <Column field="mailParent2" header="mailParent2" :sortable="true" style="min-width: 12rem"></Column>
+      <Column field="sexeEleve" header="sexeEleve" :sortable="true" style="min-width: 12rem"></Column>
+      <Column :exportable="false" style="min-width: 8rem">
+        <template #body="slotProps">
+          <Button
+            icon="pi pi-pencil"
+            class="p-button-rounded p-button-success mr-2"
+            @click="champsEleve(slotProps.data.id)"
+          />
+        </template>
+      </Column>
+
+      <Column :exportable="false" style="min-width: 8rem">
+        <template #body="slotProps">
+          <Button
+            icon="pi pi-trash"
+            class="p-button-rounded p-button-warning"
+            @click="supprimerEleve(slotProps.data.id)"
+          />
+        </template>
+      </Column>
+    </DataTable>
+  </div>
+
+  <Dialog header="Ajouter un Eleve" v-model:visible="displayBasic" :style="{ width: '50vw' }">
+    <div class="row" style="place-content: center">
+      <div class="col-8">
+        <Card>
+          <template #content>
+            <DataTable :value="eleves" v-model:selection="selectedEleve" responsiveLayout="scroll" dataKey="id">
+              <Column selectionMode="single"></Column>
+              <Column field="nom" header="nom" :sortable="true" style="min-width: 12rem"></Column>
+              <Column field="prenom" header="prenom" :sortable="true" style="min-width: 12rem"></Column>
+              <Column field="telephone" header="telephone" :sortable="true" style="min-width: 12rem"></Column>
+              <Column field="mailParent1" header="mailParent1" :sortable="true" style="min-width: 12rem"></Column>
+              <Column field="mailParent2" header="mailParent2" :sortable="true" style="min-width: 12rem"></Column>
+              <Column :exportable="false" style="min-width: 8rem">
+                <template>
+                  <Button icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" />
+                  <Button icon="pi pi-trash" class="p-button-rounded p-button-warning" />
+                </template>
+              </Column>
+            </DataTable>
+            <button type="button" class="btn btn-primary" @click="updateClasse(selectedClasse.value)">Ajouter</button>
+          </template>
+        </Card>
+      </div>
+    </div>
+    <template #footer>
+      <Button label="No" icon="pi pi-times" @click="closeBasic" class="p-button-text" />
+      <Button label="Yes" icon="pi pi-check" autofocus />
+    </template>
+  </Dialog>
+
+  <Dialog header="Modifier un Eleve" v-model:visible="eleveDialog" :style="{ width: '50vw' }">
+    <div class="row" style="place-content: center">
+      <div class="col-8">
+        <Card>
+          <template #content>
+            <center><h1>Modifier un Eleve</h1></center>
+            <form>
+              <div class="container">
+                <div class="row">
+                  <div class="offset-lg-2 offset-md-2 col-lg-4 col-md-4 col-sm-12">
+                    <label for="nom">Nom</label>
+                    <InputText id="nom" v-model="eleveById.nom" required="true" autofocus />
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-12">
+                    <label for="prenom">Prenom</label>
+                    <InputText v-model="eleveById.prenom" id="prenom" required="true" autofocus />
+                  </div>
+                </div>
+                <div class="row mt-3">
+                  <div class="offset-lg-2 offset-md-2 col-lg-4 col-md-4 col-sm-12">
+                    <label for="telephone">Telephone</label>
+                    <InputText id="telephone" v-model="eleveById.telephone" required="true" autofocus />
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-12">
+                    <label for="mailParent1">mail Parent 1</label>
+                    <InputText v-model="eleveById.mailParent1" id="mailParent1" required="true" autofocus />
+                  </div>
+                </div>
+                <div class="row mt-3">
+                  <div class="offset-lg-2 offset-md-2 col-lg-4 col-md-4 col-sm-12">
+                    <label for="mailParent2">mail Parent 2</label>
+                    <InputText id="mailParent2" v-model="eleveById.mailParent2" required="true" autofocus />
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-12">
+                    <label for="sexeEleve">sexe Eleve</label>
+                    <InputText v-model="eleveById.sexeEleve" id="sexeEleve" required="true" autofocus />
+                  </div>
+                </div>
+                <button type="button" class="btn btn-primary" @click="editEleve(eleveById.id)">Update</button>
+              </div>
+            </form>
+          </template>
+        </Card>
+      </div>
+    </div>
+    <template #footer>
+      <Button label="No" icon="pi pi-times" @click="closeBasic" class="p-button-text" />
+      <Button label="Yes" icon="pi pi-check" autofocus />
+    </template>
+  </Dialog>
+</template>
+
+<script lang="ts" setup>
+import { Classe, Eleve, User, Utilisateur } from '@/models';
+import ClasseService from '@/services/ClasseService';
+import EleveService from '@/services/EleveService';
+import eleve from '@/store/modules/eleve';
+import etablissement from '@/store/modules/etablissement';
+import { Class } from '@babel/types';
+import { ref, onMounted, watch } from 'vue';
+
+const { fetchAllEleves, saveEleve, eleves, deleteEleve, fetchEleveById, eleveById, updateEleve } = EleveService();
+const { fetchAllClasses, fetchClasseByAnnee, classesByAnnee, updateClasse, classes } = ClasseService();
+
+
+
+console.log(ref<Classe[]>([]));
+
+let columns;
+
+onMounted(async () => {
+  await fetchAllEleves();
+  await fetchAllClasses();
+  await fetchClasseByAnnee(1);
+});
+
+const displayBasic = ref(false);
+const openBasic = () => {
+  displayBasic.value = true;
+};
+
+let deleteProductDialog = ref(false);
+const eleveDialog = ref(false);
+let monEleve = ref<Eleve>();
+const selectedClasse = ref();
+const selectedEleve = ref<Eleve>();
+
+
+function confirmDeleteEleve() {}
+
+function supprimerEleve(idEleve: number) {
+  if (confirm('Voulez vous vraiment supprimer ?')) {
+    deleteEleve(idEleve);
+    return mesEleves;
+  }
+}
+
+console.log('classe', selectedEleve);
+
+function champsEleve(idEleve: number) {
+  eleveDialog.value = true;
+  fetchEleveById(idEleve);
+  console.log('test', eleveById.value);
+}
+
+function editEleve(idEleve: number) {
+  updateEleve(
+    idEleve,
+    eleveById.value.nom,
+    eleveById.value.prenom,
+    eleveById.value.mailParent1,
+    eleveById.value.mailParent2,
+    eleveById.value.telephone,
+    eleveById.value.sexeEleve,
+    eleveById.value.etablissement
+  );
+  alert('Votre Eleve à ete modifié');
+  eleveDialog.value = false;
+  return mesEleves;
+}
+
+function editClasse(idClasse: number) {
+  updateClasse(idClasse,["api/eleves/1"]
+  );
+  alert('Votre Eleve à ete ajouté à cette classe');
+  eleveDialog.value = false;
+}
+
+const closeBasic = () => {
+  displayBasic.value = false;
+};
+
+watch(
+  () => selectedClasse.value,
+  async () => {
+    if (selectedClasse.value) {
+      mesElevesByClasse(selectedClasse.value);
+    }
+  }
+);
+
+const mesEleves = ref<Eleve[]>([]);
+
+function mesElevesByClasse(idClasse: number) {
+  mesEleves.value = classesByAnnee.value.find((a) => a.id === idClasse)!.eleves;
+}
+
+console.log(mesEleves.value);
+</script>

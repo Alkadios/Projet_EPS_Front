@@ -62,8 +62,13 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/GestionClasse',
-    name: 'CreerEleve',
+    name: 'GestionClasse',
     component: () => import('../views/coordinateur/GestionClasse.vue'),
+  },
+  {
+    path: '/GestionEleve',
+    name: 'GestionEleve',
+    component: () => import('../views/coordinateur/GestionEleve.vue'),
   },
   {
     path: '/:notFound(.*)',

@@ -1,4 +1,4 @@
-import { Classe } from '@/models';
+import { Annee, Classe, Eleve, Etablissement, NiveauScolaire } from '@/models';
 import { computed } from 'vue';
 import { useStore } from 'vuex';
 
@@ -23,10 +23,34 @@ export default function ClasseService() {
     });
   }
 
+  async function updateClasse(idClasse: number, eleves: Eleve[]) {
+    await store.dispatch('EleveModule/updateEleve', {
+      idClasse: idClasse,
+      eleves,
+    });
+  }
+
+
+  async function saveClasse(
+    libelleClasse: string,
+    NiveauScolaire: NiveauScolaire,
+    Annee: Annee,
+    etablissement: Etablissement,
+  ) {
+    await store.dispatch('EleveModule/saveEleve', {
+      libelleClasse,
+      NiveauScolaire,
+      Annee,
+      etablissement,
+    });
+  }
+
   return {
     fetchAllClasses,
     fetchClasseByAnnee,
     classes,
     classesByAnnee,
+    updateClasse,
+    saveClasse
   };
 }

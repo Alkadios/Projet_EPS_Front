@@ -59,9 +59,6 @@ export default function EleveService() {
 
   async function updateEleve(
     idEleve: number,
-    email: string,
-    roles:string,
-    password:string,
     nom: string,
     prenom: string,
     telephone: string,
@@ -72,9 +69,6 @@ export default function EleveService() {
   ) {
     await store.dispatch('EleveModule/updateEleve', {
       idEleve: idEleve,
-      email,
-      roles,
-      password,
       nom,
       prenom,
       telephone,

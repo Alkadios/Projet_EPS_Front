@@ -46,6 +46,6 @@ export default {
       etablissement: Etablissement;
     }
   ): Promise<AxiosResponse> {
-    return axios.put(`${ApiURLCreateEleve}/` + idEleve, payload, apiConfig.value);
+    return axios.put(`${ApiURLEleve}/` + idEleve, payload, apiConfig.value);
   },
 };

@@ -1,23 +1,13 @@
 <template>
-  <Dropdown
-    v-model="selectedClasse"
-    :options="classesByAnnee"
-    optionLabel="libelleClasse"
-    optionValue="id"
-    placeholder="Selectionner une classe"
-  />
-
   <div>
-    <DataTable :value="mesEleves" responsiveLayout="scroll" dataKey="id">
-      <Button label="Ajouter un Eleve" @click="openBasic" style="right: 1rem" icon="pi pi-plus" autofocus />
-      <Column selectionMode="multiple" style="width: 3rem" :exportable="false"></Column>
+    <DataTable :value="classesByAnnee" responsiveLayout="scroll" dataKey="id">
+      <Button label="Ajouter une Classe" @click="openBasic" style="right: 1rem" icon="pi pi-plus" autofocus />
+      <Column selectionMode="single" style="width: 3rem" :exportable="false"></Column>
 
-      <Column field="nom" header="nom" :sortable="true" style="min-width: 12rem"></Column>
-      <Column field="prenom" header="prenom" :sortable="true" style="min-width: 12rem"></Column>
-      <Column field="telephone" header="telephone" :sortable="true" style="min-width: 12rem"></Column>
-      <Column field="mailParent1" header="mailParent1" :sortable="true" style="min-width: 12rem"></Column>
-      <Column field="mailParent2" header="mailParent2" :sortable="true" style="min-width: 12rem"></Column>
-      <Column field="sexeEleve" header="sexeEleve" :sortable="true" style="min-width: 12rem"></Column>
+      <Column field="NiveauScolaire" header="NiveauScolaire" :sortable="true" style="min-width: 12rem"></Column>
+      <Column field="Annee" header="Annee" :sortable="true" style="min-width: 12rem"></Column>
+      <Column field="etablissement" header="etablissement" :sortable="true" style="min-width: 12rem"></Column>
+      <Column field="libelleClasse" header="libelleClasse" :sortable="true" style="min-width: 12rem"></Column>
       <Column :exportable="false" style="min-width: 8rem">
         <template #body="slotProps">
           <Button
@@ -40,74 +30,47 @@
     </DataTable>
   </div>
 
-  <Dialog header="Ajouter un Eleve" v-model:visible="displayBasic" :style="{ width: '50vw' }">
+  <Dialog header="Ajouter une Classe" v-model:visible="displayBasic" :style="{ width: '50vw' }">
     <div class="row" style="place-content: center">
       <div class="col-8">
         <Card>
           <template #content>
-            <DataTable :value="eleves" responsiveLayout="scroll" dataKey="id">
-              <Column selectionMode="multiple" style="width: 3rem" :exportable="false"></Column>
-
-              <Column field="nom" header="nom" :sortable="true" style="min-width: 12rem"></Column>
-              <Column field="prenom" header="prenom" :sortable="true" style="min-width: 12rem"></Column>
-              <Column field="telephone" header="telephone" :sortable="true" style="min-width: 12rem"></Column>
-              <Column field="mailParent1" header="mailParent1" :sortable="true" style="min-width: 12rem"></Column>
-              <Column field="mailParent2" header="mailParent2" :sortable="true" style="min-width: 12rem"></Column>
-              <Column :exportable="false" style="min-width: 8rem">
-                <template>
-                  <Button icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" />
-                  <Button icon="pi pi-trash" class="p-button-rounded p-button-warning" />
-                </template>
-              </Column>
-            </DataTable>
-          </template>
-        </Card>
-      </div>
-    </div>
-    <template #footer>
-      <Button label="No" icon="pi pi-times" @click="closeBasic" class="p-button-text" />
-      <Button label="Yes" icon="pi pi-check" autofocus />
-    </template>
-  </Dialog>
-
-  <Dialog header="Modifier un Eleve" v-model:visible="eleveDialog" :style="{ width: '50vw' }">
-    <div class="row" style="place-content: center">
-      <div class="col-8">
-        <Card>
-          <template #content>
-            <center><h1>Modifier un Eleve</h1></center>
-            <div class="container">
-              <div class="row">
-                <div class="offset-lg-2 offset-md-2 col-lg-4 col-md-4 col-sm-12">
-                  <label for="nom">Nom</label>
-                  <InputText id="nom" v-model="eleveById.nom" required="true" autofocus />
+            <center><h1>Ajouter une Classe</h1></center>
+            <form>
+              <div class="container">
+                <div class="row">
+                  <div class="offset-lg-2 offset-md-2 col-lg-4 col-md-4 col-sm-12">
+                    <label for="nom">Nom</label>
+                    <InputText id="nom" v-model="eleveById.nom" required="true" autofocus />
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-12">
+                    <label for="prenom">Prenom</label>
+                    <InputText v-model="eleveById.prenom" id="prenom" required="true" autofocus />
+                  </div>
                 </div>
-                <div class="col-lg-4 col-md-4 col-sm-12">
-                  <label for="prenom">Prenom</label>
-                  <InputText v-model="eleveById.prenom" id="prenom" required="true" autofocus />
+                <div class="row mt-3">
+                  <div class="offset-lg-2 offset-md-2 col-lg-4 col-md-4 col-sm-12">
+                    <label for="telephone">Telephone</label>
+                    <InputText id="telephone" v-model="eleveById.telephone" required="true" autofocus />
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-12">
+                    <label for="mailParent1">mail Parent 1</label>
+                    <InputText v-model="eleveById.mailParent1" id="mailParent1" required="true" autofocus />
+                  </div>
                 </div>
+                <div class="row mt-3">
+                  <div class="offset-lg-2 offset-md-2 col-lg-4 col-md-4 col-sm-12">
+                    <label for="mailParent2">mail Parent 2</label>
+                    <InputText id="mailParent2" v-model="eleveById.mailParent2" required="true" autofocus />
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-12">
+                    <label for="sexeEleve">sexe Eleve</label>
+                    <InputText v-model="eleveById.sexeEleve" id="sexeEleve" required="true" autofocus />
+                  </div>
+                </div>
+                <button type="button" class="btn btn-primary" @click="editEleve(eleveById.id)">Update</button>
               </div>
-              <div class="row mt-3">
-                <div class="offset-lg-2 offset-md-2 col-lg-4 col-md-4 col-sm-12">
-                  <label for="telephone">Telephone</label>
-                  <InputText id="telephone" v-model="eleveById.telephone" required="true" autofocus />
-                </div>
-                <div class="col-lg-4 col-md-4 col-sm-12">
-                  <label for="mailParent1">mail Parent 1</label>
-                  <InputText v-model="eleveById.mailParent1" id="mailParent1" required="true" autofocus />
-                </div>
-              </div>
-              <div class="row mt-3">
-                <div class="offset-lg-2 offset-md-2 col-lg-4 col-md-4 col-sm-12">
-                  <label for="mailParent2">mail Parent 2</label>
-                  <InputText id="mailParent2" v-model="eleveById.mailParent2" required="true" autofocus />
-                </div>
-                <div class="col-lg-4 col-md-4 col-sm-12">
-                  <label for="sexeEleve">sexe Eleve</label>
-                  <InputText v-model="eleveById.sexeEleve" id="sexeEleve" required="true" autofocus />
-                </div>
-              </div>
-            </div>
+            </form>
           </template>
         </Card>
       </div>
@@ -122,24 +85,33 @@
 <script lang="ts" setup>
 import { Classe, Eleve, User, Utilisateur } from '@/models';
 import ClasseService from '@/services/ClasseService';
-import EleveService from '@/services/EleveService';
-import eleve from '@/store/modules/eleve';
-import etablissement from '@/store/modules/etablissement';
 import { Class } from '@babel/types';
 import { ref, onMounted, watch } from 'vue';
 
-const { fetchAllEleves, saveEleve, eleves, deleteEleve, fetchEleveById, eleveById } = EleveService();
-const { fetchAllClasses, fetchClasseByAnnee, classesByAnnee, classes } = ClasseService();
-
-const selectedClasse = ref();
+const { fetchClasseByAnnee, classesByAnnee, saveClasse } = ClasseService();
 
 console.log(ref<Classe[]>([]));
 
 let columns;
 
+const nouvelleClasse = ref<Classe>({
+  libelleClasse: '',
+  NiveauScolaire: '',
+  Annee: '',
+  etablissement: '',
+});
+
+
+function CreerEleve() {
+  saveClasse(
+    nouvelleClasse.value.libelleClasse,
+
+  );
+}
+
+
+
 onMounted(async () => {
-  await fetchAllEleves();
-  await fetchAllClasses();
   await fetchClasseByAnnee(1);
 });
 
@@ -148,44 +120,7 @@ const openBasic = () => {
   displayBasic.value = true;
 };
 
-let deleteProductDialog = ref(false);
-const eleveDialog = ref(false);
-let monEleve = ref<Eleve>();
-let selectedEleve = {};
-
-function confirmDeleteEleve() {}
-
-function supprimerEleve(idEleve: number) {
-  if (confirm('Voulez vous vraiment supprimer ?')) {
-    deleteEleve(idEleve);
-    return mesEleves;
-  }
-}
-
-function champsEleve(idEleve: number) {
-  eleveDialog.value = true;
-  fetchEleveById(idEleve);
-  console.log('test', eleveById.value);
-}
-
 const closeBasic = () => {
   displayBasic.value = false;
 };
-
-watch(
-  () => selectedClasse.value,
-  async () => {
-    if (selectedClasse.value) {
-      mesElevesByClasse(selectedClasse.value);
-    }
-  }
-);
-
-const mesEleves = ref<Eleve[]>([]);
-
-function mesElevesByClasse(idClasse: number) {
-  mesEleves.value = classesByAnnee.value.find((a) => a.id === idClasse)!.eleves;
-}
-
-console.log(mesEleves.value);
 </script>
