@@ -113,14 +113,23 @@
           >
             <template #header> Critères </template>
             <Column :expander="true" headerStyle="width: 3rem" />
-            <Column field="titre" header="Titre" />
-            <Column field="description" header="Description" />
+            <Column field="titre" header="Titre">
+              <template #body="slotProps"> <span v-html="slotProps.data.titre"></span> </template>
+            </Column>
+            <Column field="description" header="Description">
+              <template #body="slotProps"> <span v-html="slotProps.data.description"></span> </template>
+            </Column>
             <template #expansion="slotProps">
-              <DataTable :value="slotProps.data.criteres" responsiveLayout="scroll">
+              <DataTable :value="slotProps.data.Indicateur" responsiveLayout="scroll">
                 <template #header> Indicateurs </template>
 
-                <Column field="libelle" header="Titre" />
-                <Column field="description" header="Description" />
+                <Column field="libelle" header="Titre">
+                  <template #body="slotProps"> <span v-html="slotProps.data.libelle"></span> </template
+                ></Column>
+
+                <Column field="description" header="Description">
+                  <template #body="slotProps"> <span v-html="slotProps.data.description"></span> </template>
+                </Column>
               </DataTable>
             </template>
           </DataTable>
@@ -143,7 +152,7 @@
 
 <script lang="ts" setup>
 import { ref, onMounted, computed } from 'vue';
-import { Annee, NiveauScolaire, ChoixAnnee, ApsaRetenu } from '@/models';
+import type { Annee, NiveauScolaire, ChoixAnnee, ApsaRetenu } from '@/models';
 import UtilisateurService from '@/services/UtilisateurService';
 import AnneeService from '@/services/AnneeService';
 import ApsaSelectAnneeService from '@/services/ApsaSelectAnneeService';
@@ -237,5 +246,7 @@ async function onAnneeEnConfigChange() {
   await fetchConfigAnnee();
 }
 
-function onNiveauChange() {}
+function onNiveauChange(data: any) {
+  console.log('data', data);
+}
 </script>

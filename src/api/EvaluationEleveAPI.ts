@@ -21,12 +21,12 @@ export default {
     Date: string;
     evaluationEleve: [
       {
-        Indicateur: string;
-        Eleve: string;
+        Indicateur: number;
+        Eleve: number;
         autoEval: boolean;
       }
     ];
   }): Promise<AxiosResponse<ResponseModel>> {
-    return axios.post(`http://127.0.0.1:8000/api/evaluation_eleve/create`, payload, apiConfig.value);
+    return axios.post(`https://127.0.0.1:8000/api/evaluation_eleve/create`, payload, apiConfig.value);
   },
 };
