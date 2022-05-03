@@ -3,7 +3,7 @@ import './assets/css/bootstrap.min.css';
 import './assets/fonts/fontawesome-all.min.css';
 import './assets/fonts/font-awesome.min.css';
 import './assets/fonts/fontawesome5-overrides.min.css';
-import './assets/js/bootstrap.min.js';
+import 'bootstrap';
 import '@/assets/css/theme.css';
 import 'primevue/resources/primevue.min.css';
 import PrimeVue from 'primevue/config';
