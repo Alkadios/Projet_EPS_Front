@@ -72,6 +72,7 @@ export default {
     }
     //if (response.status !== 201) throw new Error);
   },
+
   async fetchClasseByAnneeAndProf(
     context: ActionContext<ClasseState, any>,
     payload: { idAnnee: number; idProfesseur: number }

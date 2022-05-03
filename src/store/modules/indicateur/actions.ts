@@ -1,6 +1,6 @@
 import { ActionContext } from 'vuex';
 import { ref } from 'vue';
-import IndicateurAPI from '@/api/IndicateurApi';
+import IndicateurAPI from '@/api/IndicateurAPI';
 import IndicateurState from './stateInterface';
 import { Indicateur } from '@/models';
 

@@ -168,6 +168,7 @@ async function supprimerEleve(idEleve: number) {
   if (confirm('Voulez vous vraiment supprimer ?')) {
     await deleteEleve(idEleve);
   }
+  await fetchClasseByAnnee(3);
   await fetchAllEleves();
   onClasseChange();
 }
@@ -193,7 +194,7 @@ async function editEleve(idEleve: number) {
   );
   alert('Votre Eleve à ete modifié');
   eleveDialog.value = false;
-  await fetchAllEleves();
+  await fetchClasseByAnnee(3);
   console.log('fetchAllEleves', eleves.value);
   onClasseChange();
   console.log('onClasseChange', mesEleves.value);

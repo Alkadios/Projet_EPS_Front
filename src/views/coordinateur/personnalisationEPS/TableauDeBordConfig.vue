@@ -176,7 +176,7 @@ const {
   fetchAnneeEnCours,
   anneeEnCours,
 } = UtilisateurService();
-const { annees, fetchAllAnnee, annee, fetchAnneeById } = AnneeService();
+const { annees, fetchAllAnnees, annee, fetchAnneeById } = AnneeService();
 const { apsaSelectAnneeByAnnee, fetchAllApsaSelectAnneeByAnnee } = ApsaSelectAnneeService();
 const { fetchAllChoixAnneeByAnneeAndEtablissement, choixAnneeByAnneeAndEtablissement } = ChoixAnneeService();
 const { fetchApsaRetenuByAnneeAndEtablissement, apsasRetenusByEtablissementAndAnnee } = ApsaRetenuService();
@@ -208,7 +208,7 @@ const apsasRetenusFiltree = computed((): ApsaRetenu[] => {
 
 onMounted(async () => {
   isLoading.value = true;
-  await fetchAllAnnee();
+  await fetchAllAnnees();
   if (isObjectEmpty(nouvelAnneeEnConfig.value)) {
     const anneeLocal = localStorage.getItem('anneeEnConfig');
     if (anneeLocal != undefined && anneeLocal != null) {
