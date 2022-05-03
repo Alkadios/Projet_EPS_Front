@@ -255,6 +255,7 @@ function openEdit(monIndicateur: Indicateur) {
 
 const closeEdit = () => {
   displayEdit.value = false;
+  window.location.reload();
   window.alert('L\indicateur a bien été modifié !');
 };
 
@@ -321,6 +322,7 @@ onMounted(async () => {
     await fetchIndicateurs();
     await fetchCritereById(parseInt(route.query.idCritere.toString()));
   }
+  isLoading.value = false;
 });
 
 function onPhotoChange(event: any) {

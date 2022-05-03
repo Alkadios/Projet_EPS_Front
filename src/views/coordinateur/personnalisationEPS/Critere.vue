@@ -248,6 +248,8 @@ const closeBasic = () => {
 
 const closeEdit = () => {
   displayEdit.value = false;
+  window.location.reload();
+  window.alert('Le critère a bien été modifié !');
 };
 
 const imageCritereIsSelected = computed(() => {
@@ -315,6 +317,7 @@ onMounted(async () => {
       }
     });
   }
+  isLoading.value = false;
 });
 
 function onPhotoChange(event: any) {
