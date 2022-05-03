@@ -34,8 +34,8 @@ export default {
       Date: string;
       evaluationEleve: [
         {
-          Indicateur: string;
-          Eleve: string;
+          Indicateur: number;
+          Eleve: number;
           autoEval: boolean;
         }
       ];

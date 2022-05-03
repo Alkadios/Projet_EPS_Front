@@ -45,11 +45,13 @@
               </div>
             </div>
           </div>
-          <div>
+          <div class="p-5" style="height: 4rem">
+            <!--<Chart type="pie" :data="chartDataCammenbert" :options="lightOptionsCammenbert" />-->
+          </div>
+          <!-- <div>
             <div class="p-5">
               <div class="col-md-12">
                 <div class="d-flex" v-if="apsaSelectionner != null">
-                  <div class="p-2">Mes Situation d'évaluation :</div>
                   <Dropdown
                     v-model="apsaRetenuSelectionner"
                     :options="situationsEvaluationByNiveauScolaireAndApsa"
@@ -60,18 +62,11 @@
                 </div>
               </div>
             </div>
-          </div>
-          <div id="myTableEleves">
+          </div> -->
+          <!-- <div id="myTableEleves">
             <div class="row">
               <div class="d-flex justify-content-start">
                 <div id="elevesByClasse" v-if="apsaRetenuSelectionner != null" class="col-md-4 p-2">
-                  <Button
-                    label="Tout les élèves"
-                    style="margin-bottom: 1rem; width: 100%"
-                    :style="!isCheckButtonTous ? 'background-color: bisque' : ''"
-                    :class="isCheckButtonTous === true ? 'primary' : ''"
-                    @click="onClickButtonTous()"
-                  />
                   <Listbox
                     v-model="eleveSelectionne"
                     :options="elevesByClasse"
@@ -110,12 +105,12 @@
                 </div>
               </div>
             </div>
-          </div>
+          </div> -->
         </div>
       </div>
       <div class="mt-3 ms-3">
         <Button label="Annuler" @click="router.push('TableauDeBordConfig')"></Button>
-        <Button label="Terminer l'évaluation" icon="pi pi-check" style="left: 1rem" @click="saveEvaluation()"></Button>
+        <Button label="Terminer l'évaluation" icon="pi pi-check" style="left: 1rem" @click="verif()"></Button>
       </div>
       <div class="mb-3"></div>
       <div style="position: fixed; bottom: 0; right: 2rem">
@@ -129,7 +124,6 @@
     </div>
   </div>
 </template>
-
 <script lang="ts" setup>
 import { ref, onMounted, toRaw, computed, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -162,6 +156,83 @@ const listeApsa = ref<APSA[]>([]);
 const isCheckButtonTous = ref(false);
 const monEvaluation = ref<newEvaluation>({ evaluationEleve: [] as newEvaluationEleve[] } as newEvaluation);
 
+const chartOptions = ref({
+  plugins: {
+    legend: {
+      labels: {
+        color: '#495057',
+      },
+    },
+  },
+  scales: {
+    x: {
+      ticks: {
+        color: '#495057',
+      },
+      grid: {
+        color: '#ebedef',
+      },
+    },
+    y: {
+      ticks: {
+        color: '#495057',
+      },
+      grid: {
+        color: '#ebedef',
+      },
+    },
+  },
+});
+
+const chartDataCammenbert = ref({
+  labels: ['A', 'B', 'C'],
+  datasets: [
+    {
+      data: [300, 50, 100],
+      backgroundColor: ['#42A5F5', '#66BB6A', '#FFA726'],
+      hoverBackgroundColor: ['#64B5F6', '#81C784', '#FFB74D'],
+    },
+  ],
+});
+
+const chartData = ref({
+  labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+  datasets: [
+    {
+      type: 'line',
+      label: 'Dataset 1',
+      borderColor: '#42A5F5',
+      borderWidth: 2,
+      fill: false,
+      data: [50, 25, 12, 48, 56, 76, 42],
+    },
+    {
+      type: 'bar',
+      label: 'Dataset 2',
+      backgroundColor: '#66BB6A',
+      data: [21, 84, 24, 75, 37, 65, 34],
+      borderColor: 'white',
+      borderWidth: 2,
+    },
+    {
+      type: 'bar',
+      label: 'Dataset 3',
+      backgroundColor: '#FFA726',
+      data: [41, 52, 24, 74, 23, 21, 32],
+    },
+  ],
+});
+
+const lightOptionsCammenbert = ref({
+  plugins: {
+    legend: {
+      labels: {
+        color: '#495057',
+      },
+    },
+  },
+});
+
 interface newEvaluationEleve {
   Indicateur: number;
   Eleve: number;
@@ -179,7 +250,7 @@ interface indicateurEleve {
 }
 
 function verif() {
-  console.log('isCheckButtonTous : ', isCheckButtonTous.value);
+  console.log('listeApsa : ', listeApsa.value);
 }
 
 function onClickButtonTous() {
@@ -313,22 +384,5 @@ function checkIfIndicateurIsSelectionner(unIndicateur: Indicateur) {
   )
     return true;
   else return false;
-}
-
-async function saveEvaluation() {
-  isLoading.value = true;
-  if (indicateursEleveSelectionner.value != null) {
-    monEvaluation.value.Date = new Date().toLocaleDateString('en-CA');
-    monEvaluation.value.evaluationEleve = getEvaluationEleveForRequest(indicateursEleveSelectionner.value);
-    await saveEvaluationEleve(monEvaluation.value.Date, monEvaluation.value.evaluationEleve);
-  }
-  router.push('TableauDeBordConfig');
-  isLoading.value = false;
-}
-
-function getEvaluationEleveForRequest(listeIndicateurEleve: indicateurEleve[]) {
-  return listeIndicateurEleve.map((ie) => {
-    return { Indicateur: ie.indicateur.id, Eleve: ie.eleve.id, autoEval: false };
-  });
 }
 </script>
