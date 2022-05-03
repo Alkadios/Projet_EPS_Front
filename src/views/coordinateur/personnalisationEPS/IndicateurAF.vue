@@ -24,6 +24,38 @@
             <div>
               <InputText id="UrlVideo" v-model="nouveauIndicateur.url_video" type="text" placeholder="URL vidéo" />
             </div>
+            <div style="margin-top: 1.5rem">
+              <p>Couleur:</p>
+              <ColorPicker v-model="nouveauIndicateur.color" defaultColor="#FF0000" />
+            </div>
+            <div class="row" style="margin-top: 1.5rem">
+              <div class="col-3">
+                <p>Image :</p>
+              </div>
+              <div class="col-9">
+                <FileUpload
+                  v-if="!imageIndicateurIsSelected"
+                  v-model="nouveauIndicateur.image"
+                  mode="basic"
+                  accept="image/*"
+                  :maxFileSize="1000000"
+                  @select="onPhotoChange"
+                  :showUploadButton="false"
+                />
+                <img
+                  v-else
+                  :src="`data:${nouvelleImageIndicateur.type};base64,` + nouveauIndicateur.image"
+                  style="max-width: 10rem; max-height: 10rem"
+                  alt="Logo organisme"
+                />
+                <Button
+                  v-if="imageIndicateurIsSelected"
+                  icon="pi pi-trash"
+                  class="p-button-rounded p-button-danger"
+                  @click="supprimerImageIndicateur"
+                />
+              </div>
+            </div>
           </template>
         </Card>
       </div>
@@ -57,6 +89,10 @@
             </Editor>
             <div style="margin-top: 1.5rem">
               <InputText id="UrlVideo" v-model="nouveauIndicateur.url_video" type="text" placeholder="URL vidéo" />
+            </div>
+            <div style="margin-top: 1.5rem">
+              <p>Couleur:</p>
+              <ColorPicker v-model="nouveauIndicateur.color" />
             </div>
             <div class="row" style="margin-top: 1.5rem">
               <div class="col-3">
@@ -92,17 +128,7 @@
     </div>
     <template #footer>
       <Button label="Annuler" icon="pi pi-times" @click="closeEdit" class="p-button-text" />
-      <Button
-        label="Ajouter des indicateurs"
-        icon="pi pi-plus"
-        @click="
-          router.push({
-            name: 'IndicateurAF',
-            query: { idCritere: nouveauIndicateur.id },
-          })
-        "
-      />
-      <Button label="Modifier" icon="pi pi-check" @click="closeEdit(), editIndicateur(nouveauIndicateur)" autofocus>
+      <Button label="Modifier" icon="pi pi-check" @click="closeEdit(), changeIndicateur(nouveauIndicateur)" autofocus>
       </Button>
     </template>
   </Dialog>
@@ -136,8 +162,8 @@
             <template #title> {{ monIndicateur.libelle }} </template>
             <template #content>
               <p v-html="monIndicateur.description" />
-              <Button class="p-button-rounded p-button-info" @click="changeIndicateur(monIndicateur)"
-                ><i class="pi pi-pencil" @click="openEdit"
+              <Button class="p-button-rounded p-button-info" @click="openEdit(monIndicateur)"
+                ><i class="pi pi-pencil"
               /></Button>
               <Button class="p-button-rounded p-button-danger" @click="removeIndicateur(monIndicateur.id)"
                 ><i class="pi pi-times"
@@ -191,6 +217,7 @@ import IndicateurService from '@/services/IndicateurService';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import { isObject } from '@vue/shared';
+import ColorPicker from 'primevue/colorpicker';
 
 const route = useRoute();
 const router = useRouter();
@@ -200,7 +227,13 @@ const { critere, fetchCriteres, fetchCritereById } = CritereService();
 const { saveIndicateur, deleteIndicateur, editIndicateur, fetchIndicateurs, indicateurs } = IndicateurService();
 const IndicateurByCritere = ref<Indicateur[]>([]);
 const nouvelleImageIndicateur = ref<File>({} as File);
-const nouveauIndicateur = ref<Indicateur>({ libelle: '', description: '', url_video: '', id: -1 } as Indicateur);
+const nouveauIndicateur = ref<Indicateur>({
+  libelle: '',
+  description: '',
+  url_video: '',
+  color: '',
+  id: -1,
+} as Indicateur);
 const isLoading = ref(false);
 const mesIndicateurs = ref<Indicateur[]>([]);
 
@@ -215,14 +248,14 @@ const closeBasic = () => {
 };
 
 const displayEdit = ref(false);
-const openEdit = () => {
+function openEdit(monIndicateur: Indicateur) {
   displayEdit.value = true;
-};
+  nouveauIndicateur.value = monIndicateur;
+}
 
 const closeEdit = () => {
   displayEdit.value = false;
   window.alert('L\indicateur a bien été modifié !');
-  window.location.reload();
 };
 
 async function addIndicateur() {
@@ -233,6 +266,7 @@ async function addIndicateur() {
       nouveauIndicateur.value.description,
       nouveauIndicateur.value.image,
       nouveauIndicateur.value.url_video,
+      nouveauIndicateur.value.color,
       critere.value['@id']
     );
     closeBasic();
@@ -245,13 +279,13 @@ async function addIndicateur() {
 async function changeIndicateur(monIndicateur: Indicateur) {
   try {
     await editIndicateur(
-      nouveauIndicateur.value.libelle,
-      nouveauIndicateur.value.description,
-      nouveauIndicateur.value.image,
-      nouveauIndicateur.value.url_video,
-      critere.value['@id']
+      monIndicateur.id,
+      monIndicateur.libelle,
+      monIndicateur.description,
+      monIndicateur.image,
+      monIndicateur.url_video,
+      monIndicateur.color
     );
-    window.alert("L'indicateur a bien été modifier !");
   } catch (e) {
     console.log(e);
   }

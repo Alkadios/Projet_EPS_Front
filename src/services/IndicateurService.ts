@@ -21,18 +21,28 @@ export default function IndicateurService() {
     description: string,
     image: string,
     urlVideo: string,
+    color: string,
     critere: string
   ) {
-    await store.dispatch('IndicateurModule/saveIndicateur', { id, libelle, description, image, urlVideo, critere });
+    await store.dispatch('IndicateurModule/saveIndicateur', {
+      id,
+      libelle,
+      description,
+      image,
+      urlVideo,
+      color,
+      critere,
+    });
   }
   async function editIndicateur(
-    titre: string,
+    id: number,
+    libelle: string,
     description: string,
     image: string,
     urlVideo: string,
-    ApsaRetenu: string
+    color: string
   ) {
-    await store.dispatch('IndicateurModule/editIndicateur', { titre, description, image, urlVideo, ApsaRetenu });
+    await store.dispatch('IndicateurModule/editIndicateur', { id, libelle, description, image, urlVideo, color });
   }
   async function fetchIndicateurById(idIndicateur: number) {
     await store.dispatch('IndicateurModule/fetchIndicateurById', idIndicateur);

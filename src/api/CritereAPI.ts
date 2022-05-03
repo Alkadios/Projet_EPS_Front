@@ -44,7 +44,6 @@ export default {
     urlVideo: string;
   }): Promise<AxiosResponse<any>> {
     const url = `${ApiCritere}/${payload.id.toString()}`;
-    console.log('url', url, payload.id.toString());
     return axios.put(`${url}`, payload, apiConfig.value);
   },
 };
