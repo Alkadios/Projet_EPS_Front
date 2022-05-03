@@ -8,4 +8,8 @@ export default {
   getClassesByAnnee(state: ClasseState) {
     return state.classesByAnnee;
   },
+
+  getClassesById(state: ClasseState) {
+    return state.classesById;
+  },
 };

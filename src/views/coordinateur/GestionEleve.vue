@@ -3,8 +3,9 @@
     v-model="selectedClasse"
     :options="classesByAnnee"
     optionLabel="libelleClasse"
-    optionValue="id"
+    dataKey="id"
     placeholder="Selectionner une classe"
+    @change="onClasseChange"
   />
 
   <div>
@@ -45,8 +46,8 @@
       <div class="col-8">
         <Card>
           <template #content>
-            <DataTable :value="eleves" v-model:selection="selectedEleve" responsiveLayout="scroll" dataKey="id">
-              <Column selectionMode="single"></Column>
+            <DataTable :value="eleves" v-model:selection="selectedEleves" responsiveLayout="scroll" dataKey="id">
+              <Column selectionMode="multiple"></Column>
               <Column field="nom" header="nom" :sortable="true" style="min-width: 12rem"></Column>
               <Column field="prenom" header="prenom" :sortable="true" style="min-width: 12rem"></Column>
               <Column field="telephone" header="telephone" :sortable="true" style="min-width: 12rem"></Column>
@@ -59,7 +60,7 @@
                 </template>
               </Column>
             </DataTable>
-            <button type="button" class="btn btn-primary" @click="editClasse(selectedClasse)">Ajouter</button>
+            <button type="button" class="btn btn-primary" @click="editClasse(selectedClasse?.id)">Ajouter</button>
           </template>
         </Card>
       </div>
@@ -123,60 +124,64 @@
 </template>
 
 <script lang="ts" setup>
-import { Classe, Eleve, User, Utilisateur } from '@/models';
+import { Classe, Eleve } from '@/models';
 import ClasseService from '@/services/ClasseService';
 import EleveService from '@/services/EleveService';
-import eleve from '@/store/modules/eleve';
-import etablissement from '@/store/modules/etablissement';
-import { Class } from '@babel/types';
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted } from 'vue';
 
 const { fetchAllEleves, saveEleve, eleves, deleteEleve, fetchEleveById, eleveById, updateEleve } = EleveService();
-const { fetchAllClasses, fetchClasseByAnnee, classesByAnnee, updateClasse, classes } = ClasseService();
-
-
-
-console.log(ref<Classe[]>([]));
-
-let columns;
+const { fetchAllClasses, fetchClasseByAnnee, classesByAnnee, addElevesInClasse, classes } = ClasseService();
 
 onMounted(async () => {
   await fetchAllEleves();
   await fetchAllClasses();
-  await fetchClasseByAnnee(1);
+  await fetchClasseByAnnee(3);
 });
+
+function mesElevesByClasse(idClasse: number) {
+  mesEleves.value = classesByAnnee.value.find((a) => a.id === idClasse)!.eleves;
+}
+
+function onClasseChange() {
+  if (selectedClasse.value) {
+    mesElevesByClasse(selectedClasse.value.id);
+  }
+}
+
+console.log(ref<Classe[]>([]));
+
+let columns;
 
 const displayBasic = ref(false);
 const openBasic = () => {
   displayBasic.value = true;
 };
 
-let deleteProductDialog = ref(false);
 const eleveDialog = ref(false);
 let monEleve = ref<Eleve>();
-const selectedClasse = ref();
-const selectedEleve = ref();
-
+const selectedClasse = ref<Classe>();
+const selectedEleves = ref<Eleve[]>();
 
 function confirmDeleteEleve() {}
 
-function supprimerEleve(idEleve: number) {
+async function supprimerEleve(idEleve: number) {
   if (confirm('Voulez vous vraiment supprimer ?')) {
-    deleteEleve(idEleve);
-    return mesEleves;
+    await deleteEleve(idEleve);
   }
+  await fetchAllEleves();
+  onClasseChange();
 }
 
-console.log('classe', selectedEleve);
+console.log('classe', selectedEleves);
 
-function champsEleve(idEleve: number) {
+async function champsEleve(idEleve: number) {
   eleveDialog.value = true;
-  fetchEleveById(idEleve);
+  await fetchEleveById(idEleve);
   console.log('test', eleveById.value);
 }
 
-function editEleve(idEleve: number) {
-  updateEleve(
+async function editEleve(idEleve: number) {
+  await updateEleve(
     idEleve,
     eleveById.value.nom,
     eleveById.value.prenom,
@@ -188,34 +193,29 @@ function editEleve(idEleve: number) {
   );
   alert('Votre Eleve à ete modifié');
   eleveDialog.value = false;
-  return mesEleves;
-}
-
-function editClasse(idClasse: number) {
-  updateClasse(idClasse,["api/eleves/" + selectedEleve.value.id]
-  );
-  alert('Votre Eleve à ete ajouté à cette classe');
-  eleveDialog.value = false;
+  await fetchAllEleves();
+  console.log('fetchAllEleves', eleves.value);
+  onClasseChange();
+  console.log('onClasseChange', mesEleves.value);
 }
 
 const closeBasic = () => {
   displayBasic.value = false;
 };
 
-watch(
-  () => selectedClasse.value,
-  async () => {
-    if (selectedClasse.value) {
-      mesElevesByClasse(selectedClasse.value);
-    }
+async function editClasse(idClasse: number) {
+  if (selectedEleves.value) {
+    const idsEleve = selectedEleves.value.map((e: Eleve) => {
+      return e['@id'];
+    });
+    if (idsEleve) await addElevesInClasse(idClasse, idsEleve);
   }
-);
 
-const mesEleves = ref<Eleve[]>([]);
-
-function mesElevesByClasse(idClasse: number) {
-  mesEleves.value = classesByAnnee.value.find((a) => a.id === idClasse)!.eleves;
+  alert('Votre Eleve à ete ajouté à cette classe');
+  eleveDialog.value = false;
+  await fetchAllEleves();
+  onClasseChange();
 }
 
-console.log(mesEleves.value);
+const mesEleves = ref<Eleve[]>([]);
 </script>

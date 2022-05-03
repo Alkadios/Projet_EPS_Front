@@ -4,26 +4,16 @@
       <Button label="Ajouter une Classe" @click="openBasic" style="right: 1rem" icon="pi pi-plus" autofocus />
       <Column selectionMode="single" style="width: 3rem" :exportable="false"></Column>
 
-      <Column field="NiveauScolaire" header="NiveauScolaire" :sortable="true" style="min-width: 12rem"></Column>
-      <Column field="Annee" header="Annee" :sortable="true" style="min-width: 12rem"></Column>
-      <Column field="etablissement" header="etablissement" :sortable="true" style="min-width: 12rem"></Column>
+      <Column field="NiveauScolaire.libelle" header="NiveauScolaire" :sortable="true" style="min-width: 12rem"></Column>
+      <Column field="Annee.annee" header="Annee" :sortable="true" style="min-width: 12rem"></Column>
+      <Column field="etablissement.nom" header="etablissement" :sortable="true" style="min-width: 12rem"></Column>
       <Column field="libelleClasse" header="libelleClasse" :sortable="true" style="min-width: 12rem"></Column>
       <Column :exportable="false" style="min-width: 8rem">
         <template #body="slotProps">
           <Button
-            icon="pi pi-pencil"
-            class="p-button-rounded p-button-success mr-2"
-            @click="champsEleve(slotProps.data.id)"
-          />
-        </template>
-      </Column>
-
-      <Column :exportable="false" style="min-width: 8rem">
-        <template #body="slotProps">
-          <Button
             icon="pi pi-trash"
-            class="p-button-rounded p-button-warning"
-            @click="supprimerEleve(slotProps.data.id)"
+            class="p-button-rounded p-button-success mr-2"
+            @click="supprimerClasse(slotProps.data.id)"
           />
         </template>
       </Column>
@@ -94,15 +84,14 @@
 </template>
 
 <script lang="ts" setup>
-import { Classe, Eleve, User, Utilisateur } from '@/models';
+import { Classe } from '@/models';
 import AnneeService from '@/services/AnneeService';
 import ClasseService from '@/services/ClasseService';
 import EtablissementService from '@/services/EtablissementService';
 import NiveauScolaireService from '@/services/NiveauScolaireService';
-import { Class } from '@babel/types';
 import { ref, onMounted, watch } from 'vue';
 
-const { fetchClasseByAnnee, classesByAnnee, saveClasse } = ClasseService();
+const { fetchClasseByAnnee, classesByAnnee, saveClasse, deleteClasse, classesById, fetchClasseById } = ClasseService();
 const { etablissements, fetchAllEtablissements } = EtablissementService();
 const { niveauxScolaires, fetchAllNiveauxScolaires } = NiveauScolaireService();
 const { annees, fetchAllAnnees } = AnneeService();
@@ -111,9 +100,7 @@ const selectedNiveauScolaire = ref();
 const selectedAnnee = ref();
 const selectedEtablissement = ref();
 
-console.log('eta', etablissements.value);
-console.log('Niv', niveauxScolaires.value);
-console.log('Annee', annees.value);
+const classeDialog = ref(false);
 
 const nouvelleClasse = ref<Classe>({
   libelleClasse: '',
@@ -122,29 +109,39 @@ const nouvelleClasse = ref<Classe>({
   etablissement: '',
 });
 
-function CreerClasse() {
-  saveClasse(
+async function CreerClasse() {
+  await saveClasse(
     nouvelleClasse.value.libelleClasse,
     'api/niveau_scolaires/' + selectedNiveauScolaire.value,
     'api/annees/' + selectedAnnee.value,
     'api/etablissements/' + selectedEtablissement.value
   );
   alert('Votre Classe à ete créer');
+  displayBasic.value = false;
+  await fetchClasseByAnnee(3);
 }
-
-onMounted(async () => {
-  await fetchClasseByAnnee(1);
-  await fetchAllEtablissements();
-  await fetchAllNiveauxScolaires();
-  await fetchAllAnnees();
-});
 
 const displayBasic = ref(false);
 const openBasic = () => {
   displayBasic.value = true;
 };
 
+async function supprimerClasse(idClasse: number) {
+  console.log(idClasse);
+  if (confirm('Voulez vous vraiment supprimer ?')) {
+    await deleteClasse(idClasse);
+    await fetchClasseByAnnee(3);
+  }
+}
+
 const closeBasic = () => {
   displayBasic.value = false;
 };
+
+onMounted(async () => {
+  await fetchClasseByAnnee(3);
+  await fetchAllEtablissements();
+  await fetchAllNiveauxScolaires();
+  await fetchAllAnnees();
+});
 </script>

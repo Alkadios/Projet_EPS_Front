@@ -10,7 +10,7 @@ export default function EleveService() {
   }
 
   async function fetchEleveById(idEleve: number) {
-    await store.dispatch('EleveModule/fetchEleveById',{
+    await store.dispatch('EleveModule/fetchEleveById', {
       idEleve: idEleve,
     });
   }
@@ -29,12 +29,10 @@ export default function EleveService() {
     return store.getters['EleveModule/getEleves'];
   });
 
-
-
   async function saveEleve(
     email: string,
-    roles:string,
-    password:string,
+    roles: string,
+    password: string,
     nom: string,
     prenom: string,
     telephone: string,
@@ -53,7 +51,7 @@ export default function EleveService() {
       mailParent1,
       mailParent2,
       sexeEleve,
-      etablissement
+      etablissement,
     });
   }
 
@@ -75,7 +73,7 @@ export default function EleveService() {
       mailParent1,
       mailParent2,
       sexeEleve,
-      etablissement
+      etablissement,
     });
   }
 
@@ -86,6 +84,6 @@ export default function EleveService() {
     deleteEleve,
     updateEleve,
     eleves,
-    eleveById
+    eleveById,
   };
 }

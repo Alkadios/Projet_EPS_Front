@@ -10,6 +10,7 @@ export default {
     return {
       classes: [] as Classe[],
       classesByAnnee: [] as Classe[],
+      classesById: {} as Classe,
     };
   },
   mutations,

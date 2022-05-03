@@ -17,14 +17,18 @@ export default function ClasseService() {
     return store.getters['ClasseModule/getClassesByAnnee'];
   });
 
+  const classesById = computed((): Classe => {
+    return store.getters['ClasseModule/getClasseById'];
+  });
+
   async function fetchClasseByAnnee(idAnnee: number) {
     await store.dispatch('ClasseModule/fetchClasseByAnnee', {
       idAnnee: idAnnee,
     });
   }
 
-  async function updateClasse(idClasse: number, eleves: string[]) {
-    await store.dispatch('ClasseModule/updateClasse', {
+  async function addElevesInClasse(idClasse: number, eleves: string[]) {
+    await store.dispatch('ClasseModule/addElevesInClasse', {
       idClasse: idClasse,
       eleves,
     });
@@ -39,12 +43,27 @@ export default function ClasseService() {
     });
   }
 
+  async function fetchClasseById(idClasse: number) {
+    await store.dispatch('ClasseModule/fetchClasseById', {
+      idClasse: idClasse,
+    });
+  }
+
+  async function deleteClasse(idClasse: number) {
+    await store.dispatch('ClasseModule/deleteClasse', {
+      idClasse: idClasse,
+    });
+  }
+
   return {
     fetchAllClasses,
     fetchClasseByAnnee,
+    fetchClasseById,
     classes,
     classesByAnnee,
-    updateClasse,
+    classesById,
+    addElevesInClasse,
     saveClasse,
+    deleteClasse,
   };
 }

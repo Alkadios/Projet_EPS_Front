@@ -8,4 +8,7 @@ export default {
   setClassesByAnnee(state: ClasseState, payload: Classe[]) {
     state.classesByAnnee = payload;
   },
+  setClassesById(state: ClasseState, payload: Classe) {
+    state.classesById = payload;
+  },
 };

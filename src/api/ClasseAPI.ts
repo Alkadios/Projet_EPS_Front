@@ -15,6 +15,14 @@ export default {
     return axios.get(`${url.toString()}`, apiConfig.value);
   },
 
+  async fetchClasseById(idClasse: number): Promise<AxiosResponse<ResponseModel>> {
+    return axios.get(`${ApiURLClasse}/` + idClasse, apiConfig.value);
+  },
+
+  async deleteClasse(idClasse: number): Promise<AxiosResponse<ResponseModel>> {
+    return axios.delete(`${ApiURLClasse}/` + idClasse, apiConfig.value);
+  },
+
   async saveClasse(payload: {
     libelleClasse: string;
     NiveauScolaire: string;
@@ -24,7 +32,7 @@ export default {
     return axios.post(`${ApiURLClasse}`, payload, apiConfig.value);
   },
 
-  async updateClasse(
+  async addElevesInClasse(
     idClasse: number,
     payload: {
       eleves: string[];
