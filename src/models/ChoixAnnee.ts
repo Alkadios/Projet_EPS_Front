@@ -3,7 +3,7 @@ export interface ChoixAnnee {
   '@id': string;
   id: number;
   Annee: string;
-  Niveau: NiveauScolaire | string;
+  Niveau: NiveauScolaire;
   champApprentissage: ChampApprentissage;
   afRetenus: AfRetenus[];
 }
