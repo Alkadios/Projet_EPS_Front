@@ -12,4 +12,8 @@ export default {
   getClassesById(state: ClasseState) {
     return state.classesById;
   },
+
+  getClassesByAnneeAndProfesseur(state: ClasseState) {
+    return state.classesByAnneeAndProfesseur;
+  },
 };

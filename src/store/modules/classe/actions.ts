@@ -1,8 +1,6 @@
 import { ActionContext } from 'vuex';
 import ClasseAPI from '@/api/ClasseAPI';
 import ClasseState from './stateInterface';
-import { Eleve } from '@/models/Eleve';
-import { Annee, Classe, Etablissement, NiveauScolaire } from '@/models';
 import { ref } from 'vue';
 
 export default {
@@ -73,5 +71,17 @@ export default {
       //throw new Error(response.data.message);
     }
     //if (response.status !== 201) throw new Error);
+  },
+  async fetchClasseByAnneeAndProf(
+    context: ActionContext<ClasseState, any>,
+    payload: { idAnnee: number; idProfesseur: number }
+  ) {
+    const response = await ClasseAPI.fetchClasseByAnneeAndProf(payload.idAnnee, payload.idProfesseur);
+    if (response.data['hydra:totalItems'] > 0)
+      context.commit('setClassesByAnneeAndProfesseur', response.data['hydra:member']);
+    else {
+      context.commit('setClassesByAnneeAndProfesseur', []);
+      //throw new Error(response.data.message);
+    }
   },
 };

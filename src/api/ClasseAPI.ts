@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
 import { ApiURLClasse } from '@/constants/ApiUrls';
-import { Annee, Eleve, Etablissement, NiveauScolaire, ResponseModel } from '@/models';
+import { ResponseModel } from '@/models';
 import { apiConfig } from '@/config/UtilisateurConfig';
 
 export default {
@@ -39,5 +39,12 @@ export default {
     }
   ): Promise<AxiosResponse> {
     return axios.put(`${ApiURLClasse}/` + idClasse, payload, apiConfig.value);
+  },
+
+  async fetchClasseByAnneeAndProf(idAnnee: number, idProfesseur: number): Promise<AxiosResponse<ResponseModel>> {
+    const paramsString = `professeurs.id=${idProfesseur.toString()}&Annee.id=${idAnnee.toString()}`;
+    const url = new URL(`${ApiURLClasse}/`);
+    url.search = new URLSearchParams(paramsString).toString();
+    return axios.get(`${url.toString()}`, apiConfig.value);
   },
 };

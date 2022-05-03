@@ -1,8 +1,6 @@
 import { ActionContext } from 'vuex';
-import AnneeState from './stateInterface';
-import { Annee } from '@/models';
 import AnneeAPI from '@/api/AnneeAPI';
-
+import AnneeState from './stateInterface';
 
 export default {
   async fetchAllAnnees(context: ActionContext<AnneeState, any>) {
@@ -13,6 +11,12 @@ export default {
       //throw new Error(response.data.message);
     }
   },
-
-
+  async fetchAnneeById(context: ActionContext<AnneeState, any>, idAnnee: number) {
+    const response = await AnneeAPI.fetchAnneeById(idAnnee);
+    if (response.status === 200) context.commit('setAnnee', response.data);
+    else {
+      context.commit('setAnnee', {});
+      //throw new Error(response.data.message);
+    }
+  },
 };

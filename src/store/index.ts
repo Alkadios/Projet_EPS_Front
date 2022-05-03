@@ -8,14 +8,17 @@ import AfRetenusModule from '@/store/modules/afRetenus/index';
 import ApsaSelectAnneeModule from '@/store/modules/ApsaSelectAnnee/index';
 import ChoixAnneeModule from '@/store/modules/choixAnnee/index';
 import ApsaRetenuModule from '@/store/modules/ApsaRetenu/index';
-import EleveModule from '@/store/modules/eleve/index';
 import UserModule from '@/store/modules/user/index';
 import EtablissementModule from '@/store/modules/etablissement/index';
-import ClasseModule from '@/store/modules/classe/index';
-import AnneeModule from '@/store/modules/annee/index';
 import NiveauScolaireModule from '@/store/modules/niveauScolaire/index';
+import CritereModule from '@/store/modules/critere/index';
+import EleveModule from '@/store/modules/eleve/index';
+import ClasseModule from '@/store/modules/classe/index';
+import EvaluationEleveModule from '@/store/modules/evaluationEleve/index';
+import IndicateurModule from '@/store/modules/indicateur/index';
+import AnneeModule from '@/store/modules/annee/index';
 
-const keyLocalStorage = 'epsstore';
+const keyLocalStorage = 'ocpepsstore';
 
 export function getLocalStorage(module: string, property: string): any {
   const storage = localStorage.getItem(keyLocalStorage);
@@ -42,6 +45,9 @@ export default createStore({
     EtablissementModule,
     ClasseModule,
     AnneeModule,
-    NiveauScolaireModule
+    NiveauScolaireModule,
+    CritereModule,
+    EvaluationEleveModule,
+    IndicateurModule,
   },
 });

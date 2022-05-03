@@ -10,7 +10,7 @@
                 Personnalisation de l'équipe EPS <br />
                 au
               </p>
-              <h4 class="text-dark mb-4">{{ etablissement.nomEtablissement }}</h4>
+              <h4 class="text-dark mb-4">{{ etablissement.nom }}</h4>
             </div>
             <div class="d-flex justify-content-center align-items-center align-content-center">
               <div class="col-3">
@@ -31,7 +31,9 @@
         </div>
       </div>
       <div class="mb-3">
-        <label style="margin-left: 1rem" for="situation-evaluation">Description de la situation d'évaluation :</label>
+        <div class="p-3">
+          <label style="margin-left: 1rem" for="situation-evaluation">Description de la situation d'évaluation :</label>
+        </div>
         <Textarea
           v-model="situationEvaluation"
           id="situation-evaluation"
@@ -46,11 +48,19 @@
     <div class="mb-3">
       <Button label="Valider" style="right: 1rem" @click="ajoutApsaRetenu()" icon="pi pi-check" autofocus></Button>
     </div>
+    <div style="position: fixed; bottom: 0; right: 0">
+      <ProgressSpinner
+        v-if="isLoading"
+        style="float: right; width: 50px; height: 50px"
+        strokeWidth="8"
+        animationDuration=".5s"
+      />
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import AfRetenusService from '@/services/AfRetenusService';
 import ApsaRetenuService from '@/services/ApsaRetenuService';
 import ApsaSelectAnneeService from '@/services/ApsaSelectAnneeService';
@@ -64,26 +74,43 @@ const route = useRoute();
 const { apsaSelectAnneeByAnnee, fetchAllApsaSelectAnneeByAnnee } = ApsaSelectAnneeService();
 const { afRetenus, fetchAllAfRetenus } = AfRetenusService();
 const { apsaRetenu, apsasRetenus, saveApsaRetenu, fetchAllApsaRetenu } = ApsaRetenuService();
-const { etablissement, annee } = UtilisateurService();
+const { etablissement, anneeEnConfig } = UtilisateurService();
 
 const apsaSelects = ref<ApsaSelectAnnee[]>([]);
 const monAPSA = ref<ApsaRetenu>();
 const monAfRetenuSelected = ref();
 const mesAfRetenus = ref<AfRetenus[]>([]);
-
+const isLoading = ref(false);
 const situationEvaluation = ref('');
 
 async function ajoutApsaRetenu() {
   if ((monAfRetenuSelected.value['@id'], situationEvaluation.value, monAPSA.value?.['@id'])) {
     await saveApsaRetenu(monAfRetenuSelected.value['@id'], situationEvaluation.value, monAPSA.value?.['@id']);
     router.push({ name: 'Critere', query: { idApsaRetenu: apsaRetenu.value.id } });
+  } else {
+    console.log((monAfRetenuSelected.value['@id'], situationEvaluation.value, monAPSA.value?.['@id']));
   }
 }
 
+watch(
+  () => monAPSA.value,
+  async () => {
+    console.log('watch1', monAPSA.value);
+    if (monAPSA.value) {
+      isLoading.value = true;
+      //await fetchAllAfRetenuByAnneeAndNiveauScolaire(annee.value.id, niveauScolaireSelectionne.value?.id);
+
+      //Mettre fonction
+      isLoading.value = false;
+    }
+  }
+);
+
 onMounted(async () => {
+  isLoading.value = true;
   await fetchAllAfRetenus();
   await fetchAllApsaRetenu();
-  await fetchAllApsaSelectAnneeByAnnee(annee.value.id);
+  await fetchAllApsaSelectAnneeByAnnee(anneeEnConfig.value.id);
   apsaSelectAnneeByAnnee.value.forEach((a) => {
     if (route.query.idCA) {
       if (a.Ca.id === parseInt(route.query.idCA.toString())) {
@@ -100,5 +127,6 @@ onMounted(async () => {
       }
     }
   });
+  isLoading.value = false;
 });
 </script>

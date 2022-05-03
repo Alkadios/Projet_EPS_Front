@@ -48,4 +48,11 @@ export default {
   ): Promise<AxiosResponse> {
     return axios.put(`${ApiURLEleve}/` + idEleve, payload, apiConfig.value);
   },
+
+  async fetchElevesByClasse(idClasse: number): Promise<AxiosResponse<ResponseModel>> {
+    const paramsString = `eleveClasses.classe.id=${idClasse.toString()}`;
+    const url = new URL(`${ApiURLEleve}/`);
+    url.search = new URLSearchParams(paramsString).toString();
+    return axios.get(`${url.toString()}`, apiConfig.value);
+  },
 };

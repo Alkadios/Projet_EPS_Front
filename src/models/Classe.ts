@@ -1,14 +1,12 @@
-import { Annee } from './Annee';
-import { Eleve } from './Eleve';
-import { Etablissement } from './Etablissement';
-import { NiveauScolaire } from './NiveauScolaire';
+import { Etablissement, Annee, NiveauScolaire, Eleve, Professeur } from '@/models';
 
 export interface Classe {
   '@id': string;
   id: number;
-  niveauScolaire: NiveauScolaire;
-  annee: Annee;
-  etablissement: Etablissement;
   libelleClasse: string;
+  NiveauScolaire: NiveauScolaire;
+  Annee: Annee;
+  etablissement: Etablissement;
   eleves: Eleve[];
+  professeurs: Professeur[];
 }

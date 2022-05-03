@@ -5,10 +5,6 @@ import { useStore } from 'vuex';
 export default function EleveService() {
   const store = useStore();
 
-  async function fetchAllEleves() {
-    await store.dispatch('EleveModule/fetchAllEleves');
-  }
-
   async function fetchEleveById(idEleve: number) {
     await store.dispatch('EleveModule/fetchEleveById', {
       idEleve: idEleve,
@@ -77,6 +73,19 @@ export default function EleveService() {
     });
   }
 
+  async function fetchAllEleves() {
+    await store.dispatch('EleveModule/fetchAllEleves');
+  }
+
+  const elevesByClasse = computed((): Eleve[] => {
+    return store.getters['EleveModule/getElevesByClasse'];
+  });
+  async function fetchElevesByClasse(idClasse: number) {
+    await store.dispatch('EleveModule/fetchElevesByClasse', {
+      idClasse: idClasse,
+    });
+  }
+
   return {
     saveEleve,
     fetchAllEleves,
@@ -85,5 +94,7 @@ export default function EleveService() {
     updateEleve,
     eleves,
     eleveById,
+    elevesByClasse,
+    fetchElevesByClasse,
   };
 }

@@ -7,4 +7,7 @@ export default {
   getEleveById(state: EleveState) {
     return state.eleveById;
   },
+  getElevesByClasse(state: EleveState) {
+    return state.elevesByClasse;
+  },
 };

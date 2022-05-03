@@ -5,7 +5,7 @@
       <div id="content">
         <Navbar />
         <div class="container-fluid">
-          <router-view />
+          <router-view v-if="onMountedIsFinish" />
         </div>
       </div>
     </div>
@@ -13,7 +13,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import Sidebar from './views/Sidebar.vue';
 import Navbar from './views/Navbar.vue';
@@ -29,13 +29,23 @@ import router from './router';
 // const router = useRouter();
 
 const { isObjectEmpty } = ObjectUtils();
-const { utilisateur } = UtilisateurService();
+const { utilisateur, fetchAnneeEnCours, anneeEnCours, storeAnneeEnConfig, fetchEtablissementById } =
+  UtilisateurService();
 // const { storeOrganismesUtilisateur, organismeConnecte, storeOrganismeConnecte, listeOrganismesUtilisateur } =
 //   UtilisateurService();
+
+const onMountedIsFinish = ref(false);
 onMounted(async () => {
   // if (isObjectEmpty(utilisateur.value)) {
   //   router.push({ name: 'Authentification' });
   // }
+
+  await fetchAnneeEnCours();
+  console.log('OnMounted App', anneeEnCours.value);
+  storeAnneeEnConfig(anneeEnCours.value);
+  await fetchEtablissementById(1);
+
+  onMountedIsFinish.value = true;
 
   var sidebar = document.querySelector('.sidebar');
   var sidebarToggles = document.querySelectorAll('#sidebarToggle, #sidebarToggleTop');

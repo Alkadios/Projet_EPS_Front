@@ -1,21 +1,6 @@
 <template>
   <div class="card shadow-lg o-hidden border-0 my-5">
-    <div class="card-body p-0">
-      <div class="row">
-        <div class="col-lg-1"></div>
-        <div class="col-lg-10">
-          <div class="p-5" style="padding-bottom: 1rem !important">
-            <div class="text-center">
-              <p class="text-dark mb-2">
-                Personnalisation de l'équipe EPS <br />
-                au
-              </p>
-              <h4 class="text-dark mb-4">{{ etablissement.nomEtablissement }}</h4>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <EnTetePersonalisation />
     <div class="container-fluid">
       <div id="mesClasses">
         <div class="row">
@@ -24,7 +9,7 @@
           </div>
           <SelectButton
             v-model="niveauScolaireSelectionne"
-            :options="etablissement.niveauxScolaires"
+            :options="etablissement.niveauScolaire"
             optionLabel="libelle"
           />
           <div class="d-flex p-2">
@@ -37,6 +22,8 @@
           :label="'CA' + ca.id"
           :style="selectedCa?.id != ca.id ? 'background-color:' + ca.color : ''"
           :class="selectedCa?.id === ca.id ? 'primary' : ''"
+          :icon="checkIfCaHasAfRetenu(ca) ? 'pi pi-check-circle' : checkIfCaHasNotApsaSelect(ca) ? 'pi pi-times' : ''"
+          :disabled="checkIfCaHasAfRetenu(ca) || checkIfCaHasNotApsaSelect(ca)"
           @click="selectionnerCa(ca)"
         />
         <div class="row">
@@ -51,51 +38,91 @@
         <div class="d-flex p-2">
           <Button label="Valider" style="right: 1rem" icon="pi pi-check" @click="ajouterAfsRetenus()" autofocus />
           <InlineMessage v-if="afEnErreur" severity="error"
-            >Le nombre d'attendus finaux sélectionner doit être de 4</InlineMessage
+            >Vous devez sélectionner au moins 1 attendu final</InlineMessage
           >
         </div>
       </div>
+    </div>
+    <div style="position: fixed; bottom: 0; right: 0">
+      <ProgressSpinner
+        v-if="isLoading"
+        style="float: right; width: 50px; height: 50px"
+        strokeWidth="8"
+        animationDuration=".5s"
+      />
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, watch, computed } from 'vue';
-import { AF, ChampApprentissage, NiveauScolaire, ChoixAnnee } from '@/models';
+import { ref, onMounted, watch } from 'vue';
+import { AF, ApsaSelectAnnee, ChampApprentissage, NiveauScolaire } from '@/models';
 import AfService from '@/services/AfService';
 import ChampApprentissageService from '@/services/ChampApprentissageService';
 import UtilisateurService from '@/services/UtilisateurService';
 import afRetenuService from '@/services/AfRetenusService';
 import ChoixAnneeService from '@/services/ChoixAnneeService';
 import router from '@/router';
+import ApsaSelectAnneeService from '@/services/ApsaSelectAnneeService';
+import EnTetePersonalisation from './EnTetePersonalisation.vue';
 
+const { apsaSelectAnneeByAnnee, fetchAllApsaSelectAnneeByAnnee } = ApsaSelectAnneeService();
 const { saveChoixAnnee, choixAnnee } = ChoixAnneeService();
-const { saveAfRetenu } = afRetenuService();
+const { saveAfRetenu, fetchAllAfRetenuByAnneeAndNiveauScolaire, afRetenuByAnneeAndNiveauScolaire } = afRetenuService();
 const { afs, fetchAllAfs } = AfService();
 const { champsApprentissages, fetchChampsApprentissages } = ChampApprentissageService();
-const { etablissement, annee } = UtilisateurService();
+const { etablissement, anneeEnConfig } = UtilisateurService();
 
 const selectedCa = ref<ChampApprentissage>();
 const selectedAfs = ref<AF[]>([]);
 const niveauScolaireSelectionne = ref<NiveauScolaire>();
+const isLoading = ref(false);
 
 //Gestion des erreurs
 const afEnErreur = ref(false);
 const formulaireEnErreur = ref(false);
 
 onMounted(async () => {
+  isLoading.value = true;
   await fetchChampsApprentissages();
   await fetchAllAfs();
+  await fetchAllApsaSelectAnneeByAnnee(anneeEnConfig.value.id);
+  isLoading.value = false;
 });
 
 watch(
   () => selectedAfs.value.length,
   (count) => {
-    if (count > 4) {
-      afEnErreur.value = true;
-    } else afEnErreur.value = false;
+    if (count > 0) {
+      afEnErreur.value = false;
+    }
   }
 );
+
+watch(
+  () => niveauScolaireSelectionne.value,
+  async () => {
+    if (niveauScolaireSelectionne.value) {
+      isLoading.value = true;
+      await fetchAllAfRetenuByAnneeAndNiveauScolaire(anneeEnConfig.value.id, niveauScolaireSelectionne.value.id);
+      isLoading.value = false;
+    }
+  }
+);
+
+function checkIfCaHasNotApsaSelect(ca: ChampApprentissage) {
+  if (!apsaSelectAnneeByAnnee.value.find((monAPSASelect) => ca.id === monAPSASelect.Ca.id)) {
+    return true;
+  }
+  return false;
+}
+
+function checkIfCaHasAfRetenu(ca: ChampApprentissage) {
+  if (afRetenuByAnneeAndNiveauScolaire.value.find((afRetenu) => afRetenu.ChoixAnnee.champApprentissage.id === ca.id)) {
+    return true;
+  }
+  return false;
+}
 
 function selectionnerCa(ca: ChampApprentissage) {
   selectedCa.value = ca;
@@ -104,7 +131,7 @@ function verifFormulaire(): Boolean {
   let nbErreur = 0;
   if (!selectedCa.value?.id) nbErreur++;
   if (!niveauScolaireSelectionne.value) nbErreur++;
-  if (afEnErreur.value || selectedAfs.value.length < 4) {
+  if (afEnErreur.value || selectedAfs.value.length < 0) {
     afEnErreur.value = true;
     nbErreur++;
   }
@@ -113,17 +140,25 @@ function verifFormulaire(): Boolean {
   else return false;
 }
 async function ajouterAfsRetenus() {
-  if (!verifFormulaire()) {
-    let monNiveau = '/api/niveau_scolaires/' + niveauScolaireSelectionne.value?.id;
-    await saveChoixAnnee(selectedCa.value?.['@id']!, monNiveau, annee.value['@id']);
-    selectedAfs.value.forEach(async (af: AF) => {
-      await saveAfRetenu(choixAnnee.value['@id'], af['@id']);
-      console.log("Ajout de l'AF ", af.libelle);
-    });
-    router.push({
-      name: 'DeclinerAFRetenus',
-      query: { idChoixAnnee: choixAnnee.value.id, idCA: selectedCa.value?.id },
-    });
+  if (selectedAfs.value.length > 0) {
+    if (!verifFormulaire()) {
+      let monNiveau = '/api/niveau_scolaires/' + niveauScolaireSelectionne.value?.id;
+      await saveChoixAnnee(
+        selectedCa.value?.['@id']!,
+        monNiveau,
+        anneeEnConfig.value['@id'],
+        etablissement.value['@id']
+      );
+      selectedAfs.value.forEach(async (af: AF) => {
+        await saveAfRetenu(choixAnnee.value['@id'], af['@id']);
+      });
+      router.push({
+        name: 'DeclinerAFRetenus',
+        query: { idChoixAnnee: choixAnnee.value.id, idCA: selectedCa.value?.id },
+      });
+    }
+  } else {
+    afEnErreur.value = true;
   }
 }
 </script>

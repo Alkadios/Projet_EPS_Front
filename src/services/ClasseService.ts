@@ -1,6 +1,6 @@
-import { Annee, Classe, Eleve, Etablissement, NiveauScolaire } from '@/models';
 import { computed } from 'vue';
 import { useStore } from 'vuex';
+import { Classe } from '@/models';
 
 export default function ClasseService() {
   const store = useStore();
@@ -55,6 +55,17 @@ export default function ClasseService() {
     });
   }
 
+  const classesByAnneeAndProfesseur = computed((): Classe[] => {
+    return store.getters['ClasseModule/getClassesByAnneeAndProfesseur'];
+  });
+
+  async function fetchClasseByAnneeAndProf(idAnnee: number, idProfesseur: number) {
+    await store.dispatch('ClasseModule/fetchClasseByAnneeAndProf', {
+      idAnnee: idAnnee,
+      idProfesseur: idProfesseur,
+    });
+  }
+
   return {
     fetchAllClasses,
     fetchClasseByAnnee,
@@ -65,5 +76,7 @@ export default function ClasseService() {
     addElevesInClasse,
     saveClasse,
     deleteClasse,
+    classesByAnneeAndProfesseur,
+    fetchClasseByAnneeAndProf,
   };
 }

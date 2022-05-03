@@ -10,6 +10,7 @@ export default {
     return {
       eleves: [] as Eleve[],
       eleveById: {} as Eleve,
+      elevesByClasse: [] as Eleve[],
     };
   },
   mutations,

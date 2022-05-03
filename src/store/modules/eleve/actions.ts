@@ -13,7 +13,7 @@ export default {
     }
   },
 
-  async fetchEleveById(context: ActionContext<EleveState, any>, payload: { idEleve: number}) {
+  async fetchEleveById(context: ActionContext<EleveState, any>, payload: { idEleve: number }) {
     const response = await EleveAPI.fetchEleveById(payload.idEleve);
     if (response.data) context.commit('setEleveById', response.data);
     else {
@@ -22,7 +22,7 @@ export default {
     }
   },
 
-  async deleteEleve(context: ActionContext<EleveState, any>, payload: { idEleve: number}) {
+  async deleteEleve(context: ActionContext<EleveState, any>, payload: { idEleve: number }) {
     await EleveAPI.deleteEleve(payload.idEleve);
   },
 
@@ -65,11 +65,19 @@ export default {
       etablissement: Etablissement;
     }
   ) {
-    const response = await EleveAPI.updateEleve(payload.idEleve,payload);
+    const response = await EleveAPI.updateEleve(payload.idEleve, payload);
     if (response.status === 200) {
     } else {
       //throw new Error(response.data.message);
     }
     //if (response.status !== 201) throw new Error);
+  },
+  async fetchElevesByClasse(context: ActionContext<EleveState, any>, payload: { idClasse: number }) {
+    const response = await EleveAPI.fetchElevesByClasse(payload.idClasse);
+    if (response.data['hydra:totalItems'] > 0) context.commit('setElevesByClasse', response.data['hydra:member']);
+    else {
+      context.commit('setElevesByClasse', []);
+      //throw new Error(response.data.message);
+    }
   },
 };

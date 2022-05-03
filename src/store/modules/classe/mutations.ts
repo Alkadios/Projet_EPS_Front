@@ -11,4 +11,8 @@ export default {
   setClassesById(state: ClasseState, payload: Classe) {
     state.classesById = payload;
   },
+
+  setClassesByAnneeAndProfesseur(state: ClasseState, payload: Classe[]) {
+    state.classesByAnneeAndProfesseur = payload;
+  },
 };

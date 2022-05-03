@@ -13,8 +13,17 @@ export default function AnneeService() {
     await store.dispatch('AnneeModule/fetchAllAnnees');
   }
 
+  const annee = computed((): Annee => {
+    return store.getters['AnneeModule/getAnnee'];
+  });
+  async function fetchAnneeById(idAnnee: number) {
+    await store.dispatch('AnneeModule/fetchAnneeById', idAnnee);
+  }
+
   return {
-    fetchAllAnnees,
     annees,
+    fetchAllAnnees,
+    annee,
+    fetchAnneeById,
   };
 }

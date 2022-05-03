@@ -14,5 +14,8 @@ export const ApiURLCreateEleve = `${ApiUrl}/eleve/create`;
 export const ApiURLEtablissement = `${ApiUrl}/etablissements`;
 export const ApiURLClasse = `${ApiUrl}/classes`;
 export const ApiURLAnnee = `${ApiUrl}/annees`;
-
-
+export const ApiCritere = `${ApiUrl}/criteres`;
+export const ApiIndicateur = `${ApiUrl}/indicateurs`;
+export const ApiProfesseurClasses = `${ApiUrl}/professeur_classes`;
+export const ApiEleve = `${ApiUrl}/eleves`;
+export const ApiEvaluationEleve = `${ApiUrl}/evaluation_eleves`;

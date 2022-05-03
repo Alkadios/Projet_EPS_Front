@@ -11,6 +11,7 @@ export default {
       classes: [] as Classe[],
       classesByAnnee: [] as Classe[],
       classesById: {} as Classe,
+      classesByAnneeAndProfesseur: [] as Classe[],
     };
   },
   mutations,

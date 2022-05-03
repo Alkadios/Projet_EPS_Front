@@ -3,7 +3,7 @@ import './assets/css/bootstrap.min.css';
 import './assets/fonts/fontawesome-all.min.css';
 import './assets/fonts/font-awesome.min.css';
 import './assets/fonts/fontawesome5-overrides.min.css';
-import './assets/js/bootstrap.min.js';
+import 'bootstrap';
 import '@/assets/css/theme.css';
 import 'primevue/resources/primevue.min.css';
 import PrimeVue from 'primevue/config';
@@ -41,14 +41,21 @@ import Textarea from 'primevue/textarea';
 import Message from 'primevue/message';
 import InlineMessage from 'primevue/inlinemessage';
 import ColorPicker from 'primevue/colorpicker';
+import ProgressSpinner from 'primevue/progressspinner';
 import App from './App.vue';
 import Editor from 'primevue/editor';
+import Skeleton from 'primevue/skeleton';
 import AppAuth from './views/AppAuth.vue';
 import router from './router';
 import store from './store';
 import UtilisateurService from './services/UtilisateurService';
 import ObjectUtils from './utils/ObjectUtils';
 import Locale_FR from './constants/Locale_FR';
+import Accordion from 'primevue/accordion';
+import AccordionTab from 'primevue/accordiontab';
+import Fieldset from 'primevue/fieldset';
+import ToggleButton from 'primevue/togglebutton';
+import Chart from 'primevue/chart';
 import './assets/css/monStyle.css';
 const { isObjectEmpty } = ObjectUtils();
 const { utilisateur } = UtilisateurService();
@@ -56,6 +63,10 @@ const { utilisateur } = UtilisateurService();
 const app = createApp(App);
 // PrimeVue components
 app
+  .component('Fieldset', Fieldset)
+  .component('ToggleButton', ToggleButton)
+  .component('Accordion', Accordion)
+  .component('AccordionTab', AccordionTab)
   .component('Editor', Editor)
   .component('Card', Card)
   .component('DataTable', DataTable)
@@ -86,7 +97,10 @@ app
   .component('Textarea', Textarea)
   .component('Message', Message)
   .component('InlineMessage', InlineMessage)
-  .component('ColorPicker', ColorPicker);
+  .component('ColorPicker', ColorPicker)
+  .component('ProgressSpinner', ProgressSpinner)
+  .component('Skeleton', Skeleton)
+  .component('Chart', Chart);
 
 // Directives
 app.directive('tooltip', Tooltip);
