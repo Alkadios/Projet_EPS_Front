@@ -26,14 +26,14 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('../views/coordinateur/personnalisationEPS/AjoutQuantiteTravailEleve.vue'),
   },
   {
-    path: '/ApsaRetenusAF',
-    name: 'ApsaRetenusAF',
-    component: () => import('../views/coordinateur/personnalisationEPS/ApsaRetenusAF.vue'),
+    path: '/ApsaRetenuAF',
+    name: 'ApsaRetenuAF',
+    component: () => import('../views/coordinateur/personnalisationEPS/ApsaRetenuAF.vue'),
   },
   {
     path: '/DeclinerAFRetenus',
     name: 'DeclinerAFRetenus',
-    component: () => import('../views/coordinateur/personnalisationEPS/DeclinerAFRetenus.vue'),
+    component: () => import('../views/coordinateur/personnalisationEPS/DeclinerAFRetenu.vue'),
   },
   {
     path: '/EvaluationEleves',
@@ -49,6 +49,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/IndicateurAF',
     name: 'IndicateurAF',
     component: () => import('../views/coordinateur/personnalisationEPS/IndicateurAF.vue'),
+  },
+  {
+    path: '/coordinateur/TableauDeBord',
+    name: 'TableauDeBordConfig',
+    component: () => import('../views/coordinateur/personnalisationEPS/TableauDeBordConfig.vue'),
   },
   {
     path: '/Profil',

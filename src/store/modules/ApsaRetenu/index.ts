@@ -1,14 +1,16 @@
 import mutations from './mutations';
 import actions from './actions';
 import getters from './getters';
-import { ApsaRetenus } from '@/models';
-import ApsaRetenusState from './stateInterface';
+import { ApsaRetenu } from '@/models';
+import ApsaRetenuState from './stateInterface';
 
 export default {
   namespaced: true,
-  state(): ApsaRetenusState {
+  state(): ApsaRetenuState {
     return {
-      apsaRetenus: {} as ApsaRetenus,
+      apsaRetenu: {} as ApsaRetenu,
+      apsasRetenus: [] as ApsaRetenu[],
+      apsasRetenusByEtablissementAndAnnee: [] as ApsaRetenu[],
     };
   },
   mutations,

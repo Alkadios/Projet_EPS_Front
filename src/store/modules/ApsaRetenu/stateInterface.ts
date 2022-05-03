@@ -1,5 +1,7 @@
-import { ApsaRetenus } from '@/models';
+import { ApsaRetenu } from '@/models';
 
-export default interface ApsaRetenusState {
-  apsaRetenus: ApsaRetenus;
+export default interface ApsaRetenuState {
+  apsaRetenu: ApsaRetenu;
+  apsasRetenus: ApsaRetenu[];
+  apsasRetenusByEtablissementAndAnnee: ApsaRetenu[];
 }

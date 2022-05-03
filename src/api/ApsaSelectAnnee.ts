@@ -10,11 +10,31 @@ export default {
     url.search = new URLSearchParams(paramsString).toString();
     return axios.get(`${url.toString()}`, apiConfig.value);
   },
-  async saveApsaSelectAnnee(payload: {
-    Ca: string;
-    Apsa: string;
-    Annee: string;
-  }): Promise<AxiosResponse<ResponseModel>> {
-    return axios.post(`${ApiURLApsaSelect}`, payload, apiConfig.value);
+  async fetchAllApsaSelectAnneeByAnneeAndClasse(
+    idAnnee: number,
+    idClasse: number
+  ): Promise<AxiosResponse<ResponseModel>> {
+    const paramsString = `Annee.id=${idAnnee.toString()}&etablissement.Classe.id=${idClasse.toString()}`;
+    const url = new URL(`${ApiURLApsaSelect}/`);
+    url.search = new URLSearchParams(paramsString).toString();
+    return axios.get(`${url.toString()}`, apiConfig.value);
+  },
+  async fetchAllApsaSelectAnneeByAnneeAndEtablissement(
+    idAnnee: number,
+    idEtablissement: number
+  ): Promise<AxiosResponse<ResponseModel>> {
+    const paramsString = `Annee.id=${idAnnee.toString()}&etablissement.id=${idEtablissement.toString()}`;
+    const url = new URL(`${ApiURLApsaSelect}/`);
+    url.search = new URLSearchParams(paramsString).toString();
+    return axios.get(`${url.toString()}`, apiConfig.value);
+  },
+  async saveApsaSelectAnnee(
+    payload: {
+      Ca: number;
+      Apsa: number;
+      Annee: number;
+    }[]
+  ): Promise<AxiosResponse> {
+    return axios.post(`${ApiURLApsaSelect}/deleteAndReplace`, payload, apiConfig.value);
   },
 };

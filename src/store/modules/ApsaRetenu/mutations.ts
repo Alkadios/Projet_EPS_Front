@@ -1,8 +1,14 @@
-import { ApsaRetenus } from '@/models';
-import ApsaRetenusState from './stateInterface';
+import { ApsaRetenu } from '@/models';
+import ApsaRetenuState from './stateInterface';
 
 export default {
-  setApsaRetenus(state: ApsaRetenusState, payload: ApsaRetenus) {
-    state.apsaRetenus = payload;
+  setApsaRetenu(state: ApsaRetenuState, payload: ApsaRetenu) {
+    state.apsaRetenu = payload;
+  },
+  setApsasRetenus(state: ApsaRetenuState, payload: ApsaRetenu[]) {
+    state.apsasRetenus = payload;
+  },
+  setApsasRetenusByEtablissementAndAnnee(state: ApsaRetenuState, payload: ApsaRetenu[]) {
+    state.apsasRetenusByEtablissementAndAnnee = payload;
   },
 };

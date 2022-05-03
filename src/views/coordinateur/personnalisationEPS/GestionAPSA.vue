@@ -25,7 +25,7 @@
                 Personnalisation de l'équipe EPS <br />
                 au
               </p>
-              <h4 class="text-dark mb-4">{{ etablissement.nomEtablissement }}</h4>
+              <h4 class="text-dark mb-4">{{ etablissement.nom }}</h4>
             </div>
           </div>
         </div>
@@ -70,6 +70,14 @@
         </span>
       </div>
     </div>
+    <div style="position: fixed; bottom: 0; right: 0">
+      <ProgressSpinner
+        v-if="isLoading"
+        style="float: right; width: 50px; height: 50px"
+        strokeWidth="8"
+        animationDuration=".5s"
+      />
+    </div>
   </div>
 </template>
 
@@ -86,14 +94,14 @@ const router = useRouter();
 
 const { champsApprentissages, fetchChampsApprentissages, saveApsaInCa } = ChampApprentissageService();
 const { apsas, fetchAllApsa } = ApsaService();
-const { etablissement, annee } = UtilisateurService();
+const { etablissement, anneeEnConfig } = UtilisateurService();
 const { saveApsaSelectAnnee, fetchAllApsaSelectAnneeByAnnee, apsaSelectAnneeByAnnee } = ApsaSelectAnneeService();
 
 const displayModal = ref(false);
 const monCAModal = ref<ChampApprentissage>({ '@id': '', id: -1, libelle: '', color: '', champsApprentissageApsas: [] });
 const caApsasSelectionnes = ref<any[]>([]);
 const apsaFromCaSelectionnes = ref<APSA[]>([]);
-
+const isLoading = ref(false);
 const apsaSelectAnneeEnErreur = ref(false);
 
 function openModal(CA: ChampApprentissage) {
@@ -130,17 +138,26 @@ async function AjoutApsaInCa() {
 }
 
 async function saveApsasSelectionnees() {
+  isLoading.value = true;
   if (!champsNonRempli()) {
+    let listForRequest: {
+      Ca: number;
+      Apsa: number;
+      Annee: number;
+    }[] = [];
     caApsasSelectionnes.value.forEach((_, idCA) => {
       const ca: ChampApprentissage = champsApprentissages.value.find((ca) => ca.id === idCA)!;
-
-      caApsasSelectionnes.value[idCA].forEach(async (caApsa: ChampsApprentissageApsa) => {
-        await saveApsaSelectAnnee(ca['@id'], caApsa.Apsa['@id'], annee.value['@id']);
+      caApsasSelectionnes.value[idCA].forEach((caApsa: ChampsApprentissageApsa) => {
+        if (caApsa) listForRequest.push({ Ca: ca.id, Apsa: caApsa.Apsa.id, Annee: anneeEnConfig.value.id });
       });
     });
 
-    router.push('ApsaRetenusAF');
+    await saveApsaSelectAnnee(listForRequest);
+    router.push('ApsaRetenuAF');
+  } else {
+    console.log('erreur');
   }
+  isLoading.value = false;
 }
 
 function champsNonRempli() {
@@ -152,10 +169,11 @@ function champsNonRempli() {
 }
 
 onMounted(async () => {
+  isLoading.value = true;
   await fetchChampsApprentissages();
   await fetchAllApsa();
 
-  await fetchAllApsaSelectAnneeByAnnee(1);
+  await fetchAllApsaSelectAnneeByAnnee(anneeEnConfig.value.id);
   if (apsaSelectAnneeByAnnee.value.length > 0) {
     champsApprentissages.value.forEach((ca) => {
       caApsasSelectionnes.value[ca.id] = [];
@@ -168,5 +186,6 @@ onMounted(async () => {
         });
     });
   }
+  isLoading.value = false;
 });
 </script>

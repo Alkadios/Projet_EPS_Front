@@ -1,4 +1,4 @@
-import { Etablissement, Utilisateur } from '@/models';
+import { Etablissement, Utilisateur, Annee } from '@/models';
 import UtilisateurState from './stateInterface';
 
 export default {
@@ -10,6 +10,12 @@ export default {
   },
   setEtablissement(state: UtilisateurState, payload: Etablissement) {
     state.etablissement = payload;
+  },
+  setAnneeEnConfig(state: UtilisateurState, payload: Annee) {
+    state.anneeEnConfig = payload;
+  },
+  setAnneeEnCours(state: UtilisateurState, payload: Annee) {
+    state.anneeEnCours = payload;
   },
   // setOrganismesUtilisateur(state: UtilisateurState, payload: Organisme[]) {
   //   state.organismesUtilisateur = payload;
