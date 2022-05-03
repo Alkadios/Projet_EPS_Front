@@ -230,7 +230,7 @@ async function fetchConfigAnnee() {
   await fetchAllApsaSelectAnneeByAnnee(nouvelAnneeEnConfig.value.id);
   await fetchAllChoixAnneeByAnneeAndEtablissement(nouvelAnneeEnConfig.value.id, etablissement.value.id);
   await fetchApsaRetenuByAnneeAndEtablissement(anneeEnConfig.value.id, etablissement.value.id);
-  console.log('apsaRetenu', apsasRetenusByEtablissementAndAnnee.value);
+  //console.log('apsaRetenu', apsasRetenusByEtablissementAndAnnee.value);
   isLoading.value = false;
 }
 
@@ -247,6 +247,6 @@ async function onAnneeEnConfigChange() {
 }
 
 function onNiveauChange(data: any) {
-  console.log('data', data);
+  // console.log('data', data);
 }
 </script>

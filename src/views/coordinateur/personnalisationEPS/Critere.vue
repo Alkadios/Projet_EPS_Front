@@ -262,7 +262,7 @@ async function addCritere() {
     });
     closeBasic();
   } catch (e) {
-    console.log(e);
+    // console.log(e);
   }
 }
 
@@ -278,7 +278,7 @@ async function editCritere(monCritere: Critere) {
       urlVideo: monCritere.url_video,
     });
   } catch (e) {
-    console.log(e);
+    // console.log(e);
   }
 }
 

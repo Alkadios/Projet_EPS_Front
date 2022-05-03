@@ -171,17 +171,7 @@ interface indicateurEleve {
   eleve: Eleve;
 }
 
-function verif() {
-  console.log('elevesByClasse : ', elevesByClasse.value);
-  console.log('apsasRetenusByNiveauScolaire : ', apsasRetenusByNiveauScolaire.value);
-  console.log('criteresByApsaRetenuSelectionner : ', criteresByApsaRetenuSelectionner.value);
-  console.log('indicateursEleveSelectionner : ', indicateursEleveSelectionner.value);
-  console.log('classeSelectionner : ', classeSelectionner.value);
-  console.log('apsaRetenuSelectionner : ', apsaRetenuSelectionner.value);
-  console.log('eleveSelectionne : ', eleveSelectionne.value);
-  console.log('apsasRetenusByEtablissementAndAnnee : ', apsasRetenusByEtablissementAndAnnee.value);
-  console.log('situationsEvaluationByNiveauScolaireAndApsa : ', situationsEvaluationByNiveauScolaireAndApsa.value);
-}
+function verif() {}
 
 async function addIndicateurInEvaluation(unCritere: Critere, unIndicateur: Indicateur) {
   const nouveauIndicateurEleve = {

@@ -233,7 +233,7 @@ async function addIndicateur() {
     });
     closeBasic();
   } catch (e) {
-    console.log(e);
+    // console.log(e);
   }
 }
 
@@ -249,7 +249,7 @@ async function editIndicateur(monIndicateur: Indicateur) {
       urlVideo: monIndicateur.url_video,
     });
   } catch (e) {
-    console.log(e);
+    // console.log(e);
   }
 }
 

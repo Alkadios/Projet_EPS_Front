@@ -233,7 +233,7 @@ const selectedCategories = ref([]);
 const NomEleve = 'Laura GUICHON';
 
 function verif() {
-  console.log(selectedCategories.value);
+  // console.log(selectedCategories.value);
 }
 </script>
 <style>
