@@ -19,12 +19,13 @@ export default function EvaluationEleveService() {
   async function fetchEvaluationEleveByAnneeAndEtablissement() {
     await store.dispatch('EvaluationEleveModule/fetchEvaluationEleveByAnneeAndEtablissement');
   }
+
   async function saveEvaluationEleve(
     Date: string,
     evaluationEleve: [
       {
-        Indicateur: string;
-        Eleve: string;
+        Indicateur: number;
+        Eleve: number;
         autoEval: boolean;
       }
     ]

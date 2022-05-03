@@ -54,6 +54,8 @@ import Locale_FR from './constants/Locale_FR';
 import Accordion from 'primevue/accordion';
 import AccordionTab from 'primevue/accordiontab';
 import Fieldset from 'primevue/fieldset';
+import ToggleButton from 'primevue/togglebutton';
+import Chart from 'primevue/chart';
 import './assets/css/monStyle.css';
 const { isObjectEmpty } = ObjectUtils();
 const { utilisateur } = UtilisateurService();
@@ -62,6 +64,7 @@ const app = createApp(App);
 // PrimeVue components
 app
   .component('Fieldset', Fieldset)
+  .component('ToggleButton', ToggleButton)
   .component('Accordion', Accordion)
   .component('AccordionTab', AccordionTab)
   .component('Editor', Editor)
@@ -96,7 +99,8 @@ app
   .component('InlineMessage', InlineMessage)
   .component('ColorPicker', ColorPicker)
   .component('ProgressSpinner', ProgressSpinner)
-  .component('Skeleton', Skeleton);
+  .component('Skeleton', Skeleton)
+  .component('Chart', Chart);
 
 // Directives
 app.directive('tooltip', Tooltip);

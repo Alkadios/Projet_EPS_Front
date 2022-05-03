@@ -39,6 +39,7 @@ onMounted(async () => {
   // }
 
   await fetchAnneeEnCours();
+  console.log('OnMounted App', anneeEnCours.value);
   storeAnneeEnConfig(anneeEnCours.value);
   await fetchEtablissementById(1);
 
