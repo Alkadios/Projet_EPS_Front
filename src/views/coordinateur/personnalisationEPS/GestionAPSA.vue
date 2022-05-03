@@ -138,6 +138,7 @@ async function AjoutApsaInCa() {
 }
 
 async function saveApsasSelectionnees() {
+  isLoading.value = true;
   if (!champsNonRempli()) {
     let listForRequest: {
       Ca: number;
@@ -156,6 +157,7 @@ async function saveApsasSelectionnees() {
   } else {
     console.log('erreur');
   }
+  isLoading.value = false;
 }
 
 function champsNonRempli() {

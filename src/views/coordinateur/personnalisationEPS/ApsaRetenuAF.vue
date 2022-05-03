@@ -104,7 +104,7 @@ watch(
   async () => {
     if (niveauScolaireSelectionne.value) {
       isLoading.value = true;
-      await fetchAllAfRetenuByAnneeAndNiveauScolaire(anneeEnConfig.value.id, niveauScolaireSelectionne.value?.id);
+      await fetchAllAfRetenuByAnneeAndNiveauScolaire(anneeEnConfig.value.id, niveauScolaireSelectionne.value.id);
       isLoading.value = false;
     }
   }

@@ -8,4 +8,7 @@ export default {
   setApsasRetenus(state: ApsaRetenuState, payload: ApsaRetenu[]) {
     state.apsasRetenus = payload;
   },
+  setApsasRetenusByEtablissementAndAnnee(state: ApsaRetenuState, payload: ApsaRetenu[]) {
+    state.apsasRetenusByEtablissementAndAnnee = payload;
+  },
 };

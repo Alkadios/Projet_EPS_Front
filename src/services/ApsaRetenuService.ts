@@ -19,6 +19,16 @@ export default function ApsaRetenuService() {
     await store.dispatch('ApsaRetenuModule/fetchApsaRetenu', { idApsaRetenu: idApsaRetenu });
   }
 
+  const apsasRetenusByEtablissementAndAnnee = computed((): ApsaRetenu[] => {
+    return store.getters['ApsaRetenuModule/getApsasRetenusByEtablissementAndAnnee'];
+  });
+
+  async function fetchApsaRetenuByAnneeAndEtablissement(idAnnee: number, idEtablissement: number) {
+    await store.dispatch('ApsaRetenuModule/fetchApsaRetenuByAnneeAndEtablissement', {
+      idAnnee: idAnnee,
+      idEtablissement: idEtablissement,
+    });
+  }
   async function saveApsaRetenu(AfRetenu: string, SituationEvaluation: string, ApsaSelectAnnee: string) {
     await store.dispatch('ApsaRetenuModule/saveApsaRetenu', {
       AfRetenu,
@@ -29,8 +39,10 @@ export default function ApsaRetenuService() {
   return {
     apsaRetenu,
     apsasRetenus,
+    apsasRetenusByEtablissementAndAnnee,
     fetchAllApsaRetenu,
     fetchApsaRetenu,
     saveApsaRetenu,
+    fetchApsaRetenuByAnneeAndEtablissement,
   };
 }
