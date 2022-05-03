@@ -26,4 +26,13 @@ export default {
   async deleteIndicateur(idCritere: number): Promise<AxiosResponse> {
     return axios.delete(`${ApiIndicateur}/${idCritere}`, apiConfig.value);
   },
+  async editIndicateur(payload: {
+    titre: string;
+    description: string;
+    image: string;
+    urlVideo: string;
+    ApsaRetenu: string;
+  }): Promise<AxiosResponse<any>> {
+    return axios.put(`${ApiIndicateur}`, payload, apiConfig.value);
+  },
 };

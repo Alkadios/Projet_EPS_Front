@@ -117,7 +117,7 @@
                 Personnalisation de l'équipe EPS <br />
                 au
               </p>
-              <h4 class="text-dark mb-4">{{ etablissement.nomEtablissement }}</h4>
+              <h4 class="text-dark mb-4">{{ etablissement.nom }}</h4>
             </div>
           </div>
         </div>
@@ -136,7 +136,7 @@
             <template #title> {{ monIndicateur.libelle }} </template>
             <template #content>
               <p v-html="monIndicateur.description" />
-              <Button class="p-button-rounded p-button-info" @click="editIndicateur(monIndicateur)"
+              <Button class="p-button-rounded p-button-info" @click="changeIndicateur(monIndicateur)"
                 ><i class="pi pi-pencil" @click="openEdit"
               /></Button>
               <Button class="p-button-rounded p-button-danger" @click="removeIndicateur(monIndicateur.id)"
@@ -197,7 +197,7 @@ const router = useRouter();
 
 const { etablissement } = UtilisateurService();
 const { critere, fetchCriteres, fetchCritereById } = CritereService();
-const { saveIndicateur, deleteIndicateur, fetchIndicateurs, indicateurs } = IndicateurService();
+const { saveIndicateur, deleteIndicateur, editIndicateur, fetchIndicateurs, indicateurs } = IndicateurService();
 const IndicateurByCritere = ref<Indicateur[]>([]);
 const nouvelleImageIndicateur = ref<File>({} as File);
 const nouveauIndicateur = ref<Indicateur>({ libelle: '', description: '', url_video: '', id: -1 } as Indicateur);
@@ -242,17 +242,16 @@ async function addIndicateur() {
   }
 }
 
-async function editIndicateur(monIndicateur: Indicateur) {
+async function changeIndicateur(monIndicateur: Indicateur) {
   try {
-    let indexIndicateur = mesIndicateurs.value.findIndex((a) => a.id === monIndicateur.id);
-    mesIndicateurs.value.splice(indexIndicateur, 1);
-    nouveauIndicateur.value = monIndicateur;
-    const critere = await axios.put('https://localhost:8000/api/indicateurs/' + monIndicateur.id, {
-      libelle: monIndicateur.libelle,
-      description: monIndicateur.description,
-      image: monIndicateur.image,
-      urlVideo: monIndicateur.url_video,
-    });
+    await editIndicateur(
+      nouveauIndicateur.value.libelle,
+      nouveauIndicateur.value.description,
+      nouveauIndicateur.value.image,
+      nouveauIndicateur.value.url_video,
+      critere.value['@id']
+    );
+    window.alert("L'indicateur a bien été modifier !");
   } catch (e) {
     console.log(e);
   }

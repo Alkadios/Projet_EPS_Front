@@ -112,7 +112,8 @@
     </div>
     <template #footer>
       <Button label="Annuler" icon="pi pi-times" @click="closeEdit" class="p-button-text" />
-      <Button label="Modifier" icon="pi pi-check" @click="closeEdit(), editCritere(nouveauCritere)" autofocus> </Button>
+      <Button label="Modifier" icon="pi pi-check" @click="closeEdit(), changeCritere(nouveauCritere)" autofocus>
+      </Button>
     </template>
   </Dialog>
   <div class="card shadow-lg o-hidden border-0 my-5">
@@ -126,7 +127,7 @@
                 Personnalisation de l'équipe EPS <br />
                 au
               </p>
-              <h4 class="text-dark mb-4">{{ etablissement.nomEtablissement }}</h4>
+              <h4 class="text-dark mb-4">{{ etablissement.nom }}</h4>
             </div>
           </div>
         </div>
@@ -145,8 +146,8 @@
             <template #content>
               <p v-html="monCritere.description" />
               <p v-html="monCritere.url_video" />
-              <Button class="p-button-rounded p-button-info" @click="editCritere(monCritere)"
-                ><i class="pi pi-pencil" @click="openEdit"
+              <Button class="p-button-rounded p-button-info"
+                ><i class="pi pi-pencil" @click="openEdit(monCritere)"
               /></Button>
               <Button class="p-button-rounded p-button-danger" @click="removeCritere(monCritere.id)"
                 ><i class="pi pi-times"
@@ -217,7 +218,8 @@ const router = useRouter();
 
 const { isObjectEmpty } = ObjectUtils();
 const { etablissement } = UtilisateurService();
-const { saveCritere, fetchCriteres, deleteCritere, criteres } = CritereService();
+const { saveCritere, fetchCriteres, fetchCriteresByApsaRetenu, deleteCritere, editCritere, criteres } =
+  CritereService();
 const { apsaRetenu, fetchApsaRetenu } = ApsaRetenuService();
 
 const monTitleCritere = ref();
@@ -234,9 +236,10 @@ const openBasic = () => {
 };
 
 const displayEdit = ref(false);
-const openEdit = () => {
+function openEdit(monCritere: Critere) {
   displayEdit.value = true;
-};
+  nouveauCritere.value = monCritere;
+}
 
 const closeBasic = () => {
   window.location.reload();
@@ -244,8 +247,6 @@ const closeBasic = () => {
 };
 
 const closeEdit = () => {
-  window.alert('Le critère a bien été modifié !');
-  window.location.reload();
   displayEdit.value = false;
 };
 
@@ -257,7 +258,6 @@ const imageCritereIsSelected = computed(() => {
 async function addCritere() {
   try {
     await saveCritere(
-      nouveauCritere.value['@id'],
       nouveauCritere.value.titre,
       nouveauCritere.value.description,
       nouveauCritere.value.image,
@@ -271,17 +271,9 @@ async function addCritere() {
   }
 }
 
-async function editCritere(monCritere: Critere) {
+async function changeCritere(monCritere: Critere) {
   try {
-    let indexCritere = mesCriteres.value.findIndex((a) => a.id === monCritere.id);
-    mesCriteres.value.splice(indexCritere, 1);
-    nouveauCritere.value = monCritere;
-    const critere = await axios.put('https://localhost:8000/api/criteres/' + monCritere.id, {
-      titre: monCritere.titre,
-      description: monCritere.description,
-      image: monCritere.image,
-      urlVideo: monCritere.url_video,
-    });
+    await editCritere(monCritere.id, monCritere.titre, monCritere.description, monCritere.image, monCritere.url_video);
   } catch (e) {
     console.log(e);
   }

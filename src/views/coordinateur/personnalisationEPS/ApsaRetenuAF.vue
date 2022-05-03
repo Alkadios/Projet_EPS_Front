@@ -9,7 +9,7 @@
           </div>
           <SelectButton
             v-model="niveauScolaireSelectionne"
-            :options="etablissement.niveauxScolaires"
+            :options="etablissement.niveauScolaire"
             optionLabel="libelle"
           />
           <div class="d-flex p-2">

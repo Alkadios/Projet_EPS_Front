@@ -25,6 +25,15 @@ export default function IndicateurService() {
   ) {
     await store.dispatch('IndicateurModule/saveIndicateur', { id, libelle, description, image, urlVideo, critere });
   }
+  async function editIndicateur(
+    titre: string,
+    description: string,
+    image: string,
+    urlVideo: string,
+    ApsaRetenu: string
+  ) {
+    await store.dispatch('IndicateurModule/editIndicateur', { titre, description, image, urlVideo, ApsaRetenu });
+  }
   async function fetchIndicateurById(idIndicateur: number) {
     await store.dispatch('IndicateurModule/fetchIndicateurById', idIndicateur);
   }
@@ -44,6 +53,7 @@ export default function IndicateurService() {
     indicateurs,
     fetchIndicateurs,
     indicateur,
+    editIndicateur,
     fetchIndicateurById,
     saveIndicateur,
     deleteIndicateur,
