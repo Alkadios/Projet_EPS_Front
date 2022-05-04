@@ -45,10 +45,7 @@
               </div>
             </div>
           </div>
-          <div class="p-5" style="height: 4rem">
-            <!--<Chart type="pie" :data="chartDataCammenbert" :options="lightOptionsCammenbert" />-->
-          </div>
-          <!-- <div>
+          <div>
             <div class="p-5">
               <div class="col-md-12">
                 <div class="d-flex" v-if="apsaSelectionner != null">
@@ -62,6 +59,15 @@
                 </div>
               </div>
             </div>
+          </div>
+          <!-- <div class="p-5">
+            <Chart
+              type="pie"
+              :data="chartDataCammenbert"
+              :options="lightOptionsCammenbert"
+              :height="200"
+              :width="100"
+            />
           </div> -->
           <!-- <div id="myTableEleves">
             <div class="row">
@@ -132,7 +138,16 @@ import ApsaRetenuService from '@/services/ApsaRetenuService';
 import ClasseService from '@/services/ClasseService';
 import EvaluationEleveService from '@/services/EvaluationEleveService';
 import ObjectUtils from '@/utils/ObjectUtils';
-import type { Critere, Eleve, Indicateur, Classe, ApsaRetenu, NiveauScolaire, APSA } from '@/models';
+import type {
+  Critere,
+  Eleve,
+  Indicateur,
+  Classe,
+  ApsaRetenu,
+  NiveauScolaire,
+  APSA,
+  ChampApprentissage,
+} from '@/models';
 
 const route = useRoute();
 const router = useRouter();
@@ -145,6 +160,7 @@ const { isObjectEmpty } = ObjectUtils();
 const isLoading = ref(false);
 
 const elevesByClasse = ref<Eleve[]>([]);
+const caByApsaByClasse = ref<ChampApprentissage[]>([]);
 const apsasRetenusByNiveauScolaire = ref<ApsaRetenu[]>([]);
 const situationsEvaluationByNiveauScolaireAndApsa = ref<ApsaRetenu[]>([]);
 const indicateursEleveSelectionner = ref<indicateurEleve[]>([]);
@@ -153,6 +169,7 @@ const apsaSelectionner = ref<APSA>();
 const apsaRetenuSelectionner = ref<ApsaRetenu>();
 const eleveSelectionne = ref<Eleve>();
 const listeApsa = ref<APSA[]>([]);
+const listeCa = ref<ChampApprentissage[]>([]);
 const isCheckButtonTous = ref(false);
 const monEvaluation = ref<newEvaluation>({ evaluationEleve: [] as newEvaluationEleve[] } as newEvaluation);
 
@@ -250,6 +267,7 @@ interface indicateurEleve {
 }
 
 function verif() {
+  console.log('apsasRetenusByEtablissementAndAnnee : ', apsasRetenusByEtablissementAndAnnee.value);
   console.log('listeApsa : ', listeApsa.value);
 }
 
@@ -346,6 +364,14 @@ function onClasseChange() {
         listeApsa.value.push(ar.ApsaSelectAnnee.Apsa);
       }
     });
+
+    apsasRetenusByNiveauScolaire.value.forEach((ar) => {
+      if (listeApsa.value.find((a) => a.id === ar.ApsaSelectAnnee.Apsa.id)) {
+        listeCa.value.push(ar.AfRetenu.ChoixAnnee.champApprentissage);
+      }
+    });
+
+    console.log('listeCa : ', listeCa.value);
     isLoading.value = false;
   }
 }
@@ -366,6 +392,14 @@ function getElevesByClasse(uneClasse: Classe) {
 }
 
 function getApsasRetenusByNiveauScolaire(unNiveauScolaire: NiveauScolaire) {
+  return apsasRetenusByEtablissementAndAnnee.value
+    .filter((apsaRetenu) => apsaRetenu.AfRetenu.ChoixAnnee.Niveau['@id'] === unNiveauScolaire)
+    .map((apsaR) => {
+      return toRaw(apsaR);
+    });
+}
+
+function getCaByApsasRetenusByNiveauScolaire(unNiveauScolaire: NiveauScolaire) {
   return apsasRetenusByEtablissementAndAnnee.value
     .filter((apsaRetenu) => apsaRetenu.AfRetenu.ChoixAnnee.Niveau['@id'] === unNiveauScolaire)
     .map((apsaR) => {
