@@ -36,4 +36,14 @@ export default {
   async deleteCritere(idCritere: number): Promise<AxiosResponse> {
     return axios.delete(`${ApiCritere}/${idCritere}`, apiConfig.value);
   },
+  async editCritere(payload: {
+    id: number;
+    titre: string;
+    description: string;
+    image: string;
+    urlVideo: string;
+  }): Promise<AxiosResponse<any>> {
+    const url = `${ApiCritere}/${payload.id.toString()}`;
+    return axios.put(`${url}`, payload, apiConfig.value);
+  },
 };

@@ -34,7 +34,7 @@ export default {
   },
   async saveIndicateur(
     context: ActionContext<IndicateurState, any>,
-    payload: { libelle: string; description: string; image: string; urlVideo: string; Critere: string }
+    payload: { libelle: string; description: string; image: string; urlVideo: string; color: string; Critere: string }
   ) {
     const response = await IndicateurAPI.saveIndicateur(payload);
     if (response.status === 201) {
@@ -52,6 +52,19 @@ export default {
     } else {
       context.commit('setIndicateur', []);
       //throw new Error(response.data.message);
+    }
+  },
+  async editIndicateur(
+    context: ActionContext<IndicateurState, any>,
+    payload: { id: number; libelle: string; description: string; image: string; urlVideo: string; color: string }
+  ) {
+    const response = await IndicateurAPI.editIndicateur(payload);
+    if (response.status === 201) {
+      context.commit('setCritere', response.data);
+      //Ajout dans la liste critèresByApsaRetenu
+      const criteresByApsaRetenu = ref<Indicateur[]>(context.getters.getCriteresByApsaRetenu);
+      criteresByApsaRetenu.value.push(response.data);
+      context.commit('setCriteresByApsaRetenu', criteresByApsaRetenu.value);
     }
   },
 };

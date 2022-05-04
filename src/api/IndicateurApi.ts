@@ -19,11 +19,23 @@ export default {
     description: string;
     image: string;
     urlVideo: string;
+    color: string;
     Critere: string;
   }): Promise<AxiosResponse<any>> {
     return axios.post(`${ApiIndicateur}`, payload, apiConfig.value);
   },
   async deleteIndicateur(idCritere: number): Promise<AxiosResponse> {
     return axios.delete(`${ApiIndicateur}/${idCritere}`, apiConfig.value);
+  },
+  async editIndicateur(payload: {
+    id: number;
+    libelle: string;
+    description: string;
+    image: string;
+    urlVideo: string;
+    color: string;
+  }): Promise<AxiosResponse<any>> {
+    const url = `${ApiIndicateur}/${payload.id.toString()}`;
+    return axios.put(`${url}`, payload, apiConfig.value);
   },
 };

@@ -24,6 +24,38 @@
             <div>
               <InputText id="UrlVideo" v-model="nouveauIndicateur.url_video" type="text" placeholder="URL vidéo" />
             </div>
+            <div style="margin-top: 1.5rem">
+              <p>Couleur:</p>
+              <ColorPicker v-model="nouveauIndicateur.color" defaultColor="#FF0000" />
+            </div>
+            <div class="row" style="margin-top: 1.5rem">
+              <div class="col-3">
+                <p>Image :</p>
+              </div>
+              <div class="col-9">
+                <FileUpload
+                  v-if="!imageIndicateurIsSelected"
+                  v-model="nouveauIndicateur.image"
+                  mode="basic"
+                  accept="image/*"
+                  :maxFileSize="1000000"
+                  @select="onPhotoChange"
+                  :showUploadButton="false"
+                />
+                <img
+                  v-else
+                  :src="`data:${nouvelleImageIndicateur.type};base64,` + nouveauIndicateur.image"
+                  style="max-width: 10rem; max-height: 10rem"
+                  alt="Logo organisme"
+                />
+                <Button
+                  v-if="imageIndicateurIsSelected"
+                  icon="pi pi-trash"
+                  class="p-button-rounded p-button-danger"
+                  @click="supprimerImageIndicateur"
+                />
+              </div>
+            </div>
           </template>
         </Card>
       </div>
@@ -57,6 +89,10 @@
             </Editor>
             <div style="margin-top: 1.5rem">
               <InputText id="UrlVideo" v-model="nouveauIndicateur.url_video" type="text" placeholder="URL vidéo" />
+            </div>
+            <div style="margin-top: 1.5rem">
+              <p>Couleur:</p>
+              <ColorPicker v-model="nouveauIndicateur.color" />
             </div>
             <div class="row" style="margin-top: 1.5rem">
               <div class="col-3">
@@ -92,17 +128,7 @@
     </div>
     <template #footer>
       <Button label="Annuler" icon="pi pi-times" @click="closeEdit" class="p-button-text" />
-      <Button
-        label="Ajouter des indicateurs"
-        icon="pi pi-plus"
-        @click="
-          router.push({
-            name: 'IndicateurAF',
-            query: { idCritere: nouveauIndicateur.id },
-          })
-        "
-      />
-      <Button label="Modifier" icon="pi pi-check" @click="closeEdit(), editIndicateur(nouveauIndicateur)" autofocus>
+      <Button label="Modifier" icon="pi pi-check" @click="closeEdit(), changeIndicateur(nouveauIndicateur)" autofocus>
       </Button>
     </template>
   </Dialog>
@@ -136,10 +162,10 @@
             <template #title> {{ monIndicateur.libelle }} </template>
             <template #content>
               <p v-html="monIndicateur.description" />
-              <Button class="p-button-rounded p-button-info" @click="editIndicateur(monIndicateur)"
-                ><i class="pi pi-pencil" @click="openEdit"
+              <Button class="p-button-rounded p-button-info" @click="openEdit(monIndicateur)"
+                ><i class="pi pi-pencil"
               /></Button>
-              <Button class="p-button-rounded p-button-danger" @click="deleteIndicateur(monIndicateur.id)"
+              <Button class="p-button-rounded p-button-danger" @click="removeIndicateur(monIndicateur.id)"
                 ><i class="pi pi-times"
               /></Button>
             </template>
@@ -191,16 +217,23 @@ import IndicateurService from '@/services/IndicateurService';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import { isObject } from '@vue/shared';
+import ColorPicker from 'primevue/colorpicker';
 
 const route = useRoute();
 const router = useRouter();
 
 const { etablissement } = UtilisateurService();
 const { critere, fetchCriteres, fetchCritereById } = CritereService();
-const { saveIndicateur, fetchIndicateurs, indicateurs } = IndicateurService();
+const { saveIndicateur, deleteIndicateur, editIndicateur, fetchIndicateurs, indicateurs } = IndicateurService();
 const IndicateurByCritere = ref<Indicateur[]>([]);
 const nouvelleImageIndicateur = ref<File>({} as File);
-const nouveauIndicateur = ref<Indicateur>({ libelle: '', description: '', url_video: '', id: -1 } as Indicateur);
+const nouveauIndicateur = ref<Indicateur>({
+  libelle: '',
+  description: '',
+  url_video: '',
+  color: '',
+  id: -1,
+} as Indicateur);
 const isLoading = ref(false);
 const mesIndicateurs = ref<Indicateur[]>([]);
 
@@ -211,53 +244,64 @@ const openBasic = () => {
 
 const closeBasic = () => {
   displayBasic.value = false;
+  window.location.reload();
 };
 
 const displayEdit = ref(false);
-const openEdit = () => {
+function openEdit(monIndicateur: Indicateur) {
   displayEdit.value = true;
-};
+  nouveauIndicateur.value = monIndicateur;
+}
 
 const closeEdit = () => {
   displayEdit.value = false;
+  window.location.reload();
+  window.alert('L\indicateur a bien été modifié !');
 };
 
 async function addIndicateur() {
   try {
-    const critere = await axios.post('https://localhost:8000/api/indicateurs', {
-      libelle: nouveauIndicateur.value.libelle,
-      description: nouveauIndicateur.value.description,
-      image: nouveauIndicateur.value.image,
-      urlVideo: nouveauIndicateur.value.url_video,
-      critere: '/api/criteres/' + route.query.idCritere?.toString(),
-    });
+    await saveIndicateur(
+      nouveauIndicateur.value['@id'],
+      nouveauIndicateur.value.libelle,
+      nouveauIndicateur.value.description,
+      nouveauIndicateur.value.image,
+      nouveauIndicateur.value.url_video,
+      nouveauIndicateur.value.color,
+      critere.value['@id']
+    );
     closeBasic();
+    window.alert("L'indicateur a bien été ajouté !");
   } catch (e) {
     console.log(e);
   }
 }
 
-async function editIndicateur(monIndicateur: Indicateur) {
+async function changeIndicateur(monIndicateur: Indicateur) {
   try {
-    let indexIndicateur = mesIndicateurs.value.findIndex((a) => a.id === monIndicateur.id);
-    mesIndicateurs.value.splice(indexIndicateur, 1);
-    nouveauIndicateur.value = monIndicateur;
-    const critere = await axios.put('https://localhost:8000/api/indicateurs/' + monIndicateur.id, {
-      libelle: monIndicateur.libelle,
-      description: monIndicateur.description,
-      image: monIndicateur.image,
-      urlVideo: monIndicateur.url_video,
-    });
+    await editIndicateur(
+      monIndicateur.id,
+      monIndicateur.libelle,
+      monIndicateur.description,
+      monIndicateur.image,
+      monIndicateur.url_video,
+      monIndicateur.color
+    );
   } catch (e) {
     console.log(e);
   }
 }
 
-async function deleteIndicateur(id: number) {
+async function removeIndicateur(indicateurId: number) {
   let x = window.confirm('Voulez vous vraiment supprimer cet indicateur ?');
-
   if (x) {
-    const user = await axios.delete('https://localhost:8000/api/indicateurs/' + id);
+    try {
+      await deleteIndicateur(indicateurId);
+      window.alert("L'indicateur a bien été supprimé !");
+      window.location.reload();
+    } catch (e) {
+      console.log(e);
+    }
   }
 }
 
@@ -278,6 +322,7 @@ onMounted(async () => {
     await fetchIndicateurs();
     await fetchCritereById(parseInt(route.query.idCritere.toString()));
   }
+  isLoading.value = false;
 });
 
 function onPhotoChange(event: any) {

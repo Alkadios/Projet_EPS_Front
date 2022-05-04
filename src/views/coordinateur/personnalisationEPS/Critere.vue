@@ -112,7 +112,8 @@
     </div>
     <template #footer>
       <Button label="Annuler" icon="pi pi-times" @click="closeEdit" class="p-button-text" />
-      <Button label="Modifier" icon="pi pi-check" @click="closeEdit(), editCritere(nouveauCritere)" autofocus> </Button>
+      <Button label="Modifier" icon="pi pi-check" @click="closeEdit(), changeCritere(nouveauCritere)" autofocus>
+      </Button>
     </template>
   </Dialog>
   <div class="card shadow-lg o-hidden border-0 my-5">
@@ -145,10 +146,10 @@
             <template #content>
               <p v-html="monCritere.description" />
               <p v-html="monCritere.url_video" />
-              <Button class="p-button-rounded p-button-info" @click="editCritere(monCritere)"
-                ><i class="pi pi-pencil" @click="openEdit"
+              <Button class="p-button-rounded p-button-info"
+                ><i class="pi pi-pencil" @click="openEdit(monCritere)"
               /></Button>
-              <Button class="p-button-rounded p-button-danger" @click="deleteCritere(monCritere.id)"
+              <Button class="p-button-rounded p-button-danger" @click="removeCritere(monCritere.id)"
                 ><i class="pi pi-times"
               /></Button>
               <Button
@@ -157,7 +158,7 @@
                 @click="
                   router.push({
                     name: 'IndicateurAF',
-                    query: { idCritere: nouveauCritere.id },
+                    query: { idCritere: monCritere.id },
                   })
                 "
               />
@@ -217,7 +218,8 @@ const router = useRouter();
 
 const { isObjectEmpty } = ObjectUtils();
 const { etablissement } = UtilisateurService();
-const { saveCritere, fetchCriteres, criteres } = CritereService();
+const { saveCritere, fetchCriteres, fetchCriteresByApsaRetenu, deleteCritere, editCritere, criteres } =
+  CritereService();
 const { apsaRetenu, fetchApsaRetenu } = ApsaRetenuService();
 
 const monTitleCritere = ref();
@@ -226,7 +228,7 @@ const monUrlVideo = ref();
 const isLoading = ref(false);
 const mesCriteres = ref<Critere[]>([]);
 const CritereByApsaRetenu = ref<Critere[]>([]);
-const nouveauCritere = ref<Critere>({ titre: '', description: '', url_video: '', image: '', id: -1 } as Critere);
+const nouveauCritere = ref<Critere>({ titre: '', description: '', url_video: '', image: '' } as Critere);
 
 const displayBasic = ref(false);
 const openBasic = () => {
@@ -234,16 +236,20 @@ const openBasic = () => {
 };
 
 const displayEdit = ref(false);
-const openEdit = () => {
+function openEdit(monCritere: Critere) {
   displayEdit.value = true;
-};
+  nouveauCritere.value = monCritere;
+}
 
 const closeBasic = () => {
+  window.location.reload();
   displayBasic.value = false;
 };
 
 const closeEdit = () => {
   displayEdit.value = false;
+  window.location.reload();
+  window.alert('Le critère a bien été modifié !');
 };
 
 const imageCritereIsSelected = computed(() => {
@@ -253,40 +259,38 @@ const imageCritereIsSelected = computed(() => {
 
 async function addCritere() {
   try {
-    const critere = await axios.post('https://localhost:8000/api/criteres', {
-      titre: nouveauCritere.value.titre,
-      description: nouveauCritere.value.description,
-      image: nouveauCritere.value.image,
-      urlVideo: nouveauCritere.value.url_video,
-      apsaRetenu: '/api/apsa_retenus/' + route.query.idApsaRetenu?.toString(),
-    });
+    await saveCritere(
+      nouveauCritere.value.titre,
+      nouveauCritere.value.description,
+      nouveauCritere.value.image,
+      nouveauCritere.value.url_video,
+      apsaRetenu.value['@id']
+    );
     closeBasic();
+    window.alert('Le critère a bien été ajouté !');
   } catch (e) {
     console.log(e);
   }
 }
 
-async function editCritere(monCritere: Critere) {
+async function changeCritere(monCritere: Critere) {
   try {
-    let indexCritere = mesCriteres.value.findIndex((a) => a.id === monCritere.id);
-    mesCriteres.value.splice(indexCritere, 1);
-    nouveauCritere.value = monCritere;
-    const critere = await axios.put('https://localhost:8000/api/criteres/' + monCritere.id, {
-      titre: monCritere.titre,
-      description: monCritere.description,
-      image: monCritere.image,
-      urlVideo: monCritere.url_video,
-    });
+    await editCritere(monCritere.id, monCritere.titre, monCritere.description, monCritere.image, monCritere.url_video);
   } catch (e) {
     console.log(e);
   }
 }
 
-async function deleteCritere(id: number) {
+async function removeCritere(critereId: number) {
   let x = window.confirm('Voulez vous vraiment supprimer ce critère ?');
-
   if (x) {
-    const user = await axios.delete('https://localhost:8000/api/criteres/' + id);
+    try {
+      await deleteCritere(critereId);
+      window.alert('Le critère a bien été supprimé !');
+      window.location.reload();
+    } catch (e) {
+      console.log(e);
+    }
   }
 }
 
@@ -313,6 +317,7 @@ onMounted(async () => {
       }
     });
   }
+  isLoading.value = false;
 });
 
 function onPhotoChange(event: any) {
