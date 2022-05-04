@@ -36,7 +36,12 @@
       <div class="col-8">
         <Card>
           <template #content>
-            <DataTable :value="eleves" v-model:selection="selectedEleves" responsiveLayout="scroll" dataKey="id">
+            <DataTable
+              :value="mesElevesSansClasse"
+              v-model:selection="selectedEleves"
+              responsiveLayout="scroll"
+              dataKey="id"
+            >
               <Column selectionMode="multiple"></Column>
               <Column field="nom" header="nom" :sortable="true" style="min-width: 12rem"></Column>
               <Column field="prenom" header="prenom" :sortable="true" style="min-width: 12rem"></Column>
@@ -145,7 +150,12 @@ const mesElevesSansClasse = ref<Eleve[]>([]);
 const displayBasic = ref(false);
 const openBasic = () => {
   displayBasic.value = true;
+  filterClasse();
 };
+
+function filterClasse() {
+  mesElevesSansClasse.value = eleves.value.filter((e) => e.classe.length == 0);
+}
 
 function onClasseChange() {
   if (selectedClasse.value) {
@@ -184,12 +194,18 @@ async function editEleve(idEleve: number) {
 }
 
 async function editClasse(idClasse: number) {
+  const idsEleveExistant = mesEleves.value.map((e: Eleve) => {
+    return e['@id'];
+  });
+  console.log('idsEleveExistant', idsEleveExistant);
   if (selectedEleves.value) {
     const idsEleve = selectedEleves.value.map((e: Eleve) => {
       return e['@id'];
     });
+    const arrayidEleve = idsEleveExistant.concat(idsEleve);
+    console.log('monarray', arrayidEleve);
     console.log(idsEleve);
-    if (idsEleve) await addElevesInClasse(idClasse, idsEleve);
+    if (idsEleve) await addElevesInClasse(idClasse, arrayidEleve);
   }
 
   alert('Votre Eleve à ete ajouté à cette classe');
