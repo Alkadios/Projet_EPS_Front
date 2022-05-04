@@ -26,21 +26,26 @@
           :disabled="checkIfCaHasAfRetenu(ca) || checkIfCaHasNotApsaSelect(ca)"
           @click="selectionnerCa(ca)"
         />
-        <div class="row">
+        <div v-if="selectedCa && niveauScolaireSelectionne">
+          <div class="row">
+            <div class="d-flex p-2">
+              <strong>Sélectionner les attendus finaux retenus :</strong>
+            </div>
+            <div v-for="af of listeAf" :key="af.id" class="field-checkbox">
+              <Checkbox v-model="selectedAfs" :id="af.id" name="category" :value="af" style="margin-bottom: 0.5rem" />
+              <label style="margin: 0.5rem" :for="af.id.toString()">{{ af.libelle }}</label>
+            </div>
+          </div>
           <div class="d-flex p-2">
-            <strong>Sélectionner les attendus finaux retenus :</strong>
-          </div>
-          <div v-for="af of afs" :key="af.id" class="field-checkbox">
-            <Checkbox v-model="selectedAfs" :id="af.id" name="category" :value="af" style="margin-bottom: 0.5rem" />
-            <label style="margin: 0.5rem" :for="af.id.toString()">{{ af.libelle }}</label>
+            <Button label="Valider" style="right: 1rem" icon="pi pi-check" @click="ajouterAfsRetenus()" autofocus />
+            <InlineMessage v-if="afEnErreur" severity="error"
+              >Vous devez sélectionner au moins 1 attendu final
+            </InlineMessage>
           </div>
         </div>
-        <div class="d-flex p-2">
-          <Button label="Valider" style="right: 1rem" icon="pi pi-check" @click="ajouterAfsRetenus()" autofocus />
-          <InlineMessage v-if="afEnErreur" severity="error"
-            >Vous devez sélectionner au moins 1 attendu final</InlineMessage
-          >
-        </div>
+        <InlineMessage v-else severity="info">
+          Veuillez sélectionner un niveau scolaire et un champ d'apprentissage
+        </InlineMessage>
       </div>
     </div>
     <div style="position: fixed; bottom: 0; right: 0">
@@ -73,6 +78,7 @@ const { afs, fetchAllAfs } = AfService();
 const { champsApprentissages, fetchChampsApprentissages } = ChampApprentissageService();
 const { etablissement, anneeEnConfig } = UtilisateurService();
 
+const listeAf = ref<AF[]>([]);
 const selectedCa = ref<ChampApprentissage>();
 const selectedAfs = ref<AF[]>([]);
 const niveauScolaireSelectionne = ref<NiveauScolaire>();
@@ -80,7 +86,6 @@ const isLoading = ref(false);
 
 //Gestion des erreurs
 const afEnErreur = ref(false);
-const formulaireEnErreur = ref(false);
 
 onMounted(async () => {
   isLoading.value = true;
@@ -98,6 +103,13 @@ watch(
     }
   }
 );
+watch(
+  () => selectedCa.value,
+  (ca) => {
+    if (ca && niveauScolaireSelectionne.value)
+      listeAf.value = getAfsByTypeAndCa(niveauScolaireSelectionne.value.typeAf, ca['@id']);
+  }
+);
 
 watch(
   () => niveauScolaireSelectionne.value,
@@ -105,10 +117,22 @@ watch(
     if (niveauScolaireSelectionne.value) {
       isLoading.value = true;
       await fetchAllAfRetenuByAnneeAndNiveauScolaire(anneeEnConfig.value.id, niveauScolaireSelectionne.value.id);
+      if (selectedCa.value) {
+        if (checkIfCaHasNotApsaSelect(selectedCa.value)) {
+          selectedCa.value = {} as ChampApprentissage;
+        } else {
+          listeAf.value = getAfsByTypeAndCa(niveauScolaireSelectionne.value.typeAf, selectedCa.value['@id']);
+        }
+      }
       isLoading.value = false;
     }
   }
 );
+
+function getAfsByTypeAndCa(type_af: string, id_ca: string) {
+  console.log('toto', type_af);
+  return afs.value.filter((af) => af.typeAf === type_af && af.ca === id_ca);
+}
 
 function checkIfCaHasNotApsaSelect(ca: ChampApprentissage) {
   if (!apsaSelectAnneeByAnnee.value.find((monAPSASelect) => ca.id === monAPSASelect.Ca.id)) {
