@@ -49,7 +49,6 @@
             <div class="p-5">
               <div class="col-md-12">
                 <div class="d-flex" v-if="apsaSelectionner != null">
-                  <div class="p-2">Mes Situation d'évaluation :</div>
                   <Dropdown
                     v-model="apsaRetenuSelectionner"
                     :options="situationsEvaluationByNiveauScolaireAndApsa"
@@ -257,6 +256,8 @@ onMounted(async () => {
   isLoading.value = true;
   await fetchClasseByAnneeAndProf(anneeEnCours.value.id, 1);
   await fetchApsaRetenuByAnneeAndEtablissement(anneeEnCours.value.id, etablissement.value.id);
+  console.log('classesByAnneeAndProfesseur : ', classesByAnneeAndProfesseur.value);
+  console.log('apsasRetenusByEtablissementAndAnnee : ', apsasRetenusByEtablissementAndAnnee.value);
   isLoading.value = false;
 });
 
