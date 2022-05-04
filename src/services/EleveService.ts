@@ -12,7 +12,7 @@ export default function EleveService() {
   }
 
   async function fetchElevesByAnneeAndEtablissement(idEtablissement: number) {
-    await store.dispatch('EleveModule/fetchEleveById', {
+    await store.dispatch('EleveModule/fetchElevesByAnneeAndEtablissement', {
       idEtablissement: idEtablissement,
     });
   }

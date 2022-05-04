@@ -27,9 +27,10 @@ export default {
     payload: { idEtablissement: number }
   ) {
     const response = await EleveAPI.fetchElevesByAnneeAndEtablissement(payload.idEtablissement);
-    if (response.data) context.commit('setElevesByAnneeAndEtablissement', response.data);
+    if (response.data['hydra:totalItems'] > 0)
+      context.commit('setElevesByAnneeAndEtablissement', response.data['hydra:member']);
     else {
-      context.commit('setElevesByAnneeAndEtablissement', []);
+      context.commit('setEleves', []);
       //throw new Error(response.data.message);
     }
   },

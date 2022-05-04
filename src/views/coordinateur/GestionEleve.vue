@@ -28,16 +28,6 @@
           />
         </template>
       </Column>
-
-      <Column :exportable="false" style="min-width: 8rem">
-        <template #body="slotProps">
-          <Button
-            icon="pi pi-trash"
-            class="p-button-rounded p-button-warning"
-            @click="supprimerEleve(slotProps.data.id)"
-          />
-        </template>
-      </Column>
     </DataTable>
   </div>
 
@@ -127,6 +117,7 @@
 import { Classe, Eleve } from '@/models';
 import ClasseService from '@/services/ClasseService';
 import EleveService from '@/services/EleveService';
+import eleve from '@/store/modules/eleve';
 import { ref, onMounted } from 'vue';
 
 const { fetchAllEleves, saveEleve, eleves, deleteEleve, fetchEleveById, eleveById, updateEleve } = EleveService();
@@ -136,11 +127,25 @@ onMounted(async () => {
   await fetchAllEleves();
   await fetchAllClasses();
   await fetchClasseByAnnee(3);
+  console.log('length classe', eleves.value);
+  console.log('elevesansclasse', eleves.value);
 });
 
 function mesElevesByClasse(idClasse: number) {
   mesEleves.value = classesByAnnee.value.find((a) => a.id === idClasse)!.eleves;
 }
+const closeBasic = () => {
+  displayBasic.value = false;
+};
+const mesEleves = ref<Eleve[]>([]);
+const eleveDialog = ref(false);
+const selectedClasse = ref<Classe>();
+const selectedEleves = ref<Eleve[]>();
+const mesElevesSansClasse = ref<Eleve[]>([]);
+const displayBasic = ref(false);
+const openBasic = () => {
+  displayBasic.value = true;
+};
 
 function onClasseChange() {
   if (selectedClasse.value) {
@@ -151,28 +156,6 @@ function onClasseChange() {
 console.log(ref<Classe[]>([]));
 
 let columns;
-
-const displayBasic = ref(false);
-const openBasic = () => {
-  displayBasic.value = true;
-};
-
-const eleveDialog = ref(false);
-let monEleve = ref<Eleve>();
-const selectedClasse = ref<Classe>();
-const selectedEleves = ref<Eleve[]>();
-
-function confirmDeleteEleve() {}
-
-async function supprimerEleve(idEleve: number) {
-  if (confirm('Voulez vous vraiment supprimer ?')) {
-    await deleteEleve(idEleve);
-  }
-  await fetchClasseByAnnee(3);
-  await fetchAllEleves();
-  onClasseChange();
-}
-
 console.log('classe', selectedEleves);
 
 async function champsEleve(idEleve: number) {
@@ -200,15 +183,12 @@ async function editEleve(idEleve: number) {
   console.log('onClasseChange', mesEleves.value);
 }
 
-const closeBasic = () => {
-  displayBasic.value = false;
-};
-
 async function editClasse(idClasse: number) {
   if (selectedEleves.value) {
     const idsEleve = selectedEleves.value.map((e: Eleve) => {
       return e['@id'];
     });
+    console.log(idsEleve);
     if (idsEleve) await addElevesInClasse(idClasse, idsEleve);
   }
 
@@ -218,5 +198,18 @@ async function editClasse(idClasse: number) {
   onClasseChange();
 }
 
-const mesEleves = ref<Eleve[]>([]);
+async function deleteFromClasse(idClasse: number) {
+  if (selectedEleves.value) {
+    const idsEleve = !selectedEleves.value.map((e: Eleve) => {
+      return e['@id'];
+    });
+    console.log(idsEleve);
+    if (idsEleve) await addElevesInClasse(idClasse, idsEleve);
+  }
+
+  alert('Votre Eleve à ete ajouté à cette classe');
+  eleveDialog.value = false;
+  await fetchAllEleves();
+  onClasseChange();
+}
 </script>
