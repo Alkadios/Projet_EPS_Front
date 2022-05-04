@@ -11,10 +11,7 @@ export default {
     return axios.get(`${url.toString()}`, apiConfig.value);
   },
 
-
   async fetchAllNiveauxScolaires(): Promise<AxiosResponse<ResponseModel>> {
     return axios.get(`${ApiURLNiveauScolaire}`, apiConfig.value);
   },
-
-
 };

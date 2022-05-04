@@ -295,7 +295,7 @@ function getElevesByClasse(uneClasse: Classe) {
   return classesByAnneeAndProfesseur.value.find((classeProf) => classeProf.id === uneClasse.id)?.eleves;
 }
 
-function getApsasRetenusByNiveauScolaire(unNiveauScolaire: NiveauScolaire) {
+function getApsasRetenusByNiveauScolaire(unNiveauScolaire: string | NiveauScolaire) {
   return apsasRetenusByEtablissementAndAnnee.value
     .filter((apsaRetenu) => apsaRetenu.AfRetenu.ChoixAnnee.Niveau['@id'] === unNiveauScolaire)
     .map((apsaR) => {

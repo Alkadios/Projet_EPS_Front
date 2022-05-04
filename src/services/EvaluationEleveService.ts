@@ -1,6 +1,6 @@
 import { computed } from 'vue';
 import { useStore } from 'vuex';
-import { EvaluationEleve } from '@/models';
+import type { EvaluationEleve } from '@/models';
 
 export default function EvaluationEleveService() {
   const store = useStore();
@@ -21,7 +21,7 @@ export default function EvaluationEleveService() {
   }
 
   async function saveEvaluationEleve(
-    Date: string,
+    Date: Date,
     evaluationEleve: [
       {
         Indicateur: number;
