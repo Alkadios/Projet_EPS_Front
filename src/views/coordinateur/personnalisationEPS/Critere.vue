@@ -4,21 +4,45 @@
       <div class="col-8">
         <Card>
           <template #title>
-            <InputText id="Title" v-model="nouveauCritere.titre" type="text" placeholder="Titre" />
+            <p class="text-center">Entrez les informations</p>
           </template>
           <template #content>
-            <Editor v-model="nouveauCritere.description" editorStyle="height: 130px" placeholder="Entrez vos critères">
-              <template v-slot:toolbar>
-                <span class="ql-formats">
-                  <button class="ql-list" value="bullet" type="button"></button>
-                  <button class="ql-bold" v-tooltip.bottom="'Bold'"></button>
-                  <button class="ql-italic" v-tooltip.bottom="'Italic'"></button>
-                  <button class="ql-underline" v-tooltip.bottom="'Underline'"></button>
-                </span>
-              </template>
-            </Editor>
-            <div style="margin-top: 1.5rem">
-              <InputText id="UrlVideo" v-model="nouveauCritere.url_video" type="text" placeholder="URL vidéo" />
+            <div class="row" style="margin-top: 1.5rem">
+              <div class="col-3">
+                <p>Titre :</p>
+              </div>
+              <div class="col-9">
+                <InputText id="Title" v-model="nouveauCritere.titre" type="text" placeholder="Titre" />
+              </div>
+            </div>
+            <div class="row" style="margin-top: 1.5rem">
+              <div class="col-3">
+                <p>Description :</p>
+              </div>
+              <div class="col-9">
+                <Editor
+                  v-model="nouveauCritere.description"
+                  editorStyle="height: 130px"
+                  placeholder="Entrez vos critères"
+                >
+                  <template v-slot:toolbar>
+                    <span class="ql-formats">
+                      <button class="ql-list" value="bullet" type="button"></button>
+                      <button class="ql-bold" v-tooltip.bottom="'Bold'"></button>
+                      <button class="ql-italic" v-tooltip.bottom="'Italic'"></button>
+                      <button class="ql-underline" v-tooltip.bottom="'Underline'"></button>
+                    </span>
+                  </template>
+                </Editor>
+              </div>
+            </div>
+            <div class="row" style="margin-top: 1.5rem">
+              <div class="col-3">
+                <p>Vidéo :</p>
+              </div>
+              <div class="col-9">
+                <InputText id="UrlVideo" v-model="nouveauCritere.url_video" type="text" placeholder="URL vidéo" />
+              </div>
             </div>
             <div class="row" style="margin-top: 1.5rem">
               <div class="col-3">
@@ -62,21 +86,45 @@
       <div class="col-8">
         <Card>
           <template #title>
-            <InputText id="Title" v-model="nouveauCritere.titre" type="text" placeholder="Titre" />
+            <p class="text-center">Entrez les informations</p>
           </template>
           <template #content>
-            <Editor v-model="nouveauCritere.description" editorStyle="height: 130px" placeholder="Entrez vos critères">
-              <template v-slot:toolbar>
-                <span class="ql-formats">
-                  <button class="ql-list" value="bullet" type="button"></button>
-                  <button class="ql-bold" v-tooltip.bottom="'Bold'"></button>
-                  <button class="ql-italic" v-tooltip.bottom="'Italic'"></button>
-                  <button class="ql-underline" v-tooltip.bottom="'Underline'"></button>
-                </span>
-              </template>
-            </Editor>
-            <div style="margin-top: 1.5rem">
-              <InputText id="UrlVideo" v-model="nouveauCritere.url_video" type="text" placeholder="URL vidéo" />
+            <div class="row" style="margin-top: 1.5rem">
+              <div class="col-3">
+                <p>Titre :</p>
+              </div>
+              <div class="col-9">
+                <InputText id="Title" v-model="nouveauCritere.titre" type="text" placeholder="Titre" />
+              </div>
+            </div>
+            <div class="row" style="margin-top: 1.5rem">
+              <div class="col-3">
+                <p>Description :</p>
+              </div>
+              <div class="col-9">
+                <Editor
+                  v-model="nouveauCritere.description"
+                  editorStyle="height: 130px"
+                  placeholder="Entrez vos critères"
+                >
+                  <template v-slot:toolbar>
+                    <span class="ql-formats">
+                      <button class="ql-list" value="bullet" type="button"></button>
+                      <button class="ql-bold" v-tooltip.bottom="'Bold'"></button>
+                      <button class="ql-italic" v-tooltip.bottom="'Italic'"></button>
+                      <button class="ql-underline" v-tooltip.bottom="'Underline'"></button>
+                    </span>
+                  </template>
+                </Editor>
+              </div>
+            </div>
+            <div class="row" style="margin-top: 1.5rem">
+              <div class="col-3">
+                <p>Vidéo :</p>
+              </div>
+              <div class="col-9">
+                <InputText id="UrlVideo" v-model="nouveauCritere.url_video" type="text" placeholder="URL vidéo" />
+              </div>
             </div>
             <div class="row" style="margin-top: 1.5rem">
               <div class="col-3">
@@ -146,12 +194,6 @@
             <template #content>
               <p v-html="monCritere.description" />
               <p v-html="monCritere.url_video" />
-              <Button class="p-button-rounded p-button-info"
-                ><i class="pi pi-pencil" @click="openEdit(monCritere)"
-              /></Button>
-              <Button class="p-button-rounded p-button-danger" @click="removeCritere(monCritere.id)"
-                ><i class="pi pi-times"
-              /></Button>
               <Button
                 label="Ajouter des indicateurs"
                 icon="pi pi-plus"
@@ -162,6 +204,12 @@
                   })
                 "
               />
+              <Button class="p-button-rounded p-button-info"
+                ><i class="pi pi-pencil" @click="openEdit(monCritere)"
+              /></Button>
+              <Button class="p-button-rounded p-button-danger" @click="removeCritere(monCritere.id)"
+                ><i class="pi pi-trash"
+              /></Button>
             </template>
           </Card>
         </div>
