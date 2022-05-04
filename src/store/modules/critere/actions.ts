@@ -70,4 +70,17 @@ export default {
       //throw new Error(response.data.message);
     }
   },
+  async editCritere(
+    context: ActionContext<CritereState, any>,
+    payload: { id: number; titre: string; description: string; image: string; urlVideo: string }
+  ) {
+    const response = await CritereAPI.editCritere(payload);
+    if (response.status === 201) {
+      context.commit('setCritere', response.data);
+      //Ajout dans la liste critèresByApsaRetenu
+      const criteresByApsaRetenu = ref<Critere[]>(context.getters.getCriteresByApsaRetenu);
+      criteresByApsaRetenu.value.push(response.data);
+      context.commit('setCriteresByApsaRetenu', criteresByApsaRetenu.value);
+    }
+  },
 };

@@ -66,6 +66,26 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('../views/Profil.vue'),
   },
   {
+    path: '/CreerEleve',
+    name: 'CreerEleve',
+    component: () => import('../views/coordinateur/personnalisationEPS/CreerEleve.vue'),
+  },
+  {
+    path: '/GestionClasse',
+    name: 'GestionClasse',
+    component: () => import('../views/coordinateur/GestionClasse.vue'),
+  },
+  {
+    path: '/GestionEleve',
+    name: 'GestionEleve',
+    component: () => import('../views/coordinateur/GestionEleve.vue'),
+  },
+  {
+    path: '/CrudEleve',
+    name: 'CrudEleve',
+    component: () => import('../views/coordinateur/CrudEleve.vue'),
+  },
+  {
     path: '/:notFound(.*)',
     redirect: '/',
   },

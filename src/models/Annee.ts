@@ -4,5 +4,6 @@ export interface Annee {
   '@id': string;
   id: number;
   annee: string;
-  choixAnnees: ChoixAnnee[];
+  enCours: boolean;
+  choixAnnees?: ChoixAnnee[];
 }

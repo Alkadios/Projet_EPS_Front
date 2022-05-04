@@ -66,7 +66,7 @@ const {
   fetchAnneeEnCours,
   anneeEnCours,
 } = UtilisateurService();
-const { annees, fetchAllAnnee, annee, fetchAnneeById } = AnneeService();
+const { annees, fetchAllAnnees, annee, fetchAnneeById } = AnneeService();
 // Contrôle l'affichage du menu. Par défaut, est vrai si l'écran n'est pas un mobile, faux sinon.
 const displayMenu = ref(window.innerWidth >= 600);
 

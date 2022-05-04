@@ -18,6 +18,10 @@ export default function CritereService() {
   async function saveCritere(titre: string, description: string, image: string, urlVideo: string, ApsaRetenu: string) {
     await store.dispatch('CritereModule/saveCritere', { titre, description, image, urlVideo, ApsaRetenu });
   }
+  async function editCritere(id: number, titre: string, description: string, image: string, urlVideo: string) {
+    await store.dispatch('CritereModule/editCritere', { id, titre, description, image, urlVideo });
+  }
+
   async function fetchCritereById(idCritere: number) {
     await store.dispatch('CritereModule/fetchCritereById', idCritere);
   }
@@ -41,12 +45,15 @@ export default function CritereService() {
   }
 
   async function deleteCritere(idCritere: number) {
-    await store.dispatch('CritereModule/deleteCritere');
+    await store.dispatch('CritereModule/deleteCritere', {
+      idCritere,
+    });
   }
   return {
     criteres,
     fetchCriteres,
     critere,
+    editCritere,
     fetchCritereById,
     saveCritere,
     deleteCritere,

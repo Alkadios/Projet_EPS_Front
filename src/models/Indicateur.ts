@@ -5,9 +5,9 @@ export interface Indicateur {
   id: number;
   libelle: string;
   description: string;
-  Critere: Critere;
   image: string;
   url_video: string;
   color: string;
   evaluationEleves: EvaluationEleve[];
+  Critere: Critere;
 }

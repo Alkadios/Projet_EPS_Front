@@ -16,13 +16,33 @@ export default function IndicateurService() {
     return store.getters['IndicateurModule/getIndicateur'];
   });
   async function saveIndicateur(
+    id: string,
     libelle: string,
     description: string,
     image: string,
     urlVideo: string,
-    Critere: string
+    color: string,
+    critere: string
   ) {
-    await store.dispatch('CritereModule/saveCritere', { libelle, description, image, urlVideo, Critere });
+    await store.dispatch('IndicateurModule/saveIndicateur', {
+      id,
+      libelle,
+      description,
+      image,
+      urlVideo,
+      color,
+      critere,
+    });
+  }
+  async function editIndicateur(
+    id: number,
+    libelle: string,
+    description: string,
+    image: string,
+    urlVideo: string,
+    color: string
+  ) {
+    await store.dispatch('IndicateurModule/editIndicateur', { id, libelle, description, image, urlVideo, color });
   }
   async function fetchIndicateurById(idIndicateur: number) {
     await store.dispatch('IndicateurModule/fetchIndicateurById', idIndicateur);
@@ -35,12 +55,15 @@ export default function IndicateurService() {
   }
 
   async function deleteIndicateur(idIndicateur: number) {
-    await store.dispatch('IndicateurModule/deleteIndicateur');
+    await store.dispatch('IndicateurModule/deleteIndicateur', {
+      idIndicateur,
+    });
   }
   return {
     indicateurs,
     fetchIndicateurs,
     indicateur,
+    editIndicateur,
     fetchIndicateurById,
     saveIndicateur,
     deleteIndicateur,
