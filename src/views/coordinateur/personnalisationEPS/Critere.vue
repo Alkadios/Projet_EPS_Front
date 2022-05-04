@@ -194,6 +194,7 @@
             <template #content>
               <p v-html="monCritere.description" />
               <p v-html="monCritere.url_video" />
+              <p v-html="monCritere.image" />
               <Button
                 label="Ajouter des indicateurs"
                 icon="pi pi-plus"
