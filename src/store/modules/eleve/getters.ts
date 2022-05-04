@@ -10,4 +10,7 @@ export default {
   getElevesByClasse(state: EleveState) {
     return state.elevesByClasse;
   },
+  getElevesByAnneeAndEtablissement(state: EleveState) {
+    return state.elevesByAnneeAndEtablissement;
+  },
 };

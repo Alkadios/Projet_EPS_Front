@@ -11,4 +11,7 @@ export default {
   setElevesByClasse(state: EleveState, payload: Eleve[]) {
     state.elevesByClasse = payload;
   },
+  setElevesByAnneeAndEtablissement(state: EleveState, payload: Eleve[]) {
+    state.elevesByAnneeAndEtablissement = payload;
+  },
 };

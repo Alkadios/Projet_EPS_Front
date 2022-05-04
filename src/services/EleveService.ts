@@ -11,6 +11,12 @@ export default function EleveService() {
     });
   }
 
+  async function fetchElevesByAnneeAndEtablissement(idEtablissement: number) {
+    await store.dispatch('EleveModule/fetchEleveById', {
+      idEtablissement: idEtablissement,
+    });
+  }
+
   const eleveById = computed((): Eleve => {
     return store.getters['EleveModule/getEleveById'];
   });
@@ -23,6 +29,10 @@ export default function EleveService() {
 
   const eleves = computed((): Eleve[] => {
     return store.getters['EleveModule/getEleves'];
+  });
+
+  const elevesByAnneeAndEtablissement = computed((): Eleve[] => {
+    return store.getters['EleveModule/getElevesByAnneeAndEtablissement'];
   });
 
   async function saveEleve(
@@ -95,6 +105,8 @@ export default function EleveService() {
     eleves,
     eleveById,
     elevesByClasse,
+    elevesByAnneeAndEtablissement,
     fetchElevesByClasse,
+    fetchElevesByAnneeAndEtablissement,
   };
 }

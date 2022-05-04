@@ -22,6 +22,18 @@ export default {
     }
   },
 
+  async fetchElevesByAnneeAndEtablissement(
+    context: ActionContext<EleveState, any>,
+    payload: { idEtablissement: number }
+  ) {
+    const response = await EleveAPI.fetchElevesByAnneeAndEtablissement(payload.idEtablissement);
+    if (response.data) context.commit('setElevesByAnneeAndEtablissement', response.data);
+    else {
+      context.commit('setElevesByAnneeAndEtablissement', []);
+      //throw new Error(response.data.message);
+    }
+  },
+
   async deleteEleve(context: ActionContext<EleveState, any>, payload: { idEleve: number }) {
     await EleveAPI.deleteEleve(payload.idEleve);
   },

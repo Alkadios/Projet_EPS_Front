@@ -11,6 +11,7 @@ export default {
       eleves: [] as Eleve[],
       eleveById: {} as Eleve,
       elevesByClasse: [] as Eleve[],
+      elevesByAnneeAndEtablissement: [] as Eleve[],
     };
   },
   mutations,

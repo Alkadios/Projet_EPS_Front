@@ -12,6 +12,13 @@ export default {
     return axios.get(`${ApiURLEleve}/` + idEleve, apiConfig.value);
   },
 
+  async fetchElevesByAnneeAndEtablissement(idEtablissement: number): Promise<AxiosResponse<ResponseModel>> {
+    const paramsString = `etablissement.id=${idEtablissement.toString()}`;
+    const url = new URL(`${ApiURLEleve}/`);
+    url.search = new URLSearchParams(paramsString).toString();
+    return axios.get(`${url.toString()}`, apiConfig.value);
+  },
+
   async deleteEleve(idEleve: number): Promise<AxiosResponse<ResponseModel>> {
     return axios.delete(`${ApiURLEleve}/` + idEleve, apiConfig.value);
   },
