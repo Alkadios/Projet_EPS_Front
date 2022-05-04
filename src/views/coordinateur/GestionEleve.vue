@@ -110,6 +110,14 @@
           </template>
         </Card>
       </div>
+      <div style="position: fixed; bottom: 0; right: 2rem">
+        <ProgressSpinner
+          v-if="isLoading"
+          style="float: right; width: 50px; height: 50px"
+          strokeWidth="8"
+          animationDuration=".5s"
+        />
+      </div>
     </div>
     <template #footer>
       <Button label="No" icon="pi pi-times" @click="closeBasic" class="p-button-text" />
@@ -122,18 +130,20 @@
 import { Classe, Eleve } from '@/models';
 import ClasseService from '@/services/ClasseService';
 import EleveService from '@/services/EleveService';
+import UtilisateurService from '@/services/UtilisateurService';
 import eleve from '@/store/modules/eleve';
 import { ref, onMounted } from 'vue';
 
 const { fetchAllEleves, saveEleve, eleves, deleteEleve, fetchEleveById, eleveById, updateEleve } = EleveService();
 const { fetchAllClasses, fetchClasseByAnnee, classesByAnnee, addElevesInClasse, classes } = ClasseService();
+const { etablissement, anneeEnCours } = UtilisateurService();
 
 onMounted(async () => {
+  isLoading.value = true;
   await fetchAllEleves();
   await fetchAllClasses();
-  await fetchClasseByAnnee(3);
-  console.log('length classe', eleves.value);
-  console.log('elevesansclasse', eleves.value);
+  await fetchClasseByAnnee(anneeEnCours.value.id);
+  isLoading.value = false;
 });
 
 function mesElevesByClasse(idClasse: number) {
@@ -148,6 +158,7 @@ const selectedClasse = ref<Classe>();
 const selectedEleves = ref<Eleve[]>();
 const mesElevesSansClasse = ref<Eleve[]>([]);
 const displayBasic = ref(false);
+const isLoading = ref(false);
 const openBasic = () => {
   displayBasic.value = true;
   filterClasse();

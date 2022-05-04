@@ -16,7 +16,7 @@
           <div id="mesClasses">
             <div class="row">
               <div id="EvaluationClasse" class="col-md-5">
-                <div class="d-flex">
+                <div class="d-flex justify-content-center">
                   <div>
                     <Dropdown
                       v-model="classeSelectionner"
@@ -30,7 +30,7 @@
                 </div>
               </div>
               <div class="col-md-5 offset-md-2">
-                <div class="d-flex" v-if="classeSelectionner != null">
+                <div class="d-flex justify-content-center" v-if="classeSelectionner != null">
                   <div>
                     <Dropdown
                       v-model="apsaSelectionner"
@@ -48,7 +48,7 @@
           <div>
             <div class="p-5">
               <div class="col-md-12">
-                <div class="d-flex" v-if="apsaSelectionner != null">
+                <div class="d-flex justify-content-center" v-if="apsaSelectionner != null">
                   <Dropdown
                     v-model="apsaRetenuSelectionner"
                     :options="situationsEvaluationByNiveauScolaireAndApsa"
@@ -297,7 +297,7 @@ function getElevesByClasse(uneClasse: Classe) {
 
 function getApsasRetenusByNiveauScolaire(unNiveauScolaire: NiveauScolaire) {
   return apsasRetenusByEtablissementAndAnnee.value
-    .filter((apsaRetenu) => apsaRetenu.AfRetenu.ChoixAnnee.Niveau['@id'] === unNiveauScolaire['@id'])
+    .filter((apsaRetenu) => apsaRetenu.AfRetenu.ChoixAnnee.Niveau['@id'] === unNiveauScolaire)
     .map((apsaR) => {
       return toRaw(apsaR);
     });
