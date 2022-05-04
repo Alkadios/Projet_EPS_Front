@@ -16,8 +16,7 @@
           <div id="mesClasses">
             <div class="row">
               <div id="EvaluationClasse" class="col-md-5">
-                <div class="d-flex">
-                  <div class="p-2">Mes Classes :</div>
+                <div class="d-flex justify-content-center">
                   <div>
                     <Dropdown
                       v-model="classeSelectionner"
@@ -31,8 +30,7 @@
                 </div>
               </div>
               <div class="col-md-5 offset-md-2">
-                <div class="d-flex" v-if="classeSelectionner != null">
-                  <div class="p-2">Mes Apsas :</div>
+                <div class="d-flex justify-content-center" v-if="classeSelectionner != null">
                   <div>
                     <Dropdown
                       v-model="apsaSelectionner"
@@ -50,8 +48,7 @@
           <div>
             <div class="p-5">
               <div class="col-md-12">
-                <div class="d-flex" v-if="apsaSelectionner != null">
-                  <div class="p-2">Mes Situation d'évaluation :</div>
+                <div class="d-flex justify-content-center" v-if="apsaSelectionner != null">
                   <Dropdown
                     v-model="apsaRetenuSelectionner"
                     :options="situationsEvaluationByNiveauScolaireAndApsa"
@@ -67,7 +64,13 @@
             <div class="row">
               <div class="d-flex justify-content-start">
                 <div id="elevesByClasse" v-if="apsaRetenuSelectionner != null" class="col-md-4 p-2">
-                  <Button style="margin-bottom: 1rem; width: 100%" label="Tous" />
+                  <Button
+                    label="Tout les élèves"
+                    style="margin-bottom: 1rem; width: 100%"
+                    :style="!isCheckButtonTous ? 'background-color: bisque' : ''"
+                    :class="isCheckButtonTous === true ? 'primary' : ''"
+                    @click="onClickButtonTous()"
+                  />
                   <Listbox
                     v-model="eleveSelectionne"
                     :options="elevesByClasse"
@@ -83,7 +86,10 @@
                   </Listbox>
                 </div>
                 <div class="offset-md-1 col-md-7">
-                  <div id="CriteresEvaluations" v-if="apsaRetenuSelectionner != null">
+                  <div
+                    id="CriteresEvaluations"
+                    v-if="apsaRetenuSelectionner != null && (isCheckButtonTous == true || eleveSelectionne != null)"
+                  >
                     <div v-for="monCritere in apsaRetenuSelectionner.criteres" :key="monCritere.id" class="card">
                       <Divider align="center" type="dashed">
                         <b>{{ monCritere.titre }}</b>
@@ -107,8 +113,8 @@
         </div>
       </div>
       <div class="mt-3 ms-3">
-        <Button label="Annuler" icon="pi pi-check" @click="verif()"></Button>
-        <Button label="Terminer l'évaluation" icon="pi pi-check" style="left: 1rem" @click="verif()"></Button>
+        <Button label="Annuler" @click="router.push('TableauDeBordConfig')"></Button>
+        <Button label="Terminer l'évaluation" icon="pi pi-check" style="left: 1rem" @click="saveEvaluation()"></Button>
       </div>
       <div class="mb-3"></div>
       <div style="position: fixed; bottom: 0; right: 2rem">
@@ -124,12 +130,13 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, toRaw, computed } from 'vue';
+import { ref, onMounted, toRaw, computed, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import UtilisateurService from '@/services/UtilisateurService';
 import ApsaRetenuService from '@/services/ApsaRetenuService';
-import ApsaSelectAnneeService from '@/services/ApsaSelectAnneeService';
 import ClasseService from '@/services/ClasseService';
+import EvaluationEleveService from '@/services/EvaluationEleveService';
+import ObjectUtils from '@/utils/ObjectUtils';
 import type { Critere, Eleve, Indicateur, Classe, ApsaRetenu, NiveauScolaire, APSA } from '@/models';
 
 const route = useRoute();
@@ -137,31 +144,30 @@ const router = useRouter();
 
 const { apsasRetenusByEtablissementAndAnnee, fetchApsaRetenuByAnneeAndEtablissement } = ApsaRetenuService();
 const { classesByAnneeAndProfesseur, fetchClasseByAnneeAndProf } = ClasseService();
-const { apsaSelectAnneeByAnneeAndEtablissement, fetchAllApsaSelectAnneeByAnneeAndEtablissement } =
-  ApsaSelectAnneeService();
+const { saveEvaluationEleve } = EvaluationEleveService();
 const { etablissement, anneeEnCours } = UtilisateurService();
+const { isObjectEmpty } = ObjectUtils();
 const isLoading = ref(false);
 
 const elevesByClasse = ref<Eleve[]>([]);
 const apsasRetenusByNiveauScolaire = ref<ApsaRetenu[]>([]);
 const situationsEvaluationByNiveauScolaireAndApsa = ref<ApsaRetenu[]>([]);
-const criteresByApsaRetenuSelectionner = ref<Critere[]>([]);
 const indicateursEleveSelectionner = ref<indicateurEleve[]>([]);
-const ApsaRetenuBySituationEvaluation = ref<ApsaRetenu>();
 const classeSelectionner = ref<Classe>();
 const apsaSelectionner = ref<APSA>();
 const apsaRetenuSelectionner = ref<ApsaRetenu>();
 const eleveSelectionne = ref<Eleve>();
-const idIndicateurTrouve = ref<number>();
 const listeApsa = ref<APSA[]>([]);
+const isCheckButtonTous = ref(false);
 const monEvaluation = ref<newEvaluation>({ evaluationEleve: [] as newEvaluationEleve[] } as newEvaluation);
+
 interface newEvaluationEleve {
   Indicateur: number;
   Eleve: number;
   autoEval: boolean;
 }
 interface newEvaluation {
-  Date: Date;
+  Date: String;
   evaluationEleve: newEvaluationEleve[];
 }
 
@@ -172,44 +178,86 @@ interface indicateurEleve {
 }
 
 function verif() {
-  console.log('elevesByClasse : ', elevesByClasse.value);
-  console.log('apsasRetenusByNiveauScolaire : ', apsasRetenusByNiveauScolaire.value);
-  console.log('criteresByApsaRetenuSelectionner : ', criteresByApsaRetenuSelectionner.value);
-  console.log('indicateursEleveSelectionner : ', indicateursEleveSelectionner.value);
-  console.log('classeSelectionner : ', classeSelectionner.value);
-  console.log('apsaRetenuSelectionner : ', apsaRetenuSelectionner.value);
-  console.log('eleveSelectionne : ', eleveSelectionne.value);
-  console.log('apsasRetenusByEtablissementAndAnnee : ', apsasRetenusByEtablissementAndAnnee.value);
-  console.log('situationsEvaluationByNiveauScolaireAndApsa : ', situationsEvaluationByNiveauScolaireAndApsa.value);
+  console.log('isCheckButtonTous : ', isCheckButtonTous.value);
+}
+
+function onClickButtonTous() {
+  isCheckButtonTous.value = true;
+  console.log('test', isCheckButtonTous.value);
 }
 
 async function addIndicateurInEvaluation(unCritere: Critere, unIndicateur: Indicateur) {
-  const nouveauIndicateurEleve = {
-    critere: unCritere,
-    indicateur: unIndicateur,
-    eleve: eleveSelectionne.value,
-  } as indicateurEleve;
+  if (!isCheckButtonTous.value) {
+    if (!isObjectEmpty(eleveSelectionne.value)) {
+      const nouveauIndicateurEleve = {
+        critere: unCritere,
+        indicateur: unIndicateur,
+        eleve: eleveSelectionne.value,
+      } as indicateurEleve;
 
-  const indexIndicateurEleveAlreadyExist = indicateursEleveSelectionner.value.findIndex(
-    (ies) =>
-      ies.critere.id === nouveauIndicateurEleve.critere.id &&
-      ies.eleve.id === nouveauIndicateurEleve.eleve.id &&
-      ies.indicateur.id != nouveauIndicateurEleve.indicateur.id
-  );
-  //Si un indicateurEleve existe déjà (même élève & même critère mais l'indicateur est différent) -> on le remplace
-  if (indexIndicateurEleveAlreadyExist != -1) {
-    indicateursEleveSelectionner.value[indexIndicateurEleveAlreadyExist] = nouveauIndicateurEleve;
+      const indexIndicateurEleveAlreadyExist = indicateursEleveSelectionner.value.findIndex(
+        (ies) =>
+          ies.critere.id === nouveauIndicateurEleve.critere.id &&
+          ies.eleve.id === nouveauIndicateurEleve.eleve.id &&
+          ies.indicateur.id != nouveauIndicateurEleve.indicateur.id
+      );
+      //Si un indicateurEleve existe déjà (même élève & même critère mais l'indicateur est différent) -> on le remplace
+      if (indexIndicateurEleveAlreadyExist != -1) {
+        indicateursEleveSelectionner.value[indexIndicateurEleveAlreadyExist] = nouveauIndicateurEleve;
+      } else {
+        // Sinon on l'ajoute
+        indicateursEleveSelectionner.value.push(nouveauIndicateurEleve);
+      }
+    }
   } else {
-    // Sinon on l'ajoute
-    indicateursEleveSelectionner.value.push(nouveauIndicateurEleve);
+    elevesByClasse.value.forEach((e) => {
+      const nouveauIndicateurPourChaqueEleve = {
+        critere: unCritere,
+        indicateur: unIndicateur,
+        eleve: e,
+      } as indicateurEleve;
+
+      const indexIndicateurEleveAlreadyExist = indicateursEleveSelectionner.value.findIndex(
+        (ies) =>
+          ies.critere.id === nouveauIndicateurPourChaqueEleve.critere.id &&
+          ies.eleve.id === nouveauIndicateurPourChaqueEleve.eleve.id &&
+          ies.indicateur.id != nouveauIndicateurPourChaqueEleve.indicateur.id
+      );
+
+      //Si un indicateurEleve existe déjà (même élève & même critère mais l'indicateur est différent) -> on le remplace
+      if (indexIndicateurEleveAlreadyExist != -1) {
+        indicateursEleveSelectionner.value[indexIndicateurEleveAlreadyExist] = nouveauIndicateurPourChaqueEleve;
+      } else {
+        // Sinon on l'ajoute
+        indicateursEleveSelectionner.value.push(nouveauIndicateurPourChaqueEleve);
+      }
+    });
+    console.log('indicateursEleveSelectionner : ', indicateursEleveSelectionner.value);
   }
 }
 
+watch(
+  () => eleveSelectionne.value,
+  () => {
+    if (!isObjectEmpty(eleveSelectionne.value)) {
+      isCheckButtonTous.value = false;
+    }
+  }
+);
+
+watch(
+  () => isCheckButtonTous.value,
+  () => {
+    eleveSelectionne.value = {} as Eleve;
+  }
+);
+
 onMounted(async () => {
   isLoading.value = true;
-  await fetchAllApsaSelectAnneeByAnneeAndEtablissement(1, 1);
-  await fetchClasseByAnneeAndProf(1, 1);
-  await fetchApsaRetenuByAnneeAndEtablissement(1, 1);
+  await fetchClasseByAnneeAndProf(anneeEnCours.value.id, 1);
+  await fetchApsaRetenuByAnneeAndEtablissement(anneeEnCours.value.id, etablissement.value.id);
+  console.log('classesByAnneeAndProfesseur : ', classesByAnneeAndProfesseur.value);
+  console.log('apsasRetenusByEtablissementAndAnnee : ', apsasRetenusByEtablissementAndAnnee.value);
   isLoading.value = false;
 });
 
@@ -219,8 +267,8 @@ function onClasseChange() {
     elevesByClasse.value = getElevesByClasse(classeSelectionner.value)!;
 
     apsasRetenusByNiveauScolaire.value = getApsasRetenusByNiveauScolaire(classeSelectionner.value.NiveauScolaire);
-
     listeApsa.value = [];
+    console.log('onClasseChange', apsasRetenusByNiveauScolaire.value);
     //Evite les doublons si une apsa à plusiers situation d'évaluation
 
     apsasRetenusByNiveauScolaire.value.forEach((ar) => {
@@ -247,27 +295,41 @@ function getElevesByClasse(uneClasse: Classe) {
   return classesByAnneeAndProfesseur.value.find((classeProf) => classeProf.id === uneClasse.id)?.eleves;
 }
 
-function getApsasRetenusByNiveauScolaire(unNiveauScolaire: string | NiveauScolaire) {
+function getApsasRetenusByNiveauScolaire(unNiveauScolaire: NiveauScolaire) {
   return apsasRetenusByEtablissementAndAnnee.value
-    .filter((apsaRetenu) => apsaRetenu.AfRetenu.ChoixAnnee.Niveau === unNiveauScolaire)
+    .filter((apsaRetenu) => apsaRetenu.AfRetenu.ChoixAnnee.Niveau['@id'] === unNiveauScolaire)
     .map((apsaR) => {
       return toRaw(apsaR);
     });
 }
 
 function checkIfIndicateurIsSelectionner(unIndicateur: Indicateur) {
+  let idEleve = 0;
+  if (isCheckButtonTous.value) idEleve = elevesByClasse.value[0].id;
+  else idEleve = eleveSelectionne.value?.id!;
   if (
     indicateursEleveSelectionner.value.find(
-      (ies) => toRaw(ies).indicateur.id === unIndicateur.id && ies.eleve.id === eleveSelectionne.value?.id
+      (ies) => toRaw(ies).indicateur.id === unIndicateur.id && ies.eleve.id === idEleve
     )
   )
     return true;
   else return false;
 }
 
+async function saveEvaluation() {
+  isLoading.value = true;
+  if (indicateursEleveSelectionner.value != null) {
+    monEvaluation.value.Date = new Date().toLocaleDateString('en-CA');
+    monEvaluation.value.evaluationEleve = getEvaluationEleveForRequest(indicateursEleveSelectionner.value);
+    await saveEvaluationEleve(monEvaluation.value.Date, monEvaluation.value.evaluationEleve);
+  }
+  router.push('TableauDeBordConfig');
+  isLoading.value = false;
+}
+
 function getEvaluationEleveForRequest(listeIndicateurEleve: indicateurEleve[]) {
   return listeIndicateurEleve.map((ie) => {
-    return { Indicateur: ie.indicateur.id, Eleve: ie.eleve.id, AutoEval: false };
+    return { Indicateur: ie.indicateur.id, Eleve: ie.eleve.id, autoEval: false };
   });
 }
 </script>

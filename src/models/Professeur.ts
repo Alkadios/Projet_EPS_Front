@@ -1,4 +1,4 @@
-import { ProfesseurClasses, Etablissement } from '@/models';
+import { Etablissement } from '@/models';
 
 export interface Professeur {
   '@id': string;
@@ -10,5 +10,4 @@ export interface Professeur {
   cours: string;
   user: string;
   etablissement: Etablissement;
-  professeurClasses: ProfesseurClasses;
 }

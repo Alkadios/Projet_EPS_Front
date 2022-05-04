@@ -56,9 +56,34 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('../views/coordinateur/personnalisationEPS/TableauDeBordConfig.vue'),
   },
   {
+    path: '/AffichageEvaluationEleve',
+    name: 'AffichageEvaluationEleve',
+    component: () => import('../views/professeur/evaluation/AffichageEvaluationEleve.vue'),
+  },
+  {
     path: '/Profil',
     name: 'Profil',
     component: () => import('../views/Profil.vue'),
+  },
+  {
+    path: '/CreerEleve',
+    name: 'CreerEleve',
+    component: () => import('../views/coordinateur/personnalisationEPS/CreerEleve.vue'),
+  },
+  {
+    path: '/GestionClasse',
+    name: 'GestionClasse',
+    component: () => import('../views/coordinateur/GestionClasse.vue'),
+  },
+  {
+    path: '/GestionEleve',
+    name: 'GestionEleve',
+    component: () => import('../views/coordinateur/GestionEleve.vue'),
+  },
+  {
+    path: '/CrudEleve',
+    name: 'CrudEleve',
+    component: () => import('../views/coordinateur/CrudEleve.vue'),
   },
   {
     path: '/:notFound(.*)',

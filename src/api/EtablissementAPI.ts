@@ -1,10 +1,14 @@
 import axios, { AxiosResponse } from 'axios';
-import { ApiEtablissement } from '@/constants/ApiUrls';
-import { ResponseModel } from '@/models';
+import { ApiURLEtablissement } from '@/constants/ApiUrls';
+import { Etablissement, ResponseModel } from '@/models';
 import { apiConfig } from '@/config/UtilisateurConfig';
 
 export default {
+  async fetchAllEtablissements(): Promise<AxiosResponse<ResponseModel>> {
+    return axios.get(`${ApiURLEtablissement}`, apiConfig.value);
+  },
+
   async fetchEtablissementById(id: number): Promise<AxiosResponse<ResponseModel>> {
-    return axios.get(`${ApiEtablissement}/${id}`, apiConfig.value);
+    return axios.get(`${ApiURLEtablissement}/${id}`, apiConfig.value);
   },
 };

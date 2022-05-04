@@ -1,8 +1,8 @@
 import mutations from './mutations';
 import actions from './actions';
 import getters from './getters';
-import { Annee } from '@/models';
 import AnneeState from './stateInterface';
+import { Annee } from '@/models';
 
 export default {
   namespaced: true,
