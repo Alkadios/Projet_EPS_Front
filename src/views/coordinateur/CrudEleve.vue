@@ -30,6 +30,14 @@
         </template>
       </Column>
     </DataTable>
+    <div style="position: fixed; bottom: 0; right: 2rem">
+      <ProgressSpinner
+        v-if="isLoading"
+        style="float: right; width: 50px; height: 50px"
+        strokeWidth="8"
+        animationDuration=".5s"
+      />
+    </div>
   </div>
 
   <Dialog header="Ajouter un Eleve" v-model:visible="displayBasic" :style="{ width: '50vw' }">
@@ -193,46 +201,38 @@
             <form>
               <div class="container">
                 <div class="row">
-                  <div class="offset-lg-2 offset-md-2 col-lg-4 col-md-4 col-sm-12">
-                    <label for="nom">Nom</label>
+                  <div class="mt-3 col-lg-12 col-md-12 col-sm-12">
+                    <label for="nom">Nom : </label>
                     <InputText id="nom" v-model="eleveById.nom" required="true" autofocus />
                   </div>
-                  <div class="col-lg-4 col-md-4 col-sm-12">
-                    <label for="prenom">Prenom</label>
+                  <div class="mt-3 col-lg-12 col-md-12 col-sm-12">
+                    <label for="prenom">Prenom : </label>
                     <InputText v-model="eleveById.prenom" id="prenom" required="true" autofocus />
                   </div>
-                </div>
-                <div class="row mt-3">
-                  <div class="offset-lg-2 offset-md-2 col-lg-4 col-md-4 col-sm-12">
-                    <label for="telephone">Telephone</label>
+                  <div class="mt-3 col-lg-12 col-md-12 col-sm-12">
+                    <label for="telephone">Telephone : </label>
                     <InputText id="telephone" v-model="eleveById.telephone" required="true" autofocus />
                   </div>
-                  <div class="col-lg-4 col-md-4 col-sm-12">
-                    <label for="mailParent1">mail Parent 1</label>
+                  <div class="mt-3 col-lg-12 col-md-12 col-sm-12">
+                    <label for="mailParent1">mail Parent 1 : </label>
                     <InputText v-model="eleveById.mailParent1" id="mailParent1" required="true" autofocus />
                   </div>
-                </div>
-                <div class="row mt-3">
-                  <div class="offset-lg-2 offset-md-2 col-lg-4 col-md-4 col-sm-12">
-                    <label for="mailParent2">mail Parent 2</label>
+                  <div class="mt-3 col-lg-12 col-md-12 col-sm-12">
+                    <label for="mailParent2">mail Parent 2 : </label>
                     <InputText id="mailParent2" v-model="eleveById.mailParent2" required="true" autofocus />
                   </div>
-                  <div class="col-lg-4 col-md-4 col-sm-12">
-                    <label for="sexeEleve">sexe Eleve</label>
+                  <div class="mt-3 col-lg-12 col-md-12 col-sm-12">
+                    <label for="sexeEleve">sexe Eleve : </label>
                     <InputText v-model="eleveById.sexeEleve" id="sexeEleve" required="true" autofocus />
                   </div>
+                  <Button class="mt-4" label="Modifier" icon="pi pi-check" @click="editEleve(eleveById.id)" autofocus />
                 </div>
-                <button type="button" class="btn btn-primary" @click="editEleve(eleveById.id)">Update</button>
               </div>
             </form>
           </template>
         </Card>
       </div>
     </div>
-    <template #footer>
-      <Button label="No" icon="pi pi-times" @click="closeBasic" class="p-button-text" />
-      <Button label="Yes" icon="pi pi-check" autofocus />
-    </template>
   </Dialog>
 </template>
 
@@ -252,6 +252,7 @@ const {
   updateEleve,
 } = EleveService();
 
+const isLoading = ref(false);
 const eleveDialog = ref(false);
 
 const nouveauUtilisateur = ref<User>({
@@ -333,6 +334,8 @@ const closeBasic = () => {
 };
 
 onMounted(async () => {
+  isLoading.value = true;
   await fetchElevesByAnneeAndEtablissement(1);
+  isLoading.value = false;
 });
 </script>

@@ -18,6 +18,14 @@
         </template>
       </Column>
     </DataTable>
+    <div style="position: fixed; bottom: 0; right: 2rem">
+      <ProgressSpinner
+        v-if="isLoading"
+        style="float: right; width: 50px; height: 50px"
+        strokeWidth="8"
+        animationDuration=".5s"
+      />
+    </div>
   </div>
 
   <Dialog header="Ajouter une Classe" v-model:visible="displayBasic" :style="{ width: '50vw' }">
@@ -91,6 +99,7 @@ import EtablissementService from '@/services/EtablissementService';
 import NiveauScolaireService from '@/services/NiveauScolaireService';
 import { ref, onMounted, watch } from 'vue';
 
+const isLoading = ref(false);
 const { fetchClasseByAnnee, classesByAnnee, saveClasse, deleteClasse, classesById, fetchClasseById } = ClasseService();
 const { etablissements, fetchAllEtablissements } = EtablissementService();
 const { niveauxScolaires, fetchAllNiveauxScolaires } = NiveauScolaireService();
@@ -130,7 +139,6 @@ async function supprimerClasse(idClasse: number) {
   console.log(idClasse);
   if (confirm('Voulez vous vraiment supprimer ?')) {
     await deleteClasse(idClasse);
-    await fetchClasseByAnnee(3);
   }
 }
 
@@ -139,9 +147,11 @@ const closeBasic = () => {
 };
 
 onMounted(async () => {
+  isLoading.value = true;
   await fetchClasseByAnnee(3);
   await fetchAllEtablissements();
   await fetchAllNiveauxScolaires();
   await fetchAllAnnees();
+  isLoading.value = false;
 });
 </script>
