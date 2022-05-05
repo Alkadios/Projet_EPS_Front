@@ -61,6 +61,11 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('../views/professeur/evaluation/AffichageEvaluationEleve.vue'),
   },
   {
+    path: '/AffichageMesEvaluation',
+    name: 'EvaluationEleve',
+    component: () => import('../views/eleve/evaluation/EvaluationEleve.vue'),
+  },
+  {
     path: '/Profil',
     name: 'Profil',
     component: () => import('../views/Profil.vue'),
