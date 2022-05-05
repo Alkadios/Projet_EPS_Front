@@ -230,7 +230,6 @@ async function fetchConfigAnnee() {
   await fetchAllApsaSelectAnneeByAnnee(nouvelAnneeEnConfig.value.id);
   await fetchAllChoixAnneeByAnneeAndEtablissement(nouvelAnneeEnConfig.value.id, etablissement.value.id);
   await fetchApsaRetenuByAnneeAndEtablissement(anneeEnConfig.value.id, etablissement.value.id);
-  console.log('apsaRetenu', apsasRetenusByEtablissementAndAnnee.value);
   isLoading.value = false;
 }
 
@@ -244,9 +243,5 @@ function getStringApsaByIdCa(idCa: number) {
 async function onAnneeEnConfigChange() {
   await storeAnneeEnConfig(nouvelAnneeEnConfig.value);
   await fetchConfigAnnee();
-}
-
-function onNiveauChange(data: any) {
-  console.log('data', data);
 }
 </script>

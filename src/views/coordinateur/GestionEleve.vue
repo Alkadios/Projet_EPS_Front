@@ -174,15 +174,11 @@ function onClasseChange() {
   }
 }
 
-console.log(ref<Classe[]>([]));
-
 let columns;
-console.log('classe', selectedEleves);
 
 async function champsEleve(idEleve: number) {
   eleveDialog.value = true;
   await fetchEleveById(idEleve);
-  console.log('test', eleveById.value);
 }
 
 async function editEleve(idEleve: number) {
@@ -199,23 +195,19 @@ async function editEleve(idEleve: number) {
   alert('Votre Eleve à ete modifié');
   eleveDialog.value = false;
   await fetchClasseByAnnee(3);
-  console.log('fetchAllEleves', eleves.value);
   onClasseChange();
-  console.log('onClasseChange', mesEleves.value);
 }
 
 async function editClasse(idClasse: number) {
   const idsEleveExistant = mesEleves.value.map((e: Eleve) => {
     return e['@id'];
   });
-  console.log('idsEleveExistant', idsEleveExistant);
   if (selectedEleves.value) {
     const idsEleve = selectedEleves.value.map((e: Eleve) => {
       return e['@id'];
     });
     const arrayidEleve = idsEleveExistant.concat(idsEleve);
-    console.log('monarray', arrayidEleve);
-    console.log(idsEleve);
+
     if (idsEleve) await addElevesInClasse(idClasse, arrayidEleve);
   }
 
@@ -230,7 +222,6 @@ async function deleteFromClasse(idClasse: number) {
     const idsEleve = !selectedEleves.value.map((e: Eleve) => {
       return e['@id'];
     });
-    console.log(idsEleve);
     if (idsEleve) await addElevesInClasse(idClasse, idsEleve);
   }
 

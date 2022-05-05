@@ -228,7 +228,7 @@ const nouveauEleve = ref<Eleve>({
   sexeEleve: '',
   user: '',
   etablissement: 1,
-});
+} as Eleve);
 
 function CreerEleve() {
   saveEleve(
@@ -244,10 +244,6 @@ function CreerEleve() {
     nouveauEleve.value.etablissement
   );
   alert('Votre Eleve à ete créer');
-}
-
-function verif() {
-  console.log(selectedCategories.value);
 }
 
 function onSubmitUtil() {

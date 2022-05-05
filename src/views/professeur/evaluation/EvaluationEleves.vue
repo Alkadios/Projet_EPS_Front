@@ -167,7 +167,7 @@ interface newEvaluationEleve {
   autoEval: boolean;
 }
 interface newEvaluation {
-  Date: String;
+  Date: string;
   evaluationEleve: newEvaluationEleve[];
 }
 
@@ -177,13 +177,8 @@ interface indicateurEleve {
   eleve: Eleve;
 }
 
-function verif() {
-  console.log('isCheckButtonTous : ', isCheckButtonTous.value);
-}
-
 function onClickButtonTous() {
   isCheckButtonTous.value = true;
-  console.log('test', isCheckButtonTous.value);
 }
 
 async function addIndicateurInEvaluation(unCritere: Critere, unIndicateur: Indicateur) {
@@ -232,7 +227,6 @@ async function addIndicateurInEvaluation(unCritere: Critere, unIndicateur: Indic
         indicateursEleveSelectionner.value.push(nouveauIndicateurPourChaqueEleve);
       }
     });
-    console.log('indicateursEleveSelectionner : ', indicateursEleveSelectionner.value);
   }
 }
 
@@ -256,8 +250,6 @@ onMounted(async () => {
   isLoading.value = true;
   await fetchClasseByAnneeAndProf(anneeEnCours.value.id, 1);
   await fetchApsaRetenuByAnneeAndEtablissement(anneeEnCours.value.id, etablissement.value.id);
-  console.log('classesByAnneeAndProfesseur : ', classesByAnneeAndProfesseur.value);
-  console.log('apsasRetenusByEtablissementAndAnnee : ', apsasRetenusByEtablissementAndAnnee.value);
   isLoading.value = false;
 });
 
@@ -268,7 +260,6 @@ function onClasseChange() {
 
     apsasRetenusByNiveauScolaire.value = getApsasRetenusByNiveauScolaire(classeSelectionner.value.NiveauScolaire);
     listeApsa.value = [];
-    console.log('onClasseChange', apsasRetenusByNiveauScolaire.value);
     //Evite les doublons si une apsa à plusiers situation d'évaluation
 
     apsasRetenusByNiveauScolaire.value.forEach((ar) => {

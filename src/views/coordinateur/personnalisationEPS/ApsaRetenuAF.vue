@@ -23,7 +23,7 @@
           :style="selectedCa?.id != ca.id ? 'background-color:' + ca.color : ''"
           :class="selectedCa?.id === ca.id ? 'primary' : ''"
           :icon="checkIfCaHasAfRetenu(ca) ? 'pi pi-check-circle' : checkIfCaHasNotApsaSelect(ca) ? 'pi pi-times' : ''"
-          :disabled="checkIfCaHasAfRetenu(ca) || checkIfCaHasNotApsaSelect(ca)"
+          :disabled="checkIfCaHasNotApsaSelect(ca)"
           @click="selectionnerCa(ca)"
         />
         <div v-if="selectedCa && niveauScolaireSelectionne">
@@ -32,7 +32,14 @@
               <strong>Sélectionner les attendus finaux retenus :</strong>
             </div>
             <div v-for="af of listeAf" :key="af.id" class="field-checkbox">
-              <Checkbox v-model="selectedAfs" :id="af.id" name="category" :value="af" style="margin-bottom: 0.5rem" />
+              <Checkbox
+                :id="af.id"
+                name="af"
+                :value="af"
+                v-model="selectedAfs"
+                dataKey="id"
+                style="margin-bottom: 0.5rem"
+              />
               <label style="margin: 0.5rem" :for="af.id.toString()">{{ af.libelle }}</label>
             </div>
           </div>
@@ -60,19 +67,22 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, watch } from 'vue';
-import { AF, ApsaSelectAnnee, ChampApprentissage, NiveauScolaire } from '@/models';
+import { ref, onMounted, watch, toRaw } from 'vue';
+import type { AF, ApsaSelectAnnee, ChampApprentissage, NiveauScolaire } from '@/models';
 import AfService from '@/services/AfService';
 import ChampApprentissageService from '@/services/ChampApprentissageService';
 import UtilisateurService from '@/services/UtilisateurService';
 import afRetenuService from '@/services/AfRetenusService';
 import ChoixAnneeService from '@/services/ChoixAnneeService';
-import router from '@/router';
+import { useRoute, useRouter } from 'vue-router';
 import ApsaSelectAnneeService from '@/services/ApsaSelectAnneeService';
 import EnTetePersonalisation from './EnTetePersonalisation.vue';
 
+const route = useRoute();
+const router = useRouter();
+
 const { apsaSelectAnneeByAnnee, fetchAllApsaSelectAnneeByAnnee } = ApsaSelectAnneeService();
-const { saveChoixAnnee, choixAnnee } = ChoixAnneeService();
+const { saveChoixAnnee, choixAnnee, saveAfRetenuInChoixAnnee } = ChoixAnneeService();
 const { saveAfRetenu, fetchAllAfRetenuByAnneeAndNiveauScolaire, afRetenuByAnneeAndNiveauScolaire } = afRetenuService();
 const { afs, fetchAllAfs } = AfService();
 const { champsApprentissages, fetchChampsApprentissages } = ChampApprentissageService();
@@ -93,6 +103,14 @@ onMounted(async () => {
   await fetchAllAfs();
   await fetchAllApsaSelectAnneeByAnnee(anneeEnConfig.value.id);
   isLoading.value = false;
+  if (route.query.idNiveau) {
+    niveauScolaireSelectionne.value = etablissement.value.niveauScolaire.find(
+      (n) => n.id == parseInt(route.query.idNiveau!.toString())
+    );
+  }
+  if (route.query.idCa) {
+    selectedCa.value = champsApprentissages.value.find((ca) => ca.id == parseInt(route.query.idCa!.toString()));
+  }
 });
 
 watch(
@@ -106,8 +124,20 @@ watch(
 watch(
   () => selectedCa.value,
   (ca) => {
+    selectedAfs.value = [];
     if (ca && niveauScolaireSelectionne.value)
       listeAf.value = getAfsByTypeAndCa(niveauScolaireSelectionne.value.typeAf, ca['@id']);
+    if (ca && checkIfCaHasAfRetenu(ca)) {
+      selectedAfs.value = afRetenuByAnneeAndNiveauScolaire.value
+        .filter((afRetenu) => afRetenu.ChoixAnnee.champApprentissage.id === selectedCa.value?.id)
+        .map((afR) => {
+          return {
+            '@id': afR.Af['@id'],
+            id: afR.Af.id,
+            libelle: afR.Af.libelle,
+          } as AF;
+        });
+    }
   }
 );
 
@@ -116,12 +146,24 @@ watch(
   async () => {
     if (niveauScolaireSelectionne.value) {
       isLoading.value = true;
+      selectedAfs.value = [];
       await fetchAllAfRetenuByAnneeAndNiveauScolaire(anneeEnConfig.value.id, niveauScolaireSelectionne.value.id);
       if (selectedCa.value) {
         if (checkIfCaHasNotApsaSelect(selectedCa.value)) {
           selectedCa.value = {} as ChampApprentissage;
         } else {
           listeAf.value = getAfsByTypeAndCa(niveauScolaireSelectionne.value.typeAf, selectedCa.value['@id']);
+          if (checkIfCaHasAfRetenu(selectedCa.value)) {
+            selectedAfs.value = afRetenuByAnneeAndNiveauScolaire.value
+              .filter((afRetenu) => afRetenu.ChoixAnnee.champApprentissage.id === selectedCa.value?.id)
+              .map((afR) => {
+                return {
+                  '@id': afR.Af['@id'],
+                  id: afR.Af.id,
+                  libelle: afR.Af.libelle,
+                } as AF;
+              });
+          }
         }
       }
       isLoading.value = false;
@@ -129,9 +171,16 @@ watch(
   }
 );
 
-function getAfsByTypeAndCa(type_af: string, id_ca: string) {
-  console.log('toto', type_af);
-  return afs.value.filter((af) => af.typeAf === type_af && af.ca === id_ca);
+function getAfsByTypeAndCa(type_af: string, id_ca: string): AF[] {
+  return afs.value
+    .filter((af) => af.typeAf === type_af && af.ca === id_ca)
+    .map((af) => {
+      return {
+        '@id': af['@id'],
+        id: af.id,
+        libelle: af.libelle,
+      } as AF;
+    });
 }
 
 function checkIfCaHasNotApsaSelect(ca: ChampApprentissage) {
@@ -142,7 +191,10 @@ function checkIfCaHasNotApsaSelect(ca: ChampApprentissage) {
 }
 
 function checkIfCaHasAfRetenu(ca: ChampApprentissage) {
-  if (afRetenuByAnneeAndNiveauScolaire.value.find((afRetenu) => afRetenu.ChoixAnnee.champApprentissage.id === ca.id)) {
+  if (
+    ca &&
+    afRetenuByAnneeAndNiveauScolaire.value.find((afRetenu) => afRetenu.ChoixAnnee.champApprentissage.id === ca.id)
+  ) {
     return true;
   }
   return false;
@@ -164,8 +216,18 @@ function verifFormulaire(): Boolean {
   else return false;
 }
 async function ajouterAfsRetenus() {
-  if (selectedAfs.value.length > 0) {
-    if (!verifFormulaire()) {
+  if (!verifFormulaire()) {
+    //Edit
+    if (checkIfCaHasAfRetenu(selectedCa.value!)) {
+      const afR = afRetenuByAnneeAndNiveauScolaire.value.find(
+        (afRetenu) => afRetenu.ChoixAnnee.champApprentissage.id === selectedCa.value!.id
+      );
+      const idsAfForRequest = selectedAfs.value.map((af) => {
+        return { Af: af.id };
+      });
+      await saveAfRetenuInChoixAnnee(afR!.ChoixAnnee.id, idsAfForRequest);
+    } else {
+      // Create
       let monNiveau = '/api/niveau_scolaires/' + niveauScolaireSelectionne.value?.id;
       await saveChoixAnnee(
         selectedCa.value?.['@id']!,
@@ -176,13 +238,11 @@ async function ajouterAfsRetenus() {
       selectedAfs.value.forEach(async (af: AF) => {
         await saveAfRetenu(choixAnnee.value['@id'], af['@id']);
       });
-      router.push({
-        name: 'DeclinerAFRetenus',
-        query: { idChoixAnnee: choixAnnee.value.id, idCA: selectedCa.value?.id },
-      });
     }
-  } else {
-    afEnErreur.value = true;
+    router.push({
+      name: 'DeclinerAFRetenus',
+      query: { idChoixAnnee: choixAnnee.value.id, idCA: selectedCa.value?.id },
+    });
   }
 }
 </script>

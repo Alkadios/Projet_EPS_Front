@@ -21,14 +21,12 @@ export default function EvaluationEleveService() {
   }
 
   async function saveEvaluationEleve(
-    Date: Date,
-    evaluationEleve: [
-      {
-        Indicateur: number;
-        Eleve: number;
-        autoEval: boolean;
-      }
-    ]
+    Date: string,
+    evaluationEleve: {
+      Indicateur: number;
+      Eleve: number;
+      autoEval: boolean;
+    }[]
   ) {
     await store.dispatch('EvaluationEleveModule/saveEvaluationEleve', { Date, evaluationEleve });
   }
