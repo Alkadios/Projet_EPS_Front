@@ -196,7 +196,6 @@ function onSituationEvaluationChange() {
   monAffichageGraphique.value = [];
   let indexGraphiqueClasseByCritere = 0;
   situationEvaluationSelectionner.value?.criteres.forEach((c) => {
-    console.log('critere : ', c);
     monAffichageGraphique.value[indexGraphiqueClasseByCritere] = {
       critere: c.titre,
       id: indexGraphiqueClasseByCritere,
@@ -211,13 +210,9 @@ function onSituationEvaluationChange() {
     });
     indexGraphiqueClasseByCritere++;
   });
-  console.log('situationEvaluationSelectionner : ', situationEvaluationSelectionner.value);
 }
 
-function verif() {
-  console.log('apsaSelectionner : ', apsaSelectionner.value);
-  console.log('situationsEvaluationByNiveauScolaireAndApsa : ', situationsEvaluationByNiveauScolaireAndApsa.value);
-}
+function verif() {}
 
 onMounted(async () => {
   isLoading.value = true;
@@ -230,7 +225,6 @@ watch(
   () => eleveSelectionne.value,
   () => {
     if (!isObjectEmpty(eleveSelectionne.value)) {
-      console.log('eleveSeelcted : ', eleveSelectionne.value);
       console.log('situationEvaluationSelectionner: ', situationEvaluationSelectionner.value);
       monAffichageGraphiqueByEleve.value = [];
       let indexGraphiqueClasseByCriterebyEleves = 0;
@@ -262,8 +256,6 @@ watch(
         });
         indexGraphiqueClasseByCriterebyEleves++;
       });
-      console.log('monAffichageGraphiqueByEleve : ', monAffichageGraphiqueByEleve.value);
-      console.log('eleveSelectionne : ', eleveSelectionne.value);
     }
   }
 );

@@ -127,7 +127,6 @@ const openBasic = () => {
 };
 
 async function supprimerClasse(idClasse: number) {
-  console.log(idClasse);
   if (confirm('Voulez vous vraiment supprimer ?')) {
     await deleteClasse(idClasse);
     await fetchClasseByAnnee(3);

@@ -228,7 +228,7 @@ const nouveauEleve = ref<Eleve>({
   sexeEleve: '',
   user: '',
   etablissement: 1,
-});
+} as Eleve);
 
 function CreerEleve() {
   saveEleve(
@@ -246,10 +246,6 @@ function CreerEleve() {
   alert('Votre Eleve à ete créer');
 }
 
-function verif() {
-  console.log(selectedCategories.value);
-}
-
 function onSubmitUtil() {
   CreerEleve();
 }
@@ -257,7 +253,6 @@ function onSubmitUtil() {
 onMounted(async () => {
   await fetchAllEtablissements();
 });
-
 </script>
 <style>
 .mb-3 {

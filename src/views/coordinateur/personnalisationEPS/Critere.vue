@@ -140,7 +140,7 @@
     </div>
     <div class="mb-3">
       <div class="row">
-        <div class="col-3" v-for="monCritere in criteres" v-bind:key="monCritere.id">
+        <div class="col-3" v-for="monCritere in CritereByApsaRetenu" v-bind:key="monCritere.id">
           <Card>
             <template #title> {{ monCritere.titre }} </template>
             <template #content>
@@ -210,8 +210,6 @@ import ObjectUtils from '@/utils/ObjectUtils';
 import UtilisateurService from '@/services/UtilisateurService';
 import ApsaRetenuService from '@/services/ApsaRetenuService';
 import { useRoute, useRouter } from 'vue-router';
-import axios from 'axios';
-import critere from '@/store/modules/critere';
 
 const route = useRoute();
 const router = useRouter();

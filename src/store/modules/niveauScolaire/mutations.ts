@@ -5,5 +5,4 @@ export default {
   setNiveauxScolaires(state: NiveauScolaireState, payload: NiveauScolaire[]) {
     state.niveauxScolaires = payload;
   },
-
 };
