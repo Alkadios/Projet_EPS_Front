@@ -38,11 +38,6 @@
           >
         </li>
         <li class="nav-item">
-          <router-link class="nav-link" to="/ajoutQuantiteTravailEleve"
-            ><i class="fas fa-table"></i><span>Ajout Quantite Travail </span></router-link
-          >
-        </li>
-        <li class="nav-item">
           <router-link class="nav-link" to="/EvaluationEleves"
             ><i class="fas fa-table"></i><span>Evaluation</span></router-link
           >

@@ -3,17 +3,14 @@ import UserState from './stateInterface';
 import UserAPI from '@/api/UserAPI';
 
 export default {
-
-
   async saveUser(
     context: ActionContext<UserState, any>,
     payload: {
       '@id': string;
-      id:number;
+      id: number;
       email: string;
       roles: string;
       password: string;
-
     }
   ) {
     const response = await UserAPI.saveUser(payload);

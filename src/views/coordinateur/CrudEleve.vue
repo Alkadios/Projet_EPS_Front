@@ -293,7 +293,6 @@ async function CreerEleve() {
 async function champsEleve(idEleve: number) {
   eleveDialog.value = true;
   await fetchEleveById(idEleve);
-  console.log('test', eleveById.value);
 }
 
 async function editEleve(idEleve: number) {

@@ -231,10 +231,6 @@ const categories = ref([
 const selectedCategories = ref([]);
 
 const NomEleve = 'Laura GUICHON';
-
-function verif() {
-  console.log(selectedCategories.value);
-}
 </script>
 <style>
 .mb-3 {
