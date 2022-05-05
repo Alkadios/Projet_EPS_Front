@@ -63,8 +63,13 @@
           </div>
           <div class="d-flex row" v-if="situationEvaluationSelectionner != null">
             <div class="col-md-3" v-for="monGraphique in monAffichageGraphique" :key="monGraphique.id">
-              <Chart type="pie" :data="monGraphique" :options="lightOptionsCammenbert" />
-              <div v-if="monGraphique.labels.length != 0" class="d-flex justify-content-center p-2">
+              <Chart
+                v-if="monGraphique.labels.length > 0"
+                type="pie"
+                :data="monGraphique"
+                :options="lightOptionsCammenbert"
+              />
+              <div v-if="monGraphique.labels.length > 0" class="d-flex justify-content-center p-2">
                 <B>{{ monGraphique.critere }}</B>
               </div>
             </div>
@@ -225,6 +230,7 @@ watch(
   () => eleveSelectionne.value,
   () => {
     if (!isObjectEmpty(eleveSelectionne.value)) {
+      console.log('eleveSeelcted : ', eleveSelectionne.value);
       console.log('situationEvaluationSelectionner: ', situationEvaluationSelectionner.value);
       monAffichageGraphiqueByEleve.value = [];
       let indexGraphiqueClasseByCriterebyEleves = 0;
@@ -239,11 +245,16 @@ watch(
           { data: [], backgroundColor: [] },
         ];
         c.Indicateur.forEach((i) => {
-          if (i.evaluationEleves.find((f) => f.Eleve === eleveSelectionne.value?.['@id'])) {
+          if (i.evaluationEleves.find((f) => f.Eleve['@id'] === eleveSelectionne.value?.['@id'])) {
+            console.log('test : ', i);
+            let nb = 0;
             monAffichageGraphiqueByEleve.value[indexGraphiqueClasseByCriterebyEleves].labels.push(i.libelle);
-            monAffichageGraphiqueByEleve.value[indexGraphiqueClasseByCriterebyEleves].datasets[0].data.push(
-              i.evaluationEleves.length
-            );
+            i.evaluationEleves.forEach((ee) => {
+              if (ee.Eleve['@id'] === eleveSelectionne.value?.['@id']) {
+                nb++;
+              }
+            });
+            monAffichageGraphiqueByEleve.value[indexGraphiqueClasseByCriterebyEleves].datasets[0].data.push(nb);
             monAffichageGraphiqueByEleve.value[indexGraphiqueClasseByCriterebyEleves].datasets[0].backgroundColor.push(
               i.color
             );
@@ -298,7 +309,7 @@ function getElevesByClasse(uneClasse: Classe) {
 
 function getApsasRetenusByNiveauScolaire(unNiveauScolaire: NiveauScolaire) {
   return apsasRetenusByEtablissementAndAnnee.value
-    .filter((apsaRetenu) => apsaRetenu.AfRetenu.ChoixAnnee.Niveau['@id'] === unNiveauScolaire)
+    .filter((apsaRetenu) => apsaRetenu.AfRetenu.ChoixAnnee.Niveau['@id'] === unNiveauScolaire['@id'])
     .map((apsaR) => {
       return toRaw(apsaR);
     });

@@ -7,6 +7,6 @@ export interface ApsaSelectAnnee {
   Ca: ChampApprentissage;
   Apsa: APSA;
   Annee: Annee;
-  apsaRetenus: ApsaRetenu;
+  apsaRetenus: ApsaRetenu[];
   etablissement: Etablissement;
 }

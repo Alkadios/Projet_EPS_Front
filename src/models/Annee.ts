@@ -1,3 +1,4 @@
+import { ApsaSelectAnnee } from './ApsaSelectAnnee';
 import { ChoixAnnee } from './ChoixAnnee';
 
 export interface Annee {
@@ -6,4 +7,5 @@ export interface Annee {
   annee: string;
   enCours: boolean;
   choixAnnees?: ChoixAnnee[];
+  apsaSelectAnnees: ApsaSelectAnnee[];
 }

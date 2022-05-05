@@ -11,6 +11,7 @@ export default {
       apsaSelectAnneeByAnnee: [] as ApsaSelectAnnee[],
       apsaSelectAnneeByAnneeAndClasse: [] as ApsaSelectAnnee[],
       apsaSelectAnneeByAnneeAndEtablissement: [] as ApsaSelectAnnee[],
+      apsaSelectAnneeByApsaAndEtablissmenetAndAnnee: [] as ApsaSelectAnnee[],
     };
   },
   mutations,
