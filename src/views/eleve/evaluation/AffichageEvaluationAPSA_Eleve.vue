@@ -34,9 +34,9 @@
               </div>
             </div>
           </div>
-          <div class="d-flex row" v-if="situationEvaluationSelectionner != null">
-            <div class="p-5">
-              <h4 class="text-dark mb-4">Performance de ma classe :</h4>
+          <div style="padding-top: 2rem" v-if="situationEvaluationSelectionner != null">
+            <div class="d-flex row">
+              <h4 class="text-dark p-5">Performance de ma classe :</h4>
               <div class="col-md-3" v-for="monGraphique in monAffichageGraphique" :key="monGraphique.id">
                 <Chart
                   v-if="monGraphique.labels.length > 0"
@@ -44,18 +44,27 @@
                   :data="monGraphique"
                   :options="lightOptionsCammenbert"
                 />
-                <div v-if="monGraphique.labels.length > 0" class="d-flex justify-content-center p-2">
+                <div class="d-flex justify-content-center p-2" v-if="monGraphique.labels.length > 0">
                   <B>{{ monGraphique.critere }}</B>
                 </div>
               </div>
-
-              <h4 class="text-dark mb-4">Mes performances personnelles :</h4>
-              <div class="col-md-3" v-for="monGraphique in monAffichageGraphique" :key="monGraphique.id">
-                <Chart type="pie" :data="monGraphique" :options="lightOptionsCammenbert" />
-                <div v-if="monGraphique.labels.length != 0" class="d-flex justify-content-center p-2">
-                  <B>{{ monGraphique.critere }}</B>
+              <h4 class="text-dark p-5">Mes performances personnelles :</h4>
+              <div
+                class="col-md-3"
+                v-for="monGraphiquePersonnel in monAffichageGraphiquePersonnel"
+                :key="monGraphiquePersonnel.id"
+              >
+                <Chart
+                  v-if="monGraphiquePersonnel.labels.length > 0"
+                  type="pie"
+                  :data="monGraphiquePersonnel"
+                  :options="lightOptionsCammenbert"
+                />
+                <div class="d-flex justify-content-center p-2" v-if="monGraphiquePersonnel.labels.length > 0">
+                  <B>{{ monGraphiquePersonnel.critere }}</B>
                 </div>
               </div>
+              <Chart type="line" :data="basicData" :options="basicOptions" :plugins="quadrants" />
             </div>
           </div>
         </div>
@@ -98,6 +107,9 @@ const situationEvaluationSelectionner = ref<ApsaRetenu>();
 const monAffichageGraphique = ref<newAffichageGraphique[]>([
   { datasets: [] as datasetsEvaluation[] } as newAffichageGraphique,
 ]);
+const monAffichageGraphiquePersonnel = ref<newAffichageGraphique[]>([
+  { datasets: [] as datasetsEvaluation[] } as newAffichageGraphique,
+]);
 const lightOptionsCammenbert = ref({
   plugins: {
     legend: {
@@ -118,6 +130,56 @@ interface datasetsEvaluation {
   data: number[];
   backgroundColor: string[];
 }
+const basicOptions = {
+  plugins: {
+    legend: {
+      labels: {
+        color: '#495057',
+      },
+    },
+    quadrants: {
+      topLeft: '#33EA0D',
+      topRight: '#33EA0D',
+      bottomRight: '#33EA0D',
+      bottomLeft: '#33EA0D',
+    },
+  },
+};
+
+const basicData = ref({
+  labels: ['22-04-2022', '06-05-2022', '15-06-2022'],
+  datasets: [
+    {
+      label: 'Course de fond',
+      data: [0, 3, 2],
+      borderColor: '#FFA726',
+      tension: 0.4,
+    },
+  ],
+});
+
+const quadrants = {
+  id: 'quadrants',
+  beforeDraw(chart, args, options) {
+    const {
+      ctx,
+      chartArea: { left, top, right, bottom },
+      scales: { x, y },
+    } = chart;
+    const midX = x.getPixelForValue(0);
+    const midY = y.getPixelForValue(0);
+    ctx.save();
+    ctx.fillStyle = options.topLeft;
+    ctx.fillRect(left, top, midX - left, midY - top);
+    ctx.fillStyle = options.topRight;
+    ctx.fillRect(midX, top, right - midX, midY - top);
+    ctx.fillStyle = options.bottomRight;
+    ctx.fillRect(midX, midY, right - midX, bottom - midY);
+    ctx.fillStyle = options.bottomLeft;
+    ctx.fillRect(left, midY, midX - left, bottom - midY);
+    ctx.restore();
+  },
+};
 
 onMounted(async () => {
   isLoading.value = true;
@@ -126,8 +188,6 @@ onMounted(async () => {
     (asa) => asa.apsaRetenus
   )?.apsaRetenus;
   libelleSport.value = apsaSelectAnneeByApsaAndEtablissmenetAndAnnee.value.find((asa) => asa)?.Apsa.libelle;
-  console.log('apsaselectannebyapsa : ', apsaSelectAnneeByApsaAndEtablissmenetAndAnnee.value);
-  console.log('libelleSport : ', libelleSport.value);
   isLoading.value = false;
 });
 
@@ -151,5 +211,36 @@ function onSituationEvaluationChange() {
     indexGraphiqueClasseByCritere++;
   });
   console.log('situationEvaluationSelectionner : ', situationEvaluationSelectionner.value);
+
+  monAffichageGraphiquePersonnel.value = [];
+  let indexGraphiqueClasseByCriterebyEleves = 0;
+  situationEvaluationSelectionner.value?.criteres.forEach((c) => {
+    monAffichageGraphiquePersonnel.value[indexGraphiqueClasseByCriterebyEleves] = {
+      critere: c.titre,
+      id: indexGraphiqueClasseByCriterebyEleves,
+      labels: [],
+      datasets: [],
+    };
+    monAffichageGraphiquePersonnel.value[indexGraphiqueClasseByCriterebyEleves].datasets = [
+      { data: [], backgroundColor: [] },
+    ];
+    c.Indicateur.forEach((i) => {
+      if (i.evaluationEleves.find((f) => f.Eleve.id === 1)) {
+        console.log('test : ', i);
+        let nb = 0;
+        monAffichageGraphiquePersonnel.value[indexGraphiqueClasseByCriterebyEleves].labels.push(i.libelle);
+        i.evaluationEleves.forEach((ee) => {
+          if (ee.Eleve.id === 1) {
+            nb++;
+          }
+        });
+        monAffichageGraphiquePersonnel.value[indexGraphiqueClasseByCriterebyEleves].datasets[0].data.push(nb);
+        monAffichageGraphiquePersonnel.value[indexGraphiqueClasseByCriterebyEleves].datasets[0].backgroundColor.push(
+          i.color
+        );
+      }
+    });
+    indexGraphiqueClasseByCriterebyEleves++;
+  });
 }
 </script>

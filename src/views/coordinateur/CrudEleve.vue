@@ -30,6 +30,14 @@
         </template>
       </Column>
     </DataTable>
+    <div style="position: fixed; bottom: 0; right: 2rem">
+      <ProgressSpinner
+        v-if="isLoading"
+        style="float: right; width: 50px; height: 50px"
+        strokeWidth="8"
+        animationDuration=".5s"
+      />
+    </div>
   </div>
 
   <Dialog header="Ajouter un Eleve" v-model:visible="displayBasic" :style="{ width: '50vw' }">
@@ -253,7 +261,7 @@ const {
 } = EleveService();
 
 const eleveDialog = ref(false);
-
+const isLoading = ref(false);
 const nouveauUtilisateur = ref<User>({
   email: '',
   roles: ['Eleve'],
@@ -273,6 +281,7 @@ const nouveauEleve = ref<Eleve>({
 });
 
 async function CreerEleve() {
+  isLoading.value = true;
   await saveEleve(
     nouveauUtilisateur.value.email,
     nouveauUtilisateur.value.roles,
@@ -288,14 +297,18 @@ async function CreerEleve() {
   alert('Votre Eleve à ete créer');
   displayBasic.value = false;
   await fetchElevesByAnneeAndEtablissement(1);
+  isLoading.value = false;
 }
 
 async function champsEleve(idEleve: number) {
+  isLoading.value = true;
   eleveDialog.value = true;
   await fetchEleveById(idEleve);
+  isLoading.value = false;
 }
 
 async function editEleve(idEleve: number) {
+  isLoading.value = true;
   await updateEleve(
     idEleve,
     eleveById.value.nom,
@@ -309,12 +322,15 @@ async function editEleve(idEleve: number) {
   await fetchElevesByAnneeAndEtablissement(3);
   alert('Votre Eleve à ete modifié');
   eleveDialog.value = false;
+  isLoading.value = false;
 }
 
 async function supprimerEleve(idEleve: number) {
   if (confirm('Voulez vous vraiment supprimer ?')) {
+    isLoading.value = true;
     await deleteEleve(idEleve);
     await fetchElevesByAnneeAndEtablissement(3);
+    isLoading.value = false;
   }
 }
 
@@ -332,6 +348,8 @@ const closeBasic = () => {
 };
 
 onMounted(async () => {
+  isLoading.value = true;
   await fetchElevesByAnneeAndEtablissement(1);
+  isLoading.value = false;
 });
 </script>
