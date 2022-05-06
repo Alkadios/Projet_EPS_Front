@@ -37,25 +37,22 @@
           <div class="d-flex row" v-if="situationEvaluationSelectionner != null">
             <div class="p-5">
               <h4 class="text-dark mb-4">Performance de ma classe :</h4>
-              <div class="col-md-3" v-for="monGraphique in monAffichageGraphique" :key="monGraphique.id">
-                <Chart
-                  v-if="monGraphique.labels.length > 0"
-                  type="pie"
-                  :data="monGraphique"
-                  :options="lightOptionsCammenbert"
-                />
-                <div v-if="monGraphique.labels.length > 0" class="d-flex justify-content-center p-2">
-                  <B>{{ monGraphique.critere }}</B>
+              <div v-for="monGraphique in monAffichageGraphique" :key="monGraphique.id">
+                <div class="col-md-3">
+                  <Chart
+                    v-if="monGraphique.labels.length > 0"
+                    type="pie"
+                    :data="monGraphique"
+                    :options="lightOptionsCammenbert"
+                  />
+                  <div v-if="monGraphique.labels.length > 0" class="d-flex justify-content-center p-2">
+                    <B>{{ monGraphique.critere }}</B>
+                  </div>
                 </div>
               </div>
 
               <h4 class="text-dark mb-4">Mes performances personnelles :</h4>
-              <div class="col-md-3" v-for="monGraphique in monAffichageGraphique" :key="monGraphique.id">
-                <Chart type="pie" :data="monGraphique" :options="lightOptionsCammenbert" />
-                <div v-if="monGraphique.labels.length != 0" class="d-flex justify-content-center p-2">
-                  <B>{{ monGraphique.critere }}</B>
-                </div>
-              </div>
+              <Chart type="line" :data="basicData" :options="basicOptions" :plugins="quadrants" />
             </div>
           </div>
         </div>
@@ -118,6 +115,56 @@ interface datasetsEvaluation {
   data: number[];
   backgroundColor: string[];
 }
+const basicOptions = {
+  plugins: {
+    legend: {
+      labels: {
+        color: '#495057',
+      },
+    },
+    quadrants: {
+      topLeft: '#33EA0D',
+      topRight: '#33EA0D',
+      bottomRight: '#33EA0D',
+      bottomLeft: '#33EA0D',
+    },
+  },
+};
+
+const basicData = ref({
+  labels: ['22-04-2022', '06-05-2022', '15-06-2022'],
+  datasets: [
+    {
+      label: 'Course de fond',
+      data: [0, 3, 2],
+      borderColor: '#FFA726',
+      tension: 0.4,
+    },
+  ],
+});
+
+const quadrants = {
+  id: 'quadrants',
+  beforeDraw(chart, args, options) {
+    const {
+      ctx,
+      chartArea: { left, top, right, bottom },
+      scales: { x, y },
+    } = chart;
+    const midX = x.getPixelForValue(0);
+    const midY = y.getPixelForValue(0);
+    ctx.save();
+    ctx.fillStyle = options.topLeft;
+    ctx.fillRect(left, top, midX - left, midY - top);
+    ctx.fillStyle = options.topRight;
+    ctx.fillRect(midX, top, right - midX, midY - top);
+    ctx.fillStyle = options.bottomRight;
+    ctx.fillRect(midX, midY, right - midX, bottom - midY);
+    ctx.fillStyle = options.bottomLeft;
+    ctx.fillRect(left, midY, midX - left, bottom - midY);
+    ctx.restore();
+  },
+};
 
 onMounted(async () => {
   isLoading.value = true;
