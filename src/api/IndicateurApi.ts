@@ -12,7 +12,7 @@ export default {
     return axios.get(`${ApiIndicateur}/${idIndicateur}`, apiConfig.value);
   },
   async fetchIndicateursByCritere(idCritere: number): Promise<AxiosResponse<ResponseModel>> {
-    return axios.get(`${ApiIndicateur}?Critere.id=${idCritere}`, apiConfig.value);
+    return axios.get(`${ApiIndicateur}?critere.id=${idCritere}`, apiConfig.value);
   },
   async saveIndicateur(payload: {
     libelle: string;

@@ -16,6 +16,7 @@ export default {
       //throw new Error(response.data.message);
     }
   },
+
   async fetchAllApsaSelectAnneeByAnneeAndClasse(
     context: ActionContext<ApsaSelectAnneeState, any>,
     payload: { idAnnee: number; idClasse: number }
@@ -28,6 +29,23 @@ export default {
       context.commit('setApsaSelectAnneeByAnneeAndClasse', response.data['hydra:member']);
     else {
       context.commit('setApsaSelectAnneeByAnneeAndClasse', []);
+      //throw new Error(response.data.message);
+    }
+  },
+
+  async fetchAllApsaSelectAnneeByApsaAndEtablissmenetAndAnnee(
+    context: ActionContext<ApsaSelectAnneeState, any>,
+    payload: { idApsa: number; idAnnee: number; idEtablissment: number }
+  ) {
+    const response = await ApsaSelectAnneeAPI.fetchAllApsaSelectAnneeByApsaAndEtablissmenetAndAnnee(
+      payload.idAnnee,
+      payload.idEtablissment,
+      payload.idApsa
+    );
+    if (response.data['hydra:totalItems'] > 0)
+      context.commit('setApsaSelectAnneeByApsaAndEtablissmenetAndAnnee', response.data['hydra:member']);
+    else {
+      context.commit('setApsaSelectAnneeByApsaAndEtablissmenetAndAnnee', []);
       //throw new Error(response.data.message);
     }
   },

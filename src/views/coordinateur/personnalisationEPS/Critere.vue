@@ -4,21 +4,45 @@
       <div class="col-8">
         <Card>
           <template #title>
-            <InputText id="Title" v-model="nouveauCritere.titre" type="text" placeholder="Titre" />
+            <p class="text-center">Entrez les informations</p>
           </template>
           <template #content>
-            <Editor v-model="nouveauCritere.description" editorStyle="height: 130px" placeholder="Entrez vos critères">
-              <template v-slot:toolbar>
-                <span class="ql-formats">
-                  <button class="ql-list" value="bullet" type="button"></button>
-                  <button class="ql-bold" v-tooltip.bottom="'Bold'"></button>
-                  <button class="ql-italic" v-tooltip.bottom="'Italic'"></button>
-                  <button class="ql-underline" v-tooltip.bottom="'Underline'"></button>
-                </span>
-              </template>
-            </Editor>
-            <div style="margin-top: 1.5rem">
-              <InputText id="UrlVideo" v-model="nouveauCritere.url_video" type="text" placeholder="URL vidéo" />
+            <div class="row" style="margin-top: 1.5rem">
+              <div class="col-3">
+                <p>Titre :</p>
+              </div>
+              <div class="col-9">
+                <InputText id="Title" v-model="nouveauCritere.titre" type="text" placeholder="Titre" />
+              </div>
+            </div>
+            <div class="row" style="margin-top: 1.5rem">
+              <div class="col-3">
+                <p>Description :</p>
+              </div>
+              <div class="col-9">
+                <Editor
+                  v-model="nouveauCritere.description"
+                  editorStyle="height: 130px"
+                  placeholder="Entrez vos critères"
+                >
+                  <template v-slot:toolbar>
+                    <span class="ql-formats">
+                      <button class="ql-list" value="bullet" type="button"></button>
+                      <button class="ql-bold" v-tooltip.bottom="'Bold'"></button>
+                      <button class="ql-italic" v-tooltip.bottom="'Italic'"></button>
+                      <button class="ql-underline" v-tooltip.bottom="'Underline'"></button>
+                    </span>
+                  </template>
+                </Editor>
+              </div>
+            </div>
+            <div class="row" style="margin-top: 1.5rem">
+              <div class="col-3">
+                <p>Vidéo :</p>
+              </div>
+              <div class="col-9">
+                <InputText id="UrlVideo" v-model="nouveauCritere.url_video" type="text" placeholder="URL vidéo" />
+              </div>
             </div>
             <div class="row" style="margin-top: 1.5rem">
               <div class="col-3">
@@ -62,21 +86,45 @@
       <div class="col-8">
         <Card>
           <template #title>
-            <InputText id="Title" v-model="nouveauCritere.titre" type="text" placeholder="Titre" />
+            <p class="text-center">Entrez les informations</p>
           </template>
           <template #content>
-            <Editor v-model="nouveauCritere.description" editorStyle="height: 130px" placeholder="Entrez vos critères">
-              <template v-slot:toolbar>
-                <span class="ql-formats">
-                  <button class="ql-list" value="bullet" type="button"></button>
-                  <button class="ql-bold" v-tooltip.bottom="'Bold'"></button>
-                  <button class="ql-italic" v-tooltip.bottom="'Italic'"></button>
-                  <button class="ql-underline" v-tooltip.bottom="'Underline'"></button>
-                </span>
-              </template>
-            </Editor>
-            <div style="margin-top: 1.5rem">
-              <InputText id="UrlVideo" v-model="nouveauCritere.url_video" type="text" placeholder="URL vidéo" />
+            <div class="row" style="margin-top: 1.5rem">
+              <div class="col-3">
+                <p>Titre :</p>
+              </div>
+              <div class="col-9">
+                <InputText id="Title" v-model="nouveauCritere.titre" type="text" placeholder="Titre" />
+              </div>
+            </div>
+            <div class="row" style="margin-top: 1.5rem">
+              <div class="col-3">
+                <p>Description :</p>
+              </div>
+              <div class="col-9">
+                <Editor
+                  v-model="nouveauCritere.description"
+                  editorStyle="height: 130px"
+                  placeholder="Entrez vos critères"
+                >
+                  <template v-slot:toolbar>
+                    <span class="ql-formats">
+                      <button class="ql-list" value="bullet" type="button"></button>
+                      <button class="ql-bold" v-tooltip.bottom="'Bold'"></button>
+                      <button class="ql-italic" v-tooltip.bottom="'Italic'"></button>
+                      <button class="ql-underline" v-tooltip.bottom="'Underline'"></button>
+                    </span>
+                  </template>
+                </Editor>
+              </div>
+            </div>
+            <div class="row" style="margin-top: 1.5rem">
+              <div class="col-3">
+                <p>Vidéo :</p>
+              </div>
+              <div class="col-9">
+                <InputText id="UrlVideo" v-model="nouveauCritere.url_video" type="text" placeholder="URL vidéo" />
+              </div>
             </div>
             <div class="row" style="margin-top: 1.5rem">
               <div class="col-3">
@@ -140,18 +188,13 @@
     </div>
     <div class="mb-3">
       <div class="row">
-        <div class="col-3" v-for="monCritere in CritereByApsaRetenu" v-bind:key="monCritere.id">
+        <div class="col-3" v-for="monCritere in criteresByApsaRetenu" v-bind:key="monCritere.id">
           <Card>
             <template #title> {{ monCritere.titre }} </template>
             <template #content>
               <p v-html="monCritere.description" />
               <p v-html="monCritere.url_video" />
-              <Button class="p-button-rounded p-button-info"
-                ><i class="pi pi-pencil" @click="openEdit(monCritere)"
-              /></Button>
-              <Button class="p-button-rounded p-button-danger" @click="removeCritere(monCritere.id)"
-                ><i class="pi pi-times"
-              /></Button>
+              <p v-html="monCritere.image" />
               <Button
                 label="Ajouter des indicateurs"
                 icon="pi pi-plus"
@@ -162,6 +205,12 @@
                   })
                 "
               />
+              <Button class="p-button-rounded p-button-info"
+                ><i class="pi pi-pencil" @click="openEdit(monCritere)"
+              /></Button>
+              <Button class="p-button-rounded p-button-danger" @click="removeCritere(monCritere.id)"
+                ><i class="pi pi-trash"
+              /></Button>
             </template>
           </Card>
         </div>
@@ -191,7 +240,7 @@
         autofocus
       ></Button>
     </div>
-    <div>
+    <div style="position: fixed; bottom: 0; right: 2rem">
       <ProgressSpinner
         v-if="isLoading"
         style="float: right; width: 50px; height: 50px"
@@ -216,16 +265,12 @@ const router = useRouter();
 
 const { isObjectEmpty } = ObjectUtils();
 const { etablissement } = UtilisateurService();
-const { saveCritere, fetchCriteres, fetchCriteresByApsaRetenu, deleteCritere, editCritere, criteres } =
+const { saveCritere, fetchCriteres, fetchCriteresByApsaRetenu, deleteCritere, editCritere, criteresByApsaRetenu } =
   CritereService();
 const { apsaRetenu, fetchApsaRetenu } = ApsaRetenuService();
 
-const monTitleCritere = ref();
 const nouvelleImageCritere = ref<File>({} as File);
-const monUrlVideo = ref();
 const isLoading = ref(false);
-const mesCriteres = ref<Critere[]>([]);
-const CritereByApsaRetenu = ref<Critere[]>([]);
 const nouveauCritere = ref<Critere>({ titre: '', description: '', url_video: '', image: '' } as Critere);
 
 const displayBasic = ref(false);
@@ -240,19 +285,26 @@ function openEdit(monCritere: Critere) {
 }
 
 const closeBasic = () => {
-  window.location.reload();
   displayBasic.value = false;
 };
 
 const closeEdit = () => {
   displayEdit.value = false;
-  window.location.reload();
   window.alert('Le critère a bien été modifié !');
 };
 
 const imageCritereIsSelected = computed(() => {
   if (isObjectEmpty(nouvelleImageCritere.value) && nouveauCritere.value.image === '') return false;
   else return true;
+});
+
+onMounted(async () => {
+  isLoading.value = true;
+  if (route.query.idApsaRetenu) {
+    await fetchCriteresByApsaRetenu(parseInt(route.query.idApsaRetenu.toString()));
+    await fetchApsaRetenu(parseInt(route.query.idApsaRetenu.toString()));
+  }
+  isLoading.value = false;
 });
 
 async function addCritere() {
@@ -285,7 +337,6 @@ async function removeCritere(critereId: number) {
     try {
       await deleteCritere(critereId);
       window.alert('Le critère a bien été supprimé !');
-      window.location.reload();
     } catch (e) {
       console.log(e);
     }
@@ -301,22 +352,6 @@ function verif() {}
 function toIndicateur() {
   router.push('IndicateurAF');
 }
-
-onMounted(async () => {
-  isLoading.value = true;
-  if (route.query.idApsaRetenu) {
-    await fetchCriteres();
-    await fetchApsaRetenu(parseInt(route.query.idApsaRetenu.toString()));
-    criteres.value.forEach((a) => {
-      if (route.query.idApsaRetenu) {
-        if (a.ApsaRetenu.id === parseInt(route.query.idApsaRetenu.toString())) {
-          CritereByApsaRetenu.value.push(a);
-        }
-      }
-    });
-  }
-  isLoading.value = false;
-});
 
 function onPhotoChange(event: any) {
   nouvelleImageCritere.value = event.files[0];

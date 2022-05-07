@@ -165,7 +165,9 @@ const openBasic = () => {
 };
 
 function filterClasse() {
+  isLoading.value = true;
   mesElevesSansClasse.value = eleves.value.filter((e) => e.classe.length == 0);
+  isLoading.value = false;
 }
 
 function onClasseChange() {
@@ -174,14 +176,15 @@ function onClasseChange() {
   }
 }
 
-let columns;
-
 async function champsEleve(idEleve: number) {
+  isLoading.value = true;
   eleveDialog.value = true;
   await fetchEleveById(idEleve);
+  isLoading.value = false;
 }
 
 async function editEleve(idEleve: number) {
+  isLoading.value = true;
   await updateEleve(
     idEleve,
     eleveById.value.nom,
@@ -196,6 +199,7 @@ async function editEleve(idEleve: number) {
   eleveDialog.value = false;
   await fetchClasseByAnnee(3);
   onClasseChange();
+  isLoading.value = false;
 }
 
 async function editClasse(idClasse: number) {
@@ -213,8 +217,10 @@ async function editClasse(idClasse: number) {
 
   alert('Votre Eleve à ete ajouté à cette classe');
   eleveDialog.value = false;
+  isLoading.value = true;
   await fetchAllEleves();
   onClasseChange();
+  isLoading.value = false;
 }
 
 async function deleteFromClasse(idClasse: number) {

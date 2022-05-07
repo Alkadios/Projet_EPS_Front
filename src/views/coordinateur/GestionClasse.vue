@@ -18,6 +18,14 @@
         </template>
       </Column>
     </DataTable>
+    <div style="position: fixed; bottom: 0; right: 2rem">
+      <ProgressSpinner
+        v-if="isLoading"
+        style="float: right; width: 50px; height: 50px"
+        strokeWidth="8"
+        animationDuration=".5s"
+      />
+    </div>
   </div>
 
   <Dialog header="Ajouter une Classe" v-model:visible="displayBasic" :style="{ width: '50vw' }">
@@ -99,7 +107,7 @@ const { annees, fetchAllAnnees } = AnneeService();
 const selectedNiveauScolaire = ref();
 const selectedAnnee = ref();
 const selectedEtablissement = ref();
-
+const isLoading = ref(false);
 const classeDialog = ref(false);
 
 const nouvelleClasse = ref<Classe>({
@@ -110,6 +118,7 @@ const nouvelleClasse = ref<Classe>({
 });
 
 async function CreerClasse() {
+  isLoading.value = true;
   await saveClasse(
     nouvelleClasse.value.libelleClasse,
     'api/niveau_scolaires/' + selectedNiveauScolaire.value,
@@ -119,6 +128,7 @@ async function CreerClasse() {
   alert('Votre Classe à ete créer');
   displayBasic.value = false;
   await fetchClasseByAnnee(3);
+  isLoading.value = false;
 }
 
 const displayBasic = ref(false);
@@ -128,8 +138,10 @@ const openBasic = () => {
 
 async function supprimerClasse(idClasse: number) {
   if (confirm('Voulez vous vraiment supprimer ?')) {
+    isLoading.value = true;
     await deleteClasse(idClasse);
     await fetchClasseByAnnee(3);
+    isLoading.value = false;
   }
 }
 
@@ -138,9 +150,11 @@ const closeBasic = () => {
 };
 
 onMounted(async () => {
+  isLoading.value = true;
   await fetchClasseByAnnee(3);
   await fetchAllEtablissements();
   await fetchAllNiveauxScolaires();
   await fetchAllAnnees();
+  isLoading.value = false;
 });
 </script>
