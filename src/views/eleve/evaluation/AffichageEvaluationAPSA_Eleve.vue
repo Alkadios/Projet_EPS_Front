@@ -45,7 +45,7 @@
                   :options="lightOptionsCammenbert"
                 />
                 <div class="d-flex justify-content-center p-2" v-if="monGraphique.labels.length > 0">
-                  <B>{{ monGraphique.critere }}</B>
+                  <strong>{{ monGraphique.critere }}</strong>
                 </div>
               </div>
               <h4 class="text-dark p-5">Mes performances personnelles :</h4>
@@ -61,10 +61,10 @@
                   :options="lightOptionsCammenbert"
                 />
                 <div class="d-flex justify-content-center p-2" v-if="monGraphiquePersonnel.labels.length > 0">
-                  <B>{{ monGraphiquePersonnel.critere }}</B>
+                  <strong>{{ monGraphiquePersonnel.critere }}</strong>
                 </div>
               </div>
-              <Chart type="line" :data="basicData" :options="basicOptions" />
+              <Chart type="line" :data="basicData" :options="basicOptions" :plugins="plugins" />
             </div>
           </div>
         </div>
@@ -146,6 +146,35 @@ const basicOptions = {
   },
 };
 
+const plugins = [
+  {
+    beforeDraw: function (chart) {
+      const ctx = chart.ctx;
+      const canvas = chart.canvas;
+      const chartArea = chart.chartArea;
+
+      // Chart background
+      var gradientBack = canvas.getContext('2d').createLinearGradient(0, 250, 0, 0);
+      gradientBack.addColorStop(0, 'rgba(213,235,248,1)');
+      gradientBack.addColorStop(0.16, 'rgba(213,235,248,1)');
+      gradientBack.addColorStop(0.17, 'rgba(226,245,234,1)');
+      gradientBack.addColorStop(0.25, 'rgba(226,245,234,1)');
+      gradientBack.addColorStop(0.26, 'rgba(252,244,219,1)');
+      gradientBack.addColorStop(0.5, 'rgba(252,244,219,1)');
+      gradientBack.addColorStop(0.51, 'rgba(251,221,221,1)');
+      gradientBack.addColorStop(1, 'rgba(251,221,221,1)');
+
+      ctx.fillStyle = gradientBack;
+      ctx.fillRect(
+        chartArea.left,
+        chartArea.bottom,
+        chartArea.right - chartArea.left,
+        chartArea.top - chartArea.bottom
+      );
+    },
+  },
+];
+
 const basicData = ref({
   labels: ['22-04-2022', '06-05-2022', '15-06-2022'],
   datasets: [
@@ -157,29 +186,6 @@ const basicData = ref({
     },
   ],
 });
-
-// const quadrants = {
-//   id: 'quadrants',
-//   beforeDraw(chart, args, options) {
-//     const {
-//       ctx,
-//       chartArea: { left, top, right, bottom },
-//       scales: { x, y },
-//     } = chart;
-//     const midX = x.getPixelForValue(0);
-//     const midY = y.getPixelForValue(0);
-//     ctx.save();
-//     ctx.fillStyle = options.topLeft;
-//     ctx.fillRect(left, top, midX - left, midY - top);
-//     ctx.fillStyle = options.topRight;
-//     ctx.fillRect(midX, top, right - midX, midY - top);
-//     ctx.fillStyle = options.bottomRight;
-//     ctx.fillRect(midX, midY, right - midX, bottom - midY);
-//     ctx.fillStyle = options.bottomLeft;
-//     ctx.fillRect(left, midY, midX - left, bottom - midY);
-//     ctx.restore();
-//   },
-// };
 
 onMounted(async () => {
   isLoading.value = true;
