@@ -1,4 +1,5 @@
-import { ElevesClasse, Etablissement, EvaluationEleve } from '@/models';
+import { Classe } from './Classe';
+import { Etablissement } from './Etablissement';
 
 export interface Eleve {
   '@id': string;
@@ -9,10 +10,9 @@ export interface Eleve {
   telephone: string;
   mailParent1: string;
   mailParent2: string;
+  classe: Classe[];
   dateNaiss: string;
   sexeEleve: string;
   user: string;
-  evaluationEleves: EvaluationEleve;
   etablissement: Etablissement;
-  eleveClasses: ElevesClasse;
 }

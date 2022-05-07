@@ -15,6 +15,13 @@ export default {
     }
     //if (response.status !== 201) throw new Error);
   },
+  async saveAfRetenuInChoixAnnee(
+    _: ActionContext<ChoixAnneeState, any>,
+    payload: { idChoixAnnee: number; afs: { Af: number }[] }
+  ) {
+    const response = await ChoixAnneeAPI.saveAfRetenuInChoixAnnee(payload);
+    //if (response.status !== 201) throw new Error);
+  },
   async fetchAllChoixAnneeByAnneeAndEtablissement(
     context: ActionContext<ChoixAnneeState, any>,
     payload: { idAnnee: number; idEtablissement: number }

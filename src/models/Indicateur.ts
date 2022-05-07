@@ -1,4 +1,4 @@
-import { Critere } from './Critere';
+import { EvaluationEleve, Critere } from '@/models';
 
 export interface Indicateur {
   '@id': string;
@@ -8,5 +8,6 @@ export interface Indicateur {
   image: string;
   url_video: string;
   color: string;
+  evaluationEleves: EvaluationEleve[];
   Critere: Critere;
 }

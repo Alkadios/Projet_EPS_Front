@@ -19,6 +19,16 @@ export default {
     url.search = new URLSearchParams(paramsString).toString();
     return axios.get(`${url.toString()}`, apiConfig.value);
   },
+  async fetchAllApsaSelectAnneeByApsaAndEtablissmenetAndAnnee(
+    idAPSA: number,
+    idAnnee: number,
+    idEtablissement: number
+  ): Promise<AxiosResponse<ResponseModel>> {
+    const paramsString = `Annee.id=${idAnnee}&etablissement.id=${idEtablissement}&Apsa.id=${idAPSA}`;
+    const url = new URL(`${ApiURLApsaSelect}`);
+    url.search = new URLSearchParams(paramsString).toString();
+    return axios.get(`${url.toString()}`, apiConfig.value);
+  },
   async fetchAllApsaSelectAnneeByAnneeAndEtablissement(
     idAnnee: number,
     idEtablissement: number

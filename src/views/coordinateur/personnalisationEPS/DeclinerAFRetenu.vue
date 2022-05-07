@@ -87,15 +87,12 @@ async function ajoutApsaRetenu() {
   if ((monAfRetenuSelected.value['@id'], situationEvaluation.value, monAPSA.value?.['@id'])) {
     await saveApsaRetenu(monAfRetenuSelected.value['@id'], situationEvaluation.value, monAPSA.value?.['@id']);
     router.push({ name: 'Critere', query: { idApsaRetenu: apsaRetenu.value.id } });
-  } else {
-    console.log((monAfRetenuSelected.value['@id'], situationEvaluation.value, monAPSA.value?.['@id']));
   }
 }
 
 watch(
   () => monAPSA.value,
   async () => {
-    console.log('watch1', monAPSA.value);
     if (monAPSA.value) {
       isLoading.value = true;
       //await fetchAllAfRetenuByAnneeAndNiveauScolaire(annee.value.id, niveauScolaireSelectionne.value?.id);
@@ -118,7 +115,6 @@ onMounted(async () => {
       }
     }
   });
-  //console.log('mes apsa select : ', apsaSelects.value);
 
   afRetenus.value.forEach((b) => {
     if (route.query.idChoixAnnee) {

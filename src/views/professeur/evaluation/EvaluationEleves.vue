@@ -16,7 +16,7 @@
           <div id="mesClasses">
             <div class="row">
               <div id="EvaluationClasse" class="col-md-5">
-                <div class="d-flex">
+                <div class="d-flex justify-content-center">
                   <div>
                     <Dropdown
                       v-model="classeSelectionner"
@@ -30,7 +30,7 @@
                 </div>
               </div>
               <div class="col-md-5 offset-md-2">
-                <div class="d-flex" v-if="classeSelectionner != null">
+                <div class="d-flex justify-content-center" v-if="classeSelectionner != null">
                   <div>
                     <Dropdown
                       v-model="apsaSelectionner"
@@ -48,8 +48,7 @@
           <div>
             <div class="p-5">
               <div class="col-md-12">
-                <div class="d-flex" v-if="apsaSelectionner != null">
-                  <div class="p-2">Mes Situation d'évaluation :</div>
+                <div class="d-flex justify-content-center" v-if="apsaSelectionner != null">
                   <Dropdown
                     v-model="apsaRetenuSelectionner"
                     :options="situationsEvaluationByNiveauScolaireAndApsa"
@@ -168,7 +167,7 @@ interface newEvaluationEleve {
   autoEval: boolean;
 }
 interface newEvaluation {
-  Date: String;
+  Date: string;
   evaluationEleve: newEvaluationEleve[];
 }
 
@@ -178,13 +177,8 @@ interface indicateurEleve {
   eleve: Eleve;
 }
 
-function verif() {
-  console.log('isCheckButtonTous : ', isCheckButtonTous.value);
-}
-
 function onClickButtonTous() {
   isCheckButtonTous.value = true;
-  console.log('test', isCheckButtonTous.value);
 }
 
 async function addIndicateurInEvaluation(unCritere: Critere, unIndicateur: Indicateur) {
@@ -233,7 +227,6 @@ async function addIndicateurInEvaluation(unCritere: Critere, unIndicateur: Indic
         indicateursEleveSelectionner.value.push(nouveauIndicateurPourChaqueEleve);
       }
     });
-    console.log('indicateursEleveSelectionner : ', indicateursEleveSelectionner.value);
   }
 }
 
@@ -267,7 +260,6 @@ function onClasseChange() {
 
     apsasRetenusByNiveauScolaire.value = getApsasRetenusByNiveauScolaire(classeSelectionner.value.NiveauScolaire);
     listeApsa.value = [];
-    console.log('onClasseChange', apsasRetenusByNiveauScolaire.value);
     //Evite les doublons si une apsa à plusiers situation d'évaluation
 
     apsasRetenusByNiveauScolaire.value.forEach((ar) => {
@@ -294,9 +286,9 @@ function getElevesByClasse(uneClasse: Classe) {
   return classesByAnneeAndProfesseur.value.find((classeProf) => classeProf.id === uneClasse.id)?.eleves;
 }
 
-function getApsasRetenusByNiveauScolaire(unNiveauScolaire: NiveauScolaire) {
+function getApsasRetenusByNiveauScolaire(unNiveauScolaire: string | NiveauScolaire) {
   return apsasRetenusByEtablissementAndAnnee.value
-    .filter((apsaRetenu) => apsaRetenu.AfRetenu.ChoixAnnee.Niveau['@id'] === unNiveauScolaire)
+    .filter((apsaRetenu) => apsaRetenu.AfRetenu.ChoixAnnee.Niveau['@id'] === unNiveauScolaire['@id'])
     .map((apsaR) => {
       return toRaw(apsaR);
     });
@@ -316,6 +308,7 @@ function checkIfIndicateurIsSelectionner(unIndicateur: Indicateur) {
 }
 
 async function saveEvaluation() {
+  console.log('monEvaluation.value.evaluationEleve : ', monEvaluation.value.evaluationEleve);
   isLoading.value = true;
   if (indicateursEleveSelectionner.value != null) {
     monEvaluation.value.Date = new Date().toLocaleDateString('en-CA');

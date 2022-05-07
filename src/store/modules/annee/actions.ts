@@ -3,8 +3,8 @@ import AnneeAPI from '@/api/AnneeAPI';
 import AnneeState from './stateInterface';
 
 export default {
-  async fetchAllAnnee(context: ActionContext<AnneeState, any>) {
-    const response = await AnneeAPI.fetchAllAnnee();
+  async fetchAllAnnees(context: ActionContext<AnneeState, any>) {
+    const response = await AnneeAPI.fetchAllAnnees();
     if (response.data['hydra:totalItems'] > 0) context.commit('setAnnees', response.data['hydra:member']);
     else {
       context.commit('setAnnees', []);

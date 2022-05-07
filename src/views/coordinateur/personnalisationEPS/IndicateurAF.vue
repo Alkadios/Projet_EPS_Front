@@ -1,24 +1,4 @@
 <template>
-  <div class="card">
-    <OrderList v-model="indicateursByCritere" listStyle="height:auto">
-      <template #header> Listes des indicateur </template>
-      <template #item="slotProps">
-        <div class="product-item">
-          <div class="product-list-detail" :style="'background-color: ' + slotProps.item.color">
-            <strong class="mb-2">Titre: {{ slotProps.item.libelle }}</strong>
-            <hr />
-            <strong class="product-category"
-              >Description:
-              <p v-html="slotProps.item.description"></p
-            ></strong>
-            <strong class="product-category"
-              >Vidéo: <a>{{ slotProps.item.url_video }}</a></strong
-            >
-          </div>
-        </div>
-      </template>
-    </OrderList>
-  </div>
   <Dialog header="Ajouter un indicateur" v-model:visible="displayBasic" :style="{ width: '50vw' }">
     <div class="row" style="place-content: center">
       <div class="col-8">
@@ -72,24 +52,29 @@
                 <Button
                   class="p-button-sm p-button-raised p-button-rounded"
                   style="min-width: unset; background-color: #ff1300"
-                  @click="nouveauIndicateur.color = '#ff1300'"
+                  @click="nouveauIndicateur.color = 'ff1300'"
                 />
                 <Button
                   class="p-button-sm p-button-raised p-button-rounded"
                   style="min-width: unset; background-color: #fffe00"
-                  @click="nouveauIndicateur.color = '#fffe00'"
+                  @click="nouveauIndicateur.color = 'fffe00'"
                 />
                 <Button
                   class="p-button-sm p-button-raised p-button-rounded"
                   style="min-width: unset; background-color: #98ff00"
-                  @click="nouveauIndicateur.color = '#98ff00'"
+                  @click="nouveauIndicateur.color = '98ff00'"
                 />
                 <Button
                   class="p-button-sm p-button-raised p-button-rounded"
                   style="min-width: unset; background-color: #3c6500"
-                  @click="nouveauIndicateur.color = '#3c6500'"
+                  @click="nouveauIndicateur.color = '3c6500'"
                 />
-                <ColorPicker v-model="nouveauIndicateur.color" defaultColor="#FF0000" style="min-width: unset" />
+                <ColorPicker
+                  format="hex"
+                  v-model="nouveauIndicateur.color"
+                  defaultColor="#FF0000"
+                  style="min-width: unset"
+                />
               </div>
             </div>
             <div class="row" style="margin-top: 1.5rem">
@@ -125,8 +110,8 @@
       </div>
     </div>
     <template #footer>
-      <Button label="No" icon="pi pi-times" @click="closeBasic" class="p-button-text" />
-      <Button label="Yes" icon="pi pi-check" @click="addIndicateur" autofocus />
+      <Button label="Annuler" icon="pi pi-times" @click="closeBasic" class="p-button-text" />
+      <Button label="Ajouter" icon="pi pi-check" @click="addIndicateur" autofocus />
     </template>
   </Dialog>
   <Dialog header="Modifier un indicateur" v-model:visible="displayEdit" :style="{ width: '50vw' }">
@@ -243,42 +228,45 @@
         <!-- <Textarea class="w-100" :disabled="true" v-model="monCritere" :autoResize="true" rows="5" /> -->
       </div>
     </div>
-    <div class="mb-3">
-      <div class="row">
-        <div class="col-3" v-for="monIndicateur in indicateursByCritere" v-bind:key="monIndicateur.id">
-          <Card>
-            <template #title> {{ monIndicateur.libelle }} </template>
-            <template #content>
-              <p v-html="monIndicateur.description" />
-              <p v-html="monIndicateur.color" />
-              <p v-html="monIndicateur.url_video" />
-              <p v-html="monIndicateur.image" />
-              <Button class="p-button-rounded p-button-info" @click="openEdit(monIndicateur)"
-                ><i class="pi pi-pencil"
-              /></Button>
-              <Button class="p-button-rounded p-button-danger" @click="removeIndicateur(monIndicateur.id)"
-                ><i class="pi pi-trash"
-              /></Button>
-            </template>
-          </Card>
-        </div>
-        <div class="col-3">
-          <Card>
-            <template #title> <p style="text-align: center">Ajouter un indicateur</p></template>
-            <template #content>
-              <p style="text-align: center">
-                <i
-                  class="pi pi-plus"
-                  @click="openBasic"
-                  style="cursor: pointer; font-size: 5rem; border-radius: 50%; border: 0.3rem solid"
-                />
-              </p>
-            </template>
-          </Card>
-        </div>
-      </div>
+    <div class="card container">
+      <OrderList v-model="indicateursByCritere" listStyle="height:auto">
+        <template #header> Listes des indicateur </template>
+        <template #item="nouveauIndicateur">
+          <div class="container col-12">
+            <div class="p-3 row" :style="'background-color: ' + nouveauIndicateur.item.color + '; border-radius: 10px'">
+              <div class="col-11">
+                <strong class="mb-2">Titre: {{ nouveauIndicateur.item.libelle }}</strong>
+                <hr />
+                <strong
+                  >Description:
+                  <p v-html="nouveauIndicateur.item.description"></p
+                ></strong>
+                <strong
+                  >Vidéo: <a>{{ nouveauIndicateur.item.url_video }}</a></strong
+                >
+              </div>
+              <div class="col-1 align-center mt-5">
+                <Button class="p-button-rounded p-button-info" @click="openEdit(nouveauIndicateur.item)"
+                  ><i class="pi pi-pencil"
+                /></Button>
+                <Button class="p-button-rounded p-button-danger" @click="removeIndicateur(nouveauIndicateur.item.id)"
+                  ><i class="pi pi-trash"
+                /></Button>
+              </div>
+            </div>
+          </div>
+        </template>
+      </OrderList>
+      <button class="btn-info col-12" style="border-radius: 10px">
+        <i
+          class="m-3 pi pi-plus"
+          @click="openBasic"
+          style="cursor: pointer; border-radius: 50%; border: 0.3rem solid; font-size: 2em"
+        />
+        <p>Ajouter un critère</p>
+      </button>
     </div>
-    <div class="mb-3">
+    <div class="container-fluid text-center mb-10 Pl-10">
       <Button label="Valider" style="right: 1rem" icon="pi pi-check" @click="verif()" autofocus></Button>
       <Button
         label="Retour aux critères"
@@ -288,7 +276,7 @@
         autofocus
       ></Button>
     </div>
-    <div style="position: fixed; bottom: 0; right: 0">
+    <div style="position: fixed; bottom: 0; right: 2rem">
       <ProgressSpinner
         v-if="isLoading"
         style="float: right; width: 50px; height: 50px"
@@ -373,7 +361,7 @@ async function addIndicateur() {
       nouveauIndicateur.value.description,
       nouveauIndicateur.value.image,
       nouveauIndicateur.value.url_video,
-      nouveauIndicateur.value.color,
+      '#' + nouveauIndicateur.value.color,
       critere.value['@id']
     );
     closeBasic();

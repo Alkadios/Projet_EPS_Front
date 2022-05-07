@@ -1,6 +1,6 @@
+import { Annee } from '@/models';
 import { computed } from 'vue';
 import { useStore } from 'vuex';
-import { Annee } from '@/models';
 
 export default function AnneeService() {
   const store = useStore();
@@ -8,8 +8,9 @@ export default function AnneeService() {
   const annees = computed((): Annee[] => {
     return store.getters['AnneeModule/getAnnees'];
   });
-  async function fetchAllAnnee() {
-    await store.dispatch('AnneeModule/fetchAllAnnee');
+
+  async function fetchAllAnnees() {
+    await store.dispatch('AnneeModule/fetchAllAnnees');
   }
 
   const annee = computed((): Annee => {
@@ -21,7 +22,7 @@ export default function AnneeService() {
 
   return {
     annees,
-    fetchAllAnnee,
+    fetchAllAnnees,
     annee,
     fetchAnneeById,
   };

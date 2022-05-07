@@ -1,6 +1,4 @@
-import { ElevesClasse, Etablissement, Annee, NiveauScolaire } from '@/models';
-import { Eleve } from './Eleve';
-import { Professeur } from './Professeur';
+import { Etablissement, Annee, NiveauScolaire, Eleve, Professeur } from '@/models';
 
 export interface Classe {
   '@id': string;

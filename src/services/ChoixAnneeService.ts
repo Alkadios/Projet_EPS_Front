@@ -12,6 +12,10 @@ export default function ApsaSelectAnneeService() {
     await store.dispatch('ChoixAnneeModule/saveChoixAnnee', { champApprentissage, Niveau, Annee, etablissement });
   }
 
+  async function saveAfRetenuInChoixAnnee(idChoixAnnee: number, afs: { Af: number }[]) {
+    await store.dispatch('ChoixAnneeModule/saveAfRetenuInChoixAnnee', { idChoixAnnee, afs });
+  }
+
   const choixAnneeByAnneeAndEtablissement = computed((): ChoixAnnee[] => {
     return store.getters['ChoixAnneeModule/getChoixAnneeByAnneeAndEtablissement'];
   });
@@ -22,6 +26,7 @@ export default function ApsaSelectAnneeService() {
   return {
     choixAnnee,
     saveChoixAnnee,
+    saveAfRetenuInChoixAnnee,
     choixAnneeByAnneeAndEtablissement,
     fetchAllChoixAnneeByAnneeAndEtablissement,
   };

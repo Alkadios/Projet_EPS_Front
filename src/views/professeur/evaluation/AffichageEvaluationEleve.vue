@@ -16,7 +16,7 @@
           <div id="mesClasses">
             <div class="row">
               <div id="EvaluationClasse" class="col-md-5">
-                <div class="d-flex">
+                <div class="d-flex justify-content-center">
                   <div>
                     <Dropdown
                       v-model="classeSelectionner"
@@ -30,7 +30,7 @@
                 </div>
               </div>
               <div class="col-md-5 offset-md-2">
-                <div class="d-flex" v-if="classeSelectionner != null">
+                <div class="d-flex justify-content-center" v-if="classeSelectionner != null">
                   <div>
                     <Dropdown
                       v-model="apsaSelectionner"
@@ -48,31 +48,36 @@
           <div>
             <div class="p-5">
               <div class="col-md-12">
-                <div class="d-flex" v-if="apsaSelectionner != null">
+                <div class="d-flex justify-content-center" v-if="apsaSelectionner != null">
                   <Dropdown
-                    v-model="apsaRetenuSelectionner"
+                    v-model="situationEvaluationSelectionner"
                     :options="situationsEvaluationByNiveauScolaireAndApsa"
                     optionLabel="SituationEvaluation"
                     dataKey="id"
                     placeholder="Choisir une situation d'évaluation"
+                    @change="onSituationEvaluationChange()"
                   />
                 </div>
               </div>
             </div>
           </div>
-          <!-- <div class="p-5">
-            <Chart
-              type="pie"
-              :data="chartDataCammenbert"
-              :options="lightOptionsCammenbert"
-              :height="200"
-              :width="100"
-            />
-          </div> -->
-          <!-- <div id="myTableEleves">
+          <div class="d-flex row" v-if="situationEvaluationSelectionner != null">
+            <div class="col-md-3" v-for="monGraphique in monAffichageGraphique" :key="monGraphique.id">
+              <Chart
+                v-if="monGraphique.labels.length > 0"
+                type="pie"
+                :data="monGraphique"
+                :options="lightOptionsCammenbert"
+              />
+              <div v-if="monGraphique.labels.length > 0" class="d-flex justify-content-center p-2">
+                <B>{{ monGraphique.critere }}</B>
+              </div>
+            </div>
+          </div>
+          <div id="myTableEleves" v-if="situationEvaluationSelectionner != null">
             <div class="row">
               <div class="d-flex justify-content-start">
-                <div id="elevesByClasse" v-if="apsaRetenuSelectionner != null" class="col-md-4 p-2">
+                <div id="elevesByClasse" class="col-md-4 p-2">
                   <Listbox
                     v-model="eleveSelectionne"
                     :options="elevesByClasse"
@@ -88,30 +93,32 @@
                   </Listbox>
                 </div>
                 <div class="offset-md-1 col-md-7">
+                  <div id="CriteresEvaluations" v-if="situationEvaluationSelectionner != null && !eleveSelectionne">
+                    <h1>Veuillez sélectionner un élève</h1>
+                  </div>
                   <div
                     id="CriteresEvaluations"
-                    v-if="apsaRetenuSelectionner != null && (isCheckButtonTous == true || eleveSelectionne != null)"
+                    v-if="situationEvaluationSelectionner != null && eleveSelectionne != null"
                   >
-                    <div v-for="monCritere in apsaRetenuSelectionner.criteres" :key="monCritere.id" class="card">
-                      <Divider align="center" type="dashed">
-                        <b>{{ monCritere.titre }}</b>
+                    <div
+                      v-for="monGraphiqueEleve in monAffichageGraphiqueByEleve"
+                      :key="monGraphiqueEleve.id"
+                      class="card"
+                    >
+                      <Divider align="center" type="dashed" v-if="monGraphiqueEleve.labels.length != 0">
+                        <b>{{ monGraphiqueEleve.critere }}</b>
                       </Divider>
-                      <div>
-                        <Button
-                          v-for="indicateur of monCritere.Indicateur"
-                          :key="indicateur.id"
-                          :label="indicateur.libelle"
-                          :style="!checkIfIndicateurIsSelectionner(indicateur) ? 'background-color: bisque' : ''"
-                          :class="checkIfIndicateurIsSelectionner(indicateur) ? 'primary' : ''"
-                          @click="addIndicateurInEvaluation(monCritere, indicateur)"
-                        />
+                      <div class="row">
+                        <div class="col-md-6 offset-md-3" v-if="monGraphiqueEleve.labels.length != 0">
+                          <Chart type="pie" :data="monGraphiqueEleve" :options="lightOptionsCammenbert" />
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div> -->
+          </div>
         </div>
       </div>
       <div class="mt-3 ms-3">
@@ -131,115 +138,32 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, onMounted, toRaw, computed, watch } from 'vue';
+import { ref, onMounted, toRaw, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import UtilisateurService from '@/services/UtilisateurService';
 import ApsaRetenuService from '@/services/ApsaRetenuService';
 import ClasseService from '@/services/ClasseService';
-import EvaluationEleveService from '@/services/EvaluationEleveService';
 import ObjectUtils from '@/utils/ObjectUtils';
-import type {
-  Critere,
-  Eleve,
-  Indicateur,
-  Classe,
-  ApsaRetenu,
-  NiveauScolaire,
-  APSA,
-  ChampApprentissage,
-} from '@/models';
+import type { Eleve, Classe, ApsaRetenu, NiveauScolaire, APSA, ChampApprentissage } from '@/models';
 
 const route = useRoute();
 const router = useRouter();
 
 const { apsasRetenusByEtablissementAndAnnee, fetchApsaRetenuByAnneeAndEtablissement } = ApsaRetenuService();
 const { classesByAnneeAndProfesseur, fetchClasseByAnneeAndProf } = ClasseService();
-const { saveEvaluationEleve } = EvaluationEleveService();
 const { etablissement, anneeEnCours } = UtilisateurService();
 const { isObjectEmpty } = ObjectUtils();
 const isLoading = ref(false);
 
 const elevesByClasse = ref<Eleve[]>([]);
-const caByApsaByClasse = ref<ChampApprentissage[]>([]);
 const apsasRetenusByNiveauScolaire = ref<ApsaRetenu[]>([]);
 const situationsEvaluationByNiveauScolaireAndApsa = ref<ApsaRetenu[]>([]);
-const indicateursEleveSelectionner = ref<indicateurEleve[]>([]);
 const classeSelectionner = ref<Classe>();
 const apsaSelectionner = ref<APSA>();
-const apsaRetenuSelectionner = ref<ApsaRetenu>();
+const situationEvaluationSelectionner = ref<ApsaRetenu>();
 const eleveSelectionne = ref<Eleve>();
 const listeApsa = ref<APSA[]>([]);
 const listeCa = ref<ChampApprentissage[]>([]);
-const isCheckButtonTous = ref(false);
-const monEvaluation = ref<newEvaluation>({ evaluationEleve: [] as newEvaluationEleve[] } as newEvaluation);
-
-const chartOptions = ref({
-  plugins: {
-    legend: {
-      labels: {
-        color: '#495057',
-      },
-    },
-  },
-  scales: {
-    x: {
-      ticks: {
-        color: '#495057',
-      },
-      grid: {
-        color: '#ebedef',
-      },
-    },
-    y: {
-      ticks: {
-        color: '#495057',
-      },
-      grid: {
-        color: '#ebedef',
-      },
-    },
-  },
-});
-
-const chartDataCammenbert = ref({
-  labels: ['A', 'B', 'C'],
-  datasets: [
-    {
-      data: [300, 50, 100],
-      backgroundColor: ['#42A5F5', '#66BB6A', '#FFA726'],
-      hoverBackgroundColor: ['#64B5F6', '#81C784', '#FFB74D'],
-    },
-  ],
-});
-
-const chartData = ref({
-  labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-  datasets: [
-    {
-      type: 'line',
-      label: 'Dataset 1',
-      borderColor: '#42A5F5',
-      borderWidth: 2,
-      fill: false,
-      data: [50, 25, 12, 48, 56, 76, 42],
-    },
-    {
-      type: 'bar',
-      label: 'Dataset 2',
-      backgroundColor: '#66BB6A',
-      data: [21, 84, 24, 75, 37, 65, 34],
-      borderColor: 'white',
-      borderWidth: 2,
-    },
-    {
-      type: 'bar',
-      label: 'Dataset 3',
-      backgroundColor: '#FFA726',
-      data: [41, 52, 24, 74, 23, 21, 32],
-    },
-  ],
-});
-
 const lightOptionsCammenbert = ref({
   plugins: {
     legend: {
@@ -249,98 +173,46 @@ const lightOptionsCammenbert = ref({
     },
   },
 });
+const monAffichageGraphique = ref<newAffichageGraphique[]>([
+  { datasets: [] as datasetsEvaluation[] } as newAffichageGraphique,
+]);
+const monAffichageGraphiqueByEleve = ref<newAffichageGraphique[]>([
+  { datasets: [] as datasetsEvaluation[] } as newAffichageGraphique,
+]);
 
-interface newEvaluationEleve {
-  Indicateur: number;
-  Eleve: number;
-  autoEval: boolean;
-}
-interface newEvaluation {
-  Date: String;
-  evaluationEleve: newEvaluationEleve[];
-}
-
-interface indicateurEleve {
-  critere: Critere;
-  indicateur: Indicateur;
-  eleve: Eleve;
+interface newAffichageGraphique {
+  critere: string;
+  id: number;
+  labels: string[];
+  datasets: datasetsEvaluation[];
 }
 
-function verif() {
-  console.log('apsasRetenusByEtablissementAndAnnee : ', apsasRetenusByEtablissementAndAnnee.value);
-  console.log('listeApsa : ', listeApsa.value);
+interface datasetsEvaluation {
+  data: number[];
+  backgroundColor: string[];
 }
 
-function onClickButtonTous() {
-  isCheckButtonTous.value = true;
-  console.log('test', isCheckButtonTous.value);
-}
-
-async function addIndicateurInEvaluation(unCritere: Critere, unIndicateur: Indicateur) {
-  if (!isCheckButtonTous.value) {
-    if (!isObjectEmpty(eleveSelectionne.value)) {
-      const nouveauIndicateurEleve = {
-        critere: unCritere,
-        indicateur: unIndicateur,
-        eleve: eleveSelectionne.value,
-      } as indicateurEleve;
-
-      const indexIndicateurEleveAlreadyExist = indicateursEleveSelectionner.value.findIndex(
-        (ies) =>
-          ies.critere.id === nouveauIndicateurEleve.critere.id &&
-          ies.eleve.id === nouveauIndicateurEleve.eleve.id &&
-          ies.indicateur.id != nouveauIndicateurEleve.indicateur.id
-      );
-      //Si un indicateurEleve existe déjà (même élève & même critère mais l'indicateur est différent) -> on le remplace
-      if (indexIndicateurEleveAlreadyExist != -1) {
-        indicateursEleveSelectionner.value[indexIndicateurEleveAlreadyExist] = nouveauIndicateurEleve;
-      } else {
-        // Sinon on l'ajoute
-        indicateursEleveSelectionner.value.push(nouveauIndicateurEleve);
-      }
-    }
-  } else {
-    elevesByClasse.value.forEach((e) => {
-      const nouveauIndicateurPourChaqueEleve = {
-        critere: unCritere,
-        indicateur: unIndicateur,
-        eleve: e,
-      } as indicateurEleve;
-
-      const indexIndicateurEleveAlreadyExist = indicateursEleveSelectionner.value.findIndex(
-        (ies) =>
-          ies.critere.id === nouveauIndicateurPourChaqueEleve.critere.id &&
-          ies.eleve.id === nouveauIndicateurPourChaqueEleve.eleve.id &&
-          ies.indicateur.id != nouveauIndicateurPourChaqueEleve.indicateur.id
-      );
-
-      //Si un indicateurEleve existe déjà (même élève & même critère mais l'indicateur est différent) -> on le remplace
-      if (indexIndicateurEleveAlreadyExist != -1) {
-        indicateursEleveSelectionner.value[indexIndicateurEleveAlreadyExist] = nouveauIndicateurPourChaqueEleve;
-      } else {
-        // Sinon on l'ajoute
-        indicateursEleveSelectionner.value.push(nouveauIndicateurPourChaqueEleve);
-      }
+function onSituationEvaluationChange() {
+  monAffichageGraphique.value = [];
+  let indexGraphiqueClasseByCritere = 0;
+  situationEvaluationSelectionner.value?.criteres.forEach((c) => {
+    monAffichageGraphique.value[indexGraphiqueClasseByCritere] = {
+      critere: c.titre,
+      id: indexGraphiqueClasseByCritere,
+      labels: [],
+      datasets: [],
+    };
+    monAffichageGraphique.value[indexGraphiqueClasseByCritere].datasets = [{ data: [], backgroundColor: [] }];
+    c.Indicateur.forEach((i) => {
+      monAffichageGraphique.value[indexGraphiqueClasseByCritere].labels.push(i.libelle);
+      monAffichageGraphique.value[indexGraphiqueClasseByCritere].datasets[0].data.push(i.evaluationEleves.length);
+      monAffichageGraphique.value[indexGraphiqueClasseByCritere].datasets[0].backgroundColor.push(i.color);
     });
-    console.log('indicateursEleveSelectionner : ', indicateursEleveSelectionner.value);
-  }
+    indexGraphiqueClasseByCritere++;
+  });
 }
 
-watch(
-  () => eleveSelectionne.value,
-  () => {
-    if (!isObjectEmpty(eleveSelectionne.value)) {
-      isCheckButtonTous.value = false;
-    }
-  }
-);
-
-watch(
-  () => isCheckButtonTous.value,
-  () => {
-    eleveSelectionne.value = {} as Eleve;
-  }
-);
+function verif() {}
 
 onMounted(async () => {
   isLoading.value = true;
@@ -349,6 +221,45 @@ onMounted(async () => {
   isLoading.value = false;
 });
 
+watch(
+  () => eleveSelectionne.value,
+  () => {
+    if (!isObjectEmpty(eleveSelectionne.value)) {
+      console.log('situationEvaluationSelectionner: ', situationEvaluationSelectionner.value);
+      monAffichageGraphiqueByEleve.value = [];
+      let indexGraphiqueClasseByCriterebyEleves = 0;
+      situationEvaluationSelectionner.value?.criteres.forEach((c) => {
+        monAffichageGraphiqueByEleve.value[indexGraphiqueClasseByCriterebyEleves] = {
+          critere: c.titre,
+          id: indexGraphiqueClasseByCriterebyEleves,
+          labels: [],
+          datasets: [],
+        };
+        monAffichageGraphiqueByEleve.value[indexGraphiqueClasseByCriterebyEleves].datasets = [
+          { data: [], backgroundColor: [] },
+        ];
+        c.Indicateur.forEach((i) => {
+          if (i.evaluationEleves.find((f) => f.Eleve['@id'] === eleveSelectionne.value?.['@id'])) {
+            console.log('test : ', i);
+            let nb = 0;
+            monAffichageGraphiqueByEleve.value[indexGraphiqueClasseByCriterebyEleves].labels.push(i.libelle);
+            i.evaluationEleves.forEach((ee) => {
+              if (ee.Eleve['@id'] === eleveSelectionne.value?.['@id']) {
+                nb++;
+              }
+            });
+            monAffichageGraphiqueByEleve.value[indexGraphiqueClasseByCriterebyEleves].datasets[0].data.push(nb);
+            monAffichageGraphiqueByEleve.value[indexGraphiqueClasseByCriterebyEleves].datasets[0].backgroundColor.push(
+              i.color
+            );
+          }
+        });
+        indexGraphiqueClasseByCriterebyEleves++;
+      });
+    }
+  }
+);
+
 function onClasseChange() {
   if (classeSelectionner.value) {
     isLoading.value = true;
@@ -356,7 +267,6 @@ function onClasseChange() {
 
     apsasRetenusByNiveauScolaire.value = getApsasRetenusByNiveauScolaire(classeSelectionner.value.NiveauScolaire);
     listeApsa.value = [];
-    console.log('onClasseChange', apsasRetenusByNiveauScolaire.value);
     //Evite les doublons si une apsa à plusiers situation d'évaluation
 
     apsasRetenusByNiveauScolaire.value.forEach((ar) => {
@@ -370,8 +280,6 @@ function onClasseChange() {
         listeCa.value.push(ar.AfRetenu.ChoixAnnee.champApprentissage);
       }
     });
-
-    console.log('listeCa : ', listeCa.value);
     isLoading.value = false;
   }
 }
@@ -393,30 +301,9 @@ function getElevesByClasse(uneClasse: Classe) {
 
 function getApsasRetenusByNiveauScolaire(unNiveauScolaire: NiveauScolaire) {
   return apsasRetenusByEtablissementAndAnnee.value
-    .filter((apsaRetenu) => apsaRetenu.AfRetenu.ChoixAnnee.Niveau['@id'] === unNiveauScolaire)
+    .filter((apsaRetenu) => apsaRetenu.AfRetenu.ChoixAnnee.Niveau['@id'] === unNiveauScolaire['@id'])
     .map((apsaR) => {
       return toRaw(apsaR);
     });
-}
-
-function getCaByApsasRetenusByNiveauScolaire(unNiveauScolaire: NiveauScolaire) {
-  return apsasRetenusByEtablissementAndAnnee.value
-    .filter((apsaRetenu) => apsaRetenu.AfRetenu.ChoixAnnee.Niveau['@id'] === unNiveauScolaire)
-    .map((apsaR) => {
-      return toRaw(apsaR);
-    });
-}
-
-function checkIfIndicateurIsSelectionner(unIndicateur: Indicateur) {
-  let idEleve = 0;
-  if (isCheckButtonTous.value) idEleve = elevesByClasse.value[0].id;
-  else idEleve = eleveSelectionne.value?.id!;
-  if (
-    indicateursEleveSelectionner.value.find(
-      (ies) => toRaw(ies).indicateur.id === unIndicateur.id && ies.eleve.id === idEleve
-    )
-  )
-    return true;
-  else return false;
 }
 </script>
