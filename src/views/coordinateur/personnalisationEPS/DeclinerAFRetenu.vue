@@ -40,8 +40,7 @@
           class="w-100"
           :autoResize="true"
           rows="5"
-          placeholder="Ex : Pour produire une performance maximale connue sur un 800m, utiliser préférentiellement des repères intérieurs afin de réaliser une course avec des variations d’allures optimales régulées par quelques repères extérieurs exprimés par un partenaire.
-"
+          placeholder="Ex : Pour produire une performance maximale connue sur un 800m, utiliser préférentiellement des repères intérieurs afin de réaliser une course avec des variations d’allures optimales régulées par quelques repères extérieurs exprimés par un partenaire."
         />
       </div>
     </div>

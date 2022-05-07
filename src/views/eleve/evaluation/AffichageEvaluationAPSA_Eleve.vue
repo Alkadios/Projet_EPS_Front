@@ -64,7 +64,7 @@
                   <B>{{ monGraphiquePersonnel.critere }}</B>
                 </div>
               </div>
-              <Chart type="line" :data="basicData" :options="basicOptions" :plugins="quadrants" />
+              <Chart type="line" :data="basicData" :options="basicOptions" />
             </div>
           </div>
         </div>
@@ -158,28 +158,28 @@ const basicData = ref({
   ],
 });
 
-const quadrants = {
-  id: 'quadrants',
-  beforeDraw(chart, args, options) {
-    const {
-      ctx,
-      chartArea: { left, top, right, bottom },
-      scales: { x, y },
-    } = chart;
-    const midX = x.getPixelForValue(0);
-    const midY = y.getPixelForValue(0);
-    ctx.save();
-    ctx.fillStyle = options.topLeft;
-    ctx.fillRect(left, top, midX - left, midY - top);
-    ctx.fillStyle = options.topRight;
-    ctx.fillRect(midX, top, right - midX, midY - top);
-    ctx.fillStyle = options.bottomRight;
-    ctx.fillRect(midX, midY, right - midX, bottom - midY);
-    ctx.fillStyle = options.bottomLeft;
-    ctx.fillRect(left, midY, midX - left, bottom - midY);
-    ctx.restore();
-  },
-};
+// const quadrants = {
+//   id: 'quadrants',
+//   beforeDraw(chart, args, options) {
+//     const {
+//       ctx,
+//       chartArea: { left, top, right, bottom },
+//       scales: { x, y },
+//     } = chart;
+//     const midX = x.getPixelForValue(0);
+//     const midY = y.getPixelForValue(0);
+//     ctx.save();
+//     ctx.fillStyle = options.topLeft;
+//     ctx.fillRect(left, top, midX - left, midY - top);
+//     ctx.fillStyle = options.topRight;
+//     ctx.fillRect(midX, top, right - midX, midY - top);
+//     ctx.fillStyle = options.bottomRight;
+//     ctx.fillRect(midX, midY, right - midX, bottom - midY);
+//     ctx.fillStyle = options.bottomLeft;
+//     ctx.fillRect(left, midY, midX - left, bottom - midY);
+//     ctx.restore();
+//   },
+// };
 
 onMounted(async () => {
   isLoading.value = true;
@@ -195,7 +195,6 @@ function onSituationEvaluationChange() {
   monAffichageGraphique.value = [];
   let indexGraphiqueClasseByCritere = 0;
   situationEvaluationSelectionner.value?.criteres.forEach((c) => {
-    console.log('critere : ', c);
     monAffichageGraphique.value[indexGraphiqueClasseByCritere] = {
       critere: c.titre,
       id: indexGraphiqueClasseByCritere,
@@ -210,7 +209,6 @@ function onSituationEvaluationChange() {
     });
     indexGraphiqueClasseByCritere++;
   });
-  console.log('situationEvaluationSelectionner : ', situationEvaluationSelectionner.value);
 
   monAffichageGraphiquePersonnel.value = [];
   let indexGraphiqueClasseByCriterebyEleves = 0;
@@ -226,7 +224,6 @@ function onSituationEvaluationChange() {
     ];
     c.Indicateur.forEach((i) => {
       if (i.evaluationEleves.find((f) => f.Eleve.id === 1)) {
-        console.log('test : ', i);
         let nb = 0;
         monAffichageGraphiquePersonnel.value[indexGraphiqueClasseByCriterebyEleves].labels.push(i.libelle);
         i.evaluationEleves.forEach((ee) => {

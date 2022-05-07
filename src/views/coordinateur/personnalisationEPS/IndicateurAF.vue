@@ -348,7 +348,7 @@ onMounted(async () => {
   if (route.query.idCritere) {
     await fetchIndicateursByCritere(parseInt(route.query.idCritere.toString()));
     await fetchCritereById(parseInt(route.query.idCritere.toString()));
-    console.log('indicateur', indicateursByCritere.value);
+    //  console.log('indicateur', indicateursByCritere.value);
   }
   isLoading.value = false;
 });
@@ -367,7 +367,7 @@ async function addIndicateur() {
     closeBasic();
     window.alert("L'indicateur a bien été ajouté !");
   } catch (e) {
-    console.log(e);
+    //console.log(e);
   }
 }
 
@@ -382,7 +382,7 @@ async function changeIndicateur(monIndicateur: Indicateur) {
       monIndicateur.color
     );
   } catch (e) {
-    console.log(e);
+    //console.log(e);
   }
 }
 
@@ -393,7 +393,7 @@ async function removeIndicateur(indicateurId: number) {
       await deleteIndicateur(indicateurId);
       window.alert("L'indicateur a bien été supprimé !");
     } catch (e) {
-      console.log(e);
+      // console.log(e);
     }
   }
 }

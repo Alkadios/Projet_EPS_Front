@@ -319,7 +319,7 @@ async function addCritere() {
     closeBasic();
     window.alert('Le critère a bien été ajouté !');
   } catch (e) {
-    console.log(e);
+    // console.log(e);
   }
 }
 
@@ -327,7 +327,7 @@ async function changeCritere(monCritere: Critere) {
   try {
     await editCritere(monCritere.id, monCritere.titre, monCritere.description, monCritere.image, monCritere.url_video);
   } catch (e) {
-    console.log(e);
+    //console.log(e);
   }
 }
 
@@ -338,7 +338,7 @@ async function removeCritere(critereId: number) {
       await deleteCritere(critereId);
       window.alert('Le critère a bien été supprimé !');
     } catch (e) {
-      console.log(e);
+      //console.log(e);
     }
   }
 }
