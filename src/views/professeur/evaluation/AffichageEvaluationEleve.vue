@@ -225,7 +225,6 @@ watch(
   () => eleveSelectionne.value,
   () => {
     if (!isObjectEmpty(eleveSelectionne.value)) {
-      console.log('situationEvaluationSelectionner: ', situationEvaluationSelectionner.value);
       monAffichageGraphiqueByEleve.value = [];
       let indexGraphiqueClasseByCriterebyEleves = 0;
       situationEvaluationSelectionner.value?.criteres.forEach((c) => {
@@ -240,7 +239,6 @@ watch(
         ];
         c.Indicateur.forEach((i) => {
           if (i.evaluationEleves.find((f) => f.Eleve['@id'] === eleveSelectionne.value?.['@id'])) {
-            console.log('test : ', i);
             let nb = 0;
             monAffichageGraphiqueByEleve.value[indexGraphiqueClasseByCriterebyEleves].labels.push(i.libelle);
             i.evaluationEleves.forEach((ee) => {

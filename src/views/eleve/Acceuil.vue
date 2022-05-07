@@ -67,7 +67,6 @@ const isLoading = ref(false);
 onMounted(async () => {
   isLoading.value = true;
   await fetchEleveById(3);
-  console.log('moneleve : ', eleveById.value);
   isLoading.value = false;
 });
 
@@ -85,7 +84,6 @@ async function mesAPSAbyAnnee(idAnnee: number) {
   //   }
   // });
   // isLoading.value = false;
-  // console.log('final : ', mesAPSA.value);
   // return mesAPSA.value;
 }
 </script>
