@@ -188,7 +188,7 @@
     </div>
     <div class="mb-3">
       <div class="row">
-        <div class="col-3" v-for="monCritere in criteres" v-bind:key="monCritere.id">
+        <div class="col-3" v-for="monCritere in criteresByApsaRetenu" v-bind:key="monCritere.id">
           <Card>
             <template #title> {{ monCritere.titre }} </template>
             <template #content>
@@ -267,16 +267,12 @@ const router = useRouter();
 
 const { isObjectEmpty } = ObjectUtils();
 const { etablissement } = UtilisateurService();
-const { saveCritere, fetchCriteres, fetchCriteresByApsaRetenu, deleteCritere, editCritere, criteres } =
+const { saveCritere, fetchCriteres, fetchCriteresByApsaRetenu, deleteCritere, editCritere, criteresByApsaRetenu } =
   CritereService();
 const { apsaRetenu, fetchApsaRetenu } = ApsaRetenuService();
 
-const monTitleCritere = ref();
 const nouvelleImageCritere = ref<File>({} as File);
-const monUrlVideo = ref();
 const isLoading = ref(false);
-const mesCriteres = ref<Critere[]>([]);
-const CritereByApsaRetenu = ref<Critere[]>([]);
 const nouveauCritere = ref<Critere>({ titre: '', description: '', url_video: '', image: '' } as Critere);
 
 const displayBasic = ref(false);
@@ -291,19 +287,26 @@ function openEdit(monCritere: Critere) {
 }
 
 const closeBasic = () => {
-  window.location.reload();
   displayBasic.value = false;
 };
 
 const closeEdit = () => {
   displayEdit.value = false;
-  window.location.reload();
   window.alert('Le critère a bien été modifié !');
 };
 
 const imageCritereIsSelected = computed(() => {
   if (isObjectEmpty(nouvelleImageCritere.value) && nouveauCritere.value.image === '') return false;
   else return true;
+});
+
+onMounted(async () => {
+  isLoading.value = true;
+  if (route.query.idApsaRetenu) {
+    await fetchCriteresByApsaRetenu(parseInt(route.query.idApsaRetenu.toString()));
+    await fetchApsaRetenu(parseInt(route.query.idApsaRetenu.toString()));
+  }
+  isLoading.value = false;
 });
 
 async function addCritere() {
@@ -336,7 +339,6 @@ async function removeCritere(critereId: number) {
     try {
       await deleteCritere(critereId);
       window.alert('Le critère a bien été supprimé !');
-      window.location.reload();
     } catch (e) {
       console.log(e);
     }
@@ -352,22 +354,6 @@ function verif() {}
 function toIndicateur() {
   router.push('IndicateurAF');
 }
-
-onMounted(async () => {
-  isLoading.value = true;
-  if (route.query.idApsaRetenu) {
-    await fetchCriteres();
-    await fetchApsaRetenu(parseInt(route.query.idApsaRetenu.toString()));
-    criteres.value.forEach((a) => {
-      if (route.query.idApsaRetenu) {
-        if (a.ApsaRetenu.id === parseInt(route.query.idApsaRetenu.toString())) {
-          CritereByApsaRetenu.value.push(a);
-        }
-      }
-    });
-  }
-  isLoading.value = false;
-});
 
 function onPhotoChange(event: any) {
   nouvelleImageCritere.value = event.files[0];

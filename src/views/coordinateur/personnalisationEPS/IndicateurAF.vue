@@ -1,4 +1,24 @@
 <template>
+  <div class="card">
+    <OrderList v-model="indicateursByCritere" listStyle="height:auto">
+      <template #header> Listes des indicateur </template>
+      <template #item="slotProps">
+        <div class="product-item">
+          <div class="product-list-detail" :style="'background-color: ' + slotProps.item.color">
+            <strong class="mb-2">Titre: {{ slotProps.item.libelle }}</strong>
+            <hr />
+            <strong class="product-category"
+              >Description:
+              <p v-html="slotProps.item.description"></p
+            ></strong>
+            <strong class="product-category"
+              >Vidéo: <a>{{ slotProps.item.url_video }}</a></strong
+            >
+          </div>
+        </div>
+      </template>
+    </OrderList>
+  </div>
   <Dialog header="Ajouter un indicateur" v-model:visible="displayBasic" :style="{ width: '50vw' }">
     <div class="row" style="place-content: center">
       <div class="col-8">
@@ -49,7 +69,27 @@
                 <p>Couleur:</p>
               </div>
               <div class="col-9">
-                <ColorPicker v-model="nouveauIndicateur.color" defaultColor="#FF0000" />
+                <Button
+                  class="p-button-sm p-button-raised p-button-rounded"
+                  style="min-width: unset; background-color: #ff1300"
+                  @click="nouveauIndicateur.color = '#ff1300'"
+                />
+                <Button
+                  class="p-button-sm p-button-raised p-button-rounded"
+                  style="min-width: unset; background-color: #fffe00"
+                  @click="nouveauIndicateur.color = '#fffe00'"
+                />
+                <Button
+                  class="p-button-sm p-button-raised p-button-rounded"
+                  style="min-width: unset; background-color: #98ff00"
+                  @click="nouveauIndicateur.color = '#98ff00'"
+                />
+                <Button
+                  class="p-button-sm p-button-raised p-button-rounded"
+                  style="min-width: unset; background-color: #3c6500"
+                  @click="nouveauIndicateur.color = '#3c6500'"
+                />
+                <ColorPicker v-model="nouveauIndicateur.color" defaultColor="#FF0000" style="min-width: unset" />
               </div>
             </div>
             <div class="row" style="margin-top: 1.5rem">
@@ -199,13 +239,13 @@
       </div>
       <div v-if="critere" class="mb-3">
         <p>Titre du critère : {{ critere.titre }}</p>
-        <p>Description : {{ critere.description }}</p>
+        <p v-html="critere.description" />
         <!-- <Textarea class="w-100" :disabled="true" v-model="monCritere" :autoResize="true" rows="5" /> -->
       </div>
     </div>
     <div class="mb-3">
       <div class="row">
-        <div class="col-3" v-for="monIndicateur in indicateurs" v-bind:key="monIndicateur.id">
+        <div class="col-3" v-for="monIndicateur in indicateursByCritere" v-bind:key="monIndicateur.id">
           <Card>
             <template #title> {{ monIndicateur.libelle }} </template>
             <template #content>
@@ -267,15 +307,22 @@ import CritereService from '@/services/CritereService';
 import IndicateurService from '@/services/IndicateurService';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
-import { isObject } from '@vue/shared';
-import ColorPicker from 'primevue/colorpicker';
+import ObjectUtils from '@/utils/ObjectUtils';
 
 const route = useRoute();
 const router = useRouter();
-
+const { isObjectEmpty } = ObjectUtils();
 const { etablissement } = UtilisateurService();
 const { critere, fetchCriteres, fetchCritereById } = CritereService();
-const { saveIndicateur, deleteIndicateur, editIndicateur, fetchIndicateurs, indicateurs } = IndicateurService();
+const {
+  saveIndicateur,
+  deleteIndicateur,
+  editIndicateur,
+  fetchIndicateurs,
+  fetchIndicateursByCritere,
+  indicateurs,
+  indicateursByCritere,
+} = IndicateurService();
 const IndicateurByCritere = ref<Indicateur[]>([]);
 const nouvelleImageIndicateur = ref<File>({} as File);
 const nouveauIndicateur = ref<Indicateur>({
@@ -295,7 +342,6 @@ const openBasic = () => {
 
 const closeBasic = () => {
   displayBasic.value = false;
-  window.location.reload();
 };
 
 const displayEdit = ref(false);
@@ -306,9 +352,18 @@ function openEdit(monIndicateur: Indicateur) {
 
 const closeEdit = () => {
   displayEdit.value = false;
-  window.location.reload();
   window.alert('L\indicateur a bien été modifié !');
 };
+
+onMounted(async () => {
+  isLoading.value = true;
+  if (route.query.idCritere) {
+    await fetchIndicateursByCritere(parseInt(route.query.idCritere.toString()));
+    await fetchCritereById(parseInt(route.query.idCritere.toString()));
+    console.log('indicateur', indicateursByCritere.value);
+  }
+  isLoading.value = false;
+});
 
 async function addIndicateur() {
   try {
@@ -349,7 +404,6 @@ async function removeIndicateur(indicateurId: number) {
     try {
       await deleteIndicateur(indicateurId);
       window.alert("L'indicateur a bien été supprimé !");
-      window.location.reload();
     } catch (e) {
       console.log(e);
     }
@@ -361,20 +415,11 @@ function resetIndicateur() {
 }
 
 const imageIndicateurIsSelected = computed(() => {
-  if (!isObject(nouvelleImageIndicateur.value) && nouveauIndicateur.value.image === '') return false;
+  if (isObjectEmpty(nouvelleImageIndicateur.value) && nouveauIndicateur.value.image === '') return false;
   else return true;
 });
 
 function verif() {}
-
-onMounted(async () => {
-  isLoading.value = true;
-  if (route.query.idCritere) {
-    await fetchIndicateurs();
-    await fetchCritereById(parseInt(route.query.idCritere.toString()));
-  }
-  isLoading.value = false;
-});
 
 function onPhotoChange(event: any) {
   nouvelleImageIndicateur.value = event.files[0];

@@ -25,10 +25,10 @@ export default {
   },
   async fetchCritereByApsaRetenu(context: ActionContext<CritereState, any>, idApsaRetenu: number) {
     const response = await CritereAPI.fetchCriteresByApsaRetenu(idApsaRetenu);
-    if (response.status === 200) {
-      context.commit('setCritere', response.data);
+    if (response.data['hydra:totalItems'] > 0) {
+      context.commit('setCriteresByApsaRetenu', response.data['hydra:member']);
     } else {
-      context.commit('setCritere', {});
+      context.commit('setCriteresByApsaRetenu', []);
       //throw new Error(response.data.message);
     }
   },
@@ -63,11 +63,12 @@ export default {
   },
   async deleteCritere(context: ActionContext<CritereState, any>, payload: { idCritere: number }) {
     const response = await CritereAPI.deleteCritere(payload.idCritere);
-    if (response.data['hydra:totalItems'] > 0) {
-      context.commit('setCriteres', response.data['hydra:member']);
-    } else {
-      context.commit('setCriteres', []);
-      //throw new Error(response.data.message);
+    if (response.status == 204) {
+      const critere = context.getters.getCriteresByApsaRetenu;
+      context.commit(
+        'setCriteresByApsaRetenu',
+        critere.filter((c: Critere) => c.id != payload.idCritere)
+      );
     }
   },
   async editCritere(
@@ -75,11 +76,12 @@ export default {
     payload: { id: number; titre: string; description: string; image: string; urlVideo: string }
   ) {
     const response = await CritereAPI.editCritere(payload);
-    if (response.status === 201) {
+    if (response.status === 200) {
       context.commit('setCritere', response.data);
       //Ajout dans la liste critèresByApsaRetenu
       const criteresByApsaRetenu = ref<Critere[]>(context.getters.getCriteresByApsaRetenu);
-      criteresByApsaRetenu.value.push(response.data);
+      const indexCritere = criteresByApsaRetenu.value.findIndex((c) => c.id == payload.id);
+      criteresByApsaRetenu.value[indexCritere] = response.data;
       context.commit('setCriteresByApsaRetenu', criteresByApsaRetenu.value);
     }
   },

@@ -25,10 +25,10 @@ export default {
   },
   async fetchIndicateurByCritere(context: ActionContext<IndicateurState, any>, idCritere: number) {
     const response = await IndicateurAPI.fetchIndicateursByCritere(idCritere);
-    if (response.status === 200) {
-      context.commit('setIndicateur', response.data);
+    if (response.data['hydra:totalItems'] > 0) {
+      context.commit('setIndicateursByCritere', response.data['hydra:member']);
     } else {
-      context.commit('setIndicateur', {});
+      context.commit('setIndicateursByCritere', []);
       //throw new Error(response.data.message);
     }
   },
@@ -39,7 +39,6 @@ export default {
     const response = await IndicateurAPI.saveIndicateur(payload);
     if (response.status === 201) {
       context.commit('setIndicateur', response.data);
-      //Ajout dans la liste critèresByApsaRetenu
       const indicateursByCritere = ref<Indicateur[]>(context.getters.getIndicateurByCritere);
       indicateursByCritere.value.push(response.data);
       context.commit('setIndicateursByCritere', indicateursByCritere.value);
@@ -47,8 +46,12 @@ export default {
   },
   async deleteIndicateur(context: ActionContext<IndicateurState, any>, payload: { idIndicateur: number }) {
     const response = await IndicateurAPI.deleteIndicateur(payload.idIndicateur);
-    if (response.data['hydra:totalItems'] > 0) {
-      context.commit('setIndicateur', response.data['hydra:member']);
+    if (response.status == 204) {
+      const indicateur = context.getters.getIndicateurByCritere;
+      context.commit(
+        'setIndicateursByCritere',
+        indicateur.filter((i: Indicateur) => i.id != payload.idIndicateur)
+      );
     } else {
       context.commit('setIndicateur', []);
       //throw new Error(response.data.message);
@@ -59,12 +62,13 @@ export default {
     payload: { id: number; libelle: string; description: string; image: string; urlVideo: string; color: string }
   ) {
     const response = await IndicateurAPI.editIndicateur(payload);
-    if (response.status === 201) {
-      context.commit('setCritere', response.data);
+    if (response.status === 200) {
+      context.commit('setIndicateur', response.data);
       //Ajout dans la liste critèresByApsaRetenu
-      const criteresByApsaRetenu = ref<Indicateur[]>(context.getters.getCriteresByApsaRetenu);
-      criteresByApsaRetenu.value.push(response.data);
-      context.commit('setCriteresByApsaRetenu', criteresByApsaRetenu.value);
+      const indicateursByCritere = ref<Indicateur[]>(context.getters.getCriteresByApsaRetenu);
+      const indexIndicateur = indicateursByCritere.value.findIndex((i) => i.id == payload.id);
+      indicateursByCritere.value[indexIndicateur];
+      context.commit('setIndicateursByCritere', indicateursByCritere.value);
     }
   },
 };
