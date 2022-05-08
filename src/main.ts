@@ -56,6 +56,7 @@ import AccordionTab from 'primevue/accordiontab';
 import Fieldset from 'primevue/fieldset';
 import ToggleButton from 'primevue/togglebutton';
 import Chart from 'primevue/chart';
+import OrderList from 'primevue/orderlist';
 import './assets/css/monStyle.css';
 const { isObjectEmpty } = ObjectUtils();
 const { utilisateur } = UtilisateurService();
@@ -100,7 +101,8 @@ app
   .component('ColorPicker', ColorPicker)
   .component('ProgressSpinner', ProgressSpinner)
   .component('Skeleton', Skeleton)
-  .component('Chart', Chart);
+  .component('Chart', Chart)
+  .component('OrderList', OrderList);
 
 // Directives
 app.directive('tooltip', Tooltip);
