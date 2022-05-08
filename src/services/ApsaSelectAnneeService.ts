@@ -19,6 +19,21 @@ export default function ApsaSelectAnneeService() {
     await store.dispatch('ApsaSelectAnneeModule/fetchAllApsaSelectAnneeByAnneeAndClasse', { idAnnee, idClasse });
   }
 
+  const apsaSelectAnneeByApsaAndEtablissmenetAndAnnee = computed((): ApsaSelectAnnee[] => {
+    return store.getters['ApsaSelectAnneeModule/getApsaSelectAnneeByApsaAndEtablissmenetAndAnnee'];
+  });
+  async function fetchAllApsaSelectAnneeByApsaAndEtablissmenetAndAnnee(
+    idAPSA: number,
+    idAnnee: number,
+    idEtablissement: number
+  ) {
+    await store.dispatch('ApsaSelectAnneeModule/fetchAllApsaSelectAnneeByApsaAndEtablissmenetAndAnnee', {
+      idAPSA,
+      idAnnee,
+      idEtablissement,
+    });
+  }
+
   const apsaSelectAnneeByAnneeAndEtablissement = computed((): ApsaSelectAnnee[] => {
     return store.getters['ApsaSelectAnneeModule/getApsaSelectAnneeByAnneeAndEtablissement'];
   });
@@ -46,5 +61,7 @@ export default function ApsaSelectAnneeService() {
     saveApsaSelectAnnee,
     fetchAllApsaSelectAnneeByAnneeAndEtablissement,
     apsaSelectAnneeByAnneeAndEtablissement,
+    apsaSelectAnneeByApsaAndEtablissmenetAndAnnee,
+    fetchAllApsaSelectAnneeByApsaAndEtablissmenetAndAnnee,
   };
 }

@@ -15,15 +15,13 @@ export default {
     return axios.post(`${url.toString()}`, login, apiConfig.value);
   },
 
-  
   async saveUser(payload: {
     email: string;
     prenom: string;
     nom: string;
     telephone: string;
     role: RoleUtilisateur;
-    }): Promise<AxiosResponse> {
+  }): Promise<AxiosResponse> {
     return axios.post(`${ApiUrlUtilisateur}`, payload, apiConfig.value);
   },
-
 };

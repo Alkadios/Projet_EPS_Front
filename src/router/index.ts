@@ -21,11 +21,6 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('../views/coordinateur/personnalisationEPS/GestionAPSA.vue'),
   },
   {
-    path: '/ajoutQuantiteTravailEleve',
-    name: 'AjoutQuantiteTravailEleve',
-    component: () => import('../views/coordinateur/personnalisationEPS/AjoutQuantiteTravailEleve.vue'),
-  },
-  {
     path: '/ApsaRetenuAF',
     name: 'ApsaRetenuAF',
     component: () => import('../views/coordinateur/personnalisationEPS/ApsaRetenuAF.vue'),
@@ -59,6 +54,16 @@ const routes: Array<RouteRecordRaw> = [
     path: '/AffichageEvaluationEleve',
     name: 'AffichageEvaluationEleve',
     component: () => import('../views/professeur/evaluation/AffichageEvaluationEleve.vue'),
+  },
+  {
+    path: '/AffichageMesEvaluation',
+    name: 'EvaluationEleve',
+    component: () => import('../views/eleve/evaluation/AffichageEvaluationAPSA_Eleve.vue'),
+  },
+  {
+    path: '/Acceuil',
+    name: 'Acceuil',
+    component: () => import('../views/eleve/Acceuil.vue'),
   },
   {
     path: '/Profil',

@@ -1,4 +1,4 @@
-export const ApiUrl = 'https://localhost:8000/api';
+export const ApiUrl = process.env.VUE_APP_OCPEPS_API_BASE_URL;
 export const ApiUrlUtilisateur = `${ApiUrl}/utilisateur`;
 export const ApiUrlChampApprentissage = `${ApiUrl}/champ_apprentissages`;
 export const ApiURLAPSA = `${ApiUrl}/apsas`;

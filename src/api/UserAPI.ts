@@ -4,14 +4,7 @@ import { ResponseModel } from '@/models';
 import { apiConfig } from '@/config/UtilisateurConfig';
 
 export default {
-
-
-  async saveUser(payload: {
-    id: number;
-    email: string;
-    roles: string;
-    password: string;
-  }): Promise<AxiosResponse> {
+  async saveUser(payload: { id: number; email: string; roles: string; password: string }): Promise<AxiosResponse> {
     return axios.post(`${ApiURLUser}`, payload, apiConfig.value);
   },
 };

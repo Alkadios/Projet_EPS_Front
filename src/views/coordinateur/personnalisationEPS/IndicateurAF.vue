@@ -4,29 +4,78 @@
       <div class="col-8">
         <Card>
           <template #title>
-            <InputText id="Title" v-model="nouveauIndicateur.libelle" type="text" placeholder="Titre" />
+            <p class="text-center">Entrez les informations</p>
           </template>
           <template #content>
-            <Editor
-              v-model="nouveauIndicateur.description"
-              editorStyle="height: 130px"
-              placeholder="Entrez la description de l'indicateur"
-            >
-              <template v-slot:toolbar>
-                <span class="ql-formats">
-                  <button class="ql-list" value="bullet" type="button"></button>
-                  <button class="ql-bold" v-tooltip.bottom="'Bold'"></button>
-                  <button class="ql-italic" v-tooltip.bottom="'Italic'"></button>
-                  <button class="ql-underline" v-tooltip.bottom="'Underline'"></button>
-                </span>
-              </template>
-            </Editor>
-            <div>
-              <InputText id="UrlVideo" v-model="nouveauIndicateur.url_video" type="text" placeholder="URL vidéo" />
+            <div class="row" style="margin-top: 1.5rem">
+              <div class="col-3">
+                <p>Titre :</p>
+              </div>
+              <div class="col-9">
+                <InputText id="Title" v-model="nouveauIndicateur.libelle" type="text" placeholder="Titre" />
+              </div>
             </div>
-            <div style="margin-top: 1.5rem">
-              <p>Couleur:</p>
-              <ColorPicker v-model="nouveauIndicateur.color" defaultColor="#FF0000" />
+            <div class="row" style="margin-top: 1.5rem">
+              <div class="col-3">
+                <p>Description :</p>
+              </div>
+              <div class="col-9">
+                <Editor
+                  v-model="nouveauIndicateur.description"
+                  editorStyle="height: 130px"
+                  placeholder="Entrez la description de l'indicateur"
+                >
+                  <template v-slot:toolbar>
+                    <span class="ql-formats">
+                      <button class="ql-list" value="bullet" type="button"></button>
+                      <button class="ql-bold" v-tooltip.bottom="'Bold'"></button>
+                      <button class="ql-italic" v-tooltip.bottom="'Italic'"></button>
+                      <button class="ql-underline" v-tooltip.bottom="'Underline'"></button>
+                    </span>
+                  </template>
+                </Editor>
+              </div>
+            </div>
+            <div class="row" style="margin-top: 1.5rem">
+              <div class="col-3">
+                <p>Vidéo :</p>
+              </div>
+              <div class="col-9">
+                <InputText id="UrlVideo" v-model="nouveauIndicateur.url_video" type="text" placeholder="URL vidéo" />
+              </div>
+            </div>
+            <div class="row" style="margin-top: 1.5rem">
+              <div class="col-3">
+                <p>Couleur:</p>
+              </div>
+              <div class="col-9">
+                <Button
+                  class="p-button-sm p-button-raised p-button-rounded"
+                  style="min-width: unset; background-color: #ff1300"
+                  @click="nouveauIndicateur.color = 'ff1300'"
+                />
+                <Button
+                  class="p-button-sm p-button-raised p-button-rounded"
+                  style="min-width: unset; background-color: #fffe00"
+                  @click="nouveauIndicateur.color = 'fffe00'"
+                />
+                <Button
+                  class="p-button-sm p-button-raised p-button-rounded"
+                  style="min-width: unset; background-color: #98ff00"
+                  @click="nouveauIndicateur.color = '98ff00'"
+                />
+                <Button
+                  class="p-button-sm p-button-raised p-button-rounded"
+                  style="min-width: unset; background-color: #3c6500"
+                  @click="nouveauIndicateur.color = '3c6500'"
+                />
+                <ColorPicker
+                  format="hex"
+                  v-model="nouveauIndicateur.color"
+                  defaultColor="#FF0000"
+                  style="min-width: unset"
+                />
+              </div>
             </div>
             <div class="row" style="margin-top: 1.5rem">
               <div class="col-3">
@@ -61,8 +110,8 @@
       </div>
     </div>
     <template #footer>
-      <Button label="No" icon="pi pi-times" @click="closeBasic" class="p-button-text" />
-      <Button label="Yes" icon="pi pi-check" @click="addIndicateur" autofocus />
+      <Button label="Annuler" icon="pi pi-times" @click="closeBasic" class="p-button-text" />
+      <Button label="Ajouter" icon="pi pi-check" @click="addIndicateur" autofocus />
     </template>
   </Dialog>
   <Dialog header="Modifier un indicateur" v-model:visible="displayEdit" :style="{ width: '50vw' }">
@@ -70,29 +119,53 @@
       <div class="col-8">
         <Card>
           <template #title>
-            <InputText id="Title" v-model="nouveauIndicateur.libelle" type="text" placeholder="Titre" />
+            <p class="text-center">Entrez les informations</p>
           </template>
           <template #content>
-            <Editor
-              v-model="nouveauIndicateur.description"
-              editorStyle="height: 130px"
-              placeholder="Entrez vos critères"
-            >
-              <template v-slot:toolbar>
-                <span class="ql-formats">
-                  <button class="ql-list" value="bullet" type="button"></button>
-                  <button class="ql-bold" v-tooltip.bottom="'Bold'"></button>
-                  <button class="ql-italic" v-tooltip.bottom="'Italic'"></button>
-                  <button class="ql-underline" v-tooltip.bottom="'Underline'"></button>
-                </span>
-              </template>
-            </Editor>
-            <div style="margin-top: 1.5rem">
-              <InputText id="UrlVideo" v-model="nouveauIndicateur.url_video" type="text" placeholder="URL vidéo" />
+            <div class="row" style="margin-top: 1.5rem">
+              <div class="col-3">
+                <p>Titre :</p>
+              </div>
+              <div class="col-9">
+                <InputText id="Title" v-model="nouveauIndicateur.libelle" type="text" placeholder="Titre" />
+              </div>
             </div>
-            <div style="margin-top: 1.5rem">
-              <p>Couleur:</p>
-              <ColorPicker v-model="nouveauIndicateur.color" />
+            <div class="row" style="margin-top: 1.5rem">
+              <div class="col-3">
+                <p>Description :</p>
+              </div>
+              <div class="col-9">
+                <Editor
+                  v-model="nouveauIndicateur.description"
+                  editorStyle="height: 130px"
+                  placeholder="Entrez vos critères"
+                >
+                  <template v-slot:toolbar>
+                    <span class="ql-formats">
+                      <button class="ql-list" value="bullet" type="button"></button>
+                      <button class="ql-bold" v-tooltip.bottom="'Bold'"></button>
+                      <button class="ql-italic" v-tooltip.bottom="'Italic'"></button>
+                      <button class="ql-underline" v-tooltip.bottom="'Underline'"></button>
+                    </span>
+                  </template>
+                </Editor>
+              </div>
+            </div>
+            <div class="row" style="margin-top: 1.5rem">
+              <div class="col-3">
+                <p>Vidéo</p>
+              </div>
+              <div class="col-9">
+                <InputText id="UrlVideo" v-model="nouveauIndicateur.url_video" type="text" placeholder="URL vidéo" />
+              </div>
+            </div>
+            <div class="row" style="margin-top: 1.5rem">
+              <div class="col-3">
+                <p>Couleur:</p>
+              </div>
+              <div class="col-9">
+                <ColorPicker v-model="nouveauIndicateur.color" />
+              </div>
             </div>
             <div class="row" style="margin-top: 1.5rem">
               <div class="col-3">
@@ -151,43 +224,49 @@
       </div>
       <div v-if="critere" class="mb-3">
         <p>Titre du critère : {{ critere.titre }}</p>
-        <p>Description : {{ critere.description }}</p>
+        <p v-html="critere.description" />
         <!-- <Textarea class="w-100" :disabled="true" v-model="monCritere" :autoResize="true" rows="5" /> -->
       </div>
     </div>
-    <div class="mb-3">
-      <div class="row">
-        <div class="col-3" v-for="monIndicateur in indicateurs" v-bind:key="monIndicateur.id">
-          <Card>
-            <template #title> {{ monIndicateur.libelle }} </template>
-            <template #content>
-              <p v-html="monIndicateur.description" />
-              <Button class="p-button-rounded p-button-info" @click="openEdit(monIndicateur)"
-                ><i class="pi pi-pencil"
-              /></Button>
-              <Button class="p-button-rounded p-button-danger" @click="removeIndicateur(monIndicateur.id)"
-                ><i class="pi pi-times"
-              /></Button>
-            </template>
-          </Card>
-        </div>
-        <div class="col-3">
-          <Card>
-            <template #title> <p style="text-align: center">Ajouter un indicateur</p></template>
-            <template #content>
-              <p style="text-align: center">
-                <i
-                  class="pi pi-plus"
-                  @click="openBasic"
-                  style="cursor: pointer; font-size: 5rem; border-radius: 50%; border: 0.3rem solid"
-                />
-              </p>
-            </template>
-          </Card>
-        </div>
-      </div>
+    <div class="card container">
+      <OrderList v-model="indicateursByCritere" listStyle="height:auto">
+        <template #header> Listes des indicateur </template>
+        <template #item="nouveauIndicateur">
+          <div class="container col-12">
+            <div class="p-3 row" :style="'background-color: ' + nouveauIndicateur.item.color + '; border-radius: 10px'">
+              <div class="col-11">
+                <strong class="mb-2">Titre: {{ nouveauIndicateur.item.libelle }}</strong>
+                <hr />
+                <strong
+                  >Description:
+                  <p v-html="nouveauIndicateur.item.description"></p
+                ></strong>
+                <strong
+                  >Vidéo: <a>{{ nouveauIndicateur.item.url_video }}</a></strong
+                >
+              </div>
+              <div class="col-1 align-center mt-5">
+                <Button class="p-button-rounded p-button-info" @click="openEdit(nouveauIndicateur.item)"
+                  ><i class="pi pi-pencil"
+                /></Button>
+                <Button class="p-button-rounded p-button-danger" @click="removeIndicateur(nouveauIndicateur.item.id)"
+                  ><i class="pi pi-trash"
+                /></Button>
+              </div>
+            </div>
+          </div>
+        </template>
+      </OrderList>
+      <button class="btn-info col-12" style="border-radius: 10px">
+        <i
+          class="m-3 pi pi-plus"
+          @click="openBasic"
+          style="cursor: pointer; border-radius: 50%; border: 0.3rem solid; font-size: 2em"
+        />
+        <p>Ajouter un critère</p>
+      </button>
     </div>
-    <div class="mb-3">
+    <div class="container-fluid text-center mb-10 Pl-10">
       <Button label="Valider" style="right: 1rem" icon="pi pi-check" @click="verif()" autofocus></Button>
       <Button
         label="Retour aux critères"
@@ -197,7 +276,7 @@
         autofocus
       ></Button>
     </div>
-    <div style="position: fixed; bottom: 0; right: 0">
+    <div style="position: fixed; bottom: 0; right: 2rem">
       <ProgressSpinner
         v-if="isLoading"
         style="float: right; width: 50px; height: 50px"
@@ -216,15 +295,22 @@ import CritereService from '@/services/CritereService';
 import IndicateurService from '@/services/IndicateurService';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
-import { isObject } from '@vue/shared';
-import ColorPicker from 'primevue/colorpicker';
+import ObjectUtils from '@/utils/ObjectUtils';
 
 const route = useRoute();
 const router = useRouter();
-
+const { isObjectEmpty } = ObjectUtils();
 const { etablissement } = UtilisateurService();
 const { critere, fetchCriteres, fetchCritereById } = CritereService();
-const { saveIndicateur, deleteIndicateur, editIndicateur, fetchIndicateurs, indicateurs } = IndicateurService();
+const {
+  saveIndicateur,
+  deleteIndicateur,
+  editIndicateur,
+  fetchIndicateurs,
+  fetchIndicateursByCritere,
+  indicateurs,
+  indicateursByCritere,
+} = IndicateurService();
 const IndicateurByCritere = ref<Indicateur[]>([]);
 const nouvelleImageIndicateur = ref<File>({} as File);
 const nouveauIndicateur = ref<Indicateur>({
@@ -244,7 +330,6 @@ const openBasic = () => {
 
 const closeBasic = () => {
   displayBasic.value = false;
-  window.location.reload();
 };
 
 const displayEdit = ref(false);
@@ -255,9 +340,18 @@ function openEdit(monIndicateur: Indicateur) {
 
 const closeEdit = () => {
   displayEdit.value = false;
-  window.location.reload();
   window.alert('L\indicateur a bien été modifié !');
 };
+
+onMounted(async () => {
+  isLoading.value = true;
+  if (route.query.idCritere) {
+    await fetchIndicateursByCritere(parseInt(route.query.idCritere.toString()));
+    await fetchCritereById(parseInt(route.query.idCritere.toString()));
+    //  console.log('indicateur', indicateursByCritere.value);
+  }
+  isLoading.value = false;
+});
 
 async function addIndicateur() {
   try {
@@ -267,13 +361,13 @@ async function addIndicateur() {
       nouveauIndicateur.value.description,
       nouveauIndicateur.value.image,
       nouveauIndicateur.value.url_video,
-      nouveauIndicateur.value.color,
+      '#' + nouveauIndicateur.value.color,
       critere.value['@id']
     );
     closeBasic();
     window.alert("L'indicateur a bien été ajouté !");
   } catch (e) {
-    console.log(e);
+    //console.log(e);
   }
 }
 
@@ -288,7 +382,7 @@ async function changeIndicateur(monIndicateur: Indicateur) {
       monIndicateur.color
     );
   } catch (e) {
-    console.log(e);
+    //console.log(e);
   }
 }
 
@@ -298,9 +392,8 @@ async function removeIndicateur(indicateurId: number) {
     try {
       await deleteIndicateur(indicateurId);
       window.alert("L'indicateur a bien été supprimé !");
-      window.location.reload();
     } catch (e) {
-      console.log(e);
+      // console.log(e);
     }
   }
 }
@@ -310,20 +403,11 @@ function resetIndicateur() {
 }
 
 const imageIndicateurIsSelected = computed(() => {
-  if (!isObject(nouvelleImageIndicateur.value) && nouveauIndicateur.value.image === '') return false;
+  if (isObjectEmpty(nouvelleImageIndicateur.value) && nouveauIndicateur.value.image === '') return false;
   else return true;
 });
 
 function verif() {}
-
-onMounted(async () => {
-  isLoading.value = true;
-  if (route.query.idCritere) {
-    await fetchIndicateurs();
-    await fetchCritereById(parseInt(route.query.idCritere.toString()));
-  }
-  isLoading.value = false;
-});
 
 function onPhotoChange(event: any) {
   nouvelleImageIndicateur.value = event.files[0];

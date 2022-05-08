@@ -48,6 +48,16 @@
           >
         </li>
         <li class="nav-item">
+          <router-link class="nav-link" to="/AffichageMesEvaluation"
+            ><i class="fas fa-table"></i><span>Affichage Evaluation d'un Eleve </span></router-link
+          >
+        </li>
+        <li class="nav-item">
+          <router-link class="nav-link" to="/Acceuil"
+            ><i class="fas fa-table"></i><span>Accueil Eleve </span></router-link
+          >
+        </li>
+        <li class="nav-item">
           <router-link class="nav-link" to="/ajoutQuantiteTravailEleve"
             ><i class="fas fa-table"></i><span>Ajout Quantite Travail </span></router-link
           >

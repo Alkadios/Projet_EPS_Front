@@ -3,4 +3,6 @@ export interface AF {
   id: number;
   libelle: string;
   description: string;
+  ca: string;
+  typeAf: string;
 }

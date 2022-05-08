@@ -3,7 +3,6 @@ import AnneeAPI from '@/api/AnneeAPI';
 import NiveauScolaireState from './stateInterface';
 import NiveauScolaireAPI from '@/api/NiveauScolaireAPI';
 
-
 export default {
   async fetchAllNiveauxScolaires(context: ActionContext<NiveauScolaireState, any>) {
     const response = await NiveauScolaireAPI.fetchAllNiveauxScolaires();
@@ -13,6 +12,4 @@ export default {
       //throw new Error(response.data.message);
     }
   },
-
-
 };

@@ -12,6 +12,9 @@ export default {
   }): Promise<AxiosResponse> {
     return axios.post(`${ApiURLChoixAnnee}`, payload, apiConfig.value);
   },
+  async saveAfRetenuInChoixAnnee(payload: { idChoixAnnee: number; afs: { Af: number }[] }): Promise<AxiosResponse> {
+    return axios.post(`${ApiURLChoixAnnee}/${payload.idChoixAnnee}/deleteAndReplaceAF`, payload.afs, apiConfig.value);
+  },
   async fetchAllChoixAnneeByAnneeAndEtablissement(
     idAnnee: number,
     idEtablissement: number

@@ -100,8 +100,16 @@
         <Column field="AfRetenu.Af.libelle" header="AF" />
         <Column field="SituationEvaluation" header="Situation d'évaluation" />
         <Column headerStyle="width:4rem">
-          <template #body>
-            <Button icon="pi pi-pencil" />
+          <template #body="slotProps">
+            <Button
+              icon="pi pi-pencil"
+              @click="
+                router.push({
+                  name: 'DeclinerAFRetenus',
+                  query: { idNiveau: slotProps.data.Niveau.id, idCa: slotProps.data.champApprentissage.id },
+                })
+              "
+            />
           </template>
         </Column>
         <template #expansion="slotProps">
@@ -230,7 +238,6 @@ async function fetchConfigAnnee() {
   await fetchAllApsaSelectAnneeByAnnee(nouvelAnneeEnConfig.value.id);
   await fetchAllChoixAnneeByAnneeAndEtablissement(nouvelAnneeEnConfig.value.id, etablissement.value.id);
   await fetchApsaRetenuByAnneeAndEtablissement(anneeEnConfig.value.id, etablissement.value.id);
-  console.log('apsaRetenu', apsasRetenusByEtablissementAndAnnee.value);
   isLoading.value = false;
 }
 
@@ -244,9 +251,5 @@ function getStringApsaByIdCa(idCa: number) {
 async function onAnneeEnConfigChange() {
   await storeAnneeEnConfig(nouvelAnneeEnConfig.value);
   await fetchConfigAnnee();
-}
-
-function onNiveauChange(data: any) {
-  console.log('data', data);
 }
 </script>

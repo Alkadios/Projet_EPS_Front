@@ -123,6 +123,14 @@
           </template>
         </Card>
       </div>
+      <div style="position: fixed; bottom: 0; right: 2rem">
+        <ProgressSpinner
+          v-if="isLoading"
+          style="float: right; width: 50px; height: 50px"
+          strokeWidth="8"
+          animationDuration=".5s"
+        />
+      </div>
     </div>
     <template #footer>
       <Button label="No" icon="pi pi-times" @click="closeBasic" class="p-button-text" />
@@ -135,18 +143,20 @@
 import { Classe, Eleve } from '@/models';
 import ClasseService from '@/services/ClasseService';
 import EleveService from '@/services/EleveService';
+import UtilisateurService from '@/services/UtilisateurService';
 import eleve from '@/store/modules/eleve';
 import { ref, onMounted, toRaw } from 'vue';
 
 const isLoading = ref(false);
 const { fetchAllEleves, saveEleve, eleves, deleteEleve, fetchEleveById, eleveById, updateEleve } = EleveService();
 const { fetchAllClasses, fetchClasseByAnnee, classesByAnnee, addElevesInClasse, classes } = ClasseService();
+const { etablissement, anneeEnCours } = UtilisateurService();
 
 onMounted(async () => {
   isLoading.value = true;
   await fetchAllEleves();
   await fetchAllClasses();
-  await fetchClasseByAnnee(3);
+  await fetchClasseByAnnee(anneeEnCours.value.id);
   isLoading.value = false;
 });
 
@@ -164,6 +174,7 @@ const selectedElevesOnClasse = ref<Eleve[]>();
 const mesElevesSansClasse = ref<Eleve[]>([]);
 const mesElevesRetirer = ref<Eleve[]>();
 const displayBasic = ref(false);
+const isLoading = ref(false);
 const openBasic = () => {
   displayBasic.value = true;
   filterElevesSansClasse();
@@ -171,6 +182,7 @@ const openBasic = () => {
 
 function filterElevesSansClasse() {
   mesElevesSansClasse.value = eleves.value.filter((e) => e.classe.length == 0);
+  isLoading.value = false;
 }
 
 function onClasseChange() {
@@ -179,18 +191,15 @@ function onClasseChange() {
   }
 }
 
-console.log(ref<Classe[]>([]));
-
-let columns;
-console.log('classe', selectedEleves);
-
 async function champsEleve(idEleve: number) {
+  isLoading.value = true;
   eleveDialog.value = true;
   await fetchEleveById(idEleve);
-  console.log('test', eleveById.value);
+  isLoading.value = false;
 }
 
 async function editEleve(idEleve: number) {
+  isLoading.value = true;
   await updateEleve(
     idEleve,
     eleveById.value.nom,
@@ -204,30 +213,29 @@ async function editEleve(idEleve: number) {
   alert('Votre Eleve à ete modifié');
   eleveDialog.value = false;
   await fetchClasseByAnnee(3);
-  console.log('fetchAllEleves', eleves.value);
   onClasseChange();
-  console.log('onClasseChange', mesEleves.value);
+  isLoading.value = false;
 }
 
 async function editClasse(idClasse: number) {
   const idsEleveExistant = mesEleves.value.map((e: Eleve) => {
     return e['@id'];
   });
-  console.log('idsEleveExistant', idsEleveExistant);
   if (selectedEleves.value) {
     const idsEleve = selectedEleves.value.map((e: Eleve) => {
       return e['@id'];
     });
     const arrayidEleve = idsEleveExistant.concat(idsEleve);
-    console.log('monarray', arrayidEleve);
-    console.log(idsEleve);
+
     if (idsEleve) await addElevesInClasse(idClasse, arrayidEleve);
   }
 
   alert('Votre Eleve à ete ajouté à cette classe');
   eleveDialog.value = false;
+  isLoading.value = true;
   await fetchAllEleves();
   onClasseChange();
+  isLoading.value = false;
 }
 
 async function deleteFromClasse(idClasse: number) {

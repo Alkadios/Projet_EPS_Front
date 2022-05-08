@@ -40,8 +40,7 @@
           class="w-100"
           :autoResize="true"
           rows="5"
-          placeholder="Ex : Pour produire une performance maximale connue sur un 800m, utiliser préférentiellement des repères intérieurs afin de réaliser une course avec des variations d’allures optimales régulées par quelques repères extérieurs exprimés par un partenaire.
-"
+          placeholder="Ex : Pour produire une performance maximale connue sur un 800m, utiliser préférentiellement des repères intérieurs afin de réaliser une course avec des variations d’allures optimales régulées par quelques repères extérieurs exprimés par un partenaire."
         />
       </div>
     </div>
@@ -87,15 +86,12 @@ async function ajoutApsaRetenu() {
   if ((monAfRetenuSelected.value['@id'], situationEvaluation.value, monAPSA.value?.['@id'])) {
     await saveApsaRetenu(monAfRetenuSelected.value['@id'], situationEvaluation.value, monAPSA.value?.['@id']);
     router.push({ name: 'Critere', query: { idApsaRetenu: apsaRetenu.value.id } });
-  } else {
-    console.log((monAfRetenuSelected.value['@id'], situationEvaluation.value, monAPSA.value?.['@id']));
   }
 }
 
 watch(
   () => monAPSA.value,
   async () => {
-    console.log('watch1', monAPSA.value);
     if (monAPSA.value) {
       isLoading.value = true;
       //await fetchAllAfRetenuByAnneeAndNiveauScolaire(annee.value.id, niveauScolaireSelectionne.value?.id);
@@ -118,7 +114,6 @@ onMounted(async () => {
       }
     }
   });
-  //console.log('mes apsa select : ', apsaSelects.value);
 
   afRetenus.value.forEach((b) => {
     if (route.query.idChoixAnnee) {
