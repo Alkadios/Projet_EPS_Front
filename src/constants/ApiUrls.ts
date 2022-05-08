@@ -19,3 +19,5 @@ export const ApiIndicateur = `${ApiUrl}/indicateurs`;
 export const ApiProfesseurClasses = `${ApiUrl}/professeur_classes`;
 export const ApiEleve = `${ApiUrl}/eleves`;
 export const ApiEvaluationEleve = `${ApiUrl}/evaluation_eleves`;
+export const ApiURLProfesseur = `${ApiUrl}/professeurs`;
+export const ApiURLCreateProf = `${ApiUrl}/professeur/create`;

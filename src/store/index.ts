@@ -17,6 +17,7 @@ import ClasseModule from '@/store/modules/classe/index';
 import EvaluationEleveModule from '@/store/modules/evaluationEleve/index';
 import IndicateurModule from '@/store/modules/indicateur/index';
 import AnneeModule from '@/store/modules/annee/index';
+import ProfesseurModule from '@/store/modules/professeur/index';
 
 const keyLocalStorage = 'ocpepsstore';
 
@@ -49,5 +50,6 @@ export default createStore({
     CritereModule,
     EvaluationEleveModule,
     IndicateurModule,
+    ProfesseurModule,
   },
 });
