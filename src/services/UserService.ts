@@ -1,5 +1,7 @@
 import { computed } from 'vue';
 import { useStore } from 'vuex';
+import jwt_decode from 'jwt-decode';
+import { User } from '@/models';
 
 export default function UserService() {
   const store = useStore();
@@ -13,14 +15,35 @@ export default function UserService() {
     });
   }
 
+  const token = computed((): string => {
+    return store.getters['UserModule/getToken'];
+  });
+
+
+  async function login(username: string, password: string) {
+    await store.dispatch('UserModule/login', {
+      username,
+      password,
+    });
+  }
+
+  async function deconnexion() {
+    
+  }
+
   async function deleteUser(idUser: number) {
     await store.dispatch('UserModule/deleteUser', {
       idUser: idUser,
     });
   }
 
+  
+
   return {
     saveUser,
-    deleteUser
+    deleteUser,
+    login,
+    deconnexion,
+    token
   };
 }

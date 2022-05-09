@@ -8,7 +8,8 @@ export default {
   namespaced: true,
   state(): UserState {
     return {
-      users: [] as User[],
+      user: {} as User,
+      token: '',
     };
   },
   mutations,

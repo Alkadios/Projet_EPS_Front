@@ -75,13 +75,16 @@
   </nav>
 </template>
 <script lang="ts" setup>
+import UserService from '@/services/UserService';
 import { onMounted, ref } from 'vue';
 const displayMenu = ref(window.innerWidth >= 600);
+const { token } = UserService();
 
 onMounted(function () {
   // Evènement utilisé pour contrôler basculer le menu en mode ouvert ou fermé lors du passage de mobile à PC
   window.addEventListener('resize', () => {
     displayMenu.value = window.innerWidth >= 600;
   });
+  console.log('test', token);
 });
 </script>

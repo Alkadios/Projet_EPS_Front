@@ -21,3 +21,4 @@ export const ApiEleve = `${ApiUrl}/eleves`;
 export const ApiEvaluationEleve = `${ApiUrl}/evaluation_eleves`;
 export const ApiURLProfesseur = `${ApiUrl}/professeurs`;
 export const ApiURLCreateProf = `${ApiUrl}/professeur/create`;
+export const ApiURLLogin = `${ApiUrl}/login`;
