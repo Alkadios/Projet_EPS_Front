@@ -28,6 +28,24 @@
           </div>
         </li>
         <li class="nav-item">
+          <div class="btn-group dropend">
+            <a class="nav-link" id="settings-nav-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="fas fa-cog"></i><span>Gestion des utilisateurs</span>
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+              <li v-if="token == null">
+                <router-link to="#" class="dropdown-item">Connecteé-vous</router-link>
+              </li>
+              <li v-if="token != null">
+                <router-link to="/CrudEleve" class="dropdown-item">Gestion des eleves</router-link>
+                <router-link to="/GestionClasse" class="dropdown-item">Gestion des classes</router-link>
+                <router-link to="/GestionEleve" class="dropdown-item">Attribution des classes</router-link>
+                <router-link to="/GestionProfesseur" class="dropdown-item">Gestion des professeurs</router-link>
+              </li>
+            </ul>
+          </div>
+        </li>
+        <li class="nav-item">
           <router-link class="nav-link" to="/AffichageEvaluationEleve"
             ><i class="fas fa-table"></i><span>Affichage Evaluation </span></router-link
           >
@@ -60,13 +78,16 @@
   </nav>
 </template>
 <script lang="ts" setup>
+import UserService from '@/services/UserService';
 import { onMounted, ref } from 'vue';
 const displayMenu = ref(window.innerWidth >= 600);
+const { token, user } = UserService();
 
 onMounted(function () {
   // Evènement utilisé pour contrôler basculer le menu en mode ouvert ou fermé lors du passage de mobile à PC
   window.addEventListener('resize', () => {
     displayMenu.value = window.innerWidth >= 600;
   });
+  console.log('test', token);
 });
 </script>

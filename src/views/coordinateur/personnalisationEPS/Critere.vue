@@ -77,8 +77,8 @@
       </div>
     </div>
     <template #footer>
-      <Button label="No" icon="pi pi-times" @click="closeBasic" class="p-button-text" />
-      <Button label="Yes" icon="pi pi-check" @click="addCritere" autofocus />
+      <Button label="Annuler" icon="pi pi-times" @click="closeBasic" class="p-button-text" />
+      <Button label="Ajouter" icon="pi pi-check" @click="addCritere" autofocus />
     </template>
   </Dialog>
   <Dialog header="Modifier un critère" v-model:visible="displayEdit" :style="{ width: '50vw' }">
@@ -275,6 +275,7 @@ const nouveauCritere = ref<Critere>({ titre: '', description: '', url_video: '',
 
 const displayBasic = ref(false);
 const openBasic = () => {
+  resetCritere();
   displayBasic.value = true;
 };
 
@@ -308,38 +309,26 @@ onMounted(async () => {
 });
 
 async function addCritere() {
-  try {
-    await saveCritere(
-      nouveauCritere.value.titre,
-      nouveauCritere.value.description,
-      nouveauCritere.value.image,
-      nouveauCritere.value.url_video,
-      apsaRetenu.value['@id']
-    );
-    closeBasic();
-    window.alert('Le critère a bien été ajouté !');
-  } catch (e) {
-    // console.log(e);
-  }
+  await saveCritere(
+    nouveauCritere.value.titre,
+    nouveauCritere.value.description,
+    nouveauCritere.value.image,
+    nouveauCritere.value.url_video,
+    apsaRetenu.value['@id']
+  );
+  closeBasic();
+  window.alert('Le critère a bien été ajouté !');
 }
 
 async function changeCritere(monCritere: Critere) {
-  try {
-    await editCritere(monCritere.id, monCritere.titre, monCritere.description, monCritere.image, monCritere.url_video);
-  } catch (e) {
-    //console.log(e);
-  }
+  await editCritere(monCritere.id, monCritere.titre, monCritere.description, monCritere.image, monCritere.url_video);
 }
 
 async function removeCritere(critereId: number) {
   let x = window.confirm('Voulez vous vraiment supprimer ce critère ?');
   if (x) {
-    try {
-      await deleteCritere(critereId);
-      window.alert('Le critère a bien été supprimé !');
-    } catch (e) {
-      //console.log(e);
-    }
+    await deleteCritere(critereId);
+    window.alert('Le critère a bien été supprimé !');
   }
 }
 

@@ -1,7 +1,8 @@
 import { ActionContext } from 'vuex';
 import EleveState from './stateInterface';
-import { Etablissement } from '@/models';
+import { Eleve, Etablissement } from '@/models';
 import EleveAPI from '@/api/EleveAPI';
+import { ref } from 'vue';
 
 export default {
   async fetchAllEleves(context: ActionContext<EleveState, any>) {
@@ -36,7 +37,14 @@ export default {
   },
 
   async deleteEleve(context: ActionContext<EleveState, any>, payload: { idEleve: number }) {
-    await EleveAPI.deleteEleve(payload.idEleve);
+    const response = await EleveAPI.deleteEleve(payload.idEleve);
+    if (response.status === 204) {
+      const elevesByAnneeAndEtablissement = context.getters.getElevesByAnneeAndEtablissement;
+      context.commit(
+        'setElevesByAnneeAndEtablissement',
+        elevesByAnneeAndEtablissement.filter((e: Eleve) => e.id != payload.idEleve)
+      );
+    }
   },
 
   async saveEleve(
@@ -66,20 +74,22 @@ export default {
     context: ActionContext<EleveState, any>,
     payload: {
       idEleve: number;
-      email: string;
-      roles: string;
-      password: string;
       nom: string;
       prenom: string;
       telephone: string;
       mailParent1: string;
       mailParent2: string;
       sexeEleve: string;
-      etablissement: Etablissement;
     }
   ) {
-    const response = await EleveAPI.updateEleve(payload.idEleve, payload);
+    const response = await EleveAPI.updateEleve(payload);
     if (response.status === 200) {
+      context.commit('setEleves', response.data);
+      //Ajout dans la liste critèresByApsaRetenu
+      const elevesByAnneeAndEtablissement = ref<Eleve[]>(context.getters.getElevesByAnneeAndEtablissement);
+      const indexEleve = elevesByAnneeAndEtablissement.value.findIndex((e: Eleve) => e.id == payload.idEleve);
+      elevesByAnneeAndEtablissement.value[indexEleve];
+      context.commit('setElevesByAnneeAndEtablissement', elevesByAnneeAndEtablissement.value);
     } else {
       //throw new Error(response.data.message);
     }

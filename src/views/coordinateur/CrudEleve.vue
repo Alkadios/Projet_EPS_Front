@@ -25,7 +25,7 @@
           <Button
             icon="pi pi-trash"
             class="p-button-rounded p-button-warning"
-            @click="supprimerEleve(slotProps.data.id)"
+            @click="supprimerEleve(slotProps.data)"
           />
         </template>
       </Column>
@@ -201,52 +201,45 @@
             <form>
               <div class="container">
                 <div class="row">
-                  <div class="offset-lg-2 offset-md-2 col-lg-4 col-md-4 col-sm-12">
-                    <label for="nom">Nom</label>
+                  <div class="mt-3 col-lg-12 col-md-12 col-sm-12">
+                    <label for="nom">Nom : </label>
                     <InputText id="nom" v-model="eleveById.nom" required="true" autofocus />
                   </div>
-                  <div class="col-lg-4 col-md-4 col-sm-12">
-                    <label for="prenom">Prenom</label>
+                  <div class="mt-3 col-lg-12 col-md-12 col-sm-12">
+                    <label for="prenom">Prenom : </label>
                     <InputText v-model="eleveById.prenom" id="prenom" required="true" autofocus />
                   </div>
-                </div>
-                <div class="row mt-3">
-                  <div class="offset-lg-2 offset-md-2 col-lg-4 col-md-4 col-sm-12">
-                    <label for="telephone">Telephone</label>
+                  <div class="mt-3 col-lg-12 col-md-12 col-sm-12">
+                    <label for="telephone">Telephone : </label>
                     <InputText id="telephone" v-model="eleveById.telephone" required="true" autofocus />
                   </div>
-                  <div class="col-lg-4 col-md-4 col-sm-12">
-                    <label for="mailParent1">mail Parent 1</label>
+                  <div class="mt-3 col-lg-12 col-md-12 col-sm-12">
+                    <label for="mailParent1">mail Parent 1 : </label>
                     <InputText v-model="eleveById.mailParent1" id="mailParent1" required="true" autofocus />
                   </div>
-                </div>
-                <div class="row mt-3">
-                  <div class="offset-lg-2 offset-md-2 col-lg-4 col-md-4 col-sm-12">
-                    <label for="mailParent2">mail Parent 2</label>
+                  <div class="mt-3 col-lg-12 col-md-12 col-sm-12">
+                    <label for="mailParent2">mail Parent 2 : </label>
                     <InputText id="mailParent2" v-model="eleveById.mailParent2" required="true" autofocus />
                   </div>
-                  <div class="col-lg-4 col-md-4 col-sm-12">
-                    <label for="sexeEleve">sexe Eleve</label>
+                  <div class="mt-3 col-lg-12 col-md-12 col-sm-12">
+                    <label for="sexeEleve">sexe Eleve : </label>
                     <InputText v-model="eleveById.sexeEleve" id="sexeEleve" required="true" autofocus />
                   </div>
+                  <Button class="mt-4" label="Modifier" icon="pi pi-check" @click="editEleve(eleveById)" autofocus />
                 </div>
-                <button type="button" class="btn btn-primary" @click="editEleve(eleveById.id)">Update</button>
               </div>
             </form>
           </template>
         </Card>
       </div>
     </div>
-    <template #footer>
-      <Button label="No" icon="pi pi-times" @click="closeBasic" class="p-button-text" />
-      <Button label="Yes" icon="pi pi-check" autofocus />
-    </template>
   </Dialog>
 </template>
 
 <script lang="ts" setup>
 import { Eleve, User } from '@/models';
 import EleveService from '@/services/EleveService';
+import UserService from '@/services/UserService';
 import { ref, onMounted } from 'vue';
 
 const {
@@ -259,6 +252,8 @@ const {
   eleveById,
   updateEleve,
 } = EleveService();
+
+const { deleteUser } = UserService();
 
 const eleveDialog = ref(false);
 const isLoading = ref(false);
@@ -307,28 +302,27 @@ async function champsEleve(idEleve: number) {
   isLoading.value = false;
 }
 
-async function editEleve(idEleve: number) {
+async function editEleve(Eleve: Eleve) {
   isLoading.value = true;
   await updateEleve(
-    idEleve,
+    Eleve.id,
     eleveById.value.nom,
     eleveById.value.prenom,
     eleveById.value.mailParent1,
     eleveById.value.mailParent2,
     eleveById.value.telephone,
-    eleveById.value.sexeEleve,
-    eleveById.value.etablissement
+    eleveById.value.sexeEleve
   );
-  await fetchElevesByAnneeAndEtablissement(3);
-  alert('Votre Eleve à ete modifié');
   eleveDialog.value = false;
   isLoading.value = false;
+  alert('Votre Eleve à ete modifié');
 }
 
-async function supprimerEleve(idEleve: number) {
+async function supprimerEleve(Eleve: Eleve) {
   if (confirm('Voulez vous vraiment supprimer ?')) {
     isLoading.value = true;
-    await deleteEleve(idEleve);
+    await deleteEleve(Eleve.id);
+    await deleteUser(Eleve.user.id);
     await fetchElevesByAnneeAndEtablissement(3);
     isLoading.value = false;
   }

@@ -32,6 +32,7 @@
                         aria-describedby="emailHelp"
                         placeholder="Enter Email Address..."
                         name="email"
+                        v-model="credentials.username"
                       />
                     </div>
                     <div class="mb-3">
@@ -41,6 +42,7 @@
                         id="exampleInputPassword"
                         placeholder="Password"
                         name="password"
+                        v-model="credentials.password"
                       />
                     </div>
                     <div class="mb-3">
@@ -54,7 +56,7 @@
                         </div>
                       </div>
                     </div>
-                    <button class="btn btn-primary d-block btn-user w-100" type="submit">Login</button>
+                    <Button class="mt-4" label="connexion" icon="pi pi-check" @click="connexion()" autofocus />
                     <hr />
                   </form>
                   <div class="text-center"><a class="small" href="forgot-password.html">Forgot Password?</a></div>
@@ -72,8 +74,10 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import UtilisateurService from '@/services/UtilisateurService';
+import UserService from '@/services/UserService';
 
 const router = useRouter();
+const { login, token } = UserService();
 
 //const { fetchUtilisateur } = UtilisateurService();
 
@@ -81,24 +85,13 @@ const afficherModalErreur = ref(false);
 const libelleErreur = ref('');
 const identifiant = ref('');
 const motDePasse = ref('');
+const credentials = ref<any>({
+  username: '',
+  password: '',
+});
 
-async function validerFormulaire() {
-  if (identifiant.value === '' || motDePasse.value === '') {
-    libelleErreur.value = 'Identifiant ou mot de passe invalide';
-    afficherModalErreur.value = true;
-  }
-
-  // try {
-  //   await fetchUtilisateur(identifiant.value);
-
-  //   router.push({ name: 'TableauDeBord' });
-  // } catch (e: any) {
-  //   if (e.response && e.response.status === 500) {
-  //     afficherModalErreur.value = true;
-  //   } else {
-  //     libelleErreur.value = e.message;
-  //     afficherModalErreur.value = true;
-  //   }
-  // }
+async function connexion() {
+  await login(credentials.value.username, credentials.value.password);
+  console.log('testo', token);
 }
 </script>

@@ -164,7 +164,32 @@
                 <p>Couleur:</p>
               </div>
               <div class="col-9">
-                <ColorPicker v-model="nouveauIndicateur.color" />
+                <Button
+                  class="p-button-sm p-button-raised p-button-rounded"
+                  style="min-width: unset; background-color: #ff1300"
+                  @click="nouveauIndicateur.color = 'ff1300'"
+                />
+                <Button
+                  class="p-button-sm p-button-raised p-button-rounded"
+                  style="min-width: unset; background-color: #fffe00"
+                  @click="nouveauIndicateur.color = 'fffe00'"
+                />
+                <Button
+                  class="p-button-sm p-button-raised p-button-rounded"
+                  style="min-width: unset; background-color: #98ff00"
+                  @click="nouveauIndicateur.color = '98ff00'"
+                />
+                <Button
+                  class="p-button-sm p-button-raised p-button-rounded"
+                  style="min-width: unset; background-color: #3c6500"
+                  @click="nouveauIndicateur.color = '3c6500'"
+                />
+                <ColorPicker
+                  format="hex"
+                  v-model="nouveauIndicateur.color"
+                  defaultColor="#FF0000"
+                  style="min-width: unset"
+                />
               </div>
             </div>
             <div class="row" style="margin-top: 1.5rem">
@@ -223,57 +248,58 @@
         <div class="mb-3"></div>
       </div>
       <div v-if="critere" class="mb-3">
-        <p>Titre du critère : {{ critere.titre }}</p>
+        <strong>Titre du critère : </strong>
+        <p>{{ critere.titre }}</p>
+        <strong>Description du critère</strong>
         <p v-html="critere.description" />
         <!-- <Textarea class="w-100" :disabled="true" v-model="monCritere" :autoResize="true" rows="5" /> -->
       </div>
     </div>
     <div class="card container">
-      <OrderList v-model="indicateursByCritere" listStyle="height:auto">
+      <OrderList v-model="mesIndicateurs" listStyle="height:auto" dataKey="id">
         <template #header> Listes des indicateur </template>
         <template #item="nouveauIndicateur">
-          <div class="container col-12">
+          <div class="container col-12 text-white">
             <div class="p-3 row" :style="'background-color: ' + nouveauIndicateur.item.color + '; border-radius: 10px'">
               <div class="col-11">
                 <strong class="mb-2">Titre: {{ nouveauIndicateur.item.libelle }}</strong>
-                <hr />
+                <hr class="text-black" />
                 <strong
                   >Description:
                   <p v-html="nouveauIndicateur.item.description"></p
                 ></strong>
                 <strong
-                  >Vidéo: <a>{{ nouveauIndicateur.item.url_video }}</a></strong
+                  >Vidéo:
+                  <a :href="nouveauIndicateur.item.url_video" target="blank">{{
+                    nouveauIndicateur.item.url_video
+                  }}</a></strong
                 >
               </div>
               <div class="col-1 align-center mt-5">
-                <Button class="p-button-rounded p-button-info" @click="openEdit(nouveauIndicateur.item)"
-                  ><i class="pi pi-pencil"
-                /></Button>
-                <Button class="p-button-rounded p-button-danger" @click="removeIndicateur(nouveauIndicateur.item.id)"
-                  ><i class="pi pi-trash"
-                /></Button>
+                <Button class="p-button-rounded p-button-info" @click="openEdit(nouveauIndicateur.item)">
+                  <i class="pi pi-pencil" />
+                </Button>
+                <Button class="p-button-rounded p-button-danger" @click="removeIndicateur(nouveauIndicateur.item.id)">
+                  <i class="pi pi-trash" />
+                </Button>
               </div>
             </div>
           </div>
         </template>
       </OrderList>
-      <button class="btn-info col-12" style="border-radius: 10px">
-        <i
-          class="m-3 pi pi-plus"
-          @click="openBasic"
-          style="cursor: pointer; border-radius: 50%; border: 0.3rem solid; font-size: 2em"
-        />
-        <p>Ajouter un critère</p>
-      </button>
     </div>
+    <button class="btn-info" style="border-radius: 10px" @click="openBasic">
+      <i class="m-3 pi pi-plus" style="cursor: pointer; border-radius: 50%; border: 0.2rem solid; font-size: 2em" />
+      <p>Ajouter un critère</p>
+    </button>
     <div class="container-fluid text-center mb-10 Pl-10">
-      <Button label="Valider" style="right: 1rem" icon="pi pi-check" @click="verif()" autofocus></Button>
+      <Button label="Valider" style="right: 1rem" icon="pi pi-check" @click="onValid(false)" autofocus></Button>
       <Button
         label="Retour aux critères"
         icon="pi pi-backward"
         style="left: 1rem"
-        @click="router.push('Critere')"
         autofocus
+        @click="onValid(true)"
       ></Button>
     </div>
     <div style="position: fixed; bottom: 0; right: 2rem">
@@ -294,8 +320,8 @@ import UtilisateurService from '@/services/UtilisateurService';
 import CritereService from '@/services/CritereService';
 import IndicateurService from '@/services/IndicateurService';
 import { useRoute, useRouter } from 'vue-router';
-import axios from 'axios';
 import ObjectUtils from '@/utils/ObjectUtils';
+import { cloneDeep } from 'lodash-es';
 
 const route = useRoute();
 const router = useRouter();
@@ -309,6 +335,7 @@ const {
   fetchIndicateurs,
   fetchIndicateursByCritere,
   indicateurs,
+  indicateur,
   indicateursByCritere,
 } = IndicateurService();
 const IndicateurByCritere = ref<Indicateur[]>([]);
@@ -325,6 +352,7 @@ const mesIndicateurs = ref<Indicateur[]>([]);
 
 const displayBasic = ref(false);
 const openBasic = () => {
+  resetIndicateur();
   displayBasic.value = true;
 };
 
@@ -348,53 +376,45 @@ onMounted(async () => {
   if (route.query.idCritere) {
     await fetchIndicateursByCritere(parseInt(route.query.idCritere.toString()));
     await fetchCritereById(parseInt(route.query.idCritere.toString()));
-    //  console.log('indicateur', indicateursByCritere.value);
+    mesIndicateurs.value = cloneDeep(indicateursByCritere.value);
   }
   isLoading.value = false;
 });
 
 async function addIndicateur() {
-  try {
-    await saveIndicateur(
-      nouveauIndicateur.value['@id'],
-      nouveauIndicateur.value.libelle,
-      nouveauIndicateur.value.description,
-      nouveauIndicateur.value.image,
-      nouveauIndicateur.value.url_video,
-      '#' + nouveauIndicateur.value.color,
-      critere.value['@id']
-    );
-    closeBasic();
-    window.alert("L'indicateur a bien été ajouté !");
-  } catch (e) {
-    //console.log(e);
-  }
+  await saveIndicateur(
+    nouveauIndicateur.value['@id'],
+    nouveauIndicateur.value.libelle,
+    nouveauIndicateur.value.description,
+    nouveauIndicateur.value.image,
+    nouveauIndicateur.value.url_video,
+    '#' + nouveauIndicateur.value.color,
+    critere.value['@id']
+  );
+  mesIndicateurs.value.push(indicateur.value);
+  closeBasic();
+  window.alert("L'indicateur a bien été ajouté !");
 }
 
 async function changeIndicateur(monIndicateur: Indicateur) {
-  try {
-    await editIndicateur(
-      monIndicateur.id,
-      monIndicateur.libelle,
-      monIndicateur.description,
-      monIndicateur.image,
-      monIndicateur.url_video,
-      monIndicateur.color
-    );
-  } catch (e) {
-    //console.log(e);
-  }
+  await editIndicateur(
+    monIndicateur.id,
+    monIndicateur.libelle,
+    monIndicateur.description,
+    monIndicateur.image,
+    monIndicateur.url_video,
+    monIndicateur.color
+  );
+  const index = mesIndicateurs.value.findIndex((i) => i.id === monIndicateur.id);
+  mesIndicateurs.value[index] = monIndicateur;
 }
 
 async function removeIndicateur(indicateurId: number) {
   let x = window.confirm('Voulez vous vraiment supprimer cet indicateur ?');
   if (x) {
-    try {
-      await deleteIndicateur(indicateurId);
-      window.alert("L'indicateur a bien été supprimé !");
-    } catch (e) {
-      // console.log(e);
-    }
+    await deleteIndicateur(indicateurId);
+    mesIndicateurs.value = mesIndicateurs.value.filter((i: Indicateur) => i.id != indicateurId);
+    window.alert("L'indicateur a bien été supprimé !");
   }
 }
 
@@ -406,8 +426,6 @@ const imageIndicateurIsSelected = computed(() => {
   if (isObjectEmpty(nouvelleImageIndicateur.value) && nouveauIndicateur.value.image === '') return false;
   else return true;
 });
-
-function verif() {}
 
 function onPhotoChange(event: any) {
   nouvelleImageIndicateur.value = event.files[0];
@@ -429,5 +447,16 @@ function onPhotoChange(event: any) {
 function supprimerImageIndicateur() {
   nouvelleImageIndicateur.value = {} as File;
   nouveauIndicateur.value.image = '';
+}
+async function onValid(redirectToCritere: boolean) {
+  mesIndicateurs.value.forEach(async (i: Indicateur, index) => {
+    await editIndicateur(i.id, i.libelle, i.description, i.image, i.url_video, i.color, index + 1);
+  });
+  // if (redirectToCritere) {
+  //   const splitApsaRetenu = critere.value.ApsaRetenu.toString().split('/');
+  //   router.push({ name: 'Critere', query: { idApsaRetenu: splitApsaRetenu[3] } });
+  // } else {
+  //   router.push({ name: 'TableauDeBordConfig' });
+  //}
 }
 </script>
