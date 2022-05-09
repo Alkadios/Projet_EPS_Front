@@ -137,40 +137,27 @@ const basicOptions = {
         color: '#495057',
       },
     },
-    quadrants: {
-      topLeft: '#33EA0D',
-      topRight: '#33EA0D',
-      bottomRight: '#33EA0D',
-      bottomLeft: '#33EA0D',
-    },
   },
 };
 
 const plugins = [
   {
-    beforeDraw: function (chart) {
-      const ctx = chart.ctx;
-      const canvas = chart.canvas;
-      const chartArea = chart.chartArea;
+    beforeDraw: function (chart: any) {
+      const {
+        ctx,
+        chartArea: { top, bottom, left, right, width, height },
+        scales: { x, y },
+      } = chart;
+      const heightItem = height / 4;
 
-      // Chart background
-      var gradientBack = canvas.getContext('2d').createLinearGradient(0, 250, 0, 0);
-      gradientBack.addColorStop(0, 'rgba(213,235,248,1)');
-      gradientBack.addColorStop(0.16, 'rgba(213,235,248,1)');
-      gradientBack.addColorStop(0.17, 'rgba(226,245,234,1)');
-      gradientBack.addColorStop(0.25, 'rgba(226,245,234,1)');
-      gradientBack.addColorStop(0.26, 'rgba(252,244,219,1)');
-      gradientBack.addColorStop(0.5, 'rgba(252,244,219,1)');
-      gradientBack.addColorStop(0.51, 'rgba(251,221,221,1)');
-      gradientBack.addColorStop(1, 'rgba(251,221,221,1)');
-
-      ctx.fillStyle = gradientBack;
-      ctx.fillRect(
-        chartArea.left,
-        chartArea.bottom,
-        chartArea.right - chartArea.left,
-        chartArea.top - chartArea.bottom
-      );
+      ctx.fillStyle = 'red';
+      ctx.fillRect(left, top, width, heightItem);
+      ctx.fillStyle = 'blue';
+      ctx.fillRect(left, top + heightItem, width, heightItem);
+      ctx.fillStyle = 'green';
+      ctx.fillRect(left, top + heightItem * 2, width, heightItem);
+      ctx.fillStyle = 'yellow';
+      ctx.fillRect(left, top + heightItem * 3, width, heightItem);
     },
   },
 ];
@@ -180,8 +167,8 @@ const basicData = ref({
   datasets: [
     {
       label: 'Course de fond',
-      data: [0, 3, 2],
-      borderColor: '#FFA726',
+      data: [0, 4, 2],
+      borderColor: 'black',
       tension: 0.4,
     },
   ],
