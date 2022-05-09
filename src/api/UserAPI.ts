@@ -7,4 +7,8 @@ export default {
   async saveUser(payload: { id: number; email: string; roles: string; password: string }): Promise<AxiosResponse> {
     return axios.post(`${ApiURLUser}`, payload, apiConfig.value);
   },
+
+  async deleteEleve(idUser: number): Promise<AxiosResponse<ResponseModel>> {
+    return axios.delete(`${ApiURLUser}/` + idUser, apiConfig.value);
+  },
 };

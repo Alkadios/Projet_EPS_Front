@@ -8,6 +8,21 @@
       <Column field="nom" header="nom" :sortable="true" style="min-width: 12rem"></Column>
       <Column field="prenom" header="prenom" :sortable="true" style="min-width: 12rem"></Column>
       <Column field="telephone" header="telephone" :sortable="true" style="min-width: 12rem"></Column>
+      <Column :exportable="false" style="min-width: 8rem">
+        <template #body="slotProps">
+          <Button
+            icon="pi pi-pencil"
+            class="p-button-rounded p-button-success mr-2"
+            @click="champsProf(slotProps.data.id)"
+          />
+        </template>
+      </Column>
+
+      <Column :exportable="false" style="min-width: 8rem">
+        <template #body="slotProps">
+          <Button icon="pi pi-trash" class="p-button-rounded p-button-warning" @click="supprimerProf(slotProps.data)" />
+        </template>
+      </Column>
     </DataTable>
     <div style="position: fixed; bottom: 0; right: 2rem">
       <ProgressSpinner
@@ -122,16 +137,64 @@
         <Button label="Yes" icon="pi pi-check" autofocus />
       </template>
     </Dialog>
+
+    <Dialog header="Modifier un Professeur" v-model:visible="profDialog" :style="{ width: '50vw' }">
+      <div class="row" style="place-content: center">
+        <div class="col-8">
+          <Card>
+            <template #content>
+              <center><h1>Modifier un Prof</h1></center>
+              <form>
+                <div class="container">
+                  <div class="row">
+                    <div class="mt-3 col-lg-12 col-md-12 col-sm-12">
+                      <label for="nom">Nom : </label>
+                      <InputText id="nom" v-model="professeurById.nom" required="true" autofocus />
+                    </div>
+                    <div class="mt-3 col-lg-12 col-md-12 col-sm-12">
+                      <label for="prenom">Prenom : </label>
+                      <InputText v-model="professeurById.prenom" id="prenom" required="true" autofocus />
+                    </div>
+                    <div class="mt-3 col-lg-12 col-md-12 col-sm-12">
+                      <label for="telephone">Telephone : </label>
+                      <InputText id="telephone" v-model="professeurById.telephone" required="true" autofocus />
+                    </div>
+                    <Button
+                      class="mt-4"
+                      label="Modifier"
+                      icon="pi pi-check"
+                      @click="updateProf(professeurById.id)"
+                      autofocus
+                    />
+                  </div>
+                </div>
+              </form>
+            </template>
+          </Card>
+        </div>
+      </div>
+    </Dialog>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { Professeur, User } from '@/models';
 import ProfesseurService from '@/services/ProfesseurService';
+import UserService from '@/services/UserService';
 import { ref, onMounted } from 'vue';
 
-const { fetchProfesseursByEtablissement, saveProfesseur, professeursByEtablissement } = ProfesseurService();
+const {
+  fetchProfesseursByEtablissement,
+  saveProfesseur,
+  professeursByEtablissement,
+  deleteProf,
+  updateProf,
+  fetchProfById,
+  professeurById,
+} = ProfesseurService();
+const { deleteUser } = UserService();
 const isLoading = ref(false);
+const profDialog = ref(false);
 
 const nouveauUtilisateur = ref<User>({
   email: '',
@@ -155,9 +218,34 @@ async function CreerProfesseur() {
     nouveauProf.value.prenom,
     nouveauProf.value.telephone
   );
-  alert('Votre Professueur à ete créer');
+  alert('Votre Professeur à ete créer');
   displayBasic.value = false;
   await fetchProfesseursByEtablissement(1);
+}
+
+async function champsProf(idProf: number) {
+  isLoading.value = true;
+  profDialog.value = true;
+  await fetchProfById(idProf);
+  isLoading.value = false;
+}
+
+async function editProf(idProf: number) {
+  isLoading.value = true;
+  await updateProf(idProf, professeurById.value.nom, professeurById.value.prenom, professeurById.value.telephone);
+  alert('Votre Prof à ete modifié');
+  profDialog.value = false;
+  isLoading.value = false;
+
+}
+
+async function supprimerProf(Professeur: Professeur) {
+  if (confirm('Voulez vous vraiment supprimer ?')) {
+    isLoading.value = true;
+    await deleteProf(Professeur.id);
+    await fetchProfesseursByEtablissement(1);
+    isLoading.value = false;
+  }
 }
 
 function onSubmitUtil() {

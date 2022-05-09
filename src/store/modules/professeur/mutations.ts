@@ -8,4 +8,7 @@ export default {
   setProfesseursByEtablissement(state: ProfesseurState, payload: Professeur[]) {
     state.professeursByEtablissement = payload;
   },
+  setProfById(state: ProfesseurState, payload: Professeur) {
+    state.professeurById = payload;
+  },
 };

@@ -147,7 +147,6 @@ import UtilisateurService from '@/services/UtilisateurService';
 import eleve from '@/store/modules/eleve';
 import { ref, onMounted, toRaw } from 'vue';
 
-const isLoading = ref(false);
 const { fetchAllEleves, saveEleve, eleves, deleteEleve, fetchEleveById, eleveById, updateEleve } = EleveService();
 const { fetchAllClasses, fetchClasseByAnnee, classesByAnnee, addElevesInClasse, classes } = ClasseService();
 const { etablissement, anneeEnCours } = UtilisateurService();

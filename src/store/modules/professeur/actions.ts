@@ -16,6 +16,15 @@ export default {
     }
   },
 
+  async fetchProfById(context: ActionContext<ProfesseurState, any>, payload: { idProf: number }) {
+    const response = await ProfesseurAPI.fetchProfById(payload.idProf);
+    if (response.data) context.commit('setProfById', response.data);
+    else {
+      context.commit('setProfById', []);
+      //throw new Error(response.data.message);
+    }
+  },
+
   async saveProfesseur(
     context: ActionContext<ProfesseurState, any>,
     payload: {
@@ -29,6 +38,29 @@ export default {
   ) {
     const response = await ProfesseurAPI.saveProf(payload);
     if (response.status === 201) {
+    } else {
+      //throw new Error(response.data.message);
+    }
+    //if (response.status !== 201) throw new Error);
+  },
+
+  async deleteProf(context: ActionContext<ProfesseurState, any>, payload: { idProf: number }) {
+    const response = await ProfesseurAPI.deleteProf(payload.idProf);
+    if (response.status === 204) {
+    }
+  },
+
+  async updateProf(
+    context: ActionContext<ProfesseurState, any>,
+    payload: {
+      idProf: number;
+      nom: string;
+      prenom: string;
+      telephone: string;
+    }
+  ) {
+    const response = await ProfesseurAPI.updateProf(payload.idProf, payload);
+    if (response.status === 200) {
     } else {
       //throw new Error(response.data.message);
     }

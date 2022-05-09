@@ -25,7 +25,7 @@
           <Button
             icon="pi pi-trash"
             class="p-button-rounded p-button-warning"
-            @click="supprimerEleve(slotProps.data.id)"
+            @click="supprimerEleve(slotProps.data)"
           />
         </template>
       </Column>
@@ -239,6 +239,7 @@
 <script lang="ts" setup>
 import { Eleve, User } from '@/models';
 import EleveService from '@/services/EleveService';
+import UserService from '@/services/UserService';
 import { ref, onMounted } from 'vue';
 
 const {
@@ -252,7 +253,10 @@ const {
   updateEleve,
 } = EleveService();
 
-const isLoading = ref(false);
+const {
+deleteUser
+} = UserService();
+
 const eleveDialog = ref(false);
 const isLoading = ref(false);
 const nouveauUtilisateur = ref<User>({
@@ -312,16 +316,16 @@ async function editEleve(idEleve: number) {
     eleveById.value.sexeEleve,
     eleveById.value.etablissement
   );
-  await fetchElevesByAnneeAndEtablissement(3);
-  alert('Votre Eleve à ete modifié');
   eleveDialog.value = false;
   isLoading.value = false;
+  alert('Votre Eleve à ete modifié');
 }
 
-async function supprimerEleve(idEleve: number) {
+async function supprimerEleve(Eleve: Eleve) {
   if (confirm('Voulez vous vraiment supprimer ?')) {
     isLoading.value = true;
-    await deleteEleve(idEleve);
+    await deleteEleve(Eleve.id);
+    await deleteUser(Eleve.user.id);
     await fetchElevesByAnneeAndEtablissement(3);
     isLoading.value = false;
   }

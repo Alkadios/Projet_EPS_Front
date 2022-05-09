@@ -10,6 +10,7 @@ export default {
     return {
       professeurs: [] as Professeur[],
       professeursByEtablissement: [] as Professeur[],
+      professeurById: {} as Professeur,
     };
   },
   mutations,

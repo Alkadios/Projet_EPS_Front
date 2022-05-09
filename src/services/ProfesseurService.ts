@@ -11,6 +11,18 @@ export default function ProfesseurService() {
     });
   }
 
+  async function deleteProf(idProf: number) {
+    await store.dispatch('ProfesseurModule/deleteProf', {
+      idProf: idProf,
+    });
+  }
+
+  async function fetchProfById(idProf: number) {
+    await store.dispatch('ProfesseurModule/fetchProfById', {
+      idProf: idProf,
+    });
+  }
+
   async function saveProfesseur(
     email: string,
     roles: string,
@@ -29,6 +41,19 @@ export default function ProfesseurService() {
     });
   }
 
+  async function updateProf(idProf: number, nom: string, prenom: string, telephone: string) {
+    await store.dispatch('ProfesseurModule/updateProf', {
+      idProf: idProf,
+      nom,
+      prenom,
+      telephone,
+    });
+  }
+
+  const professeurById = computed((): Professeur => {
+    return store.getters['ProfesseurModule/getProfById'];
+  });
+
   const professeursByEtablissement = computed((): Professeur[] => {
     return store.getters['ProfesseurModule/getProfesseursByEtablissement'];
   });
@@ -37,5 +62,9 @@ export default function ProfesseurService() {
     fetchProfesseursByEtablissement,
     professeursByEtablissement,
     saveProfesseur,
+    deleteProf,
+    updateProf,
+    fetchProfById,
+    professeurById,
   };
 }

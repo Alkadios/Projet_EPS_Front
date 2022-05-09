@@ -7,4 +7,7 @@ export default {
   getProfesseursByEtablissement(state: ProfesseurState) {
     return state.professeursByEtablissement;
   },
+  getProfById(state: ProfesseurState) {
+    return state.professeurById;
+  },
 };

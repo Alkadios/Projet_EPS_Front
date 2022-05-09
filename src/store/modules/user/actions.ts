@@ -20,4 +20,10 @@ export default {
     }
     //if (response.status !== 201) throw new Error);
   },
+
+  async deleteUser(context: ActionContext<UserState, any>, payload: { idUser: number }) {
+    const response = await UserAPI.deleteEleve(payload.idUser);
+    if (response.status === 204) {
+    }
+  },
 };

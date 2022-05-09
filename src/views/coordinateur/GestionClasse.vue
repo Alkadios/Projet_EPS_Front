@@ -99,7 +99,6 @@ import EtablissementService from '@/services/EtablissementService';
 import NiveauScolaireService from '@/services/NiveauScolaireService';
 import { ref, onMounted, watch } from 'vue';
 
-const isLoading = ref(false);
 const { fetchClasseByAnnee, classesByAnnee, saveClasse, deleteClasse, classesById, fetchClasseById } = ClasseService();
 const { etablissements, fetchAllEtablissements } = EtablissementService();
 const { niveauxScolaires, fetchAllNiveauxScolaires } = NiveauScolaireService();

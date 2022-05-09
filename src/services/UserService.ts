@@ -13,7 +13,14 @@ export default function UserService() {
     });
   }
 
+  async function deleteUser(idUser: number) {
+    await store.dispatch('UserModule/deleteUser', {
+      idUser: idUser,
+    });
+  }
+
   return {
     saveUser,
+    deleteUser
   };
 }
