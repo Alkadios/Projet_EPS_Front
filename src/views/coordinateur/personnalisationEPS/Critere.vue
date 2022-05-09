@@ -77,8 +77,8 @@
       </div>
     </div>
     <template #footer>
-      <Button label="No" icon="pi pi-times" @click="closeBasic" class="p-button-text" />
-      <Button label="Yes" icon="pi pi-check" @click="addCritere" autofocus />
+      <Button label="Annuler" icon="pi pi-times" @click="closeBasic" class="p-button-text" />
+      <Button label="Ajouter" icon="pi pi-check" @click="addCritere" autofocus />
     </template>
   </Dialog>
   <Dialog header="Modifier un critère" v-model:visible="displayEdit" :style="{ width: '50vw' }">
@@ -275,6 +275,7 @@ const nouveauCritere = ref<Critere>({ titre: '', description: '', url_video: '',
 
 const displayBasic = ref(false);
 const openBasic = () => {
+  resetCritere();
   displayBasic.value = true;
 };
 
