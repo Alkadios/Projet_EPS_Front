@@ -38,22 +38,17 @@ export default {
     return axios.post(`${ApiURLCreateEleve}`, payload, apiConfig.value);
   },
 
-  async updateEleve(
-    idEleve: number,
-    payload: {
-      email: string;
-      roles: string;
-      password: string;
-      nom: string;
-      prenom: string;
-      telephone: string;
-      mailParent1: string;
-      mailParent2: string;
-      sexeEleve: string;
-      etablissement: Etablissement;
-    }
-  ): Promise<AxiosResponse> {
-    return axios.put(`${ApiURLEleve}/` + idEleve, payload, apiConfig.value);
+  async updateEleve(payload: {
+    idEleve: number;
+    nom: string;
+    prenom: string;
+    telephone: string;
+    mailParent1: string;
+    mailParent2: string;
+    sexeEleve: string;
+  }): Promise<AxiosResponse> {
+    const url = `${ApiURLEleve}/${payload.idEleve.toString()}`;
+    return axios.put(`${url}`, payload, apiConfig.value);
   },
 
   async fetchElevesByClasse(idClasse: number): Promise<AxiosResponse<ResponseModel>> {

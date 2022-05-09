@@ -68,8 +68,7 @@ export default function EleveService() {
     telephone: string,
     mailParent1: string,
     mailParent2: string,
-    sexeEleve: string,
-    etablissement: Etablissement
+    sexeEleve: string
   ) {
     await store.dispatch('EleveModule/updateEleve', {
       idEleve: idEleve,
@@ -79,7 +78,6 @@ export default function EleveService() {
       mailParent1,
       mailParent2,
       sexeEleve,
-      etablissement,
     });
   }
 
