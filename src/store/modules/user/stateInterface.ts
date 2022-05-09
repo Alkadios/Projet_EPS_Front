@@ -1,5 +1,6 @@
 import { User } from '@/models';
 
 export default interface UserState {
-  users: User[];
+  user: User;
+  token: string;
 }

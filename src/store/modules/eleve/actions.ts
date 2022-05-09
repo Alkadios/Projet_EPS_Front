@@ -1,6 +1,6 @@
 import { ActionContext } from 'vuex';
 import EleveState from './stateInterface';
-import { Etablissement } from '@/models';
+import { Eleve, Etablissement } from '@/models';
 import EleveAPI from '@/api/EleveAPI';
 
 export default {
@@ -36,7 +36,14 @@ export default {
   },
 
   async deleteEleve(context: ActionContext<EleveState, any>, payload: { idEleve: number }) {
-    await EleveAPI.deleteEleve(payload.idEleve);
+    const response = await EleveAPI.deleteEleve(payload.idEleve);
+    if (response.status === 204) {
+      const elevesByAnneeAndEtablissement = context.getters.getElevesByAnneeAndEtablissement;
+      context.commit(
+        'setElevesByAnneeAndEtablissement',
+        elevesByAnneeAndEtablissement.filter((e: Eleve) => e.id != payload.idEleve)
+      );
+    }
   },
 
   async saveEleve(

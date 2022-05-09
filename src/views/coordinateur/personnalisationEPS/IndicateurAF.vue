@@ -164,7 +164,32 @@
                 <p>Couleur:</p>
               </div>
               <div class="col-9">
-                <ColorPicker v-model="nouveauIndicateur.color" />
+                <Button
+                  class="p-button-sm p-button-raised p-button-rounded"
+                  style="min-width: unset; background-color: #ff1300"
+                  @click="nouveauIndicateur.color = 'ff1300'"
+                />
+                <Button
+                  class="p-button-sm p-button-raised p-button-rounded"
+                  style="min-width: unset; background-color: #fffe00"
+                  @click="nouveauIndicateur.color = 'fffe00'"
+                />
+                <Button
+                  class="p-button-sm p-button-raised p-button-rounded"
+                  style="min-width: unset; background-color: #98ff00"
+                  @click="nouveauIndicateur.color = '98ff00'"
+                />
+                <Button
+                  class="p-button-sm p-button-raised p-button-rounded"
+                  style="min-width: unset; background-color: #3c6500"
+                  @click="nouveauIndicateur.color = '3c6500'"
+                />
+                <ColorPicker
+                  format="hex"
+                  v-model="nouveauIndicateur.color"
+                  defaultColor="#FF0000"
+                  style="min-width: unset"
+                />
               </div>
             </div>
             <div class="row" style="margin-top: 1.5rem">
@@ -223,20 +248,22 @@
         <div class="mb-3"></div>
       </div>
       <div v-if="critere" class="mb-3">
-        <p>Titre du critère : {{ critere.titre }}</p>
+        <strong>Titre du critère : </strong>
+        <p>{{ critere.titre }}</p>
+        <strong>Description du critère</strong>
         <p v-html="critere.description" />
         <!-- <Textarea class="w-100" :disabled="true" v-model="monCritere" :autoResize="true" rows="5" /> -->
       </div>
     </div>
     <div class="card container">
-      <OrderList v-model="indicateursByCritere" listStyle="height:auto">
+      <OrderList v-model="mesIndicateurs" listStyle="height:auto" dataKey="id">
         <template #header> Listes des indicateur </template>
         <template #item="nouveauIndicateur">
-          <div class="container col-12">
+          <div class="container col-12 text-white">
             <div class="p-3 row" :style="'background-color: ' + nouveauIndicateur.item.color + '; border-radius: 10px'">
               <div class="col-11">
                 <strong class="mb-2">Titre: {{ nouveauIndicateur.item.libelle }}</strong>
-                <hr />
+                <hr class="text-black" />
                 <strong
                   >Description:
                   <p v-html="nouveauIndicateur.item.description"></p
@@ -257,15 +284,11 @@
           </div>
         </template>
       </OrderList>
-      <button class="btn-info col-12" style="border-radius: 10px">
-        <i
-          class="m-3 pi pi-plus"
-          @click="openBasic"
-          style="cursor: pointer; border-radius: 50%; border: 0.3rem solid; font-size: 2em"
-        />
-        <p>Ajouter un critère</p>
-      </button>
     </div>
+    <button class="btn-info" style="border-radius: 10px" @click="openBasic">
+      <i class="m-3 pi pi-plus" style="cursor: pointer; border-radius: 50%; border: 0.2rem solid; font-size: 2em" />
+      <p>Ajouter un critère</p>
+    </button>
     <div class="container-fluid text-center mb-10 Pl-10">
       <Button label="Valider" style="right: 1rem" icon="pi pi-check" @click="verif()" autofocus></Button>
       <Button
@@ -294,8 +317,8 @@ import UtilisateurService from '@/services/UtilisateurService';
 import CritereService from '@/services/CritereService';
 import IndicateurService from '@/services/IndicateurService';
 import { useRoute, useRouter } from 'vue-router';
-import axios from 'axios';
 import ObjectUtils from '@/utils/ObjectUtils';
+import { cloneDeep } from 'lodash-es';
 
 const route = useRoute();
 const router = useRouter();
@@ -325,6 +348,7 @@ const mesIndicateurs = ref<Indicateur[]>([]);
 
 const displayBasic = ref(false);
 const openBasic = () => {
+  resetIndicateur();
   displayBasic.value = true;
 };
 
@@ -348,7 +372,8 @@ onMounted(async () => {
   if (route.query.idCritere) {
     await fetchIndicateursByCritere(parseInt(route.query.idCritere.toString()));
     await fetchCritereById(parseInt(route.query.idCritere.toString()));
-    //  console.log('indicateur', indicateursByCritere.value);
+    console.log('indicateur', indicateursByCritere.value);
+    mesIndicateurs.value = cloneDeep(indicateursByCritere.value);
   }
   isLoading.value = false;
 });
@@ -367,7 +392,7 @@ async function addIndicateur() {
     closeBasic();
     window.alert("L'indicateur a bien été ajouté !");
   } catch (e) {
-    //console.log(e);
+    console.log(e);
   }
 }
 
@@ -382,7 +407,7 @@ async function changeIndicateur(monIndicateur: Indicateur) {
       monIndicateur.color
     );
   } catch (e) {
-    //console.log(e);
+    console.log(e);
   }
 }
 
@@ -393,7 +418,7 @@ async function removeIndicateur(indicateurId: number) {
       await deleteIndicateur(indicateurId);
       window.alert("L'indicateur a bien été supprimé !");
     } catch (e) {
-      // console.log(e);
+      console.log(e);
     }
   }
 }
