@@ -2,6 +2,7 @@ import { ActionContext } from 'vuex';
 import ClasseAPI from '@/api/ClasseAPI';
 import ClasseState from './stateInterface';
 import { ref } from 'vue';
+import { Classe } from '@/models';
 
 export default {
   async fetchAllClasses(context: ActionContext<ClasseState, any>) {
@@ -53,6 +54,11 @@ export default {
   ) {
     const response = await ClasseAPI.deleteClasse(payload.idClasse);
     if (response.status === 204) {
+      const classesByAnnee = context.getters.getClassesByAnnee;
+      context.commit(
+        'setClassesByAnnee',
+        classesByAnnee.filter((c: Classe) => c.id != payload.idClasse)
+      );
     } else {
     }
     //if (response.status !== 201) throw new Error);

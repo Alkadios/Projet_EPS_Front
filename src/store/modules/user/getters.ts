@@ -1,7 +1,10 @@
 import UserState from './stateInterface';
 
 export default {
-  getUsers(state: UserState) {
-    return state.users;
+  getUser(state: UserState) {
+    return state.user;
+  },
+  getToken(state: UserState) {
+    return state.token;
   },
 };

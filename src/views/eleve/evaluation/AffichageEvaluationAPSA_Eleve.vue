@@ -45,7 +45,7 @@
                   :options="lightOptionsCammenbert"
                 />
                 <div class="d-flex justify-content-center p-2" v-if="monGraphique.labels.length > 0">
-                  <B>{{ monGraphique.critere }}</B>
+                  <strong>{{ monGraphique.critere }}</strong>
                 </div>
               </div>
               <h4 class="text-dark p-5">Mes performances personnelles :</h4>
@@ -61,10 +61,10 @@
                   :options="lightOptionsCammenbert"
                 />
                 <div class="d-flex justify-content-center p-2" v-if="monGraphiquePersonnel.labels.length > 0">
-                  <B>{{ monGraphiquePersonnel.critere }}</B>
+                  <strong>{{ monGraphiquePersonnel.critere }}</strong>
                 </div>
               </div>
-              <Chart type="line" :data="basicData" :options="basicOptions" :plugins="quadrants" />
+              <Chart type="line" :data="basicData" :options="basicOptions" :plugins="plugins" />
             </div>
           </div>
         </div>
@@ -137,49 +137,42 @@ const basicOptions = {
         color: '#495057',
       },
     },
-    quadrants: {
-      topLeft: '#33EA0D',
-      topRight: '#33EA0D',
-      bottomRight: '#33EA0D',
-      bottomLeft: '#33EA0D',
-    },
   },
 };
+
+const plugins = [
+  {
+    beforeDraw: function (chart: any) {
+      const {
+        ctx,
+        chartArea: { top, bottom, left, right, width, height },
+        scales: { x, y },
+      } = chart;
+      const heightItem = height / 4;
+
+      ctx.fillStyle = 'red';
+      ctx.fillRect(left, top, width, heightItem);
+      ctx.fillStyle = 'blue';
+      ctx.fillRect(left, top + heightItem * 1, width, heightItem);
+      ctx.fillStyle = 'green';
+      ctx.fillRect(left, top + heightItem * 2, width, heightItem);
+      ctx.fillStyle = 'yellow';
+      ctx.fillRect(left, top + heightItem * 3, width, heightItem);
+    },
+  },
+];
 
 const basicData = ref({
   labels: ['22-04-2022', '06-05-2022', '15-06-2022'],
   datasets: [
     {
       label: 'Course de fond',
-      data: [0, 3, 2],
-      borderColor: '#FFA726',
+      data: [0, 4, 2],
+      borderColor: 'black',
       tension: 0.4,
     },
   ],
 });
-
-const quadrants = {
-  id: 'quadrants',
-  beforeDraw(chart, args, options) {
-    const {
-      ctx,
-      chartArea: { left, top, right, bottom },
-      scales: { x, y },
-    } = chart;
-    const midX = x.getPixelForValue(0);
-    const midY = y.getPixelForValue(0);
-    ctx.save();
-    ctx.fillStyle = options.topLeft;
-    ctx.fillRect(left, top, midX - left, midY - top);
-    ctx.fillStyle = options.topRight;
-    ctx.fillRect(midX, top, right - midX, midY - top);
-    ctx.fillStyle = options.bottomRight;
-    ctx.fillRect(midX, midY, right - midX, bottom - midY);
-    ctx.fillStyle = options.bottomLeft;
-    ctx.fillRect(left, midY, midX - left, bottom - midY);
-    ctx.restore();
-  },
-};
 
 onMounted(async () => {
   isLoading.value = true;
@@ -195,7 +188,6 @@ function onSituationEvaluationChange() {
   monAffichageGraphique.value = [];
   let indexGraphiqueClasseByCritere = 0;
   situationEvaluationSelectionner.value?.criteres.forEach((c) => {
-    console.log('critere : ', c);
     monAffichageGraphique.value[indexGraphiqueClasseByCritere] = {
       critere: c.titre,
       id: indexGraphiqueClasseByCritere,
@@ -210,7 +202,6 @@ function onSituationEvaluationChange() {
     });
     indexGraphiqueClasseByCritere++;
   });
-  console.log('situationEvaluationSelectionner : ', situationEvaluationSelectionner.value);
 
   monAffichageGraphiquePersonnel.value = [];
   let indexGraphiqueClasseByCriterebyEleves = 0;
@@ -226,7 +217,6 @@ function onSituationEvaluationChange() {
     ];
     c.Indicateur.forEach((i) => {
       if (i.evaluationEleves.find((f) => f.Eleve.id === 1)) {
-        console.log('test : ', i);
         let nb = 0;
         monAffichageGraphiquePersonnel.value[indexGraphiqueClasseByCriterebyEleves].labels.push(i.libelle);
         i.evaluationEleves.forEach((ee) => {
