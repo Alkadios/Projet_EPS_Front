@@ -236,7 +236,6 @@ async function editProf(idProf: number) {
   alert('Votre Prof à ete modifié');
   profDialog.value = false;
   isLoading.value = false;
-
 }
 
 async function supprimerProf(Professeur: Professeur) {

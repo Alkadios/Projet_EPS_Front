@@ -309,38 +309,26 @@ onMounted(async () => {
 });
 
 async function addCritere() {
-  try {
-    await saveCritere(
-      nouveauCritere.value.titre,
-      nouveauCritere.value.description,
-      nouveauCritere.value.image,
-      nouveauCritere.value.url_video,
-      apsaRetenu.value['@id']
-    );
-    closeBasic();
-    window.alert('Le critère a bien été ajouté !');
-  } catch (e) {
-    // console.log(e);
-  }
+  await saveCritere(
+    nouveauCritere.value.titre,
+    nouveauCritere.value.description,
+    nouveauCritere.value.image,
+    nouveauCritere.value.url_video,
+    apsaRetenu.value['@id']
+  );
+  closeBasic();
+  window.alert('Le critère a bien été ajouté !');
 }
 
 async function changeCritere(monCritere: Critere) {
-  try {
-    await editCritere(monCritere.id, monCritere.titre, monCritere.description, monCritere.image, monCritere.url_video);
-  } catch (e) {
-    //console.log(e);
-  }
+  await editCritere(monCritere.id, monCritere.titre, monCritere.description, monCritere.image, monCritere.url_video);
 }
 
 async function removeCritere(critereId: number) {
   let x = window.confirm('Voulez vous vraiment supprimer ce critère ?');
   if (x) {
-    try {
-      await deleteCritere(critereId);
-      window.alert('Le critère a bien été supprimé !');
-    } catch (e) {
-      //console.log(e);
-    }
+    await deleteCritere(critereId);
+    window.alert('Le critère a bien été supprimé !');
   }
 }
 

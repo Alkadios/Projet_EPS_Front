@@ -92,8 +92,6 @@ const credentials = ref<any>({
 
 async function connexion() {
   await login(credentials.value.username, credentials.value.password);
-  console.log("testo", token)
+  console.log('testo', token);
 }
-
-
 </script>

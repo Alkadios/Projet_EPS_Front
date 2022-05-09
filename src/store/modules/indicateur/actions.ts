@@ -59,16 +59,24 @@ export default {
   },
   async editIndicateur(
     context: ActionContext<IndicateurState, any>,
-    payload: { id: number; libelle: string; description: string; image: string; urlVideo: string; color: string }
+    payload: {
+      id: number;
+      libelle: string;
+      description: string;
+      image: string;
+      urlVideo: string;
+      color: string;
+      ordre?: number;
+    }
   ) {
     const response = await IndicateurAPI.editIndicateur(payload);
     if (response.status === 200) {
       context.commit('setIndicateur', response.data);
       //Ajout dans la liste critèresByApsaRetenu
-      const indicateursByCritere = ref<Indicateur[]>(context.getters.getCriteresByApsaRetenu);
-      const indexIndicateur = indicateursByCritere.value.findIndex((i) => i.id == payload.id);
-      indicateursByCritere.value[indexIndicateur];
-      context.commit('setIndicateursByCritere', indicateursByCritere.value);
+      // const indicateursByCritere = ref<Indicateur[]>(context.getters.getCriteresByApsaRetenu);
+      // const indexIndicateur = indicateursByCritere.value.findIndex((i) => i.id == payload.id);
+      // indicateursByCritere.value[indexIndicateur];
+      // context.commit('setIndicateursByCritere', indicateursByCritere.value);
     }
   },
 };

@@ -40,9 +40,18 @@ export default function IndicateurService() {
     description: string,
     image: string,
     urlVideo: string,
-    color: string
+    color: string,
+    ordre?: number
   ) {
-    await store.dispatch('IndicateurModule/editIndicateur', { id, libelle, description, image, urlVideo, color });
+    await store.dispatch('IndicateurModule/editIndicateur', {
+      id,
+      libelle,
+      description,
+      image,
+      urlVideo,
+      color,
+      ordre,
+    });
   }
   async function fetchIndicateurById(idIndicateur: number) {
     await store.dispatch('IndicateurModule/fetchIndicateurById', idIndicateur);
