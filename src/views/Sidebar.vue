@@ -33,7 +33,10 @@
               <i class="fas fa-cog"></i><span>Gestion des utilisateurs</span>
             </a>
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-              <li>
+              <li v-if="token == null">
+                <router-link to="#" class="dropdown-item">Connecteé-vous</router-link>
+              </li>
+              <li v-if="token != null">
                 <router-link to="/CrudEleve" class="dropdown-item">Gestion des eleves</router-link>
                 <router-link to="/GestionClasse" class="dropdown-item">Gestion des classes</router-link>
                 <router-link to="/GestionEleve" class="dropdown-item">Attribution des classes</router-link>
@@ -78,7 +81,7 @@
 import UserService from '@/services/UserService';
 import { onMounted, ref } from 'vue';
 const displayMenu = ref(window.innerWidth >= 600);
-const { token } = UserService();
+const { token, user } = UserService();
 
 onMounted(function () {
   // Evènement utilisé pour contrôler basculer le menu en mode ouvert ou fermé lors du passage de mobile à PC
