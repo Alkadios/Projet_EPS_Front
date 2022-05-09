@@ -153,7 +153,7 @@ const plugins = [
       ctx.fillStyle = 'red';
       ctx.fillRect(left, top, width, heightItem);
       ctx.fillStyle = 'blue';
-      ctx.fillRect(left, top + heightItem, width, heightItem);
+      ctx.fillRect(left, top + heightItem * 1, width, heightItem);
       ctx.fillStyle = 'green';
       ctx.fillRect(left, top + heightItem * 2, width, heightItem);
       ctx.fillStyle = 'yellow';
