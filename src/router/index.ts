@@ -51,6 +51,11 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('../views/coordinateur/personnalisationEPS/TableauDeBordConfig.vue'),
   },
   {
+    path: '/professeur/Accueil',
+    name: 'professeur/Accueil',
+    component: () => import('../views/professeur/Accueil.vue'),
+  },
+  {
     path: '/AffichageEvaluationEleve',
     name: 'AffichageEvaluationEleve',
     component: () => import('../views/professeur/evaluation/AffichageEvaluationEleve.vue'),
