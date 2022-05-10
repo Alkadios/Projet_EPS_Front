@@ -163,7 +163,7 @@
                       class="mt-4"
                       label="Modifier"
                       icon="pi pi-check"
-                      @click="updateProf(professeurById.id)"
+                      @click="editProf(professeurById.id)"
                       autofocus
                     />
                   </div>
@@ -236,7 +236,6 @@ async function editProf(idProf: number) {
   alert('Votre Prof à ete modifié');
   profDialog.value = false;
   isLoading.value = false;
-
 }
 
 async function supprimerProf(Professeur: Professeur) {

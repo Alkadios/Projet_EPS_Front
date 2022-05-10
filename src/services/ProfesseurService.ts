@@ -41,6 +41,13 @@ export default function ProfesseurService() {
     });
   }
 
+  async function putProfesseursClasse(idProf: number, classe: string[]) {
+    await store.dispatch('ProfesseurModule/putProfesseursClasse', {
+      idProf: idProf,
+      classe,
+    });
+  }
+
   async function updateProf(idProf: number, nom: string, prenom: string, telephone: string) {
     await store.dispatch('ProfesseurModule/updateProf', {
       idProf: idProf,
@@ -66,5 +73,6 @@ export default function ProfesseurService() {
     updateProf,
     fetchProfById,
     professeurById,
+    putProfesseursClasse,
   };
 }

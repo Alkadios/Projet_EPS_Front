@@ -50,6 +50,21 @@ export default {
     }
   },
 
+  async putProfesseursClasse(
+    context: ActionContext<ProfesseurState, any>,
+    payload: {
+      idProf: number;
+      classe: string[];
+    }
+  ) {
+    const response = await ProfesseurAPI.putProfesseursClasse(payload.idProf, payload);
+    if (response.status === 200) {
+    } else {
+      //throw new Error(response.data.message);
+    }
+    //if (response.status !== 201) throw new Error);
+  },
+
   async updateProf(
     context: ActionContext<ProfesseurState, any>,
     payload: {

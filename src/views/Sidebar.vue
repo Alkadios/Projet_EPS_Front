@@ -33,7 +33,7 @@
               <i class="fas fa-cog"></i><span>Gestion des utilisateurs</span>
             </a>
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-              <li v-if="token == null">
+              <li v-if="token == ''">
                 <router-link to="#" class="dropdown-item">Connecteé-vous</router-link>
               </li>
               <li v-if="token != null">
@@ -41,6 +41,7 @@
                 <router-link to="/GestionClasse" class="dropdown-item">Gestion des classes</router-link>
                 <router-link to="/GestionEleve" class="dropdown-item">Attribution des classes</router-link>
                 <router-link to="/GestionProfesseur" class="dropdown-item">Gestion des professeurs</router-link>
+                <router-link to="/GestionProfClasse" class="dropdown-item">Mes classes</router-link>
               </li>
             </ul>
           </div>
@@ -88,6 +89,8 @@ onMounted(function () {
   window.addEventListener('resize', () => {
     displayMenu.value = window.innerWidth >= 600;
   });
-  console.log('test', token);
+  console.log('test', token.value);
+  console.log('user', user.value);
+  console.log('user', user.value.professeurs);
 });
 </script>
