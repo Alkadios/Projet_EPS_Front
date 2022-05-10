@@ -62,7 +62,6 @@
                   v-else
                   :src="`data:${nouvelleImageCritere.type};base64,` + nouveauCritere.image"
                   style="max-width: 10rem; max-height: 10rem"
-                  alt="Logo organisme"
                 />
                 <Button
                   v-if="imageCritereIsSelected"
@@ -144,7 +143,6 @@
                   v-else
                   :src="`data:${nouvelleImageCritere.type};base64,` + nouveauCritere.image"
                   style="max-width: 10rem; max-height: 10rem"
-                  alt="Logo organisme"
                 />
                 <Button
                   v-if="imageCritereIsSelected"
@@ -194,7 +192,10 @@
             <template #content>
               <p v-html="monCritere.description" />
               <p v-html="monCritere.url_video" />
-              <p v-html="monCritere.image" />
+              <img
+                :src="`data:${nouvelleImageCritere.type};base64,` + monCritere.image"
+                style="max-width: 10rem; max-height: 10rem"
+              />
               <Button
                 label="Ajouter des indicateurs"
                 icon="pi pi-plus"
