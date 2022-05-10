@@ -180,7 +180,7 @@
         <div class="mb-3"></div>
       </div>
       <div class="mb-3">
-        <p>{{ apsaRetenu.SituationEvaluation }}</p>
+        <p>Situation d'évaluation: {{ apsaRetenu.SituationEvaluation }}</p>
         <!-- <Textarea class="w-100" :disabled="true" v-model="apsaRetenu.SituationEvaluation" :autoResize="true" rows="5" /> -->
       </div>
     </div>
@@ -191,7 +191,8 @@
             <template #title> {{ monCritere.titre }} </template>
             <template #content>
               <p v-html="monCritere.description" />
-              <p v-html="monCritere.url_video" />
+              <a :href="monCritere.url_video" target="blank">{{ monCritere.url_video }}</a>
+
               <img
                 :src="`data:${nouvelleImageCritere.type};base64,` + monCritere.image"
                 style="max-width: 10rem; max-height: 10rem"
@@ -233,13 +234,7 @@
     </div>
     <div class="mb-3">
       <Button label="Terminer" icon="pi pi-check" @click="verif()" autofocus></Button>
-      <Button
-        label="Retour aux AF"
-        icon="pi pi-backward"
-        style="left: 1rem"
-        @click="router.push('DeclinerAFRetenus')"
-        autofocus
-      ></Button>
+      <Button label="Retour aux AF" icon="pi pi-backward" style="left: 1rem" @click="back()" autofocus></Button>
     </div>
     <div style="position: fixed; bottom: 0; right: 2rem">
       <ProgressSpinner
@@ -363,5 +358,9 @@ function onPhotoChange(event: any) {
 function supprimerImageCritere() {
   nouvelleImageCritere.value = {} as File;
   nouveauCritere.value.image = '';
+}
+
+function back() {
+  window.history.back();
 }
 </script>

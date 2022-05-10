@@ -4,7 +4,7 @@ export interface ApsaRetenu {
   '@id': string;
   id: number;
   Apsa: APSA;
-  SituationEvaluation: String;
+  SituationEvaluation: string;
   AfRetenu: AfRetenus;
   ApsaSelectAnnee: ApsaSelectAnnee;
   criteres: Critere[];
