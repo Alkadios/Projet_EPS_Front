@@ -34,6 +34,7 @@ export default {
     image: string;
     urlVideo: string;
     color: string;
+    ordre?: number;
   }): Promise<AxiosResponse<any>> {
     const url = `${ApiIndicateur}/${payload.id.toString()}`;
     return axios.put(`${url}`, payload, apiConfig.value);

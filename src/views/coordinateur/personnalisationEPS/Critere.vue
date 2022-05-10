@@ -62,7 +62,6 @@
                   v-else
                   :src="`data:${nouvelleImageCritere.type};base64,` + nouveauCritere.image"
                   style="max-width: 10rem; max-height: 10rem"
-                  alt="Logo organisme"
                 />
                 <Button
                   v-if="imageCritereIsSelected"
@@ -144,7 +143,6 @@
                   v-else
                   :src="`data:${nouvelleImageCritere.type};base64,` + nouveauCritere.image"
                   style="max-width: 10rem; max-height: 10rem"
-                  alt="Logo organisme"
                 />
                 <Button
                   v-if="imageCritereIsSelected"
@@ -194,7 +192,10 @@
             <template #content>
               <p v-html="monCritere.description" />
               <p v-html="monCritere.url_video" />
-              <p v-html="monCritere.image" />
+              <img
+                :src="`data:${nouvelleImageCritere.type};base64,` + monCritere.image"
+                style="max-width: 10rem; max-height: 10rem"
+              />
               <Button
                 label="Ajouter des indicateurs"
                 icon="pi pi-plus"
@@ -309,38 +310,26 @@ onMounted(async () => {
 });
 
 async function addCritere() {
-  try {
-    await saveCritere(
-      nouveauCritere.value.titre,
-      nouveauCritere.value.description,
-      nouveauCritere.value.image,
-      nouveauCritere.value.url_video,
-      apsaRetenu.value['@id']
-    );
-    closeBasic();
-    window.alert('Le critère a bien été ajouté !');
-  } catch (e) {
-    // console.log(e);
-  }
+  await saveCritere(
+    nouveauCritere.value.titre,
+    nouveauCritere.value.description,
+    nouveauCritere.value.image,
+    nouveauCritere.value.url_video,
+    apsaRetenu.value['@id']
+  );
+  closeBasic();
+  window.alert('Le critère a bien été ajouté !');
 }
 
 async function changeCritere(monCritere: Critere) {
-  try {
-    await editCritere(monCritere.id, monCritere.titre, monCritere.description, monCritere.image, monCritere.url_video);
-  } catch (e) {
-    //console.log(e);
-  }
+  await editCritere(monCritere.id, monCritere.titre, monCritere.description, monCritere.image, monCritere.url_video);
 }
 
 async function removeCritere(critereId: number) {
   let x = window.confirm('Voulez vous vraiment supprimer ce critère ?');
   if (x) {
-    try {
-      await deleteCritere(critereId);
-      window.alert('Le critère a bien été supprimé !');
-    } catch (e) {
-      //console.log(e);
-    }
+    await deleteCritere(critereId);
+    window.alert('Le critère a bien été supprimé !');
   }
 }
 
