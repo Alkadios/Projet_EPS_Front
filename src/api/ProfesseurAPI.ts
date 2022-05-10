@@ -37,6 +37,15 @@ export default {
     return axios.post(`${ApiURLCreateProf}`, payload, apiConfig.value);
   },
 
+  async putProfesseursClasse(
+    idProf: number,
+    payload: {
+      classe: string[];
+    }
+  ): Promise<AxiosResponse> {
+    return axios.put(`${ApiURLProfesseur}/` + idProf, payload, apiConfig.value);
+  },
+
   async deleteProf(idProf: number): Promise<AxiosResponse<ResponseModel>> {
     return axios.delete(`${ApiURLProfesseur}/` + idProf, apiConfig.value);
   },

@@ -297,13 +297,7 @@
     </button>
     <div class="container-fluid text-center mb-10 Pl-10">
       <Button label="Valider" style="right: 1rem" icon="pi pi-check" @click="onValid(false)" autofocus></Button>
-      <Button
-        label="Retour aux critères"
-        icon="pi pi-backward"
-        style="left: 1rem"
-        autofocus
-        @click="onValid(true)"
-      ></Button>
+      <Button label="Retour aux critères" icon="pi pi-backward" style="left: 1rem" autofocus @click="back()"></Button>
     </div>
     <div style="position: fixed; bottom: 0; right: 2rem">
       <ProgressSpinner
@@ -462,5 +456,9 @@ async function onValid(redirectToCritere: boolean) {
   // } else {
   //   router.push({ name: 'TableauDeBordConfig' });
   //}
+}
+
+function back() {
+  window.history.back();
 }
 </script>

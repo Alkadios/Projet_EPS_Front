@@ -25,9 +25,9 @@ export default {
 
   async fetchElevesByAnneeAndEtablissement(
     context: ActionContext<EleveState, any>,
-    payload: { idEtablissement: number }
+    payload: { idEtablissement: number; idAnnee: number }
   ) {
-    const response = await EleveAPI.fetchElevesByAnneeAndEtablissement(payload.idEtablissement);
+    const response = await EleveAPI.fetchElevesByAnneeAndEtablissement(payload.idEtablissement, payload.idAnnee);
     if (response.data['hydra:totalItems'] > 0)
       context.commit('setElevesByAnneeAndEtablissement', response.data['hydra:member']);
     else {
@@ -84,11 +84,10 @@ export default {
   ) {
     const response = await EleveAPI.updateEleve(payload);
     if (response.status === 200) {
-      context.commit('setEleves', response.data);
-      //Ajout dans la liste critèresByApsaRetenu
+      context.commit('setEleveById', response.data);
       const elevesByAnneeAndEtablissement = ref<Eleve[]>(context.getters.getElevesByAnneeAndEtablissement);
-      const indexEleve = elevesByAnneeAndEtablissement.value.findIndex((e: Eleve) => e.id == payload.idEleve);
-      elevesByAnneeAndEtablissement.value[indexEleve];
+      const indexEleve = elevesByAnneeAndEtablissement.value.findIndex((e) => e.id == payload.idEleve);
+      elevesByAnneeAndEtablissement.value[indexEleve] = response.data;
       context.commit('setElevesByAnneeAndEtablissement', elevesByAnneeAndEtablissement.value);
     } else {
       //throw new Error(response.data.message);

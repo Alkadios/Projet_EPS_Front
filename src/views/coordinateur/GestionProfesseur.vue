@@ -163,7 +163,7 @@
                       class="mt-4"
                       label="Modifier"
                       icon="pi pi-check"
-                      @click="updateProf(professeurById.id)"
+                      @click="editProf(professeurById.id)"
                       autofocus
                     />
                   </div>

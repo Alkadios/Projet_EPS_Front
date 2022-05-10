@@ -19,7 +19,7 @@ export default function UserService() {
     return store.getters['UserModule/getToken'];
   });
 
-  const user = computed((): string => {
+  const user = computed((): User => {
     return store.getters['UserModule/getUser'];
   });
 
