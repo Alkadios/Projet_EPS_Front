@@ -42,4 +42,13 @@ export default {
       context.commit('setApsaRetenu', response.data);
     }
   },
+  async editApsaRetenu(
+    context: ActionContext<ApsaRetenuState, any>,
+    payload: { id: number; AfRetenu: string; SituationEvaluation: string; ApsaSelectAnnee: string }
+  ) {
+    const response = await ApsaRetenuAPI.editApsaRetenu(payload);
+    if (response.status === 200) {
+      context.commit('setApsaRetenu', response.data);
+    }
+  },
 };
