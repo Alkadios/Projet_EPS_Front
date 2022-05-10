@@ -1,5 +1,5 @@
 <template>
-  <div class="card shadow-lg o-hidden border-0 my-5">
+  <div class="card shadow-lg o-hidden border-0 m-5">
     <EnTetePersonalisation />
     <div class="container-fluid">
       <div id="mesClasses">

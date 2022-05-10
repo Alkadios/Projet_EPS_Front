@@ -1,3 +1,22 @@
+@media screen and (max-width: 1200px) {
+  #buttonSideBar,
+  #monCompteSideBar,
+  #monProfilSideBar,
+  #LogoutSideBar {
+    display: block !important;
+  }
+  #buttonLogout,
+  #buttonProfil {
+    display: none;
+  }
+  .nav.nav-pills {
+    background: transparent;
+  }
+  #sidenav-main {
+    display: none !important;
+  }
+}
+
 @media screen and (max-width: 767px) {
   #mesEleves,
   #EvaluationClasse {
@@ -16,6 +35,12 @@
   max-height: 24rem;
   max-width: 100%;
 }  */
+
+.ps {
+  overflow: hidden !important;
+  overflow-anchor: none;
+  touch-action: auto;
+}
 
 #myTableEleves {
   margin-top: 3rem;

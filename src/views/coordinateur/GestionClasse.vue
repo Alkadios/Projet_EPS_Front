@@ -1,30 +1,37 @@
 <template>
-  <div>
-    <DataTable :value="classesByAnnee" responsiveLayout="scroll" dataKey="id">
-      <Button label="Ajouter une Classe" @click="openBasic" style="right: 1rem" icon="pi pi-plus" autofocus />
-      <Column selectionMode="single" style="width: 3rem" :exportable="false"></Column>
+  <div class="card shadow-lg o-hidden border-0 m-5">
+    <div class="card-body p-0">
+      <DataTable :value="classesByAnnee" responsiveLayout="scroll" dataKey="id">
+        <Button label="Ajouter une Classe" @click="openBasic" style="right: 1rem" icon="pi pi-plus" autofocus />
+        <Column selectionMode="single" style="width: 3rem" :exportable="false"></Column>
 
-      <Column field="NiveauScolaire.libelle" header="NiveauScolaire" :sortable="true" style="min-width: 12rem"></Column>
-      <Column field="Annee.annee" header="Annee" :sortable="true" style="min-width: 12rem"></Column>
-      <Column field="etablissement.nom" header="etablissement" :sortable="true" style="min-width: 12rem"></Column>
-      <Column field="libelleClasse" header="libelleClasse" :sortable="true" style="min-width: 12rem"></Column>
-      <Column :exportable="false" style="min-width: 8rem">
-        <template #body="slotProps">
-          <Button
-            icon="pi pi-trash"
-            class="p-button-rounded p-button-success mr-2"
-            @click="supprimerClasse(slotProps.data.id)"
-          />
-        </template>
-      </Column>
-    </DataTable>
-    <div style="position: fixed; bottom: 0; right: 2rem">
-      <ProgressSpinner
-        v-if="isLoading"
-        style="float: right; width: 50px; height: 50px"
-        strokeWidth="8"
-        animationDuration=".5s"
-      />
+        <Column
+          field="NiveauScolaire.libelle"
+          header="NiveauScolaire"
+          :sortable="true"
+          style="min-width: 12rem"
+        ></Column>
+        <Column field="Annee.annee" header="Annee" :sortable="true" style="min-width: 12rem"></Column>
+        <Column field="etablissement.nom" header="etablissement" :sortable="true" style="min-width: 12rem"></Column>
+        <Column field="libelleClasse" header="libelleClasse" :sortable="true" style="min-width: 12rem"></Column>
+        <Column :exportable="false" style="min-width: 8rem">
+          <template #body="slotProps">
+            <Button
+              icon="pi pi-trash"
+              class="p-button-rounded p-button-success mr-2"
+              @click="supprimerClasse(slotProps.data.id)"
+            />
+          </template>
+        </Column>
+      </DataTable>
+      <div style="position: fixed; bottom: 0; right: 2rem">
+        <ProgressSpinner
+          v-if="isLoading"
+          style="float: right; width: 50px; height: 50px"
+          strokeWidth="8"
+          animationDuration=".5s"
+        />
+      </div>
     </div>
   </div>
 

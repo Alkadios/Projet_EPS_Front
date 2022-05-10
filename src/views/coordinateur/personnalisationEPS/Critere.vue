@@ -164,7 +164,7 @@
       </Button>
     </template>
   </Dialog>
-  <div class="card shadow-lg o-hidden border-0 my-5">
+  <div class="card shadow-lg o-hidden border-0 m-5">
     <div class="card-body p-0">
       <div class="row">
         <div class="col-lg-1"></div>
