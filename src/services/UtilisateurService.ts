@@ -1,6 +1,6 @@
 import { computed } from 'vue';
 import { useStore } from 'vuex';
-import { Etablissement, Utilisateur, Annee } from '@/models';
+import { Etablissement, Utilisateur, Annee, Eleve } from '@/models';
 
 export default function UtilisateurService() {
   const store = useStore();

@@ -25,6 +25,15 @@ export default {
     }
   },
 
+  async fetchProfByUser(context: ActionContext<ProfesseurState, any>, payload: { idUser: number }) {
+    const response = await ProfesseurAPI.fetchProfByUser(payload.idUser);
+    if (response.data) context.commit('setProfByUser', response.data);
+    else {
+      context.commit('setProfByUser', []);
+      //throw new Error(response.data.message);
+    }
+  },
+
   async saveProfesseur(
     context: ActionContext<ProfesseurState, any>,
     payload: {

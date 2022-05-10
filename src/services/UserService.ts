@@ -1,7 +1,7 @@
 import { computed } from 'vue';
 import { useStore } from 'vuex';
 import jwt_decode from 'jwt-decode';
-import { User } from '@/models';
+import { Eleve, Professeur, User } from '@/models';
 
 export default function UserService() {
   const store = useStore();
@@ -21,6 +21,22 @@ export default function UserService() {
 
   const user = computed((): User => {
     return store.getters['UserModule/getUser'];
+  });
+
+  async function storeEleve(eleve: Eleve) {
+    await store.dispatch('UserModule/setEleve', { eleve });
+  }
+
+  async function storeProfesseur(professeur: Professeur) {
+    await store.dispatch('UserModule/setProfesseur', { professeur });
+  }
+
+  const eleve = computed((): Eleve => {
+    return store.getters['UserModule/getEleve'];
+  });
+
+  const professeur = computed((): Professeur => {
+    return store.getters['UserModule/getProfesseur'];
   });
 
   async function login(username: string, password: string) {
@@ -45,5 +61,7 @@ export default function UserService() {
     deconnexion,
     token,
     user,
+    eleve,
+    professeur,
   };
 }

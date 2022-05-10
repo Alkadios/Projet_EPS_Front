@@ -8,6 +8,9 @@ export default {
   setEleveById(state: EleveState, payload: Eleve) {
     state.eleveById = payload;
   },
+  setEleveByUser(state: EleveState, payload: Eleve) {
+    state.eleveByUser = payload;
+  },
   setElevesByClasse(state: EleveState, payload: Eleve[]) {
     state.elevesByClasse = payload;
   },

@@ -10,4 +10,7 @@ export default {
   getProfById(state: ProfesseurState) {
     return state.professeurById;
   },
+  getProfByUser(state: ProfesseurState) {
+    return state.professeurByUser;
+  },
 };

@@ -9,14 +9,17 @@
             <div class="card-body p-3">
               <div class="row gx-4">
                 <div class="col-auto">
-                  <div class="avatar avatar-xl position-relative">
+                  <div class="avatar avatar-xl position-relative" v-if="sexeUser === 'M'">
                     <img src="@/assets/img/man.png" alt="profile_image" class="w-100 border-radius-lg shadow-sm" />
+                  </div>
+                  <div class="avatar avatar-xl position-relative" v-if="sexeUser === 'F'">
+                    <img src="@/assets/img/woman.png" alt="profile_image" class="w-100 border-radius-lg shadow-sm" />
                   </div>
                 </div>
                 <div class="col-auto my-auto">
                   <div class="h-100">
-                    <h5 class="mb-1">DELEFORTRIE Lucas</h5>
-                    <p class="mb-0 font-weight-bold text-sm">Coordonnateur</p>
+                    <h5 class="mb-1">{{ nomAndPrenom }}</h5>
+                    <p class="mb-0 font-weight-bold text-sm">{{ role }}</p>
                   </div>
                 </div>
                 <div class="col-lg-4 col-md-6 my-sm-auto ms-sm-auto me-sm-0 mx-auto mt-3">
@@ -91,6 +94,9 @@ import Navbar from './views/Navbar.vue';
 import Authentification from './views/Authentification.vue';
 //import Head from './views/_Head.vue';
 import UtilisateurService from './services/UtilisateurService';
+import EleveService from './services/EleveService';
+import ProfesseurService from './services/ProfesseurService';
+import UserService from './services/UserService';
 import ObjectUtils from './utils/ObjectUtils';
 
 import router from './router';
@@ -102,16 +108,32 @@ const sidenavActive = ref(false);
 const { isObjectEmpty } = ObjectUtils();
 const { utilisateur, fetchAnneeEnCours, anneeEnCours, storeAnneeEnConfig, fetchEtablissementById } =
   UtilisateurService();
+const { fetchEleveByUser, eleveByUser } = EleveService();
+const { fetchProfByUser, professeurByUser } = ProfesseurService();
+const { user } = UserService();
 // const { storeOrganismesUtilisateur, organismeConnecte, storeOrganismeConnecte, listeOrganismesUtilisateur } =
 //   UtilisateurService();
 
 const onMountedIsFinish = ref(false);
 const displaySidebar = ref('block');
+const nomAndPrenom = ref();
+const role = ref();
+const sexeUser = ref();
 console.log(displaySidebar.value, 'displaySidebar2');
 onMounted(async () => {
   // if (isObjectEmpty(utilisateur.value)) {
   //   router.push({ name: 'Authentification' });
   // }
+
+  // if (user.value.roles.indexOf('Professeur') > -1) {
+  //   await fetchEleveByUser(user.value.id);
+  //   nomAndPrenom.value = professeurByUser.value.nom + ' ' + professeurByUser.value.prenom;
+  // } else if (user.value.roles.indexOf('ROLE_USER') > -1) {
+  //   await fetchEleveByUser(user.value.id);
+  //   nomAndPrenom.value = eleveByUser.value.nom + ' ' + eleveByUser.value.prenom;
+  //   sexeUser.value = eleveByUser.value.sexeEleve;
+  // }
+  // role.value = user.value.roles;
 
   await fetchAnneeEnCours();
   storeAnneeEnConfig(anneeEnCours.value);
@@ -129,13 +151,10 @@ if (win && document.querySelector('#sidenav-scrollbar')) {
 }
 
 function reponsiveSideBar() {
-  console.log('ta ', displaySidebar.value);
   if (displaySidebar.value === 'none') {
     displaySidebar.value = 'block';
-    console.log('oui');
   } else {
     displaySidebar.value = 'none';
-    console.log('non');
   }
 }
 </script>
