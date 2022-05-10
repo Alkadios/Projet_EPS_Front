@@ -10,4 +10,5 @@ export interface Indicateur {
   color: string;
   evaluationEleves: EvaluationEleve[];
   Critere: Critere;
+  ordre: number;
 }
