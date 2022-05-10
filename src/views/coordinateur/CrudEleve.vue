@@ -5,21 +5,22 @@
         <Button label="Ajouter un Eleve" @click="openBasic" style="right: 1rem" icon="pi pi-plus" autofocus />
         <Column selectionMode="single" style="width: 3rem" :exportable="false"></Column>
 
-        <Column field="nom" header="nom" :sortable="true" style="min-width: 12rem"></Column>
-        <Column field="prenom" header="prenom" :sortable="true" style="min-width: 12rem"></Column>
-        <Column field="telephone" header="telephone" :sortable="true" style="min-width: 12rem"></Column>
-        <Column field="mailParent1" header="mailParent1" :sortable="true" style="min-width: 12rem"></Column>
-        <Column field="mailParent2" header="mailParent2" :sortable="true" style="min-width: 12rem"></Column>
-        <Column field="sexeEleve" header="sexeEleve" :sortable="true" style="min-width: 12rem"></Column>
-        <Column :exportable="false" style="min-width: 8rem">
-          <template #body="slotProps">
-            <Button
-              icon="pi pi-pencil"
-              class="p-button-rounded p-button-success mr-2"
-              @click="champsEleve(slotProps.data.id)"
-            />
-          </template>
-        </Column>
+      <Column field="nom" header="nom" :sortable="true" style="min-width: 12rem"></Column>
+      <Column field="prenom" header="prenom" :sortable="true" style="min-width: 12rem"></Column>
+      <Column field="telephone" header="telephone" :sortable="true" style="min-width: 12rem"></Column>
+      <Column field="mailParent1" header="mailParent1" :sortable="true" style="min-width: 12rem"></Column>
+      <Column field="mailParent2" header="mailParent2" :sortable="true" style="min-width: 12rem"></Column>
+      <Column field="sexeEleve" header="sexeEleve" :sortable="true" style="min-width: 12rem"></Column>
+      <Column field="dateNaiss" header="dateNaiss" :sortable="true" style="min-width: 12rem"></Column>
+      <Column :exportable="false" style="min-width: 8rem">
+        <template #body="slotProps">
+          <Button
+            icon="pi pi-pencil"
+            class="p-button-rounded p-button-success mr-2"
+            @click="champsEleve(slotProps.data.id)"
+          />
+        </template>
+      </Column>
 
         <Column :exportable="false" style="min-width: 8rem">
           <template #body="slotProps">
@@ -242,6 +243,7 @@
 import { Eleve, User } from '@/models';
 import EleveService from '@/services/EleveService';
 import UserService from '@/services/UserService';
+import UtilisateurService from '@/services/UtilisateurService';
 import { ref, onMounted } from 'vue';
 
 const {
@@ -256,6 +258,7 @@ const {
 } = EleveService();
 
 const { deleteUser } = UserService();
+const { etablissement, anneeEnCours } = UtilisateurService();
 
 const eleveDialog = ref(false);
 const isLoading = ref(false);
@@ -274,7 +277,7 @@ const nouveauEleve = ref<Eleve>({
   mailParent2: '',
   sexeEleve: '',
   user: '',
-  etablissement: 1,
+  etablissement: etablissement.value.id,
 });
 
 async function CreerEleve() {
@@ -293,7 +296,7 @@ async function CreerEleve() {
   );
   alert('Votre Eleve à ete créer');
   displayBasic.value = false;
-  await fetchElevesByAnneeAndEtablissement(1);
+  await fetchElevesByAnneeAndEtablissement(etablissement.value.id, anneeEnCours.value.id);
   isLoading.value = false;
 }
 
@@ -325,7 +328,7 @@ async function supprimerEleve(Eleve: Eleve) {
     isLoading.value = true;
     await deleteEleve(Eleve.id);
     await deleteUser(Eleve.user.id);
-    await fetchElevesByAnneeAndEtablissement(3);
+    await fetchElevesByAnneeAndEtablissement(etablissement.value.id, anneeEnCours.value.id);
     isLoading.value = false;
   }
 }
@@ -345,7 +348,7 @@ const closeBasic = () => {
 
 onMounted(async () => {
   isLoading.value = true;
-  await fetchElevesByAnneeAndEtablissement(1);
+  await fetchElevesByAnneeAndEtablissement(etablissement.value.id, anneeEnCours.value.id);
   isLoading.value = false;
 });
 </script>

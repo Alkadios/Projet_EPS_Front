@@ -12,8 +12,11 @@ export default {
     return axios.get(`${ApiURLEleve}/` + idEleve, apiConfig.value);
   },
 
-  async fetchElevesByAnneeAndEtablissement(idEtablissement: number): Promise<AxiosResponse<ResponseModel>> {
-    const paramsString = `etablissement.id=${idEtablissement.toString()}`;
+  async fetchElevesByAnneeAndEtablissement(
+    idEtablissement: number,
+    idAnnee: number
+  ): Promise<AxiosResponse<ResponseModel>> {
+    const paramsString = `etablissement.id=${idEtablissement.toString()}&classe.Annee.id=${idAnnee.toString()}`;
     const url = new URL(`${ApiURLEleve}/`);
     url.search = new URLSearchParams(paramsString).toString();
     return axios.get(`${url.toString()}`, apiConfig.value);

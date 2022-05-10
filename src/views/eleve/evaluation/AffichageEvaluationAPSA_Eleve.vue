@@ -50,21 +50,20 @@
               </div>
               <h4 class="text-dark p-5">Mes performances personnelles :</h4>
               <div
-                class="col-md-3"
+                class="col-md-6"
                 v-for="monGraphiquePersonnel in monAffichageGraphiquePersonnel"
                 :key="monGraphiquePersonnel.id"
               >
                 <Chart
                   v-if="monGraphiquePersonnel.labels.length > 0"
-                  type="pie"
                   :data="monGraphiquePersonnel"
-                  :options="lightOptionsCammenbert"
+                  :options="basicOptions"
+                  :plugins="monGraphiquePersonnel.plugins"
                 />
                 <div class="d-flex justify-content-center p-2" v-if="monGraphiquePersonnel.labels.length > 0">
                   <strong>{{ monGraphiquePersonnel.critere }}</strong>
                 </div>
               </div>
-              <Chart type="line" :data="basicData" :options="basicOptions" :plugins="plugins" />
             </div>
           </div>
         </div>
@@ -107,9 +106,7 @@ const situationEvaluationSelectionner = ref<ApsaRetenu>();
 const monAffichageGraphique = ref<newAffichageGraphique[]>([
   { datasets: [] as datasetsEvaluation[] } as newAffichageGraphique,
 ]);
-const monAffichageGraphiquePersonnel = ref<newAffichageGraphique[]>([
-  { datasets: [] as datasetsEvaluation[] } as newAffichageGraphique,
-]);
+
 const lightOptionsCammenbert = ref({
   plugins: {
     legend: {
@@ -119,6 +116,7 @@ const lightOptionsCammenbert = ref({
     },
   },
 });
+
 interface newAffichageGraphique {
   critere: string;
   id: number;
@@ -130,49 +128,58 @@ interface datasetsEvaluation {
   data: number[];
   backgroundColor: string[];
 }
+
 const basicOptions = {
   plugins: {
     legend: {
+      display: false,
       labels: {
         color: '#495057',
       },
     },
   },
-};
-
-const plugins = [
-  {
-    beforeDraw: function (chart: any) {
-      const {
-        ctx,
-        chartArea: { top, bottom, left, right, width, height },
-        scales: { x, y },
-      } = chart;
-      const heightItem = height / 4;
-
-      ctx.fillStyle = 'red';
-      ctx.fillRect(left, top, width, heightItem);
-      ctx.fillStyle = 'blue';
-      ctx.fillRect(left, top + heightItem * 1, width, heightItem);
-      ctx.fillStyle = 'green';
-      ctx.fillRect(left, top + heightItem * 2, width, heightItem);
-      ctx.fillStyle = 'yellow';
-      ctx.fillRect(left, top + heightItem * 3, width, heightItem);
+  scales: {
+    y: {
+      ticks: {
+        display: false,
+      },
+      grid: {
+        display: false,
+      },
+      max: 4,
+    },
+    x: {
+      grid: {
+        display: false,
+      },
     },
   },
-];
+};
 
-const basicData = ref({
-  labels: ['22-04-2022', '06-05-2022', '15-06-2022'],
-  datasets: [
-    {
-      label: 'Course de fond',
-      data: [0, 4, 2],
-      borderColor: 'black',
-      tension: 0.4,
-    },
-  ],
-});
+interface datasetsEvaluation {
+  data: number[];
+  backgroundColor: string[];
+}
+
+const monAffichageGraphiquePersonnel = ref<EvaluationPersonnelle[]>([
+  { datasets: [] as datasetsEvaluationPersonnelle[], plugins: [{}] } as EvaluationPersonnelle,
+]);
+
+interface datasetsEvaluationPersonnelle {
+  display: boolean;
+  type: string;
+  label: string;
+  data: number[];
+  borderColor: string;
+}
+
+interface EvaluationPersonnelle {
+  critere: string;
+  id: number;
+  labels: string[];
+  datasets: datasetsEvaluationPersonnelle[];
+  plugins: [{}];
+}
 
 onMounted(async () => {
   isLoading.value = true;
@@ -206,28 +213,164 @@ function onSituationEvaluationChange() {
   monAffichageGraphiquePersonnel.value = [];
   let indexGraphiqueClasseByCriterebyEleves = 0;
   situationEvaluationSelectionner.value?.criteres.forEach((c) => {
+    const getOrCreateTooltip = (chart) => {
+      let tooltipEl = chart.canvas.parentNode.querySelector('div');
+
+      if (!tooltipEl) {
+        tooltipEl = document.createElement('div');
+        tooltipEl.style.background = 'rgba(0, 0, 0, 0.7)';
+        tooltipEl.style.borderRadius = '3px';
+        tooltipEl.style.color = 'white';
+        tooltipEl.style.opacity = 1;
+        tooltipEl.style.pointerEvents = 'none';
+        tooltipEl.style.position = 'absolute';
+        tooltipEl.style.transform = 'translate(-50%, 0)';
+        tooltipEl.style.transition = 'all .1s ease';
+
+        const table = document.createElement('table');
+        table.style.margin = '0px';
+
+        tooltipEl.appendChild(table);
+        chart.canvas.parentNode.appendChild(tooltipEl);
+      }
+
+      return tooltipEl;
+    };
+
+    const externalTooltipHandler = (context: any) => {
+      // Tooltip Element
+      const { chart, tooltip } = context;
+      const tooltipEl = getOrCreateTooltip(chart);
+
+      // Hide if no tooltip
+      if (tooltip.opacity === 0) {
+        tooltipEl.style.opacity = 0;
+        return;
+      }
+
+      // Set Text
+      if (tooltip.body) {
+        const titleLines = tooltip.title || [];
+        const bodyLines = tooltip.body.map((b: any) => b.lines);
+
+        const tableHead = document.createElement('thead');
+
+        titleLines.forEach((title: any) => {
+          const tr = document.createElement('tr');
+          tr.style.borderWidth = '0';
+
+          const th = document.createElement('th');
+          th.style.borderWidth = '0';
+          const text = document.createTextNode(title);
+
+          th.appendChild(text);
+          tr.appendChild(th);
+          tableHead.appendChild(tr);
+        });
+
+        const tableBody = document.createElement('tbody');
+        bodyLines.forEach((body: any, i: any) => {
+          const colors = tooltip.labelColors[i];
+
+          const span = document.createElement('span');
+          span.style.background = colors.backgroundColor;
+          span.style.borderColor = colors.borderColor;
+          span.style.borderWidth = '2px';
+          span.style.marginRight = '10px';
+          span.style.height = '10px';
+          span.style.width = '10px';
+          span.style.display = 'inline-block';
+
+          const tr = document.createElement('tr');
+          tr.style.backgroundColor = 'inherit';
+          tr.style.borderWidth = '0';
+
+          const td = document.createElement('td');
+          td.style.borderWidth = '0';
+
+          const text = document.createTextNode(body);
+
+          td.appendChild(span);
+          td.appendChild(text);
+          tr.appendChild(td);
+          tableBody.appendChild(tr);
+        });
+
+        const tableRoot = tooltipEl.querySelector('table');
+
+        // Remove old children
+        while (tableRoot.firstChild) {
+          tableRoot.firstChild.remove();
+        }
+
+        // Add new children
+        tableRoot.appendChild(tableHead);
+        tableRoot.appendChild(tableBody);
+      }
+
+      const { offsetLeft: positionX, offsetTop: positionY } = chart.canvas;
+
+      // Display, position, and set styles for font
+      tooltipEl.style.opacity = 1;
+      tooltipEl.style.left = positionX + tooltip.caretX + 'px';
+      tooltipEl.style.top = positionY + tooltip.caretY + 'px';
+      tooltipEl.style.font = tooltip.options.bodyFont.string;
+      tooltipEl.style.padding = tooltip.options.padding + 'px ' + tooltip.options.padding + 'px';
+    };
+
+    //Background color
+    let pluginsForCritere = {};
+    //Indicateur trié par ordre
+    const sortedIndicateur = c.Indicateur.sort((a, b) => b.ordre - a.ordre);
+    const nbIndicateur = sortedIndicateur.length;
+
+    pluginsForCritere = {
+      beforeDraw: function (chart: any) {
+        const {
+          ctx,
+          chartArea: { top, bottom, left, right, width, height },
+          scales: { x, y },
+        } = chart;
+        const heightItem = height / nbIndicateur;
+        //Couleur des indicateurs
+        sortedIndicateur.forEach((i, index) => {
+          ctx.fillStyle = i.color;
+          if (index === 0) ctx.fillRect(left, top, width, heightItem);
+          else ctx.fillRect(left, top + heightItem * index, width, heightItem);
+        });
+      },
+      tooltip: {
+        enabled: false,
+        position: 'nearest',
+        external: externalTooltipHandler,
+      },
+    };
+
     monAffichageGraphiquePersonnel.value[indexGraphiqueClasseByCriterebyEleves] = {
       critere: c.titre,
       id: indexGraphiqueClasseByCriterebyEleves,
       labels: [],
       datasets: [],
+      plugins: [pluginsForCritere],
     };
     monAffichageGraphiquePersonnel.value[indexGraphiqueClasseByCriterebyEleves].datasets = [
-      { data: [], backgroundColor: [] },
+      { type: 'bar', label: '', data: [], borderColor: '', display: true },
+      { type: 'line', label: libelleSport.value, data: [], borderColor: 'black', display: true },
     ];
     c.Indicateur.forEach((i) => {
       if (i.evaluationEleves.find((f) => f.Eleve.id === 1)) {
         let nb = 0;
-        monAffichageGraphiquePersonnel.value[indexGraphiqueClasseByCriterebyEleves].labels.push(i.libelle);
+        let date = i.evaluationEleves.find((f) => f.Eleve.id === 1)?.Evaluation.DateEval + '';
+        let datefinal = date.split('T')[0];
+        let dateFormat = datefinal.split('-')[2] + '/' + datefinal.split('-')[1] + '/' + datefinal.split('-')[0];
+        monAffichageGraphiquePersonnel.value[indexGraphiqueClasseByCriterebyEleves].labels.unshift(dateFormat);
         i.evaluationEleves.forEach((ee) => {
           if (ee.Eleve.id === 1) {
-            nb++;
+            monAffichageGraphiquePersonnel.value[indexGraphiqueClasseByCriterebyEleves].datasets[1].data.unshift(
+              i.ordre - 0.5
+            );
           }
         });
-        monAffichageGraphiquePersonnel.value[indexGraphiqueClasseByCriterebyEleves].datasets[0].data.push(nb);
-        monAffichageGraphiquePersonnel.value[indexGraphiqueClasseByCriterebyEleves].datasets[0].backgroundColor.push(
-          i.color
-        );
       }
     });
     indexGraphiqueClasseByCriterebyEleves++;

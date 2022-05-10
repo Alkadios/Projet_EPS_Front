@@ -95,7 +95,6 @@
                   v-else
                   :src="`data:${nouvelleImageIndicateur.type};base64,` + nouveauIndicateur.image"
                   style="max-width: 10rem; max-height: 10rem"
-                  alt="Logo organisme"
                 />
                 <Button
                   v-if="imageIndicateurIsSelected"
@@ -210,7 +209,6 @@
                   v-else
                   :src="`data:${nouvelleImageIndicateur.type};base64,` + nouveauIndicateur.image"
                   style="max-width: 10rem; max-height: 10rem"
-                  alt="Logo organisme"
                 />
                 <Button
                   v-if="imageIndicateurIsSelected"
@@ -273,7 +271,12 @@
                   <a :href="nouveauIndicateur.item.url_video" target="blank">{{
                     nouveauIndicateur.item.url_video
                   }}</a></strong
-                >
+                ><br />
+                <strong>Image:</strong><br />
+                <img
+                  :src="`data:${nouvelleImageIndicateur.type};base64,` + nouveauIndicateur.item.image"
+                  style="max-width: 10rem; max-height: 10rem"
+                />
               </div>
               <div class="col-1 align-center mt-5">
                 <Button class="p-button-rounded p-button-info" @click="openEdit(nouveauIndicateur.item)">
@@ -294,13 +297,7 @@
     </button>
     <div class="container-fluid text-center mb-10 Pl-10">
       <Button label="Valider" style="right: 1rem" icon="pi pi-check" @click="onValid(false)" autofocus></Button>
-      <Button
-        label="Retour aux critères"
-        icon="pi pi-backward"
-        style="left: 1rem"
-        autofocus
-        @click="onValid(true)"
-      ></Button>
+      <Button label="Retour aux critères" icon="pi pi-backward" style="left: 1rem" autofocus @click="back()"></Button>
     </div>
     <div style="position: fixed; bottom: 0; right: 2rem">
       <ProgressSpinner
@@ -345,6 +342,7 @@ const nouveauIndicateur = ref<Indicateur>({
   description: '',
   url_video: '',
   color: '',
+  image: '',
   id: -1,
 } as Indicateur);
 const isLoading = ref(false);
@@ -419,7 +417,7 @@ async function removeIndicateur(indicateurId: number) {
 }
 
 function resetIndicateur() {
-  nouveauIndicateur.value = { libelle: '', description: '', url_video: '' } as Indicateur;
+  nouveauIndicateur.value = { libelle: '', description: '', url_video: '', image: '' } as Indicateur;
 }
 
 const imageIndicateurIsSelected = computed(() => {
@@ -458,5 +456,9 @@ async function onValid(redirectToCritere: boolean) {
   // } else {
   //   router.push({ name: 'TableauDeBordConfig' });
   //}
+}
+
+function back() {
+  window.history.back();
 }
 </script>

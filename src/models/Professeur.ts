@@ -1,4 +1,5 @@
 import { Etablissement } from '@/models';
+import { User } from './User';
 
 export interface Professeur {
   '@id': string;
@@ -8,6 +9,6 @@ export interface Professeur {
   prenom: string;
   telephone: string;
   cours: string;
-  user: string;
+  user: User;
   etablissement: Etablissement;
 }

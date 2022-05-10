@@ -98,7 +98,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/GestionProfClasse',
     name: 'GestionProfClasse',
-    component: () => import('../views/prof/GestionProfClasse.vue'),
+    component: () => import('../views/professeur/GestionProfClasse.vue'),
   },
   {
     path: '/:notFound(.*)',
