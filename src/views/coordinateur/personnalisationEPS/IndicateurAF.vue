@@ -95,7 +95,6 @@
                   v-else
                   :src="`data:${nouvelleImageIndicateur.type};base64,` + nouveauIndicateur.image"
                   style="max-width: 10rem; max-height: 10rem"
-                  alt="Logo organisme"
                 />
                 <Button
                   v-if="imageIndicateurIsSelected"
@@ -210,7 +209,6 @@
                   v-else
                   :src="`data:${nouvelleImageIndicateur.type};base64,` + nouveauIndicateur.image"
                   style="max-width: 10rem; max-height: 10rem"
-                  alt="Logo organisme"
                 />
                 <Button
                   v-if="imageIndicateurIsSelected"
@@ -269,16 +267,24 @@
                   <p v-html="nouveauIndicateur.item.description"></p
                 ></strong>
                 <strong
-                  >Vidéo: <a>{{ nouveauIndicateur.item.url_video }}</a></strong
-                >
+                  >Vidéo:
+                  <a :href="nouveauIndicateur.item.url_video" target="blank">{{
+                    nouveauIndicateur.item.url_video
+                  }}</a></strong
+                ><br />
+                <strong>Image:</strong><br />
+                <img
+                  :src="`data:${nouvelleImageIndicateur.type};base64,` + nouveauIndicateur.item.image"
+                  style="max-width: 10rem; max-height: 10rem"
+                />
               </div>
               <div class="col-1 align-center mt-5">
-                <Button class="p-button-rounded p-button-info" @click="openEdit(nouveauIndicateur.item)"
-                  ><i class="pi pi-pencil"
-                /></Button>
-                <Button class="p-button-rounded p-button-danger" @click="removeIndicateur(nouveauIndicateur.item.id)"
-                  ><i class="pi pi-trash"
-                /></Button>
+                <Button class="p-button-rounded p-button-info" @click="openEdit(nouveauIndicateur.item)">
+                  <i class="pi pi-pencil" />
+                </Button>
+                <Button class="p-button-rounded p-button-danger" @click="removeIndicateur(nouveauIndicateur.item.id)">
+                  <i class="pi pi-trash" />
+                </Button>
               </div>
             </div>
           </div>
@@ -290,13 +296,13 @@
       <p>Ajouter un critère</p>
     </button>
     <div class="container-fluid text-center mb-10 Pl-10">
-      <Button label="Valider" style="right: 1rem" icon="pi pi-check" @click="verif()" autofocus></Button>
+      <Button label="Valider" style="right: 1rem" icon="pi pi-check" @click="onValid(false)" autofocus></Button>
       <Button
         label="Retour aux critères"
         icon="pi pi-backward"
         style="left: 1rem"
-        @click="router.push('Critere')"
         autofocus
+        @click="onValid(true)"
       ></Button>
     </div>
     <div style="position: fixed; bottom: 0; right: 2rem">
@@ -332,6 +338,7 @@ const {
   fetchIndicateurs,
   fetchIndicateursByCritere,
   indicateurs,
+  indicateur,
   indicateursByCritere,
 } = IndicateurService();
 const IndicateurByCritere = ref<Indicateur[]>([]);
@@ -341,6 +348,7 @@ const nouveauIndicateur = ref<Indicateur>({
   description: '',
   url_video: '',
   color: '',
+  image: '',
   id: -1,
 } as Indicateur);
 const isLoading = ref(false);
@@ -372,67 +380,56 @@ onMounted(async () => {
   if (route.query.idCritere) {
     await fetchIndicateursByCritere(parseInt(route.query.idCritere.toString()));
     await fetchCritereById(parseInt(route.query.idCritere.toString()));
-    console.log('indicateur', indicateursByCritere.value);
     mesIndicateurs.value = cloneDeep(indicateursByCritere.value);
   }
   isLoading.value = false;
 });
 
 async function addIndicateur() {
-  try {
-    await saveIndicateur(
-      nouveauIndicateur.value['@id'],
-      nouveauIndicateur.value.libelle,
-      nouveauIndicateur.value.description,
-      nouveauIndicateur.value.image,
-      nouveauIndicateur.value.url_video,
-      '#' + nouveauIndicateur.value.color,
-      critere.value['@id']
-    );
-    closeBasic();
-    window.alert("L'indicateur a bien été ajouté !");
-  } catch (e) {
-    console.log(e);
-  }
+  await saveIndicateur(
+    nouveauIndicateur.value['@id'],
+    nouveauIndicateur.value.libelle,
+    nouveauIndicateur.value.description,
+    nouveauIndicateur.value.image,
+    nouveauIndicateur.value.url_video,
+    '#' + nouveauIndicateur.value.color,
+    critere.value['@id']
+  );
+  mesIndicateurs.value.push(indicateur.value);
+  closeBasic();
+  window.alert("L'indicateur a bien été ajouté !");
 }
 
 async function changeIndicateur(monIndicateur: Indicateur) {
-  try {
-    await editIndicateur(
-      monIndicateur.id,
-      monIndicateur.libelle,
-      monIndicateur.description,
-      monIndicateur.image,
-      monIndicateur.url_video,
-      monIndicateur.color
-    );
-  } catch (e) {
-    console.log(e);
-  }
+  await editIndicateur(
+    monIndicateur.id,
+    monIndicateur.libelle,
+    monIndicateur.description,
+    monIndicateur.image,
+    monIndicateur.url_video,
+    monIndicateur.color
+  );
+  const index = mesIndicateurs.value.findIndex((i) => i.id === monIndicateur.id);
+  mesIndicateurs.value[index] = monIndicateur;
 }
 
 async function removeIndicateur(indicateurId: number) {
   let x = window.confirm('Voulez vous vraiment supprimer cet indicateur ?');
   if (x) {
-    try {
-      await deleteIndicateur(indicateurId);
-      window.alert("L'indicateur a bien été supprimé !");
-    } catch (e) {
-      console.log(e);
-    }
+    await deleteIndicateur(indicateurId);
+    mesIndicateurs.value = mesIndicateurs.value.filter((i: Indicateur) => i.id != indicateurId);
+    window.alert("L'indicateur a bien été supprimé !");
   }
 }
 
 function resetIndicateur() {
-  nouveauIndicateur.value = { libelle: '', description: '', url_video: '' } as Indicateur;
+  nouveauIndicateur.value = { libelle: '', description: '', url_video: '', image: '' } as Indicateur;
 }
 
 const imageIndicateurIsSelected = computed(() => {
   if (isObjectEmpty(nouvelleImageIndicateur.value) && nouveauIndicateur.value.image === '') return false;
   else return true;
 });
-
-function verif() {}
 
 function onPhotoChange(event: any) {
   nouvelleImageIndicateur.value = event.files[0];
@@ -454,5 +451,16 @@ function onPhotoChange(event: any) {
 function supprimerImageIndicateur() {
   nouvelleImageIndicateur.value = {} as File;
   nouveauIndicateur.value.image = '';
+}
+async function onValid(redirectToCritere: boolean) {
+  mesIndicateurs.value.forEach(async (i: Indicateur, index) => {
+    await editIndicateur(i.id, i.libelle, i.description, i.image, i.url_video, i.color, index + 1);
+  });
+  // if (redirectToCritere) {
+  //   const splitApsaRetenu = critere.value.ApsaRetenu.toString().split('/');
+  //   router.push({ name: 'Critere', query: { idApsaRetenu: splitApsaRetenu[3] } });
+  // } else {
+  //   router.push({ name: 'TableauDeBordConfig' });
+  //}
 }
 </script>

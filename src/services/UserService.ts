@@ -19,6 +19,9 @@ export default function UserService() {
     return store.getters['UserModule/getToken'];
   });
 
+  const user = computed((): string => {
+    return store.getters['UserModule/getUser'];
+  });
 
   async function login(username: string, password: string) {
     await store.dispatch('UserModule/login', {
@@ -27,9 +30,7 @@ export default function UserService() {
     });
   }
 
-  async function deconnexion() {
-    
-  }
+  async function deconnexion() {}
 
   async function deleteUser(idUser: number) {
     await store.dispatch('UserModule/deleteUser', {
@@ -37,13 +38,12 @@ export default function UserService() {
     });
   }
 
-  
-
   return {
     saveUser,
     deleteUser,
     login,
     deconnexion,
-    token
+    token,
+    user,
   };
 }

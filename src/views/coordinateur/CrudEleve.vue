@@ -225,7 +225,7 @@
                     <label for="sexeEleve">sexe Eleve : </label>
                     <InputText v-model="eleveById.sexeEleve" id="sexeEleve" required="true" autofocus />
                   </div>
-                  <Button class="mt-4" label="Modifier" icon="pi pi-check" @click="editEleve(eleveById.id)" autofocus />
+                  <Button class="mt-4" label="Modifier" icon="pi pi-check" @click="editEleve(eleveById)" autofocus />
                 </div>
               </div>
             </form>
@@ -253,9 +253,7 @@ const {
   updateEleve,
 } = EleveService();
 
-const {
-deleteUser
-} = UserService();
+const { deleteUser } = UserService();
 
 const eleveDialog = ref(false);
 const isLoading = ref(false);
@@ -304,17 +302,16 @@ async function champsEleve(idEleve: number) {
   isLoading.value = false;
 }
 
-async function editEleve(idEleve: number) {
+async function editEleve(Eleve: Eleve) {
   isLoading.value = true;
   await updateEleve(
-    idEleve,
+    Eleve.id,
     eleveById.value.nom,
     eleveById.value.prenom,
     eleveById.value.mailParent1,
     eleveById.value.mailParent2,
     eleveById.value.telephone,
-    eleveById.value.sexeEleve,
-    eleveById.value.etablissement
+    eleveById.value.sexeEleve
   );
   eleveDialog.value = false;
   isLoading.value = false;
