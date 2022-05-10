@@ -95,7 +95,6 @@
                   v-else
                   :src="`data:${nouvelleImageIndicateur.type};base64,` + nouveauIndicateur.image"
                   style="max-width: 10rem; max-height: 10rem"
-                  alt="Logo organisme"
                 />
                 <Button
                   v-if="imageIndicateurIsSelected"
@@ -210,7 +209,6 @@
                   v-else
                   :src="`data:${nouvelleImageIndicateur.type};base64,` + nouveauIndicateur.image"
                   style="max-width: 10rem; max-height: 10rem"
-                  alt="Logo organisme"
                 />
                 <Button
                   v-if="imageIndicateurIsSelected"
@@ -273,7 +271,12 @@
                   <a :href="nouveauIndicateur.item.url_video" target="blank">{{
                     nouveauIndicateur.item.url_video
                   }}</a></strong
-                >
+                ><br />
+                <strong>Image:</strong><br />
+                <img
+                  :src="`data:${nouvelleImageIndicateur.type};base64,` + nouveauIndicateur.item.image"
+                  style="max-width: 10rem; max-height: 10rem"
+                />
               </div>
               <div class="col-1 align-center mt-5">
                 <Button class="p-button-rounded p-button-info" @click="openEdit(nouveauIndicateur.item)">
@@ -345,6 +348,7 @@ const nouveauIndicateur = ref<Indicateur>({
   description: '',
   url_video: '',
   color: '',
+  image: '',
   id: -1,
 } as Indicateur);
 const isLoading = ref(false);
@@ -419,7 +423,7 @@ async function removeIndicateur(indicateurId: number) {
 }
 
 function resetIndicateur() {
-  nouveauIndicateur.value = { libelle: '', description: '', url_video: '' } as Indicateur;
+  nouveauIndicateur.value = { libelle: '', description: '', url_video: '', image: '' } as Indicateur;
 }
 
 const imageIndicateurIsSelected = computed(() => {
