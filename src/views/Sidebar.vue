@@ -2,7 +2,7 @@
   <aside
     class="sidenav bg-white navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-4"
     id="sidenav-main"
-    :style="'display:' + props.displaySideBar"
+    :style="'display:' + displaySideBar"
   >
     <div class="sidenav-header">
       <i
@@ -129,7 +129,7 @@
         <li class="nav-item mt-3" id="monCompteSideBar" style="display: none">
           <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Mon compte</h6>
         </li>
-        <li class="nav-item" id="monProfilSideBar" style="display: none">
+        <li class="nav-item" id="monProfilSideBar" style="display: none" @click="echo">
           <a class="nav-link" href="#">
             <div
               class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center"
@@ -239,6 +239,7 @@ onMounted(function () {
   window.addEventListener('resize', () => {
     displayMenu.value = window.innerWidth >= 600;
   });
+  echo();
 });
 
 const props = defineProps({
@@ -246,5 +247,10 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  sidenavActive: Boolean,
 });
+
+function echo() {
+  console.log(props.displaySideBar, 'props', props.sidenavActive);
+}
 </script>

@@ -136,13 +136,10 @@ const displayMenu = ref(window.innerWidth >= 600);
 
 const isLoading = ref(false);
 
-const emit = defineEmits(['update:displaySidebar']);
+const emit = defineEmits(['OndisplaySidebar']);
 
 const props = defineProps({
-  displaySideBar: {
-    type: String,
-    required: false,
-  },
+  displaySideBar: String,
 });
 
 onMounted(async () => {
@@ -151,19 +148,19 @@ onMounted(async () => {
     displayMenu.value = window.innerWidth >= 600;
   });
   isLoading.value = true;
-
+  reponsiveSideBar();
   isLoading.value = false;
 });
 
 function reponsiveSideBar() {
-  console.log('ta ', props.displaySideBar);
-  if (props.displaySideBar === 'none') {
-    emit('update:displaySidebar', 'block');
-    console.log('oui');
-  } else {
-    emit('update:displaySidebar', 'none');
-    console.log('non');
-  }
+  console.log('ta ', props);
+  // if (props.displaySideBar === 'none') {
+  //   emit('update:displaySidebar', 'block');
+  //   console.log('oui');
+  // } else {
+  //   emit('update:displaySidebar', 'none');
+  //   console.log('non');
+  // }
 }
 
 // function toggleMenu() {
