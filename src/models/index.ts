@@ -21,3 +21,4 @@ export * from './Critere';
 export * from './Professeur';
 export * from './EvaluationEleve';
 export * from './ProfesseurClasses';
+export * from './Evaluation';

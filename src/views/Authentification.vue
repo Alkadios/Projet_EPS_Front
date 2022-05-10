@@ -60,10 +60,12 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import UtilisateurService from '@/services/UtilisateurService';
+import UserService from '@/services/UserService';
 
 const router = useRouter();
 
 const { utilisateur, loginUtilisateur } = UtilisateurService();
+const { user, token } = UserService();
 
 const afficherModalErreur = ref(false);
 const libelleErreur = ref('');
@@ -82,5 +84,8 @@ async function login() {
   if (utilisateur.value.prenom) {
     router.push({ name: 'TableauDeBord' });
   }
+  console.log('test', token.value);
+  console.log('user', user.value.id);
+  console.log('user', user.value.professeurs);
 }
 </script>

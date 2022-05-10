@@ -1,11 +1,11 @@
-import { Eleve, Indicateur } from '@/models';
+import { Eleve, Indicateur, Evaluation } from '@/models';
 
 export interface EvaluationEleve {
   '@id': string;
   '@type': string;
   id: number;
   Eleve: Eleve;
-  Evaluation: string;
+  Evaluation: Evaluation;
   Indicateur: Indicateur;
   auto_eval: boolean;
 }

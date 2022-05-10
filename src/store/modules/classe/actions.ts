@@ -2,7 +2,7 @@ import { ActionContext } from 'vuex';
 import ClasseAPI from '@/api/ClasseAPI';
 import ClasseState from './stateInterface';
 import { ref } from 'vue';
-import { Classe } from '@/models';
+import { Classe, Eleve } from '@/models';
 
 export default {
   async fetchAllClasses(context: ActionContext<ClasseState, any>) {
@@ -73,6 +73,12 @@ export default {
   ) {
     const response = await ClasseAPI.addElevesInClasse(payload.idClasse, payload);
     if (response.status === 200) {
+      context.commit('setClassesById', response.data);
+      const elevesByClasse = ref<Eleve[]>(context.getters.getElevesByClasse);
+      console.log('reponse', response.data);
+      // const indexEleve = elevesByClasse.value.findIndex((c) => c.classe.find((cl) => payload.idClasse === cl.id));
+      // elevesByClasse.value[indexEleve] = response.data;
+      context.commit('setElevesByClasse', elevesByClasse.value);
     } else {
       //throw new Error(response.data.message);
     }
