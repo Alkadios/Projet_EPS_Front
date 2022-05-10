@@ -1,4 +1,8 @@
 <template>
+  <metainfo>
+    <template v-slot:title="{ content }">{{ content ? `${content} | SITE_NAME` : `SITE_NAME` }}</template>
+  </metainfo>
+
   <div id="wrapper">
     <Sidebar />
     <div class="d-flex flex-column" id="content-wrapper">
@@ -15,6 +19,8 @@
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { useMeta } from 'vue-meta';
+
 import Sidebar from './views/Sidebar.vue';
 import Navbar from './views/Navbar.vue';
 //import UtilisateurService from './services/UtilisateurService';
@@ -25,7 +31,7 @@ import ObjectUtils from './utils/ObjectUtils';
 import SelectButton from 'primevue/selectbutton';
 
 import router from './router';
-
+import { metaProperty } from '@babel/types';
 // const router = useRouter();
 
 const { isObjectEmpty } = ObjectUtils();
@@ -39,6 +45,11 @@ onMounted(async () => {
   // if (isObjectEmpty(utilisateur.value)) {
   //   router.push({ name: 'Authentification' });
   // }
+  useMeta({
+    title: 'OCPEPS22',
+    htmlAttrs: { lang: 'fr' },
+    meta: [{ charset: 'utf-8' }, { 'http-equiv': 'Content-Security-Policy', content: 'upgrade-insecure-requests' }],
+  }); //<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 
   await fetchAnneeEnCours();
   storeAnneeEnConfig(anneeEnCours.value);
