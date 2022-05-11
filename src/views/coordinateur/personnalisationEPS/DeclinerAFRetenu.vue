@@ -45,7 +45,22 @@
       </div>
     </div>
     <div class="mb-3">
-      <Button label="Valider" style="right: 1rem" @click="ajoutApsaRetenu()" icon="pi pi-check" autofocus></Button>
+      <Button
+        v-if="!verifIsExistSituationEvaluation()"
+        label="Valider"
+        style="right: 1rem"
+        @click="ajoutApsaRetenu()"
+        icon="pi pi-check"
+        autofocus
+      ></Button>
+      <Button
+        v-else
+        @click="changeApsaRetenu(monApsaRetenu!)"
+        label="Modifier"
+        style="right: 1rem"
+        icon="pi pi-pencil"
+        autofocus
+      ></Button>
     </div>
     <div style="position: fixed; bottom: 0; right: 0">
       <ProgressSpinner
@@ -72,19 +87,33 @@ const route = useRoute();
 
 const { apsaSelectAnneeByAnnee, fetchAllApsaSelectAnneeByAnnee } = ApsaSelectAnneeService();
 const { afRetenus, fetchAllAfRetenus } = AfRetenusService();
-const { apsaRetenu, apsasRetenus, saveApsaRetenu, fetchAllApsaRetenu } = ApsaRetenuService();
+const { apsaRetenu, apsasRetenus, saveApsaRetenu, fetchAllApsaRetenu, editApsaRetenu } = ApsaRetenuService();
 const { etablissement, anneeEnConfig } = UtilisateurService();
 
 const apsaSelects = ref<ApsaSelectAnnee[]>([]);
-const monAPSA = ref<ApsaRetenu>();
+const monAPSA = ref<ApsaSelectAnnee>();
 const monAfRetenuSelected = ref();
 const mesAfRetenus = ref<AfRetenus[]>([]);
 const isLoading = ref(false);
 const situationEvaluation = ref('');
+const monApsaRetenu = ref<ApsaRetenu>();
 
 async function ajoutApsaRetenu() {
   if ((monAfRetenuSelected.value['@id'], situationEvaluation.value, monAPSA.value?.['@id'])) {
     await saveApsaRetenu(monAfRetenuSelected.value['@id'], situationEvaluation.value, monAPSA.value?.['@id']);
+    router.push({ name: 'Critere', query: { idApsaRetenu: apsaRetenu.value.id } });
+  }
+}
+
+async function changeApsaRetenu(monApsaRetenu: ApsaRetenu) {
+  if ((monAfRetenuSelected.value['@id'], situationEvaluation.value, monAPSA.value?.['@id'])) {
+    await editApsaRetenu(
+      monApsaRetenu.id,
+      monAfRetenuSelected.value['@id'],
+      situationEvaluation.value,
+      monAPSA.value?.['@id']
+    );
+    window.alert('Le critère a bien été modifié !');
     router.push({ name: 'Critere', query: { idApsaRetenu: apsaRetenu.value.id } });
   }
 }
@@ -95,12 +124,49 @@ watch(
     if (monAPSA.value) {
       isLoading.value = true;
       //await fetchAllAfRetenuByAnneeAndNiveauScolaire(annee.value.id, niveauScolaireSelectionne.value?.id);
-
+      if (monAfRetenuSelected.value) console.log('watch mon Apsa', verifIsExistSituationEvaluation());
       //Mettre fonction
+      if (verifIsExistSituationEvaluation()) {
+        situationEvaluation.value = monApsaRetenu.value?.SituationEvaluation!;
+      } else {
+        situationEvaluation.value = '';
+      }
       isLoading.value = false;
     }
   }
 );
+
+watch(
+  () => monAfRetenuSelected.value,
+  async () => {
+    if (monAfRetenuSelected.value) {
+      isLoading.value = true;
+      if (monAfRetenuSelected.value) console.log('watch mon af', verifIsExistSituationEvaluation());
+      if (verifIsExistSituationEvaluation()) {
+        situationEvaluation.value = monApsaRetenu.value?.SituationEvaluation!;
+      } else {
+        situationEvaluation.value = '';
+      }
+      isLoading.value = false;
+    }
+  }
+);
+
+function verifIsExistSituationEvaluation() {
+  if (monAfRetenuSelected.value && monAPSA.value) {
+    if (
+      apsasRetenus.value.find(
+        (ar) => ar.AfRetenu.id === monAfRetenuSelected.value.id && ar.ApsaSelectAnnee['@id'] === monAPSA.value?.['@id']
+      )
+    ) {
+      monApsaRetenu.value = apsasRetenus.value.find(
+        (ar) => ar.AfRetenu.id === monAfRetenuSelected.value.id && ar.ApsaSelectAnnee['@id'] === monAPSA.value?.['@id']
+      );
+      return true;
+    }
+  }
+  return false;
+}
 
 onMounted(async () => {
   isLoading.value = true;

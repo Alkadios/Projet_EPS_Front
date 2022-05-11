@@ -36,6 +36,14 @@ export default function ApsaRetenuService() {
       ApsaSelectAnnee,
     });
   }
+  async function editApsaRetenu(id: number, AfRetenu: string, SituationEvaluation: string, ApsaSelectAnnee: string) {
+    await store.dispatch('ApsaRetenuModule/editApsaRetenu', {
+      id,
+      AfRetenu,
+      SituationEvaluation,
+      ApsaSelectAnnee,
+    });
+  }
   return {
     apsaRetenu,
     apsasRetenus,
@@ -43,6 +51,7 @@ export default function ApsaRetenuService() {
     fetchAllApsaRetenu,
     fetchApsaRetenu,
     saveApsaRetenu,
+    editApsaRetenu,
     fetchApsaRetenuByAnneeAndEtablissement,
   };
 }

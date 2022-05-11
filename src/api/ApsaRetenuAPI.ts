@@ -1,5 +1,5 @@
-import axios, { AxiosResponse } from 'axios';
-import { ApsaRetenuAPI } from '@/constants/ApiUrls';
+import axios, { Axios, AxiosResponse } from 'axios';
+import { ApiURLApsaSelect, ApsaRetenuAPI } from '@/constants/ApiUrls';
 import { ResponseModel } from '@/models';
 import { apiConfig } from '@/config/UtilisateurConfig';
 
@@ -25,5 +25,13 @@ export default {
     SituationEvaluation: string;
   }): Promise<AxiosResponse<ResponseModel>> {
     return axios.post(`${ApsaRetenuAPI}`, payload, apiConfig.value);
+  },
+  async editApsaRetenu(payload: {
+    id: number;
+    AfRetenu: string;
+    ApsaSelectAnnee: string;
+    SituationEvaluation: string;
+  }): Promise<AxiosResponse<ResponseModel>> {
+    return axios.put(`${ApsaRetenuAPI}/${payload.id}`, payload, apiConfig.value);
   },
 };
