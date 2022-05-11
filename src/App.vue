@@ -96,9 +96,7 @@ import Authentification from './views/Authentification.vue';
 import UtilisateurService from './services/UtilisateurService';
 import EleveService from './services/EleveService';
 import ProfesseurService from './services/ProfesseurService';
-import UserService from './services/UserService';
 import ObjectUtils from './utils/ObjectUtils';
-
 import router from './router';
 import UserService from './services/UserService';
 
