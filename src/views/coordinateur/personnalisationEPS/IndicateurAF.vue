@@ -266,17 +266,17 @@
                   >Description:
                   <p v-html="nouveauIndicateur.item.description"></p
                 ></strong>
-                <strong
+                <strong v-if="nouveauIndicateur.item.url_video != ''"
                   >Vidéo:
                   <a :href="nouveauIndicateur.item.url_video" target="blank">{{
                     nouveauIndicateur.item.url_video
                   }}</a></strong
                 ><br />
-                <strong>Image:</strong><br />
-                <img
-                  :src="`data:${nouvelleImageIndicateur.type};base64,` + nouveauIndicateur.item.image"
-                  style="max-width: 10rem; max-height: 10rem"
-                />
+                <strong v-if="nouveauIndicateur.item.image != ''"
+                  >Image:<br /><img
+                    :src="`data:${nouvelleImageIndicateur.type};base64,` + nouveauIndicateur.item.image"
+                    style="max-width: 10rem; max-height: 10rem" /></strong
+                ><br />
               </div>
               <div class="col-1 align-center mt-5">
                 <Button class="p-button-rounded p-button-info" @click="openEdit(nouveauIndicateur.item)">
