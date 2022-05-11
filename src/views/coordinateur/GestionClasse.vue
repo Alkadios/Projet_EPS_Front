@@ -1,6 +1,6 @@
 <template>
   <div class="card shadow-lg o-hidden border-0 m-5">
-    <div class="card-body p-0">
+    <div class="card-body p-5">
       <DataTable :value="classesByAnnee" responsiveLayout="scroll" dataKey="id">
         <Button label="Ajouter une Classe" @click="openBasic" style="right: 1rem" icon="pi pi-plus" autofocus />
         <Column selectionMode="single" style="width: 3rem" :exportable="false"></Column>
@@ -105,7 +105,12 @@ import ClasseService from '@/services/ClasseService';
 import EtablissementService from '@/services/EtablissementService';
 import NiveauScolaireService from '@/services/NiveauScolaireService';
 import { ref, onMounted, watch } from 'vue';
-
+import UserService from '@/services/UserService';
+import ObjectUtils from '@/utils/ObjectUtils';
+import { useRoute, useRouter } from 'vue-router';
+const router = useRouter();
+const { isObjectEmpty } = ObjectUtils();
+const { user } = UserService();
 const { fetchClasseByAnnee, classesByAnnee, saveClasse, deleteClasse, classesById, fetchClasseById } = ClasseService();
 const { etablissements, fetchAllEtablissements } = EtablissementService();
 const { niveauxScolaires, fetchAllNiveauxScolaires } = NiveauScolaireService();
@@ -157,11 +162,15 @@ const closeBasic = () => {
 };
 
 onMounted(async () => {
-  isLoading.value = true;
-  await fetchClasseByAnnee(3);
-  await fetchAllEtablissements();
-  await fetchAllNiveauxScolaires();
-  await fetchAllAnnees();
-  isLoading.value = false;
+  if (isObjectEmpty(user.value)) {
+    router.push('/');
+  } else {
+    isLoading.value = true;
+    await fetchClasseByAnnee(3);
+    await fetchAllEtablissements();
+    await fetchAllNiveauxScolaires();
+    await fetchAllAnnees();
+    isLoading.value = false;
+  }
 });
 </script>

@@ -135,6 +135,7 @@ import { useRoute, useRouter } from 'vue-router';
 import UtilisateurService from '@/services/UtilisateurService';
 import ApsaRetenuService from '@/services/ApsaRetenuService';
 import ClasseService from '@/services/ClasseService';
+import UserService from '@/services/UserService';
 import EvaluationEleveService from '@/services/EvaluationEleveService';
 import ObjectUtils from '@/utils/ObjectUtils';
 import type { Critere, Eleve, Indicateur, Classe, ApsaRetenu, NiveauScolaire, APSA } from '@/models';
@@ -146,6 +147,7 @@ const { apsasRetenusByEtablissementAndAnnee, fetchApsaRetenuByAnneeAndEtablissem
 const { classesByAnneeAndProfesseur, fetchClasseByAnneeAndProf } = ClasseService();
 const { saveEvaluationEleve } = EvaluationEleveService();
 const { etablissement, anneeEnCours } = UtilisateurService();
+const { user, token } = UserService();
 const { isObjectEmpty } = ObjectUtils();
 const isLoading = ref(false);
 
@@ -247,10 +249,14 @@ watch(
 );
 
 onMounted(async () => {
-  isLoading.value = true;
-  await fetchClasseByAnneeAndProf(anneeEnCours.value.id, 1);
-  await fetchApsaRetenuByAnneeAndEtablissement(anneeEnCours.value.id, etablissement.value.id);
-  isLoading.value = false;
+  if (isObjectEmpty(user.value)) {
+    router.push('/');
+  } else {
+    isLoading.value = true;
+    await fetchClasseByAnneeAndProf(anneeEnCours.value.id, 1);
+    await fetchApsaRetenuByAnneeAndEtablissement(anneeEnCours.value.id, etablissement.value.id);
+    isLoading.value = false;
+  }
 });
 
 function onClasseChange() {

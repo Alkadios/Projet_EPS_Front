@@ -19,8 +19,8 @@
     <hr class="horizontal dark mt-0" />
     <div class="collapse navbar-collapse w-auto" id="sidenav-collapse-main">
       <ul class="navbar-nav">
-        <div>
-          <li class="nav-item mt-3" v-if="token === ''">
+        <div v-if="user.roles === 'Admin'">
+          <li class="nav-item mt-3">
             <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Coordonnateur</h6>
           </li>
           <li class="nav-item">
@@ -78,7 +78,7 @@
             </router-link>
           </li>
         </div>
-        <div>
+        <div v-if="user.roles === 'Professeur'">
           <li class="nav-item mt-3">
             <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Professeur</h6>
           </li>
@@ -101,16 +101,16 @@
             </router-link>
           </li>
           <li class="nav-item">
-            <a href="#" style="margin: unset" class="nav-link">
+            <router-link to="GestionClasse" style="margin: unset" class="nav-link">
               <div class="icon icon-shape icon-sm d-flex align-items-center justify-content-center">
                 <i class="ni ni-collection text-info text-sm opacity-10"></i>
               </div>
               <i class="fas fa-graduation-cap"></i>
               <span class="nav-link-text justify-content-center">Gestion de mes classes</span>
-            </a>
+            </router-link>
           </li>
         </div>
-        <div>
+        <div v-if="user.roles === 'Eleve'">
           <li class="nav-item mt-3">
             <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Eleve</h6>
           </li>
@@ -137,7 +137,7 @@
           <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Mon compte</h6>
         </li>
         <li class="nav-item" id="monProfilSideBar" style="display: none" @click="echo">
-          <a class="nav-link" href="#">
+          <router-link to="/Profil" class="nav-link">
             <div
               class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center"
             >
@@ -145,10 +145,10 @@
             </div>
             <i class="fas fa-user"></i>
             <span class="nav-link-text ms-1">Profile</span>
-          </a>
+          </router-link>
         </li>
         <li class="nav-item" id="LogoutSideBar" style="display: none">
-          <a @click="deconnexion" class="nav-link" href="#">
+          <a @click="logout()" class="nav-link" href="#">
             <div
               class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center"
             >
@@ -165,6 +165,9 @@
 <script lang="ts" setup>
 import UserService from '@/services/UserService';
 import { onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 const displayMenu = ref(window.innerWidth >= 600);
 const { token, user, deconnexion } = UserService();
 
@@ -182,6 +185,10 @@ const props = defineProps({
   },
   sidenavActive: Boolean,
 });
+
+async function logout() {
+  await deconnexion();
+}
 
 function echo() {
   console.log(props.displaySideBar, 'props', props.sidenavActive);

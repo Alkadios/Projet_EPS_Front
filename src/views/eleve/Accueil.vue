@@ -55,7 +55,9 @@ import EleveService from '@/services/EleveService';
 import ApsaSelectAnneeService from '@/services/ApsaSelectAnneeService';
 import ObjectUtils from '@/utils/ObjectUtils';
 import type { Eleve, APSA } from '@/models';
-
+import UserService from '@/services/UserService';
+const { isObjectEmpty } = ObjectUtils();
+const { user } = UserService();
 const route = useRoute();
 const router = useRouter();
 
@@ -65,9 +67,13 @@ const { fetchEleveById, eleveById } = EleveService();
 const isLoading = ref(false);
 
 onMounted(async () => {
-  isLoading.value = true;
-  await fetchEleveById(3);
-  isLoading.value = false;
+  if (isObjectEmpty(user.value)) {
+    router.push('/');
+  } else {
+    isLoading.value = true;
+    await fetchEleveById(3);
+    isLoading.value = false;
+  }
 });
 
 async function mesAPSAbyAnnee(idAnnee: number) {

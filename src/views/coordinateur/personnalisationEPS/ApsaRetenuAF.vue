@@ -77,7 +77,11 @@ import ChoixAnneeService from '@/services/ChoixAnneeService';
 import { useRoute, useRouter } from 'vue-router';
 import ApsaSelectAnneeService from '@/services/ApsaSelectAnneeService';
 import EnTetePersonalisation from './EnTetePersonalisation.vue';
+import ObjectUtils from '@/utils/ObjectUtils';
+import UserService from '@/services/UserService';
 
+const { isObjectEmpty } = ObjectUtils();
+const { user } = UserService();
 const route = useRoute();
 const router = useRouter();
 
@@ -98,18 +102,22 @@ const isLoading = ref(false);
 const afEnErreur = ref(false);
 
 onMounted(async () => {
-  isLoading.value = true;
-  await fetchChampsApprentissages();
-  await fetchAllAfs();
-  await fetchAllApsaSelectAnneeByAnnee(anneeEnConfig.value.id);
-  isLoading.value = false;
-  if (route.query.idNiveau) {
-    niveauScolaireSelectionne.value = etablissement.value.niveauScolaire.find(
-      (n) => n.id == parseInt(route.query.idNiveau!.toString())
-    );
-  }
-  if (route.query.idCa) {
-    selectedCa.value = champsApprentissages.value.find((ca) => ca.id == parseInt(route.query.idCa!.toString()));
+  if (isObjectEmpty(user.value)) {
+    router.push('/');
+  } else {
+    isLoading.value = true;
+    await fetchChampsApprentissages();
+    await fetchAllAfs();
+    await fetchAllApsaSelectAnneeByAnnee(anneeEnConfig.value.id);
+    isLoading.value = false;
+    if (route.query.idNiveau) {
+      niveauScolaireSelectionne.value = etablissement.value.niveauScolaire.find(
+        (n) => n.id == parseInt(route.query.idNiveau!.toString())
+      );
+    }
+    if (route.query.idCa) {
+      selectedCa.value = champsApprentissages.value.find((ca) => ca.id == parseInt(route.query.idCa!.toString()));
+    }
   }
 });
 

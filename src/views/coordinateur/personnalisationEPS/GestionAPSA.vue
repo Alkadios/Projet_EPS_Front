@@ -89,7 +89,11 @@ import UtilisateurService from '@/services/UtilisateurService';
 import ApsaSelectAnneeService from '@/services/ApsaSelectAnneeService';
 import { APSA, ChampApprentissage, ChampsApprentissageApsa } from '@/models';
 import { useRouter } from 'vue-router';
+import ObjectUtils from '@/utils/ObjectUtils';
+import UserService from '@/services/UserService';
 
+const { isObjectEmpty } = ObjectUtils();
+const { user } = UserService();
 const router = useRouter();
 
 const { champsApprentissages, fetchChampsApprentissages, saveApsaInCa } = ChampApprentissageService();
@@ -169,23 +173,27 @@ function champsNonRempli() {
 }
 
 onMounted(async () => {
-  isLoading.value = true;
-  await fetchChampsApprentissages();
-  await fetchAllApsa();
+  if (isObjectEmpty(user.value)) {
+    router.push('/');
+  } else {
+    isLoading.value = true;
+    await fetchChampsApprentissages();
+    await fetchAllApsa();
 
-  await fetchAllApsaSelectAnneeByAnnee(anneeEnConfig.value.id);
-  if (apsaSelectAnneeByAnnee.value.length > 0) {
-    champsApprentissages.value.forEach((ca) => {
-      caApsasSelectionnes.value[ca.id] = [];
-      apsaSelectAnneeByAnnee.value
-        .filter((apsaSelect) => apsaSelect.Ca.id === ca.id)
-        .forEach((as) => {
-          caApsasSelectionnes.value[as.Ca.id].push(
-            ca.champsApprentissageApsas.find((caa) => caa.Apsa.id === as.Apsa.id)
-          );
-        });
-    });
+    await fetchAllApsaSelectAnneeByAnnee(anneeEnConfig.value.id);
+    if (apsaSelectAnneeByAnnee.value.length > 0) {
+      champsApprentissages.value.forEach((ca) => {
+        caApsasSelectionnes.value[ca.id] = [];
+        apsaSelectAnneeByAnnee.value
+          .filter((apsaSelect) => apsaSelect.Ca.id === ca.id)
+          .forEach((as) => {
+            caApsasSelectionnes.value[as.Ca.id].push(
+              ca.champsApprentissageApsas.find((caa) => caa.Apsa.id === as.Apsa.id)
+            );
+          });
+      });
+    }
+    isLoading.value = false;
   }
-  isLoading.value = false;
 });
 </script>

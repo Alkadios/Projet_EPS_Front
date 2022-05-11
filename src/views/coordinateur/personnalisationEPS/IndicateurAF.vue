@@ -291,7 +291,11 @@
         </template>
       </OrderList>
     </div>
-    <button class="btn-info" style="border-radius: 10px" @click="openBasic">
+    <button
+      class="btn"
+      style="border-radius: 10px; background-color: #6372e6; color: white; margin: 1rem"
+      @click="openBasic"
+    >
       <i class="m-3 pi pi-plus" style="cursor: pointer; border-radius: 50%; border: 0.2rem solid; font-size: 2em" />
       <p>Ajouter un critère</p>
     </button>
@@ -319,7 +323,9 @@ import IndicateurService from '@/services/IndicateurService';
 import { useRoute, useRouter } from 'vue-router';
 import ObjectUtils from '@/utils/ObjectUtils';
 import { cloneDeep } from 'lodash-es';
+import UserService from '@/services/UserService';
 
+const { user } = UserService();
 const route = useRoute();
 const router = useRouter();
 const { isObjectEmpty } = ObjectUtils();
@@ -370,13 +376,17 @@ const closeEdit = () => {
 };
 
 onMounted(async () => {
-  isLoading.value = true;
-  if (route.query.idCritere) {
-    await fetchIndicateursByCritere(parseInt(route.query.idCritere.toString()));
-    await fetchCritereById(parseInt(route.query.idCritere.toString()));
-    mesIndicateurs.value = cloneDeep(indicateursByCritere.value);
+  if (isObjectEmpty(user.value)) {
+    router.push('/');
+  } else {
+    isLoading.value = true;
+    if (route.query.idCritere) {
+      await fetchIndicateursByCritere(parseInt(route.query.idCritere.toString()));
+      await fetchCritereById(parseInt(route.query.idCritere.toString()));
+      mesIndicateurs.value = cloneDeep(indicateursByCritere.value);
+    }
+    isLoading.value = false;
   }
-  isLoading.value = false;
 });
 
 async function addIndicateur() {

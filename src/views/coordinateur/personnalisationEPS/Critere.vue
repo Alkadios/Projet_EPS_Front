@@ -203,7 +203,7 @@
               ><br />
 
               <Button
-                label="Ajouter des indicateurs"
+                label="Indicateur"
                 icon="pi pi-plus"
                 @click="
                   router.push({
@@ -261,7 +261,9 @@ import UtilisateurService from '@/services/UtilisateurService';
 import ApsaRetenuService from '@/services/ApsaRetenuService';
 import { useRoute, useRouter } from 'vue-router';
 import critere from '@/store/modules/critere';
+import UserService from '@/services/UserService';
 
+const { user } = UserService();
 const route = useRoute();
 const router = useRouter();
 
@@ -302,12 +304,16 @@ const imageCritereIsSelected = computed(() => {
 });
 
 onMounted(async () => {
-  isLoading.value = true;
-  if (route.query.idApsaRetenu) {
-    await fetchCriteresByApsaRetenu(parseInt(route.query.idApsaRetenu.toString()));
-    await fetchApsaRetenu(parseInt(route.query.idApsaRetenu.toString()));
+  if (isObjectEmpty(user.value)) {
+    router.push('/');
+  } else {
+    isLoading.value = true;
+    if (route.query.idApsaRetenu) {
+      await fetchCriteresByApsaRetenu(parseInt(route.query.idApsaRetenu.toString()));
+      await fetchApsaRetenu(parseInt(route.query.idApsaRetenu.toString()));
+    }
+    isLoading.value = false;
   }
-  isLoading.value = false;
 });
 
 async function addCritere() {
