@@ -25,12 +25,15 @@ import ObjectUtils from './utils/ObjectUtils';
 import SelectButton from 'primevue/selectbutton';
 
 import router from './router';
+import UserService from './services/UserService';
 
 // const router = useRouter();
 
 const { isObjectEmpty } = ObjectUtils();
 const { utilisateur, fetchAnneeEnCours, anneeEnCours, storeAnneeEnConfig, fetchEtablissementById } =
   UtilisateurService();
+const { checkLocalStorage } = UserService();
+
 // const { storeOrganismesUtilisateur, organismeConnecte, storeOrganismeConnecte, listeOrganismesUtilisateur } =
 //   UtilisateurService();
 
@@ -40,6 +43,7 @@ onMounted(async () => {
   //   router.push({ name: 'Authentification' });
   // }
 
+  await checkLocalStorage();
   await fetchAnneeEnCours();
   storeAnneeEnConfig(anneeEnCours.value);
   await fetchEtablissementById(1);
