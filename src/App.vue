@@ -110,7 +110,7 @@ const { utilisateur, fetchAnneeEnCours, anneeEnCours, storeAnneeEnConfig, fetchE
 
 const { fetchEleveByUser, eleveByUser } = EleveService();
 const { fetchProfByUser, professeurByUser } = ProfesseurService();
-const { user, checkLocalStorage } = UserService();
+const { user, checkLocalStorage, deconnexion } = UserService();
 // const { storeOrganismesUtilisateur, organismeConnecte, storeOrganismeConnecte, listeOrganismesUtilisateur } =
 //   UtilisateurService();
 
@@ -158,4 +158,6 @@ function reponsiveSideBar() {
     displaySidebar.value = 'none';
   }
 }
+
+async function logout() {}
 </script>

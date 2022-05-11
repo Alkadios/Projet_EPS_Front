@@ -19,6 +19,12 @@ export default function UserService() {
     await store.dispatch('UserModule/checkLocalStorage', {});
   }
 
+  async function deconnexion() {
+    console.log('avant la déco : ', user.value, token.value);
+    await store.dispatch('UserModule/deconnexion', {});
+    console.log('après la déco : ', user.value, token.value);
+  }
+
   const token = computed((): string => {
     return store.getters['UserModule/getToken'];
   });
@@ -49,8 +55,6 @@ export default function UserService() {
       password,
     });
   }
-
-  async function deconnexion() {}
 
   async function deleteUser(idUser: number) {
     await store.dispatch('UserModule/deleteUser', {

@@ -20,7 +20,7 @@
     <div class="collapse navbar-collapse w-auto" id="sidenav-collapse-main">
       <ul class="navbar-nav">
         <div>
-          <li class="nav-item mt-3">
+          <li class="nav-item mt-3" v-if="token === ''">
             <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Coordonnateur</h6>
           </li>
           <li class="nav-item">
@@ -148,7 +148,7 @@
           </a>
         </li>
         <li class="nav-item" id="LogoutSideBar" style="display: none">
-          <a class="nav-link" href="#">
+          <a @click="deconnexion" class="nav-link" href="#">
             <div
               class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center"
             >
@@ -166,7 +166,7 @@
 import UserService from '@/services/UserService';
 import { onMounted, ref } from 'vue';
 const displayMenu = ref(window.innerWidth >= 600);
-const { token, user } = UserService();
+const { token, user, deconnexion } = UserService();
 
 onMounted(function () {
   // Evènement utilisé pour contrôler basculer le menu en mode ouvert ou fermé lors du passage de mobile à PC
