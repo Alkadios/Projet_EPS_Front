@@ -1,11 +1,10 @@
-export const TA_GROSSE_DARONNE = 'https://opceps.widenet.fr/api';
-export const ApiUrl = 'https://opceps.widenet.fr/api';
+export const ApiUrl = process.env.VUE_APP_OCPEPS_API_BASE_URL;
 export const ApiUrlUtilisateur = `${ApiUrl}/utilisateur`;
 export const ApiUrlChampApprentissage = `${ApiUrl}/champ_apprentissages`;
 export const ApiURLAPSA = `${ApiUrl}/apsas`;
 export const ApiURLAf = `${ApiUrl}/afs`;
 export const ApiURLAfRetenus = `${ApiUrl}/af_retenus`;
-export const ApiURLApsaSelect = `${TA_GROSSE_DARONNE}/apsa_select_annees`;
+export const ApiURLApsaSelect = `${ApiUrl}/apsa_select_annees`;
 export const ApiURLNiveauScolaire = `${ApiUrl}/niveau_scolaires`;
 export const ApiURLChoixAnnee = `${ApiUrl}/choix_annees`;
 export const ApsaRetenuAPI = `${ApiUrl}/apsa_retenus`;
