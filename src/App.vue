@@ -100,6 +100,7 @@ import UserService from './services/UserService';
 import ObjectUtils from './utils/ObjectUtils';
 
 import router from './router';
+import UserService from './services/UserService';
 
 // const router = useRouter();
 
@@ -108,9 +109,10 @@ const sidenavActive = ref(false);
 const { isObjectEmpty } = ObjectUtils();
 const { utilisateur, fetchAnneeEnCours, anneeEnCours, storeAnneeEnConfig, fetchEtablissementById } =
   UtilisateurService();
+
 const { fetchEleveByUser, eleveByUser } = EleveService();
 const { fetchProfByUser, professeurByUser } = ProfesseurService();
-const { user } = UserService();
+const { user, checkLocalStorage } = UserService();
 // const { storeOrganismesUtilisateur, organismeConnecte, storeOrganismeConnecte, listeOrganismesUtilisateur } =
 //   UtilisateurService();
 
@@ -135,6 +137,7 @@ onMounted(async () => {
   // }
   // role.value = user.value.roles;
 
+  await checkLocalStorage();
   await fetchAnneeEnCours();
   storeAnneeEnConfig(anneeEnCours.value);
   await fetchEtablissementById(1);

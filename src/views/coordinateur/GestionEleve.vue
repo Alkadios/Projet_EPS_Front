@@ -232,8 +232,6 @@ async function editClasse(idClasse: number) {
 
     if (idsEleve) await addElevesInClasse(idClasse, arrayidEleve);
   }
-
-  alert('Votre Eleve à ete ajouté à cette classe');
   eleveDialog.value = false;
   isLoading.value = true;
   await fetchAllEleves();

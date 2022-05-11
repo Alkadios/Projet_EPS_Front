@@ -74,11 +74,14 @@ export default {
     const response = await ClasseAPI.addElevesInClasse(payload.idClasse, payload);
     if (response.status === 200) {
       context.commit('setClassesById', response.data);
-      const elevesByClasse = ref<Eleve[]>(context.getters.getElevesByClasse);
+      const classe = ref<Eleve[]>(context.getters.getClassesById);
+      console.log('classerep', classe.value);
+      classe.value = response.data.eleves;
       console.log('reponse', response.data);
+
       // const indexEleve = elevesByClasse.value.findIndex((c) => c.classe.find((cl) => payload.idClasse === cl.id));
       // elevesByClasse.value[indexEleve] = response.data;
-      context.commit('setElevesByClasse', elevesByClasse.value);
+      context.commit('setClassesById', classe.value);
     } else {
       //throw new Error(response.data.message);
     }
