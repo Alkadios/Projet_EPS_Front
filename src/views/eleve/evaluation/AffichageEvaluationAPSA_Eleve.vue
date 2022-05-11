@@ -91,7 +91,10 @@ import { useRoute, useRouter } from 'vue-router';
 import UtilisateurService from '@/services/UtilisateurService';
 import ApsaSelectAnneeService from '@/services/ApsaSelectAnneeService';
 import type { ApsaRetenu } from '@/models';
-
+import UserService from '@/services/UserService';
+import ObjectUtils from '@/utils/ObjectUtils';
+const { isObjectEmpty } = ObjectUtils();
+const { user } = UserService();
 const route = useRoute();
 const router = useRouter();
 
@@ -182,13 +185,17 @@ interface EvaluationPersonnelle {
 }
 
 onMounted(async () => {
-  isLoading.value = true;
-  await fetchAllApsaSelectAnneeByApsaAndEtablissmenetAndAnnee(1, 1, 3);
-  situationEvaluation.value = apsaSelectAnneeByApsaAndEtablissmenetAndAnnee.value.find(
-    (asa) => asa.apsaRetenus
-  )?.apsaRetenus;
-  libelleSport.value = apsaSelectAnneeByApsaAndEtablissmenetAndAnnee.value.find((asa) => asa)?.Apsa.libelle;
-  isLoading.value = false;
+  if (isObjectEmpty(user.value)) {
+    router.push('/');
+  } else {
+    isLoading.value = true;
+    await fetchAllApsaSelectAnneeByApsaAndEtablissmenetAndAnnee(1, 1, 3);
+    situationEvaluation.value = apsaSelectAnneeByApsaAndEtablissmenetAndAnnee.value.find(
+      (asa) => asa.apsaRetenus
+    )?.apsaRetenus;
+    libelleSport.value = apsaSelectAnneeByApsaAndEtablissmenetAndAnnee.value.find((asa) => asa)?.Apsa.libelle;
+    isLoading.value = false;
+  }
 });
 
 function onSituationEvaluationChange() {

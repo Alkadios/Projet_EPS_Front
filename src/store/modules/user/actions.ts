@@ -36,6 +36,7 @@ export default {
     console.log(user);
     context.commit('setToken', response.data.token);
     console.log('monToken', response.data.token);
+
     if (response.status === 200) {
     } else {
       //throw new Error(response.data.message);
@@ -44,9 +45,9 @@ export default {
   },
 
   async deconnexion(context: ActionContext<UserState, any>) {
+    localStorage.removeItem('user_access');
     context.commit('setUser', null);
     context.commit('setToken', '');
-    localStorage.removeItem('user_access');
   },
 
   async checkLocalStorage(context: ActionContext<UserState, any>) {

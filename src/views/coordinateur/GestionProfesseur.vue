@@ -1,6 +1,6 @@
 <template>
   <div class="card shadow-lg o-hidden border-0 m-5">
-    <div class="card-body p-0">
+    <div class="card-body p-5">
       <h1>GestionPROF</h1>
       <DataTable :value="professeursByEtablissement" responsiveLayout="scroll" dataKey="id">
         <Button label="Ajouter un Professeur" @click="openBasic" style="right: 1rem" icon="pi pi-plus" autofocus />
@@ -189,7 +189,11 @@ import { Professeur, User } from '@/models';
 import ProfesseurService from '@/services/ProfesseurService';
 import UserService from '@/services/UserService';
 import { ref, onMounted } from 'vue';
-
+import ObjectUtils from '@/utils/ObjectUtils';
+import { useRoute, useRouter } from 'vue-router';
+const router = useRouter();
+const { isObjectEmpty } = ObjectUtils();
+const { user } = UserService();
 const {
   fetchProfesseursByEtablissement,
   saveProfesseur,
@@ -268,9 +272,13 @@ const closeBasic = () => {
 };
 
 onMounted(async () => {
-  isLoading.value = true;
-  await fetchProfesseursByEtablissement(1);
-  console.log('prof', professeursByEtablissement.value);
-  isLoading.value = false;
+  if (isObjectEmpty(user.value)) {
+    router.push('/');
+  } else {
+    isLoading.value = true;
+    await fetchProfesseursByEtablissement(1);
+    console.log('prof', professeursByEtablissement.value);
+    isLoading.value = false;
+  }
 });
 </script>

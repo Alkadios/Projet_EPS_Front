@@ -29,7 +29,7 @@ export default {
 
   async fetchProfByUser(context: ActionContext<ProfesseurState, any>, payload: { idUser: number }) {
     const response = await ProfesseurAPI.fetchProfByUser(payload.idUser);
-    if (response.data) context.commit('setProfByUser', response.data);
+    if (response.data) context.commit('setProfByUser', response.data['hydra:member'][0]);
     else {
       context.commit('setProfByUser', []);
       //throw new Error(response.data.message);

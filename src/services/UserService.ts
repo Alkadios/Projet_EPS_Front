@@ -2,6 +2,7 @@ import { computed } from 'vue';
 import { useStore } from 'vuex';
 import jwt_decode from 'jwt-decode';
 import { Eleve, Professeur, User } from '@/models';
+import router from '@/router';
 
 export default function UserService() {
   const store = useStore();
@@ -20,9 +21,9 @@ export default function UserService() {
   }
 
   async function deconnexion() {
-    console.log('avant la déco : ', user.value, token.value);
     await store.dispatch('UserModule/deconnexion', {});
-    console.log('après la déco : ', user.value, token.value);
+    router.push('/');
+    location.reload();
   }
 
   const token = computed((): string => {

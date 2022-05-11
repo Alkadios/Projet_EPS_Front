@@ -145,7 +145,8 @@ import ApsaRetenuService from '@/services/ApsaRetenuService';
 import ClasseService from '@/services/ClasseService';
 import ObjectUtils from '@/utils/ObjectUtils';
 import type { Eleve, Classe, ApsaRetenu, NiveauScolaire, APSA, ChampApprentissage } from '@/models';
-
+import UserService from '@/services/UserService';
+const { user } = UserService();
 const route = useRoute();
 const router = useRouter();
 
@@ -215,10 +216,14 @@ function onSituationEvaluationChange() {
 function verif() {}
 
 onMounted(async () => {
-  isLoading.value = true;
-  await fetchClasseByAnneeAndProf(anneeEnCours.value.id, 1);
-  await fetchApsaRetenuByAnneeAndEtablissement(anneeEnCours.value.id, etablissement.value.id);
-  isLoading.value = false;
+  if (isObjectEmpty(user.value)) {
+    router.push('/');
+  } else {
+    isLoading.value = true;
+    await fetchClasseByAnneeAndProf(anneeEnCours.value.id, 1);
+    await fetchApsaRetenuByAnneeAndEtablissement(anneeEnCours.value.id, etablissement.value.id);
+    isLoading.value = false;
+  }
 });
 
 watch(
