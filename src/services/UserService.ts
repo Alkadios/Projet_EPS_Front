@@ -15,6 +15,10 @@ export default function UserService() {
     });
   }
 
+  async function checkLocalStorage() {
+    await store.dispatch('UserModule/checkLocalStorage', {});
+  }
+
   const token = computed((): string => {
     return store.getters['UserModule/getToken'];
   });
@@ -45,5 +49,6 @@ export default function UserService() {
     deconnexion,
     token,
     user,
+    checkLocalStorage,
   };
 }

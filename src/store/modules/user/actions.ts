@@ -31,7 +31,9 @@ export default {
   ) {
     const response = await UserAPI.login(payload);
     const user = jwt_decode(response.data.token);
+    localStorage.setItem('user_access', response.data.token);
     context.commit('setUser', user);
+    console.log(user);
     context.commit('setToken', response.data.token);
     console.log('monToken', response.data.token);
     if (response.status === 200) {
@@ -44,6 +46,15 @@ export default {
   async deconnexion(context: ActionContext<UserState, any>) {
     context.commit('setUser', null);
     context.commit('setToken', null);
+  },
+
+  async checkLocalStorage(context: ActionContext<UserState, any>) {
+    if ((localStorage.getItem('user_access') != null, localStorage.getItem('user_info') != null)) {
+      const currentToken = jwt_decode(localStorage.getItem('user_access') || '{}');
+      console.log('currenttok', currentToken);
+      context.commit('setToken', currentToken);
+      context.commit('setUser', currentToken);
+    }
   },
 
   async deleteUser(context: ActionContext<UserState, any>, payload: { idUser: number }) {

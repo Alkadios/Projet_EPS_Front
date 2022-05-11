@@ -89,8 +89,5 @@ onMounted(function () {
   window.addEventListener('resize', () => {
     displayMenu.value = window.innerWidth >= 600;
   });
-  console.log('test', token.value);
-  console.log('user', user.value);
-  console.log('user', user.value.professeurs);
 });
 </script>

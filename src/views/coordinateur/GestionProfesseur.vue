@@ -33,7 +33,7 @@
       />
     </div>
 
-    <Dialog header="Ajouter un Eleve" v-model:visible="displayBasic" :style="{ width: '50vw' }">
+    <Dialog header="Ajouter un Professeur" v-model:visible="displayBasic" :style="{ width: '50vw' }">
       <div class="row" style="place-content: center">
         <div class="col-8">
           <Card>
@@ -116,6 +116,7 @@
                       <input
                         class="form-control"
                         v-model="nouveauUtilisateur.password"
+                        required
                         type="password"
                         id="password"
                         name="password"
@@ -198,7 +199,7 @@ const profDialog = ref(false);
 
 const nouveauUtilisateur = ref<User>({
   email: '',
-  roles: ['Eleve'],
+  roles: ['Professeur'],
   password: '',
 });
 
