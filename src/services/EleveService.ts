@@ -11,6 +11,16 @@ export default function EleveService() {
     });
   }
 
+  const eleveByUser = computed((): Eleve => {
+    return store.getters['EleveModule/getEleveByUser'];
+  });
+
+  async function fetchEleveByUser(idUser: number) {
+    await store.dispatch('EleveModule/fetchEleveByUser', {
+      idUser: idUser,
+    });
+  }
+
   async function fetchElevesByAnneeAndEtablissement(idEtablissement: number, idAnnee: number) {
     await store.dispatch('EleveModule/fetchElevesByAnneeAndEtablissement', {
       idEtablissement: idEtablissement,
@@ -102,6 +112,8 @@ export default function EleveService() {
     fetchEleveById,
     deleteEleve,
     updateEleve,
+    eleveByUser,
+    fetchEleveByUser,
     eleves,
     eleveById,
     elevesByClasse,

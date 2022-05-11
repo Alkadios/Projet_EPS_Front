@@ -11,4 +11,7 @@ export default {
   setProfById(state: ProfesseurState, payload: Professeur) {
     state.professeurById = payload;
   },
+  setProfByUser(state: ProfesseurState, payload: Professeur) {
+    state.professeurByUser = payload;
+  },
 };

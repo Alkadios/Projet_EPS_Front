@@ -11,6 +11,16 @@ export default function ProfesseurService() {
     });
   }
 
+  const professeurByUser = computed((): Professeur => {
+    return store.getters['ProfesseurModule/getProfByUser'];
+  });
+
+  async function fetchProfByUser(idUser: number) {
+    await store.dispatch('ProfesseurModule/fetchProfByUser', {
+      idUser: idUser,
+    });
+  }
+
   async function deleteProf(idProf: number) {
     await store.dispatch('ProfesseurModule/deleteProf', {
       idProf: idProf,
@@ -74,5 +84,7 @@ export default function ProfesseurService() {
     fetchProfById,
     professeurById,
     putProfesseursClasse,
+    professeurByUser,
+    fetchProfByUser,
   };
 }

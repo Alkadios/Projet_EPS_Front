@@ -45,11 +45,12 @@ export default {
 
   async deconnexion(context: ActionContext<UserState, any>) {
     context.commit('setUser', null);
-    context.commit('setToken', null);
+    context.commit('setToken', '');
+    localStorage.removeItem('user_access');
   },
 
   async checkLocalStorage(context: ActionContext<UserState, any>) {
-    if ((localStorage.getItem('user_access') != null, localStorage.getItem('user_info') != null)) {
+    if (localStorage.getItem('user_access') != null) {
       const currentToken = jwt_decode(localStorage.getItem('user_access') || '{}');
       console.log('currenttok', currentToken);
       context.commit('setToken', currentToken);

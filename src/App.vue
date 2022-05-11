@@ -1,14 +1,87 @@
 <template>
-  <div id="wrapper">
-    <Sidebar />
-    <div class="d-flex flex-column" id="content-wrapper">
-      <div id="content">
-        <Navbar />
-        <div class="container-fluid">
+  <div class="bg-gray-100" :class="{ 'g-sidenav-show': sidenavActive }">
+    <div class="min-height-300 bg-primary position-absolute w-100"></div>
+    <Sidebar :sidenavActive="sidenavActive" :displaySideBar="displaySidebar" @hideRequest="sidenavActive = false" />
+    <main class="main-content position-relative border-radius-lg">
+      <div class="card-body px-0 pt-0 pb-2">
+        <div class="table-responsive p-0">
+          <div class="card shadow-lg mx-4" style="top: 1rem">
+            <div class="card-body p-3">
+              <div class="row gx-4">
+                <div class="col-auto">
+                  <div class="avatar avatar-xl position-relative" v-if="sexeUser === 'M'">
+                    <img src="@/assets/img/man.png" alt="profile_image" class="w-100 border-radius-lg shadow-sm" />
+                  </div>
+                  <div class="avatar avatar-xl position-relative" v-if="sexeUser === 'F'">
+                    <img src="@/assets/img/woman.png" alt="profile_image" class="w-100 border-radius-lg shadow-sm" />
+                  </div>
+                </div>
+                <div class="col-auto my-auto">
+                  <div class="h-100">
+                    <h5 class="mb-1">{{ nomAndPrenom }}</h5>
+                    <p class="mb-0 font-weight-bold text-sm">{{ role }}</p>
+                  </div>
+                </div>
+                <div class="col-lg-4 col-md-6 my-sm-auto ms-sm-auto me-sm-0 mx-auto mt-3">
+                  <div class="nav-wrapper position-relative end-0">
+                    <ul class="nav nav-pills nav-fill p-1" role="tablist">
+                      <li class="nav-item" id="buttonSideBar" style="margin: auto; display: none">
+                        <a
+                          class="nav-link mb-0 px-0 py-1 active d-flex align-items-center justify-content-center"
+                          data-bs-toggle="tab"
+                          href="javascript:;"
+                          role="tab"
+                          aria-selected="true"
+                          @click="reponsiveSideBar()"
+                          style="margin: auto"
+                        >
+                          <i
+                            class="fa fa-align-justify"
+                            aria-hidden="true"
+                            style="
+                              font-size: 1.5rem;
+                              font-size: 1.5rem;
+                              right: 0;
+                              position: absolute;
+                              padding-right: 2rem;
+                            "
+                          ></i>
+                        </a>
+                      </li>
+                      <li class="nav-item" id="buttonProfil">
+                        <a
+                          class="nav-link mb-0 px-0 py-1 active d-flex align-items-center justify-content-center"
+                          data-bs-toggle="tab"
+                          href="javascript:;"
+                          role="tab"
+                          aria-selected="true"
+                        >
+                          <i class="ni ni-app"></i>
+                          <span class="ms-2">Mon profil</span>
+                        </a>
+                      </li>
+                      <li class="nav-item" id="buttonLogout">
+                        <a
+                          class="nav-link mb-0 px-0 py-1 d-flex align-items-center justify-content-center"
+                          data-bs-toggle="tab"
+                          href="javascript:;"
+                          role="tab"
+                          aria-selected="false"
+                        >
+                          <i class="ni ni-settings-gear-65"></i>
+                          <span class="ms-2">Déconnexion</span>
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
           <router-view v-if="onMountedIsFinish" />
         </div>
       </div>
-    </div>
+    </main>
   </div>
 </template>
 
@@ -21,27 +94,46 @@ import Navbar from './views/Navbar.vue';
 import Authentification from './views/Authentification.vue';
 //import Head from './views/_Head.vue';
 import UtilisateurService from './services/UtilisateurService';
+import EleveService from './services/EleveService';
+import ProfesseurService from './services/ProfesseurService';
 import ObjectUtils from './utils/ObjectUtils';
-import SelectButton from 'primevue/selectbutton';
-
 import router from './router';
 import UserService from './services/UserService';
 
 // const router = useRouter();
 
+const sidenavActive = ref(false);
+
 const { isObjectEmpty } = ObjectUtils();
 const { utilisateur, fetchAnneeEnCours, anneeEnCours, storeAnneeEnConfig, fetchEtablissementById } =
   UtilisateurService();
-const { checkLocalStorage } = UserService();
 
+const { fetchEleveByUser, eleveByUser } = EleveService();
+const { fetchProfByUser, professeurByUser } = ProfesseurService();
+const { user, checkLocalStorage, deconnexion } = UserService();
 // const { storeOrganismesUtilisateur, organismeConnecte, storeOrganismeConnecte, listeOrganismesUtilisateur } =
 //   UtilisateurService();
 
 const onMountedIsFinish = ref(false);
+const displaySidebar = ref('block');
+const nomAndPrenom = ref();
+const role = ref();
+const sexeUser = ref();
+console.log(displaySidebar.value, 'displaySidebar2');
 onMounted(async () => {
   // if (isObjectEmpty(utilisateur.value)) {
   //   router.push({ name: 'Authentification' });
   // }
+
+  // if (user.value.roles.indexOf('Professeur') > -1) {
+  //   await fetchEleveByUser(user.value.id);
+  //   nomAndPrenom.value = professeurByUser.value.nom + ' ' + professeurByUser.value.prenom;
+  // } else if (user.value.roles.indexOf('ROLE_USER') > -1) {
+  //   await fetchEleveByUser(user.value.id);
+  //   nomAndPrenom.value = eleveByUser.value.nom + ' ' + eleveByUser.value.prenom;
+  //   sexeUser.value = eleveByUser.value.sexeEleve;
+  // }
+  // role.value = user.value.roles;
 
   await checkLocalStorage();
   await fetchAnneeEnCours();
@@ -49,74 +141,23 @@ onMounted(async () => {
   await fetchEtablissementById(1);
 
   onMountedIsFinish.value = true;
-
-  var sidebar = document.querySelector('.sidebar');
-  var sidebarToggles = document.querySelectorAll('#sidebarToggle, #sidebarToggleTop');
-
-  if (sidebar) {
-    var collapseEl = sidebar.querySelector('.collapse');
-    var collapseElementList = [].slice.call(document.querySelectorAll('.sidebar .collapse'));
-    var sidebarCollapseList = collapseElementList.map(function (collapseEl) {
-      return new bootstrap.Collapse(collapseEl, { toggle: false });
-    });
-
-    for (var toggle of sidebarToggles) {
-      // Toggle the side navigation
-      toggle.addEventListener('click', function (e) {
-        document.body.classList.toggle('sidebar-toggled');
-        sidebar.classList.toggle('toggled');
-
-        if (sidebar.classList.contains('toggled')) {
-          for (var bsCollapse of sidebarCollapseList) {
-            bsCollapse.hide();
-          }
-        }
-      });
-    }
-
-    // Close any open menu accordions when window is resized below 768px
-    window.addEventListener('resize', function () {
-      var vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
-
-      if (vw < 768) {
-        for (var bsCollapse of sidebarCollapseList) {
-          bsCollapse.hide();
-        }
-      }
-    });
-  }
-
-  // Prevent the content wrapper from scrolling when the fixed side navigation hovered over
-
-  var fixedNaigation = document.querySelector('body.fixed-nav .sidebar');
-
-  if (fixedNaigation) {
-    fixedNaigation.on('mousewheel DOMMouseScroll wheel', function (e) {
-      var vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
-
-      if (vw > 768) {
-        var e0 = e.originalEvent,
-          delta = e0.wheelDelta || -e0.detail;
-        this.scrollTop += (delta < 0 ? 1 : -1) * 30;
-        e.preventDefault();
-      }
-    });
-  }
-
-  var scrollToTop = document.querySelector('.scroll-to-top');
-
-  if (scrollToTop) {
-    // Scroll to top button appear
-    window.addEventListener('scroll', function () {
-      var scrollDistance = window.pageYOffset;
-
-      //check if user is scrolling up
-      if (scrollDistance > 100) {
-        scrollToTop.style.display = 'block';
-      } else {
-        scrollToTop.style.display = 'none';
-      }
-    });
-  }
 });
+
+var win = navigator.platform.indexOf('Win') > -1;
+if (win && document.querySelector('#sidenav-scrollbar')) {
+  var options = {
+    damping: '0.5',
+  };
+  Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
+}
+
+function reponsiveSideBar() {
+  if (displaySidebar.value === 'none') {
+    displaySidebar.value = 'block';
+  } else {
+    displaySidebar.value = 'none';
+  }
+}
+
+async function logout() {}
 </script>
