@@ -23,6 +23,15 @@ export default {
     }
   },
 
+  async fetchEleveByUser(context: ActionContext<EleveState, any>, payload: { idUser: number }) {
+    const response = await EleveAPI.fetchEleveByUser(payload.idUser);
+    if (response.data) context.commit('setEleveByUser', response.data);
+    else {
+      context.commit('setEleveByUser', []);
+      //throw new Error(response.data.message);
+    }
+  },
+
   async fetchElevesByAnneeAndEtablissement(
     context: ActionContext<EleveState, any>,
     payload: { idEtablissement: number; idAnnee: number }

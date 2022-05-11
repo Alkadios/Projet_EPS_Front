@@ -13,7 +13,7 @@
               <div class="col-lg-6 d-none d-lg-flex">
                 <div class="flex-grow-1 bg-login-image">
                   <img
-                    src="./../../assets/img/Page_Accueil.png"
+                    src="@/assets/img/logo-ocpeps.png"
                     style="width: 100%; position: relative; top: 15%; left: 10%"
                   />
                 </div>

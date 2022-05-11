@@ -1,6 +1,8 @@
 import { ActionContext } from 'vuex';
 import ProfesseurAPI from '@/api/ProfesseurAPI';
 import ProfesseurState from './stateInterface';
+import { Professeur } from '@/models';
+import { ref } from 'vue';
 
 export default {
   async fetchProfesseursByEtablissement(
@@ -21,6 +23,15 @@ export default {
     if (response.data) context.commit('setProfById', response.data);
     else {
       context.commit('setProfById', []);
+      //throw new Error(response.data.message);
+    }
+  },
+
+  async fetchProfByUser(context: ActionContext<ProfesseurState, any>, payload: { idUser: number }) {
+    const response = await ProfesseurAPI.fetchProfByUser(payload.idUser);
+    if (response.data) context.commit('setProfByUser', response.data);
+    else {
+      context.commit('setProfByUser', []);
       //throw new Error(response.data.message);
     }
   },
@@ -76,6 +87,11 @@ export default {
   ) {
     const response = await ProfesseurAPI.updateProf(payload.idProf, payload);
     if (response.status === 200) {
+      context.commit('setProfById', response.data);
+      const professeursByEtablissement = ref<Professeur[]>(context.getters.getProfesseursByEtablissement);
+      const indexProfesseur = professeursByEtablissement.value.findIndex((p) => p.id == payload.idProf);
+      professeursByEtablissement.value[indexProfesseur] = response.data;
+      context.commit('setProfesseursByEtablissement', professeursByEtablissement.value);
     } else {
       //throw new Error(response.data.message);
     }

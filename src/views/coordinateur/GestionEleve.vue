@@ -1,50 +1,54 @@
 <template>
-  <Dropdown
-    v-model="selectedClasse"
-    :options="classesByAnnee"
-    optionLabel="libelleClasse"
-    dataKey="id"
-    placeholder="Selectionner une classe"
-    @change="onClasseChange"
-  />
-
-  <div>
-    <div>
-      <Button label="Ajouter un Eleve" @click="openBasic" style="right: 1rem" icon="pi pi-plus" autofocus />
-      <Button
-        label="Retirer les Eleves"
-        @click="deleteFromClasse(selectedClasse?.id)"
-        style="right: 1rem"
-        icon="pi pi-trash"
-        autofocus
+  <div class="card shadow-lg o-hidden border-0 m-5">
+    <div class="card-body p-0">
+      <Dropdown
+        v-model="selectedClasse"
+        :options="classesByAnnee"
+        optionLabel="libelleClasse"
+        dataKey="id"
+        placeholder="Selectionner une classe"
+        @change="onClasseChange"
       />
-    </div>
-    <DataTable :value="mesEleves" v-model:selection="selectedElevesOnClasse" responsiveLayout="scroll" dataKey="id">
-      <Column selectionMode="multiple"></Column>
 
-      <Column field="nom" header="nom" :sortable="true" style="min-width: 12rem"></Column>
-      <Column field="prenom" header="prenom" :sortable="true" style="min-width: 12rem"></Column>
-      <Column field="telephone" header="telephone" :sortable="true" style="min-width: 12rem"></Column>
-      <Column field="mailParent1" header="mailParent1" :sortable="true" style="min-width: 12rem"></Column>
-      <Column field="mailParent2" header="mailParent2" :sortable="true" style="min-width: 12rem"></Column>
-      <Column field="sexeEleve" header="sexeEleve" :sortable="true" style="min-width: 12rem"></Column>
-      <Column :exportable="false" style="min-width: 8rem">
-        <template #body="slotProps">
+      <div>
+        <div>
+          <Button label="Ajouter un Eleve" @click="openBasic" style="right: 1rem" icon="pi pi-plus" autofocus />
           <Button
-            icon="pi pi-pencil"
-            class="p-button-rounded p-button-success mr-2"
-            @click="champsEleve(slotProps.data.id)"
+            label="Retirer les Eleves"
+            @click="deleteFromClasse(selectedClasse?.id)"
+            style="right: 1rem"
+            icon="pi pi-trash"
+            autofocus
           />
-        </template>
-      </Column>
-    </DataTable>
-    <div style="position: fixed; bottom: 0; right: 2rem">
-      <ProgressSpinner
-        v-if="isLoading"
-        style="float: right; width: 50px; height: 50px"
-        strokeWidth="8"
-        animationDuration=".5s"
-      />
+        </div>
+        <DataTable :value="mesEleves" v-model:selection="selectedElevesOnClasse" responsiveLayout="scroll" dataKey="id">
+          <Column selectionMode="multiple"></Column>
+
+          <Column field="nom" header="nom" :sortable="true" style="min-width: 12rem"></Column>
+          <Column field="prenom" header="prenom" :sortable="true" style="min-width: 12rem"></Column>
+          <Column field="telephone" header="telephone" :sortable="true" style="min-width: 12rem"></Column>
+          <Column field="mailParent1" header="mailParent1" :sortable="true" style="min-width: 12rem"></Column>
+          <Column field="mailParent2" header="mailParent2" :sortable="true" style="min-width: 12rem"></Column>
+          <Column field="sexeEleve" header="sexeEleve" :sortable="true" style="min-width: 12rem"></Column>
+          <Column :exportable="false" style="min-width: 8rem">
+            <template #body="slotProps">
+              <Button
+                icon="pi pi-pencil"
+                class="p-button-rounded p-button-success mr-2"
+                @click="champsEleve(slotProps.data.id)"
+              />
+            </template>
+          </Column>
+        </DataTable>
+        <div style="position: fixed; bottom: 0; right: 2rem">
+          <ProgressSpinner
+            v-if="isLoading"
+            style="float: right; width: 50px; height: 50px"
+            strokeWidth="8"
+            animationDuration=".5s"
+          />
+        </div>
+      </div>
     </div>
   </div>
 
@@ -228,8 +232,6 @@ async function editClasse(idClasse: number) {
 
     if (idsEleve) await addElevesInClasse(idClasse, arrayidEleve);
   }
-
-  alert('Votre Eleve à ete ajouté à cette classe');
   eleveDialog.value = false;
   isLoading.value = true;
   await fetchAllEleves();

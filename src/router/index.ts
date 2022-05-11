@@ -66,9 +66,9 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('../views/eleve/evaluation/AffichageEvaluationAPSA_Eleve.vue'),
   },
   {
-    path: '/Acceuil',
-    name: 'Acceuil',
-    component: () => import('../views/eleve/Acceuil.vue'),
+    path: '/Accueil',
+    name: 'Accueil',
+    component: () => import('../views/eleve/Accueil.vue'),
   },
   {
     path: '/Profil',

@@ -4,7 +4,7 @@ export interface User {
   '@id': string;
   id: number;
   email: string;
-  roles: string;
+  roles: string[];
   password: string;
   professeurs: number;
 }

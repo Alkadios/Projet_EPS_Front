@@ -12,6 +12,13 @@ export default {
     return axios.get(`${ApiURLEleve}/` + idEleve, apiConfig.value);
   },
 
+  async fetchEleveByUser(idUser: number): Promise<AxiosResponse<ResponseModel>> {
+    const paramsString = `user.id=${idUser.toString()}`;
+    const url = new URL(`${ApiURLEleve}/`);
+    url.search = new URLSearchParams(paramsString).toString();
+    return axios.get(`${url.toString()}`, apiConfig.value);
+  },
+
   async fetchElevesByAnneeAndEtablissement(
     idEtablissement: number,
     idAnnee: number

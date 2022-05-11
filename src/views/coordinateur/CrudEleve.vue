@@ -1,8 +1,9 @@
 <template>
-  <div>
-    <DataTable :value="elevesByAnneeAndEtablissement" responsiveLayout="scroll" dataKey="id">
-      <Button label="Ajouter un Eleve" @click="openBasic" style="right: 1rem" icon="pi pi-plus" autofocus />
-      <Column selectionMode="single" style="width: 3rem" :exportable="false"></Column>
+  <div class="card shadow-lg o-hidden border-0 m-5">
+    <div class="card-body p-0">
+      <DataTable :value="elevesByAnneeAndEtablissement" responsiveLayout="scroll" dataKey="id">
+        <Button label="Ajouter un Eleve" @click="openBasic" style="right: 1rem" icon="pi pi-plus" autofocus />
+        <Column selectionMode="single" style="width: 3rem" :exportable="false"></Column>
 
       <Column field="nom" header="nom" :sortable="true" style="min-width: 12rem"></Column>
       <Column field="prenom" header="prenom" :sortable="true" style="min-width: 12rem"></Column>
@@ -21,23 +22,24 @@
         </template>
       </Column>
 
-      <Column :exportable="false" style="min-width: 8rem">
-        <template #body="slotProps">
-          <Button
-            icon="pi pi-trash"
-            class="p-button-rounded p-button-warning"
-            @click="supprimerEleve(slotProps.data)"
-          />
-        </template>
-      </Column>
-    </DataTable>
-    <div style="position: fixed; bottom: 0; right: 2rem">
-      <ProgressSpinner
-        v-if="isLoading"
-        style="float: right; width: 50px; height: 50px"
-        strokeWidth="8"
-        animationDuration=".5s"
-      />
+        <Column :exportable="false" style="min-width: 8rem">
+          <template #body="slotProps">
+            <Button
+              icon="pi pi-trash"
+              class="p-button-rounded p-button-warning"
+              @click="supprimerEleve(slotProps.data)"
+            />
+          </template>
+        </Column>
+      </DataTable>
+      <div style="position: fixed; bottom: 0; right: 2rem">
+        <ProgressSpinner
+          v-if="isLoading"
+          style="float: right; width: 50px; height: 50px"
+          strokeWidth="8"
+          animationDuration=".5s"
+        />
+      </div>
     </div>
   </div>
 

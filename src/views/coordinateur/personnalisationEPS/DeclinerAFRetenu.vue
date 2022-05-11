@@ -1,5 +1,5 @@
 <template>
-  <div class="card shadow-lg o-hidden border-0 my-5">
+  <div class="card shadow-lg o-hidden border-0 m-5">
     <div class="card-body p-0">
       <div class="row">
         <div class="col-lg-1"></div>
@@ -124,7 +124,7 @@ watch(
     if (monAPSA.value) {
       isLoading.value = true;
       //await fetchAllAfRetenuByAnneeAndNiveauScolaire(annee.value.id, niveauScolaireSelectionne.value?.id);
-      if (monAfRetenuSelected.value) console.log('watch mon Apsa', verifIsExistSituationEvaluation());
+
       //Mettre fonction
       if (verifIsExistSituationEvaluation()) {
         situationEvaluation.value = monApsaRetenu.value?.SituationEvaluation!;
@@ -141,7 +141,7 @@ watch(
   async () => {
     if (monAfRetenuSelected.value) {
       isLoading.value = true;
-      if (monAfRetenuSelected.value) console.log('watch mon af', verifIsExistSituationEvaluation());
+
       if (verifIsExistSituationEvaluation()) {
         situationEvaluation.value = monApsaRetenu.value?.SituationEvaluation!;
       } else {
