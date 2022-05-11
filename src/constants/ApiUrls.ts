@@ -1,4 +1,4 @@
-export const TA_GROSSE_DARONNE = 'https://ocpeps.widenet.fr/api';
+export const TA_GROSSE_DARONNE = 'https://opceps.widenet.fr/api';
 export const ApiUrl = 'https://opceps.widenet.fr/api';
 export const ApiUrlUtilisateur = `${ApiUrl}/utilisateur`;
 export const ApiUrlChampApprentissage = `${ApiUrl}/champ_apprentissages`;
