@@ -106,7 +106,12 @@
               @click="
                 router.push({
                   name: 'DeclinerAFRetenus',
-                  query: { idNiveau: slotProps.data.Niveau.id, idCa: slotProps.data.champApprentissage.id },
+                  query: {
+                    idChoixAnnee: slotProps.data.AfRetenu.ChoixAnnee.id,
+                    idCA: slotProps.data.AfRetenu.ChoixAnnee.champApprentissage.id,
+                    idApsa: slotProps.data.ApsaSelectAnnee.Apsa.id,
+                    idAfRetenu: slotProps.data.AfRetenu.id,
+                  },
                 })
               "
             />
@@ -127,6 +132,19 @@
             <Column field="description" header="Description">
               <template #body="slotProps"> <span v-html="slotProps.data.description"></span> </template>
             </Column>
+            <Column headerStyle="width:4rem">
+              <template #body="slotProps">
+                <Button
+                  icon="pi pi-pencil"
+                  @click="
+                    router.push({
+                      name: 'Critere',
+                      query: { idApsaRetenu: slotProps.data.ApsaRetenu.id },
+                    })
+                  "
+                />
+              </template>
+            </Column>
             <template #expansion="slotProps">
               <DataTable :value="slotProps.data.Indicateur" responsiveLayout="scroll">
                 <template #header> Indicateurs </template>
@@ -137,6 +155,19 @@
 
                 <Column field="description" header="Description">
                   <template #body="slotProps"> <span v-html="slotProps.data.description"></span> </template>
+                </Column>
+                <Column headerStyle="width:4rem">
+                  <template #body="slotProps">
+                    <Button
+                      icon="pi pi-pencil"
+                      @click="
+                        router.push({
+                          name: 'Critere',
+                          query: { idApsaRetenu: slotProps.data.ApsaRetenu.id },
+                        })
+                      "
+                    />
+                  </template>
                 </Column>
               </DataTable>
             </template>

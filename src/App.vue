@@ -15,6 +15,8 @@
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { useMeta } from 'vue-meta';
+
 import Sidebar from './views/Sidebar.vue';
 import Navbar from './views/Navbar.vue';
 //import UtilisateurService from './services/UtilisateurService';
@@ -24,9 +26,7 @@ import UtilisateurService from './services/UtilisateurService';
 import ObjectUtils from './utils/ObjectUtils';
 import SelectButton from 'primevue/selectbutton';
 
-import router from './router';
-
-// const router = useRouter();
+const router = useRouter();
 
 const { isObjectEmpty } = ObjectUtils();
 const { utilisateur, fetchAnneeEnCours, anneeEnCours, storeAnneeEnConfig, fetchEtablissementById } =
@@ -39,6 +39,11 @@ onMounted(async () => {
   // if (isObjectEmpty(utilisateur.value)) {
   //   router.push({ name: 'Authentification' });
   // }
+  useMeta({
+    title: 'OCPEPS',
+    htmlAttrs: { lang: 'fr' },
+    meta: [{ charset: 'utf-8' }, { 'http-equiv': 'Content-Security-Policy', content: 'upgrade-insecure-requests' }],
+  }); //<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 
   await fetchAnneeEnCours();
   storeAnneeEnConfig(anneeEnCours.value);

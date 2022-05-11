@@ -58,6 +58,8 @@ import ToggleButton from 'primevue/togglebutton';
 import Chart from 'primevue/chart';
 import OrderList from 'primevue/orderlist';
 import './assets/css/monStyle.css';
+import { createMetaManager } from 'vue-meta';
+
 const { isObjectEmpty } = ObjectUtils();
 const { utilisateur } = UtilisateurService();
 
@@ -112,4 +114,6 @@ app.use(router);
 app.use(PrimeVue, { locale: Locale_FR });
 app.use(ToastService);
 app.use(ConfirmationService);
+app.use(createMetaManager()); // For manage meta data
+
 app.mount('#app');
