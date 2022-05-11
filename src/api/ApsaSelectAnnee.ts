@@ -6,7 +6,8 @@ import { apiConfig } from '@/config/UtilisateurConfig';
 export default {
   async fetchAllApsaSelectAnneeByAnnee(idAnnee: number): Promise<AxiosResponse<ResponseModel>> {
     const paramsString = `Annee.id=${idAnnee.toString()}`;
-    const url = new URL(`${ApiURLApsaSelect}/`);
+    // const url = new URL(`${ApiURLApsaSelect}/`);
+    const url = new URL(`https://opceps.widenet.fr/api/apsa_select_annees`);
     url.search = new URLSearchParams(paramsString).toString();
     return axios.get(`${url.toString()}`, apiConfig.value);
   },
