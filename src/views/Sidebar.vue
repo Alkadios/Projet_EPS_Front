@@ -69,11 +69,29 @@
             </router-link>
           </li>
           <li class="nav-item">
-            <router-link to="/GestionEleve" style="margin: unset" class="nav-link">
+            <router-link to="/GestionCoordonateur" style="margin: unset" class="nav-link">
               <div class="icon icon-shape icon-sm d-flex align-items-center justify-content-center">
                 <i class="ni ni-collection text-info text-sm opacity-10"></i>
               </div>
               <i class="fas fa-walking"></i>
+              <span class="nav-link-text justify-content-center">Gestion des coordonnateurs</span>
+            </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link to="/GestionProfEtablissement" style="margin: unset" class="nav-link">
+              <div class="icon icon-shape icon-sm d-flex align-items-center justify-content-center">
+                <i class="ni ni-collection text-info text-sm opacity-10"></i>
+              </div>
+              <i class="fas fa-city"></i>
+              <span class="nav-link-text justify-content-center">Attribution Etablissements</span>
+            </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link to="/GestionEleve" style="margin: unset" class="nav-link">
+              <div class="icon icon-shape icon-sm d-flex align-items-center justify-content-center">
+                <i class="ni ni-collection text-info text-sm opacity-10"></i>
+              </div>
+              <i class="fas fa-users"></i>
               <span class="nav-link-text justify-content-center">Attribution des classes</span>
             </router-link>
           </li>
@@ -101,7 +119,7 @@
             </router-link>
           </li>
           <li class="nav-item">
-            <router-link to="GestionClasse" style="margin: unset" class="nav-link">
+            <router-link to="/GestionProfClasse" style="margin: unset" class="nav-link">
               <div class="icon icon-shape icon-sm d-flex align-items-center justify-content-center">
                 <i class="ni ni-collection text-info text-sm opacity-10"></i>
               </div>

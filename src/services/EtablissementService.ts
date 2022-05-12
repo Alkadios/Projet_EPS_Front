@@ -13,8 +13,16 @@ export default function EtablissementService() {
     await store.dispatch('EtablissementModule/fetchAllEtablissements');
   }
 
+  async function putEtablissementProfs(idEtablissement: number, Professeur: string[]) {
+    await store.dispatch('EtablissementModule/putEtablissementProfs', {
+      idEtablissement: idEtablissement,
+      Professeur,
+    });
+  }
+
   return {
     fetchAllEtablissements,
+    putEtablissementProfs,
     etablissements,
   };
 }
