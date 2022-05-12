@@ -14,4 +14,7 @@ export default {
   setProfByUser(state: ProfesseurState, payload: Professeur) {
     state.professeurByUser = payload;
   },
+  setProfByRoles(state: ProfesseurState, payload: Professeur[]) {
+    state.professeurByRoles = payload;
+  },
 };

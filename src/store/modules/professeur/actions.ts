@@ -1,7 +1,7 @@
 import { ActionContext } from 'vuex';
 import ProfesseurAPI from '@/api/ProfesseurAPI';
 import ProfesseurState from './stateInterface';
-import { Professeur } from '@/models';
+import { Classe, Professeur } from '@/models';
 import { ref } from 'vue';
 
 export default {
@@ -23,6 +23,15 @@ export default {
     if (response.data) context.commit('setProfById', response.data);
     else {
       context.commit('setProfById', []);
+      //throw new Error(response.data.message);
+    }
+  },
+
+  async fetchProfByRoles(context: ActionContext<ProfesseurState, any>, payload: { roles: string }) {
+    const response = await ProfesseurAPI.fetchProfByRoles(payload.roles);
+    if (response.data) context.commit('setProfByRoles', response.data['hydra:member']);
+    else {
+      context.commit('setProfByRoles', []);
       //throw new Error(response.data.message);
     }
   },
@@ -96,5 +105,14 @@ export default {
       //throw new Error(response.data.message);
     }
     //if (response.status !== 201) throw new Error);
+  },
+
+  async fetchAllProfs(context: ActionContext<ProfesseurState, any>) {
+    const response = await ProfesseurAPI.fetchAllProfs();
+    if (response.data['hydra:totalItems'] > 0) context.commit('setProfesseurs', response.data['hydra:member']);
+    else {
+      context.commit('setProfesseurs', []);
+      //throw new Error(response.data.message);
+    }
   },
 };
