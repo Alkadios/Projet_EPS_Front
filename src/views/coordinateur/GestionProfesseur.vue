@@ -188,12 +188,14 @@
 import { Professeur, User } from '@/models';
 import ProfesseurService from '@/services/ProfesseurService';
 import UserService from '@/services/UserService';
+import UtilisateurService from '@/services/UtilisateurService';
 import { ref, onMounted } from 'vue';
 import ObjectUtils from '@/utils/ObjectUtils';
 import { useRoute, useRouter } from 'vue-router';
 const router = useRouter();
 const { isObjectEmpty } = ObjectUtils();
-const { user } = UserService();
+const { user, redirectToHomePage } = UserService();
+const { etablissement } = UtilisateurService();
 const {
   fetchProfesseursByEtablissement,
   saveProfesseur,
@@ -274,9 +276,11 @@ const closeBasic = () => {
 onMounted(async () => {
   if (isObjectEmpty(user.value)) {
     router.push('/');
+  } else if (user.value.roles != 'Admin') {
+    redirectToHomePage();
   } else {
     isLoading.value = true;
-    await fetchProfesseursByEtablissement(1);
+    await fetchProfesseursByEtablissement(etablissement.value.id);
     console.log('prof', professeursByEtablissement.value);
     isLoading.value = false;
   }

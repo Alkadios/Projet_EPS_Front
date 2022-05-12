@@ -155,7 +155,7 @@ import ObjectUtils from '@/utils/ObjectUtils';
 import router from '@/router';
 
 const { isObjectEmpty } = ObjectUtils();
-const { user } = UserService();
+const { user, redirectToHomePage } = UserService();
 const { fetchAllEleves, saveEleve, eleves, deleteEleve, fetchEleveById, eleveById, updateEleve } = EleveService();
 const { fetchAllClasses, fetchClasseByAnnee, classesByAnnee, addElevesInClasse, classes } = ClasseService();
 const { etablissement, anneeEnCours } = UtilisateurService();
@@ -163,6 +163,8 @@ const { etablissement, anneeEnCours } = UtilisateurService();
 onMounted(async () => {
   if (isObjectEmpty(user.value)) {
     router.push('/');
+  } else if (user.value.roles != 'Admin') {
+    redirectToHomePage();
   } else {
     isLoading.value = true;
     await fetchAllEleves();

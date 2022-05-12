@@ -26,6 +26,16 @@ export default function UserService() {
     location.reload();
   }
 
+  function redirectToHomePage() {
+    if (user.value.roles === 'Eleve') {
+      router.push('/Accueil');
+    } else if (user.value.roles === 'Professeur') {
+      router.push('/EvaluationEleves');
+    } else if (user.value.roles === 'Admin') {
+      router.push('/TableauDeBordConfig');
+    }
+  }
+
   const token = computed((): string => {
     return store.getters['UserModule/getToken'];
   });
@@ -73,5 +83,6 @@ export default function UserService() {
     checkLocalStorage,
     eleve,
     professeur,
+    redirectToHomePage,
   };
 }

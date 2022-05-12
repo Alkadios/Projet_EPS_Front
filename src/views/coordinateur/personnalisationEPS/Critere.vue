@@ -263,7 +263,7 @@ import { useRoute, useRouter } from 'vue-router';
 import critere from '@/store/modules/critere';
 import UserService from '@/services/UserService';
 
-const { user } = UserService();
+const { user, redirectToHomePage } = UserService();
 const route = useRoute();
 const router = useRouter();
 
@@ -306,6 +306,8 @@ const imageCritereIsSelected = computed(() => {
 onMounted(async () => {
   if (isObjectEmpty(user.value)) {
     router.push('/');
+  } else if (user.value.roles != 'Admin') {
+    redirectToHomePage();
   } else {
     isLoading.value = true;
     if (route.query.idApsaRetenu) {

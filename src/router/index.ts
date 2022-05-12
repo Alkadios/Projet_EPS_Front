@@ -57,7 +57,7 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/Accueil',
-    name: 'Accueil',
+    name: 'AccueilEleve',
     component: () => import('../views/eleve/Accueil.vue'),
   },
   {

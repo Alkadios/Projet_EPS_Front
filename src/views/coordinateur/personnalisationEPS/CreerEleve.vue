@@ -195,9 +195,14 @@ import { Eleve, User, Utilisateur } from '@/models';
 import EleveService from '@/services/EleveService';
 import EtablissementService from '@/services/EtablissementService';
 import UserService from '@/services/UserService';
-import user from '@/store/modules/user';
 import { ref, onMounted } from 'vue';
+import ObjectUtils from '@/utils/ObjectUtils';
+import { useRoute, useRouter } from 'vue-router';
 
+const { isObjectEmpty } = ObjectUtils();
+const router = useRouter();
+
+const { user, redirectToHomePage } = UserService();
 const categories = ref([
   { name: 'Accounting', key: 'A' },
   { name: 'Marketing', key: 'M' },
@@ -251,7 +256,13 @@ function onSubmitUtil() {
 }
 
 onMounted(async () => {
-  await fetchAllEtablissements();
+  if (isObjectEmpty(user.value)) {
+    router.push('/');
+  } else if (user.value.roles != 'Admin') {
+    redirectToHomePage();
+  } else {
+    await fetchAllEtablissements();
+  }
 });
 </script>
 <style>

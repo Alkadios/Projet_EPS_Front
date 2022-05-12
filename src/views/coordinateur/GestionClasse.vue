@@ -110,7 +110,7 @@ import ObjectUtils from '@/utils/ObjectUtils';
 import { useRoute, useRouter } from 'vue-router';
 const router = useRouter();
 const { isObjectEmpty } = ObjectUtils();
-const { user } = UserService();
+const { user, redirectToHomePage } = UserService();
 const { fetchClasseByAnnee, classesByAnnee, saveClasse, deleteClasse, classesById, fetchClasseById } = ClasseService();
 const { etablissements, fetchAllEtablissements } = EtablissementService();
 const { niveauxScolaires, fetchAllNiveauxScolaires } = NiveauScolaireService();
@@ -164,6 +164,8 @@ const closeBasic = () => {
 onMounted(async () => {
   if (isObjectEmpty(user.value)) {
     router.push('/');
+  } else if (user.value.roles != 'Admin') {
+    redirectToHomePage();
   } else {
     isLoading.value = true;
     await fetchClasseByAnnee(3);

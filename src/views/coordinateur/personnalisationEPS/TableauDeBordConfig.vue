@@ -170,7 +170,7 @@ import ObjectUtils from '@/utils/ObjectUtils';
 import { useRoute, useRouter } from 'vue-router';
 import UserService from '@/services/UserService';
 
-const { user } = UserService();
+const { user, redirectToHomePage } = UserService();
 //const router = useRouter();
 
 const { isObjectEmpty } = ObjectUtils();
@@ -219,6 +219,8 @@ const apsasRetenusFiltree = computed((): ApsaRetenu[] => {
 onMounted(async () => {
   if (isObjectEmpty(user.value)) {
     router.push('/');
+  } else if (user.value.roles != 'Admin') {
+    redirectToHomePage();
   } else {
     isLoading.value = true;
     await fetchAllAnnees();

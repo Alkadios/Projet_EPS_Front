@@ -325,7 +325,7 @@ import ObjectUtils from '@/utils/ObjectUtils';
 import { cloneDeep } from 'lodash-es';
 import UserService from '@/services/UserService';
 
-const { user } = UserService();
+const { user, redirectToHomePage } = UserService();
 const route = useRoute();
 const router = useRouter();
 const { isObjectEmpty } = ObjectUtils();
@@ -378,6 +378,8 @@ const closeEdit = () => {
 onMounted(async () => {
   if (isObjectEmpty(user.value)) {
     router.push('/');
+  } else if (user.value.roles != 'Admin') {
+    redirectToHomePage();
   } else {
     isLoading.value = true;
     if (route.query.idCritere) {

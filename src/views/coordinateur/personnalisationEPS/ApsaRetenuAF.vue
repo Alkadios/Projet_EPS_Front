@@ -81,7 +81,7 @@ import ObjectUtils from '@/utils/ObjectUtils';
 import UserService from '@/services/UserService';
 
 const { isObjectEmpty } = ObjectUtils();
-const { user } = UserService();
+const { user, redirectToHomePage } = UserService();
 const route = useRoute();
 const router = useRouter();
 
@@ -104,6 +104,8 @@ const afEnErreur = ref(false);
 onMounted(async () => {
   if (isObjectEmpty(user.value)) {
     router.push('/');
+  } else if (user.value.roles != 'Admin') {
+    redirectToHomePage();
   } else {
     isLoading.value = true;
     await fetchChampsApprentissages();

@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from 'axios';
-import { ApiEvaluationEleve } from '@/constants/ApiUrls';
+import { ApiEvaluationEleve, ApiUrl } from '@/constants/ApiUrls';
 import { ResponseModel } from '@/models';
 import { apiConfig } from '@/config/UtilisateurConfig';
 
@@ -27,6 +27,6 @@ export default {
       }
     ];
   }): Promise<AxiosResponse<ResponseModel>> {
-    return axios.post(`https://127.0.0.1:8000/api/evaluation_eleve/create`, payload, apiConfig.value);
+    return axios.post(ApiUrl + `/evaluation_eleve/create`, payload, apiConfig.value);
   },
 };

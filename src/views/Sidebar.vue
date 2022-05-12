@@ -38,7 +38,7 @@
                 <i class="ni ni-collection text-info text-sm opacity-10"></i>
               </div>
               <i class="fas fa-running"></i>
-              <span class="nav-link-text justify-content-center">Gestion des sports</span>
+              <span class="nav-link-text justify-content-center">Commencer la configuration</span>
             </router-link>
           </li>
           <li class="nav-item">
