@@ -113,11 +113,11 @@ export default {
   },
   async fetchAllApsaEvaluateByEleve(context: ActionContext<EleveState, any>, payload: { idEleve: number }) {
     const response = await EleveAPI.fetchAllApsaEvaluateByEleve(payload.idEleve);
-    if (response.status === 200) context.commit('setApsaEvaluateByEleve', response.data);
-    else {
+    if (response.status === 200) {
+      context.commit('setApsaEvaluateByEleve', response.data);
+    } else {
       context.commit('setApsaEvaluateByEleve', []);
       //throw new Error(response.data.message);
     }
-    console.log('response', response, response.data, context.getters.getApsaEvaluateByEleve);
   },
 };
