@@ -6,10 +6,7 @@
         <div id="ContentScreen" class="col-lg-10">
           <div class="p-5">
             <div class="text-center">
-              <p class="text-dark mb-2">
-                Personnalisation de l'équipe EPS <br />
-                au
-              </p>
+              <p class="text-dark mb-2">Aperçu de mes évaluations</p>
               <h4 class="text-dark mb-4">{{ etablissement.nom }}</h4>
             </div>
           </div>
@@ -94,7 +91,7 @@ import type { ApsaRetenu } from '@/models';
 import UserService from '@/services/UserService';
 import ObjectUtils from '@/utils/ObjectUtils';
 const { isObjectEmpty } = ObjectUtils();
-const { user } = UserService();
+const { user, redirectToHomePage } = UserService();
 const route = useRoute();
 const router = useRouter();
 
@@ -187,6 +184,8 @@ interface EvaluationPersonnelle {
 onMounted(async () => {
   if (isObjectEmpty(user.value)) {
     router.push('/');
+  } else if (user.value.roles != 'Eleve') {
+    redirectToHomePage();
   } else {
     isLoading.value = true;
     await fetchAllApsaSelectAnneeByApsaAndEtablissmenetAndAnnee(1, 1, 3);

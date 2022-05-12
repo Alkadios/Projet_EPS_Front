@@ -49,6 +49,14 @@
           </div>
         </div>
       </div>
+      <div style="position: fixed; bottom: 0; right: 2rem">
+        <ProgressSpinner
+          v-if="isLoading"
+          style="float: right; width: 50px; height: 50px"
+          strokeWidth="8"
+          animationDuration=".5s"
+        />
+      </div>
     </div>
   </main>
 </template>
@@ -56,8 +64,10 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import UserService from '@/services/UserService';
-
-const { login } = UserService();
+import { useRouter } from 'vue-router';
+const router = useRouter();
+const isLoading = ref(false);
+const { user, login, redirectToHomePage } = UserService();
 
 const credentials = ref<any>({
   username: '',
@@ -65,7 +75,9 @@ const credentials = ref<any>({
 });
 
 async function connexion() {
+  isLoading.value = true;
   await login(credentials.value.username, credentials.value.password);
-  location.reload();
+  redirectToHomePage();
+  isLoading.value = false;
 }
 </script>

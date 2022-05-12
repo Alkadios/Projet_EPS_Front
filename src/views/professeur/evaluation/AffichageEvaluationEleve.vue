@@ -7,8 +7,8 @@
           <div class="p-5">
             <div class="text-center">
               <p class="text-dark mb-2">
-                Personnalisation de l'équipe EPS <br />
-                au
+                Aperçu des évaluations pour mes classes <br />
+                de l'établissement
               </p>
               <h4 class="text-dark mb-4">{{ etablissement.nom }}</h4>
             </div>
@@ -100,11 +100,7 @@
                     id="CriteresEvaluations"
                     v-if="situationEvaluationSelectionner != null && eleveSelectionne != null"
                   >
-                    <div
-                      v-for="monGraphiqueEleve in monAffichageGraphiqueByEleve"
-                      :key="monGraphiqueEleve.id"
-                      class="card"
-                    >
+                    <div v-for="monGraphiqueEleve in monAffichageGraphiqueByEleve" :key="monGraphiqueEleve.id">
                       <Divider align="center" type="dashed" v-if="monGraphiqueEleve.labels.length != 0">
                         <b>{{ monGraphiqueEleve.critere }}</b>
                       </Divider>
@@ -146,10 +142,12 @@ import ClasseService from '@/services/ClasseService';
 import ObjectUtils from '@/utils/ObjectUtils';
 import type { Eleve, Classe, ApsaRetenu, NiveauScolaire, APSA, ChampApprentissage } from '@/models';
 import UserService from '@/services/UserService';
-const { user } = UserService();
+import ProfesseurService from '@/services/ProfesseurService';
+
+const { fetchProfByUser, professeurByUser } = ProfesseurService();
+const { user, redirectToHomePage } = UserService();
 const route = useRoute();
 const router = useRouter();
-
 const { apsasRetenusByEtablissementAndAnnee, fetchApsaRetenuByAnneeAndEtablissement } = ApsaRetenuService();
 const { classesByAnneeAndProfesseur, fetchClasseByAnneeAndProf } = ClasseService();
 const { etablissement, anneeEnCours } = UtilisateurService();
@@ -218,9 +216,12 @@ function verif() {}
 onMounted(async () => {
   if (isObjectEmpty(user.value)) {
     router.push('/');
+  } else if (user.value.roles != 'Professeur') {
+    redirectToHomePage();
   } else {
     isLoading.value = true;
-    await fetchClasseByAnneeAndProf(anneeEnCours.value.id, 1);
+    await fetchProfByUser(user.value.id);
+    await fetchClasseByAnneeAndProf(anneeEnCours.value.id, professeurByUser.value.id);
     await fetchApsaRetenuByAnneeAndEtablissement(anneeEnCours.value.id, etablissement.value.id);
     isLoading.value = false;
   }

@@ -246,8 +246,9 @@ import UserService from '@/services/UserService';
 import UtilisateurService from '@/services/UtilisateurService';
 import { ref, onMounted } from 'vue';
 import ObjectUtils from '@/utils/ObjectUtils';
-
+import { useRoute, useRouter } from 'vue-router';
 const { isObjectEmpty } = ObjectUtils();
+const router = useRouter();
 const { user } = UserService();
 const {
   fetchElevesByAnneeAndEtablissement,
@@ -260,7 +261,7 @@ const {
   updateEleve,
 } = EleveService();
 
-const { deleteUser } = UserService();
+const { deleteUser, redirectToHomePage } = UserService();
 const { etablissement, anneeEnCours } = UtilisateurService();
 
 const eleveDialog = ref(false);
@@ -352,6 +353,8 @@ const closeBasic = () => {
 onMounted(async () => {
   if (isObjectEmpty(user.value)) {
     router.push('/');
+  } else if (user.value.roles != 'Admin') {
+    redirectToHomePage();
   } else {
     isLoading.value = true;
     await fetchElevesByAnneeAndEtablissement(etablissement.value.id, anneeEnCours.value.id);

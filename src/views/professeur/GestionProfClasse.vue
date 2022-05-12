@@ -96,7 +96,7 @@ const { isObjectEmpty } = ObjectUtils();
 const { fetchClasseByAnnee, classesByAnnee, fetchClasseByAnneeAndProf, classesByAnneeAndProfesseur, classes } =
   ClasseService();
 const { anneeEnCours } = UtilisateurService();
-const { user } = UserService();
+const { user, redirectToHomePage } = UserService();
 const { putProfesseursClasse } = ProfesseurService();
 const selectedClasses = ref<Classe[]>();
 const selectedClassesForAdd = ref<Classe[]>();
@@ -116,6 +116,8 @@ const openBasic = () => {
 onMounted(async () => {
   if (isObjectEmpty(user.value)) {
     router.push('/');
+  } else if (user.value.roles != 'Professeur') {
+    redirectToHomePage();
   } else {
     isLoading.value = true;
     await fetchClasseByAnnee(anneeEnCours.value.id);

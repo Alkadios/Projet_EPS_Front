@@ -60,12 +60,11 @@
                           ></i>
                         </a>
                       </li>
-                      <li class="nav-item" id="buttonProfil">
+                      <li class="nav-item" @click="router.push('/Profil')" id="buttonProfil">
                         <router-link
                           to="/Profil"
                           class="nav-link mb-0 px-0 py-1 active d-flex align-items-center justify-content-center"
                           data-bs-toggle="tab"
-                          href="javascript:;"
                           role="tab"
                           aria-selected="true"
                         >
@@ -77,7 +76,6 @@
                         <a
                           class="nav-link mb-0 px-0 py-1 d-flex align-items-center justify-content-center"
                           data-bs-toggle="tab"
-                          href="javascript:;"
                           role="tab"
                           aria-selected="false"
                         >
