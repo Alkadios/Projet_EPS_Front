@@ -7,4 +7,6 @@ export interface User {
   roles: string[];
   password: string;
   professeurs: number;
+  etablissements: string[];
+  profLastEtablissementId: string;
 }

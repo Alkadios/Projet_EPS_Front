@@ -69,6 +69,24 @@
             </router-link>
           </li>
           <li class="nav-item">
+            <router-link to="/GestionCoordonateur" style="margin: unset" class="nav-link">
+              <div class="icon icon-shape icon-sm d-flex align-items-center justify-content-center">
+                <i class="ni ni-collection text-info text-sm opacity-10"></i>
+              </div>
+              <i class="fas fa-walking"></i>
+              <span class="nav-link-text justify-content-center">Gestion des coordonnateurs</span>
+            </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link to="/GestionProfEtablissement" style="margin: unset" class="nav-link">
+              <div class="icon icon-shape icon-sm d-flex align-items-center justify-content-center">
+                <i class="ni ni-collection text-info text-sm opacity-10"></i>
+              </div>
+              <i class="fas fa-walking"></i>
+              <span class="nav-link-text justify-content-center">Attribution des Etablissements</span>
+            </router-link>
+          </li>
+          <li class="nav-item">
             <router-link to="/GestionEleve" style="margin: unset" class="nav-link">
               <div class="icon icon-shape icon-sm d-flex align-items-center justify-content-center">
                 <i class="ni ni-collection text-info text-sm opacity-10"></i>
@@ -102,11 +120,13 @@
           </li>
           <li class="nav-item">
             <a href="#" style="margin: unset" class="nav-link">
-              <div class="icon icon-shape icon-sm d-flex align-items-center justify-content-center">
-                <i class="ni ni-collection text-info text-sm opacity-10"></i>
-              </div>
-              <i class="fas fa-graduation-cap"></i>
-              <span class="nav-link-text justify-content-center">Gestion de mes classes</span>
+              <router-link to="/GestionProfClasse" style="margin: unset" class="nav-link">
+                <div class="icon icon-shape icon-sm d-flex align-items-center justify-content-center">
+                  <i class="ni ni-collection text-info text-sm opacity-10"></i>
+                </div>
+                <i class="fas fa-graduation-cap"></i>
+                <span class="nav-link-text justify-content-center">Gestion de mes classes</span>
+              </router-link>
             </a>
           </li>
         </div>

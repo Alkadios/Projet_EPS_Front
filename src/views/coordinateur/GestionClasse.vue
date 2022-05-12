@@ -3,8 +3,6 @@
     <div class="card-body p-0">
       <DataTable :value="classesByAnnee" responsiveLayout="scroll" dataKey="id">
         <Button label="Ajouter une Classe" @click="openBasic" style="right: 1rem" icon="pi pi-plus" autofocus />
-        <Column selectionMode="single" style="width: 3rem" :exportable="false"></Column>
-
         <Column
           field="NiveauScolaire.libelle"
           header="NiveauScolaire"

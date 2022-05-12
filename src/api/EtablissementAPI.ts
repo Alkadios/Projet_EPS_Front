@@ -11,4 +11,13 @@ export default {
   async fetchEtablissementById(id: number): Promise<AxiosResponse<ResponseModel>> {
     return axios.get(`${ApiURLEtablissement}/${id}`, apiConfig.value);
   },
+
+  async putEtablissementProfs(
+    idEtablissement: number,
+    payload: {
+      Professeur: string[];
+    }
+  ): Promise<AxiosResponse> {
+    return axios.put(`${ApiURLEtablissement}/` + idEtablissement, payload, apiConfig.value);
+  },
 };
