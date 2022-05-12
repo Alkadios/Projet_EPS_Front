@@ -11,6 +11,13 @@ export default {
     return axios.get(`${url.toString()}`, apiConfig.value);
   },
 
+  async fetchProfByRoles(roles: string): Promise<AxiosResponse<ResponseModel>> {
+    const paramsString = `user.roles=["${roles}"]`;
+    const url = new URL(`${ApiURLProfesseur}/`);
+    url.search = new URLSearchParams(paramsString).toString();
+    return axios.get(`${url.toString()}`, apiConfig.value);
+  },
+
   async fetchProfByUser(idUser: number): Promise<AxiosResponse<ResponseModel>> {
     const paramsString = `user.id=${idUser.toString()}`;
     const url = new URL(`${ApiURLProfesseur}/`);
@@ -20,6 +27,10 @@ export default {
 
   async fetchProfById(idProf: number): Promise<AxiosResponse<ResponseModel>> {
     return axios.get(`${ApiURLProfesseur}/` + idProf, apiConfig.value);
+  },
+
+  async fetchAllProfs(): Promise<AxiosResponse<ResponseModel>> {
+    return axios.get(`${ApiURLProfesseur}`, apiConfig.value);
   },
 
   async updateProf(

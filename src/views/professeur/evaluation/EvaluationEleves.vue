@@ -326,7 +326,7 @@ async function saveEvaluation() {
     monEvaluation.value.evaluationEleve = getEvaluationEleveForRequest(indicateursEleveSelectionner.value);
     await saveEvaluationEleve(monEvaluation.value.Date, monEvaluation.value.evaluationEleve);
   }
-  router.push('TableauDeBordConfig');
+  router.push('/AffichageEvaluationEleve');
   isLoading.value = false;
 }
 

@@ -2,6 +2,8 @@ import { ActionContext } from 'vuex';
 import EtablissementState from './stateInterface';
 import EtablissementAPI from '@/api/EtablissementAPI';
 import etablissement from '.';
+import { Etablissement, Professeur } from '@/models';
+import { ref } from 'vue';
 
 export default {
   async fetchAllEtablissements(context: ActionContext<EtablissementState, any>) {
@@ -11,5 +13,27 @@ export default {
       context.commit('setEtablissements', []);
       //throw new Error(response.data.message);
     }
+  },
+
+  async putEtablissementProfs(
+    context: ActionContext<EtablissementState, any>,
+    payload: {
+      idEtablissement: number;
+      Professeur: string[];
+    }
+  ) {
+    const response = await EtablissementAPI.putEtablissementProfs(payload.idEtablissement, payload);
+    if (response.status === 200) {
+      const etablissement: Etablissement = response.data;
+      const etablissements = ref<Etablissement[]>(context.getters.getEtablissements);
+      etablissements.value.find((p) => p.id === etablissement.id)!.Professeur = etablissement.Professeur;
+
+      // const indexEleve = elevesByClasse.value.findIndex((c) => c.classe.find((cl) => payload.idClasse === cl.id));
+      // elevesByClasse.value[indexEleve] = response.data;
+      context.commit('setEtablissements', etablissements.value);
+    } else {
+      //throw new Error(response.data.message);
+    }
+    //if (response.status !== 201) throw new Error);
   },
 };

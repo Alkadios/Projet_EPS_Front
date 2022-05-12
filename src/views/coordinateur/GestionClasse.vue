@@ -1,10 +1,15 @@
 <template>
   <div class="card shadow-lg o-hidden border-0 m-5">
     <div class="card-body p-5">
-      <DataTable :value="classesByAnnee" responsiveLayout="scroll" dataKey="id">
+      <DataTable
+        :value="classesByAnnee"
+        :paginator="true"
+        :rows="10"
+        :rowsPerPageOptions="[10, 20, 50]"
+        responsiveLayout="scroll"
+        dataKey="id"
+      >
         <Button label="Ajouter une Classe" @click="openBasic" style="right: 1rem" icon="pi pi-plus" autofocus />
-        <Column selectionMode="single" style="width: 3rem" :exportable="false"></Column>
-
         <Column
           field="NiveauScolaire.libelle"
           header="NiveauScolaire"
