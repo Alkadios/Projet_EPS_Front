@@ -162,7 +162,6 @@ const apsaSelectionner = ref<APSA>();
 const situationEvaluationSelectionner = ref<ApsaRetenu>();
 const eleveSelectionne = ref<Eleve>();
 const listeApsa = ref<APSA[]>([]);
-const listeCa = ref<ChampApprentissage[]>([]);
 const lightOptionsCammenbert = ref({
   plugins: {
     legend: {
@@ -278,12 +277,6 @@ function onClasseChange() {
         listeApsa.value.push(ar.ApsaSelectAnnee.Apsa);
       }
     });
-
-    apsasRetenusByNiveauScolaire.value.forEach((ar) => {
-      if (listeApsa.value.find((a) => a.id === ar.ApsaSelectAnnee.Apsa.id)) {
-        listeCa.value.push(ar.AfRetenu.ChoixAnnee.champApprentissage);
-      }
-    });
     isLoading.value = false;
   }
 }
@@ -305,7 +298,7 @@ function getElevesByClasse(uneClasse: Classe) {
 
 function getApsasRetenusByNiveauScolaire(unNiveauScolaire: NiveauScolaire) {
   return apsasRetenusByEtablissementAndAnnee.value
-    .filter((apsaRetenu) => apsaRetenu.AfRetenu.ChoixAnnee.Niveau['@id'] === unNiveauScolaire)
+    .filter((apsaRetenu) => apsaRetenu.AfRetenu.ChoixAnnee.Niveau['@id'] === unNiveauScolaire['@id'])
     .map((apsaR) => {
       return toRaw(apsaR);
     });
