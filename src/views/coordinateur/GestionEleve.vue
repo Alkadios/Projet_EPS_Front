@@ -1,22 +1,23 @@
 <template>
-  <Dropdown
-    v-model="selectedClasse"
-    :options="classesByAnnee"
-    optionLabel="libelleClasse"
-    dataKey="id"
-    placeholder="Selectionner une classe"
-    @change="onClasseChange"
-  />
-
   <div>
-    <div>
-      <Button label="Ajouter un Eleve" @click="openBasic" style="right: 1rem" icon="pi pi-plus" autofocus />
-      <Button
-        label="Retirer les Eleves"
-        @click="deleteFromClasse(selectedClasse?.id)"
-        style="right: 1rem"
-        icon="pi pi-trash"
-        autofocus
+    <Button label="Ajouter un Eleve" @click="openBasic" style="right: 1rem" icon="pi pi-plus" autofocus />
+    <Button
+      label="Retirer les Eleves"
+      @click="deleteFromClasse(selectedClasse?.id)"
+      style="right: 1rem"
+      icon="pi pi-trash"
+      autofocus
+    />
+  </div>
+  <div class="card shadow-lg o-hidden border-0 m-5">
+    <div class="card-body p-5">
+      <Dropdown
+        v-model="selectedClasse"
+        :options="classesByAnnee"
+        optionLabel="libelleClasse"
+        dataKey="id"
+        placeholder="Selectionner une classe"
+        @change="onClasseChange"
       />
     </div>
     <DataTable :value="mesEleves" v-model:selection="selectedElevesOnClasse" responsiveLayout="scroll" dataKey="id">
@@ -140,23 +141,34 @@
 </template>
 
 <script lang="ts" setup>
+import { ref, onMounted, toRaw } from 'vue';
 import { Classe, Eleve } from '@/models';
 import ClasseService from '@/services/ClasseService';
 import EleveService from '@/services/EleveService';
 import UtilisateurService from '@/services/UtilisateurService';
+import UserService from '@/services/UserService';
 import eleve from '@/store/modules/eleve';
-import { ref, onMounted, toRaw } from 'vue';
+import ObjectUtils from '@/utils/ObjectUtils';
+import router from '@/router';
 
+const { isObjectEmpty } = ObjectUtils();
+const { user, redirectToHomePage } = UserService();
 const { fetchAllEleves, saveEleve, eleves, deleteEleve, fetchEleveById, eleveById, updateEleve } = EleveService();
 const { fetchAllClasses, fetchClasseByAnnee, classesByAnnee, addElevesInClasse, classes } = ClasseService();
 const { etablissement, anneeEnCours } = UtilisateurService();
 
 onMounted(async () => {
-  isLoading.value = true;
-  await fetchAllEleves();
-  await fetchAllClasses();
-  await fetchClasseByAnnee(anneeEnCours.value.id);
-  isLoading.value = false;
+  if (isObjectEmpty(user.value)) {
+    router.push('/');
+  } else if (user.value.roles != 'Admin') {
+    redirectToHomePage();
+  } else {
+    isLoading.value = true;
+    await fetchAllEleves();
+    await fetchAllClasses();
+    await fetchClasseByAnnee(anneeEnCours.value.id);
+    isLoading.value = false;
+  }
 });
 
 function mesElevesByClasse(idClasse: number) {

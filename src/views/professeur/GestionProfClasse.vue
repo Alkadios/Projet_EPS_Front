@@ -1,36 +1,43 @@
 <template>
-  <div>
-    <div>
-      <Button label="Ajouter ces classes" @click="openBasic" style="right: 1rem" icon="pi pi-plus" autofocus />
-      <Button
-        label="Retirer les Classes"
-        @click="deleteClasseOfProf()"
-        style="right: 1rem"
-        icon="pi pi-trash"
-        autofocus
-      />
-    </div>
-    <DataTable
-      :value="classesByAnneeAndProfesseur"
-      v-model:selection="selectedClasses"
-      dynamic="true"
-      responsiveLayout="scroll"
-      dataKey="id"
-    >
-      <Column selectionMode="multiple"></Column>
-      <Column field="NiveauScolaire.libelle" header="NiveauScolaire" :sortable="true" style="min-width: 12rem"></Column>
-      <Column field="Annee.annee" header="Annee" :sortable="true" style="min-width: 12rem"></Column>
-      <Column field="etablissement.nom" header="etablissement" :sortable="true" style="min-width: 12rem"></Column>
-      <Column field="libelleClasse" header="libelleClasse" :sortable="true" style="min-width: 12rem"></Column>
-      <Column :exportable="false" style="min-width: 8rem"> </Column>
-    </DataTable>
-    <div style="position: fixed; bottom: 0; right: 2rem">
-      <ProgressSpinner
-        v-if="isLoading"
-        style="float: right; width: 50px; height: 50px"
-        strokeWidth="8"
-        animationDuration=".5s"
-      />
+  <div class="card shadow-lg o-hidden border-0 m-5">
+    <div class="card-body p-5">
+      <div>
+        <Button label="Ajouter ces classes" @click="openBasic" style="right: 1rem" icon="pi pi-plus" autofocus />
+        <Button
+          label="Retirer les Classes"
+          @click="deleteClasseOfProf()"
+          style="right: 1rem"
+          icon="pi pi-trash"
+          autofocus
+        />
+      </div>
+      <DataTable
+        :value="classesByAnneeAndProfesseur"
+        v-model:selection="selectedClasses"
+        dynamic="true"
+        responsiveLayout="scroll"
+        dataKey="id"
+      >
+        <Column selectionMode="multiple"></Column>
+        <Column
+          field="NiveauScolaire.libelle"
+          header="NiveauScolaire"
+          :sortable="true"
+          style="min-width: 12rem"
+        ></Column>
+        <Column field="Annee.annee" header="Annee" :sortable="true" style="min-width: 12rem"></Column>
+        <Column field="etablissement.nom" header="etablissement" :sortable="true" style="min-width: 12rem"></Column>
+        <Column field="libelleClasse" header="libelleClasse" :sortable="true" style="min-width: 12rem"></Column>
+        <Column :exportable="false" style="min-width: 8rem"> </Column>
+      </DataTable>
+      <div style="position: fixed; bottom: 0; right: 2rem">
+        <ProgressSpinner
+          v-if="isLoading"
+          style="float: right; width: 50px; height: 50px"
+          strokeWidth="8"
+          animationDuration=".5s"
+        />
+      </div>
     </div>
   </div>
 
@@ -82,11 +89,14 @@ import UserService from '@/services/UserService';
 import UtilisateurService from '@/services/UtilisateurService';
 import eleve from '@/store/modules/eleve';
 import { ref, onMounted, toRaw } from 'vue';
-
+import ObjectUtils from '@/utils/ObjectUtils';
+import { useRoute, useRouter } from 'vue-router';
+const router = useRouter();
+const { isObjectEmpty } = ObjectUtils();
 const { fetchClasseByAnnee, classesByAnnee, fetchClasseByAnneeAndProf, classesByAnneeAndProfesseur, classes } =
   ClasseService();
 const { anneeEnCours } = UtilisateurService();
-const { user } = UserService();
+const { user, redirectToHomePage } = UserService();
 const { putProfesseursClasse } = ProfesseurService();
 const selectedClasses = ref<Classe[]>();
 const selectedClassesForAdd = ref<Classe[]>();
@@ -104,13 +114,19 @@ const openBasic = () => {
 };
 
 onMounted(async () => {
-  isLoading.value = true;
-  await fetchClasseByAnnee(anneeEnCours.value.id);
-  await fetchClasseByAnneeAndProf(anneeEnCours.value.id, user.value.professeurs);
-  console.log('classeparprof', classesByAnneeAndProfesseur.value);
-  console.log('userid', user.value.id);
-  console.log('prof', user.value.professeurs);
-  isLoading.value = false;
+  if (isObjectEmpty(user.value)) {
+    router.push('/');
+  } else if (user.value.roles != 'Professeur') {
+    redirectToHomePage();
+  } else {
+    isLoading.value = true;
+    await fetchClasseByAnnee(anneeEnCours.value.id);
+    await fetchClasseByAnneeAndProf(anneeEnCours.value.id, user.value.professeurs);
+    console.log('classeparprof', classesByAnneeAndProfesseur.value);
+    console.log('userid', user.value.id);
+    console.log('prof', user.value.professeurs);
+    isLoading.value = false;
+  }
 });
 
 async function editClasse() {

@@ -82,7 +82,11 @@ import UtilisateurService from '@/services/UtilisateurService';
 import { ApsaSelectAnnee, ApsaRetenu, AfRetenus } from '@/models';
 import { useRoute } from 'vue-router';
 import router from '@/router';
+import ObjectUtils from '@/utils/ObjectUtils';
+import UserService from '@/services/UserService';
 
+const { isObjectEmpty } = ObjectUtils();
+const { user, redirectToHomePage } = UserService();
 const route = useRoute();
 
 const { apsaSelectAnneeByAnnee, fetchAllApsaSelectAnneeByAnnee } = ApsaSelectAnneeService();
@@ -169,25 +173,31 @@ function verifIsExistSituationEvaluation() {
 }
 
 onMounted(async () => {
-  isLoading.value = true;
-  await fetchAllAfRetenus();
-  await fetchAllApsaRetenu();
-  await fetchAllApsaSelectAnneeByAnnee(anneeEnConfig.value.id);
-  apsaSelectAnneeByAnnee.value.forEach((a) => {
-    if (route.query.idCA) {
-      if (a.Ca.id === parseInt(route.query.idCA.toString())) {
-        apsaSelects.value.push(a);
+  if (isObjectEmpty(user.value)) {
+    router.push('/');
+  } else if (user.value.roles != 'Admin') {
+    redirectToHomePage();
+  } else {
+    isLoading.value = true;
+    await fetchAllAfRetenus();
+    await fetchAllApsaRetenu();
+    await fetchAllApsaSelectAnneeByAnnee(anneeEnConfig.value.id);
+    apsaSelectAnneeByAnnee.value.forEach((a) => {
+      if (route.query.idCA) {
+        if (a.Ca.id === parseInt(route.query.idCA.toString())) {
+          apsaSelects.value.push(a);
+        }
       }
-    }
-  });
+    });
 
-  afRetenus.value.forEach((b) => {
-    if (route.query.idChoixAnnee) {
-      if (b.ChoixAnnee['@id'] === '/api/choix_annees/' + route.query.idChoixAnnee) {
-        mesAfRetenus.value.push(b);
+    afRetenus.value.forEach((b) => {
+      if (route.query.idChoixAnnee) {
+        if (b.ChoixAnnee['@id'] === '/api/choix_annees/' + route.query.idChoixAnnee) {
+          mesAfRetenus.value.push(b);
+        }
       }
-    }
-  });
-  isLoading.value = false;
+    });
+    isLoading.value = false;
+  }
 });
 </script>

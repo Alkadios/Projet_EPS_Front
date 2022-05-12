@@ -1,14 +1,26 @@
 <template>
   <div class="bg-gray-100" :class="{ 'g-sidenav-show': sidenavActive }">
     <div class="min-height-300 bg-primary position-absolute w-100"></div>
-    <Sidebar :sidenavActive="sidenavActive" :displaySideBar="displaySidebar" @hideRequest="sidenavActive = false" />
+    <Sidebar
+      v-if="!isObjectEmpty(user)"
+      :sidenavActive="sidenavActive"
+      :displaySideBar="displaySidebar"
+      @hideRequest="sidenavActive = false"
+    />
     <main class="main-content position-relative border-radius-lg">
       <div class="card-body px-0 pt-0 pb-2">
         <div class="table-responsive p-0">
-          <div class="card shadow-lg mx-4" style="top: 1rem">
+          <div v-if="!isObjectEmpty(user)" class="card shadow-lg mx-4" style="top: 1rem">
             <div class="card-body p-3">
               <div class="row gx-4">
                 <div class="col-auto">
+                  <div class="avatar avatar-xl position-relative" v-if="!isObjectEmpty(professeurByUser)">
+                    <img
+                      src="@/assets/img/professeur.png"
+                      alt="profile_image"
+                      class="w-100 border-radius-lg shadow-sm"
+                    />
+                  </div>
                   <div class="avatar avatar-xl position-relative" v-if="sexeUser === 'M'">
                     <img src="@/assets/img/man.png" alt="profile_image" class="w-100 border-radius-lg shadow-sm" />
                   </div>
@@ -19,7 +31,7 @@
                 <div class="col-auto my-auto">
                   <div class="h-100">
                     <h5 class="mb-1">{{ nomAndPrenom }}</h5>
-                    <p class="mb-0 font-weight-bold text-sm">{{ role }}</p>
+                    <p class="mb-0 font-weight-bold text-sm">{{ user.roles }}</p>
                   </div>
                 </div>
                 <div class="col-lg-4 col-md-6 my-sm-auto ms-sm-auto me-sm-0 mx-auto mt-3">
@@ -48,23 +60,22 @@
                           ></i>
                         </a>
                       </li>
-                      <li class="nav-item" id="buttonProfil">
-                        <a
+                      <li class="nav-item" @click="router.push('/Profil')" id="buttonProfil">
+                        <router-link
+                          to="/Profil"
                           class="nav-link mb-0 px-0 py-1 active d-flex align-items-center justify-content-center"
                           data-bs-toggle="tab"
-                          href="javascript:;"
                           role="tab"
                           aria-selected="true"
                         >
                           <i class="ni ni-app"></i>
                           <span class="ms-2">Mon profil</span>
-                        </a>
+                        </router-link>
                       </li>
-                      <li class="nav-item" id="buttonLogout">
+                      <li class="nav-item" @click="logout()" id="buttonLogout">
                         <a
                           class="nav-link mb-0 px-0 py-1 d-flex align-items-center justify-content-center"
                           data-bs-toggle="tab"
-                          href="javascript:;"
                           role="tab"
                           aria-selected="false"
                         >
@@ -78,10 +89,18 @@
               </div>
             </div>
           </div>
-          <router-view v-if="onMountedIsFinish" />
+          <router-view v-if="onMountedIsFinish || !isObjectEmpty(user)" />
         </div>
       </div>
     </main>
+    <div style="position: fixed; bottom: 0; right: 2rem">
+      <ProgressSpinner
+        v-if="isLoading"
+        style="float: right; width: 50px; height: 50px"
+        strokeWidth="8"
+        animationDuration=".5s"
+      />
+    </div>
   </div>
 </template>
 
@@ -89,7 +108,6 @@
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import Sidebar from './views/Sidebar.vue';
-import Navbar from './views/Navbar.vue';
 //import UtilisateurService from './services/UtilisateurService';
 import Authentification from './views/Authentification.vue';
 //import Head from './views/_Head.vue';
@@ -110,46 +128,40 @@ const { utilisateur, fetchAnneeEnCours, anneeEnCours, storeAnneeEnConfig, fetchE
 
 const { fetchEleveByUser, eleveByUser } = EleveService();
 const { fetchProfByUser, professeurByUser } = ProfesseurService();
-const { user, checkLocalStorage, deconnexion } = UserService();
+const { token, user, checkLocalStorage, deconnexion } = UserService();
 // const { storeOrganismesUtilisateur, organismeConnecte, storeOrganismeConnecte, listeOrganismesUtilisateur } =
 //   UtilisateurService();
 
 const onMountedIsFinish = ref(false);
 const displaySidebar = ref('block');
 const nomAndPrenom = ref();
-const role = ref();
 const sexeUser = ref();
-console.log(displaySidebar.value, 'displaySidebar2');
+const isLoading = ref(false);
+
 onMounted(async () => {
   // if (isObjectEmpty(utilisateur.value)) {
   //   router.push({ name: 'Authentification' });
   // }
-
-  // if (user.value.roles.indexOf('Professeur') > -1) {
-  //   await fetchEleveByUser(user.value.id);
-  //   nomAndPrenom.value = professeurByUser.value.nom + ' ' + professeurByUser.value.prenom;
-  // } else if (user.value.roles.indexOf('ROLE_USER') > -1) {
-  //   await fetchEleveByUser(user.value.id);
-  //   nomAndPrenom.value = eleveByUser.value.nom + ' ' + eleveByUser.value.prenom;
-  //   sexeUser.value = eleveByUser.value.sexeEleve;
-  // }
-  // role.value = user.value.roles;
-
+  isLoading.value = true;
   await checkLocalStorage();
   await fetchAnneeEnCours();
   storeAnneeEnConfig(anneeEnCours.value);
   await fetchEtablissementById(1);
-
   onMountedIsFinish.value = true;
-});
+  console.log('user : ', user.value);
+  if (user.value.roles === 'Professeur') {
+    await fetchProfByUser(user.value.id);
+    nomAndPrenom.value = professeurByUser.value.nom + ' ' + professeurByUser.value.prenom;
+    console.log('professeur By User : ', professeurByUser.value);
+  } else if (user.value.roles === 'Eleve') {
+    await fetchEleveByUser(user.value.id);
+    nomAndPrenom.value = eleveByUser.value.nom + ' ' + eleveByUser.value.prenom;
+    sexeUser.value = eleveByUser.value.sexeEleve;
+    console.log('eleveByUser : ', eleveByUser.value);
+  }
 
-var win = navigator.platform.indexOf('Win') > -1;
-if (win && document.querySelector('#sidenav-scrollbar')) {
-  var options = {
-    damping: '0.5',
-  };
-  Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
-}
+  isLoading.value = false;
+});
 
 function reponsiveSideBar() {
   if (displaySidebar.value === 'none') {
@@ -159,5 +171,7 @@ function reponsiveSideBar() {
   }
 }
 
-async function logout() {}
+async function logout() {
+  await deconnexion();
+}
 </script>
