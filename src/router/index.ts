@@ -101,6 +101,16 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('../views/professeur/GestionProfClasse.vue'),
   },
   {
+    path: '/GestionCoordonateur',
+    name: 'GestionCoordonateur',
+    component: () => import('../views/coordinateur/GestionCoordonateur.vue'),
+  },
+  {
+    path: '/GestionProfEtablissement',
+    name: 'GestionProfEtablissement',
+    component: () => import('../views/coordinateur/GestionProfEtablissement.vue'),
+  },
+  {
     path: '/:notFound(.*)',
     redirect: '/',
   },

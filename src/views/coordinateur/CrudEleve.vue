@@ -1,10 +1,8 @@
 <template>
   <div class="card shadow-lg o-hidden border-0 m-5">
-    <div class="card-body p-5">
-      <DataTable :value="elevesByAnneeAndEtablissement" responsiveLayout="scroll" dataKey="id">
+    <div class="card-body p-0">
+      <DataTable :value="eleves" responsiveLayout="scroll" dataKey="id">
         <Button label="Ajouter un Eleve" @click="openBasic" style="right: 1rem" icon="pi pi-plus" autofocus />
-        <Column selectionMode="single" style="width: 3rem" :exportable="false"></Column>
-
         <Column field="nom" header="nom" :sortable="true" style="min-width: 12rem"></Column>
         <Column field="prenom" header="prenom" :sortable="true" style="min-width: 12rem"></Column>
         <Column field="telephone" header="telephone" :sortable="true" style="min-width: 12rem"></Column>
@@ -247,6 +245,7 @@ import UtilisateurService from '@/services/UtilisateurService';
 import { ref, onMounted } from 'vue';
 import ObjectUtils from '@/utils/ObjectUtils';
 import { useRoute, useRouter } from 'vue-router';
+
 const { isObjectEmpty } = ObjectUtils();
 const router = useRouter();
 const { user } = UserService();
@@ -255,6 +254,7 @@ const {
   elevesByAnneeAndEtablissement,
   saveEleve,
   eleves,
+  fetchAllEleves,
   deleteEleve,
   fetchEleveById,
   eleveById,
@@ -300,7 +300,7 @@ async function CreerEleve() {
   );
   alert('Votre Eleve à ete créer');
   displayBasic.value = false;
-  await fetchElevesByAnneeAndEtablissement(etablissement.value.id, anneeEnCours.value.id);
+  await fetchAllEleves();
   isLoading.value = false;
 }
 
@@ -332,7 +332,7 @@ async function supprimerEleve(Eleve: Eleve) {
     isLoading.value = true;
     await deleteEleve(Eleve.id);
     await deleteUser(Eleve.user.id);
-    await fetchElevesByAnneeAndEtablissement(etablissement.value.id, anneeEnCours.value.id);
+    await fetchAllEleves();
     isLoading.value = false;
   }
 }
@@ -357,7 +357,7 @@ onMounted(async () => {
     redirectToHomePage();
   } else {
     isLoading.value = true;
-    await fetchElevesByAnneeAndEtablissement(etablissement.value.id, anneeEnCours.value.id);
+    await fetchAllEleves();
     isLoading.value = false;
   }
 });

@@ -19,7 +19,7 @@
     <hr class="horizontal dark mt-0" />
     <div class="collapse navbar-collapse w-auto" id="sidenav-collapse-main">
       <ul class="navbar-nav">
-        <div v-if="user.roles === 'Admin'">
+        <div>
           <li class="nav-item mt-3">
             <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Coordonnateur</h6>
           </li>
@@ -69,6 +69,24 @@
             </router-link>
           </li>
           <li class="nav-item">
+            <router-link to="/GestionCoordonateur" style="margin: unset" class="nav-link">
+              <div class="icon icon-shape icon-sm d-flex align-items-center justify-content-center">
+                <i class="ni ni-collection text-info text-sm opacity-10"></i>
+              </div>
+              <i class="fas fa-walking"></i>
+              <span class="nav-link-text justify-content-center">Gestion des coordonnateurs</span>
+            </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link to="/GestionProfEtablissement" style="margin: unset" class="nav-link">
+              <div class="icon icon-shape icon-sm d-flex align-items-center justify-content-center">
+                <i class="ni ni-collection text-info text-sm opacity-10"></i>
+              </div>
+              <i class="fas fa-walking"></i>
+              <span class="nav-link-text justify-content-center">Attribution des Etablissements</span>
+            </router-link>
+          </li>
+          <li class="nav-item">
             <router-link to="/GestionEleve" style="margin: unset" class="nav-link">
               <div class="icon icon-shape icon-sm d-flex align-items-center justify-content-center">
                 <i class="ni ni-collection text-info text-sm opacity-10"></i>
@@ -101,7 +119,7 @@
             </router-link>
           </li>
           <li class="nav-item">
-            <router-link to="GestionClasse" style="margin: unset" class="nav-link">
+            <router-link to="/GestionProfClasse" style="margin: unset" class="nav-link">
               <div class="icon icon-shape icon-sm d-flex align-items-center justify-content-center">
                 <i class="ni ni-collection text-info text-sm opacity-10"></i>
               </div>

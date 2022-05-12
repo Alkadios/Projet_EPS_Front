@@ -1,9 +1,9 @@
 <template>
   <div class="card shadow-lg o-hidden border-0 m-5">
-    <div class="card-body p-5">
-      <h1>GestionPROF</h1>
-      <DataTable :value="professeursByEtablissement" responsiveLayout="scroll" dataKey="id">
-        <Button label="Ajouter un Professeur" @click="openBasic" style="right: 1rem" icon="pi pi-plus" autofocus />
+    <div class="card-body p-0">
+      <h1>Gestion Coordonnateur</h1>
+      <DataTable :value="professeurByRoles" responsiveLayout="scroll" dataKey="id">
+        <Button label="Ajouter un Coordonateur" @click="openBasic" style="right: 1rem" icon="pi pi-plus" autofocus />
 
         <Column field="nom" header="nom" :sortable="true" style="min-width: 12rem"></Column>
         <Column field="prenom" header="prenom" :sortable="true" style="min-width: 12rem"></Column>
@@ -38,7 +38,7 @@
       </div>
     </div>
 
-    <Dialog header="Ajouter un Professeur" v-model:visible="displayBasic" :style="{ width: '50vw' }">
+    <Dialog header="Ajouter un Coordonateur" v-model:visible="displayBasic" :style="{ width: '50vw' }">
       <div class="row" style="place-content: center">
         <div class="col-8">
           <Card>
@@ -149,7 +149,7 @@
         <div class="col-8">
           <Card>
             <template #content>
-              <center><h1>Modifier un Prof</h1></center>
+              <center><h1>Modifier un Coordonnateur</h1></center>
               <form>
                 <div class="container">
                   <div class="row">
@@ -189,28 +189,17 @@ import ProfesseurService from '@/services/ProfesseurService';
 import UserService from '@/services/UserService';
 import UtilisateurService from '@/services/UtilisateurService';
 import { ref, onMounted } from 'vue';
-import ObjectUtils from '@/utils/ObjectUtils';
-import { useRoute, useRouter } from 'vue-router';
-const router = useRouter();
-const { isObjectEmpty } = ObjectUtils();
-const { user, redirectToHomePage } = UserService();
-const { etablissement } = UtilisateurService();
-const {
-  fetchProfesseursByEtablissement,
-  saveProfesseur,
-  professeursByEtablissement,
-  deleteProf,
-  updateProf,
-  fetchProfById,
-  professeurById,
-} = ProfesseurService();
-const { deleteUser } = UserService();
+
+const { fetchProfByRoles, saveProfesseur, deleteProf, updateProf, fetchProfById, professeurById, professeurByRoles } =
+  ProfesseurService();
+const { deleteUser, user } = UserService();
+
 const isLoading = ref(false);
 const profDialog = ref(false);
 
 const nouveauUtilisateur = ref<User>({
   email: '',
-  roles: ['Professeur'],
+  roles: ['Admin'],
   password: '',
 });
 
@@ -232,7 +221,7 @@ async function CreerProfesseur() {
   );
   alert('Votre Professeur à ete créer');
   displayBasic.value = false;
-  await fetchProfesseursByEtablissement(1);
+  await fetchProfByRoles('Admin');
 }
 
 async function champsProf(idProf: number) {
@@ -245,7 +234,7 @@ async function champsProf(idProf: number) {
 async function editProf(idProf: number) {
   isLoading.value = true;
   await updateProf(idProf, professeurById.value.nom, professeurById.value.prenom, professeurById.value.telephone);
-  alert('Votre Prof à ete modifié');
+  alert('Votre Coordinateurs à ete modifié');
   profDialog.value = false;
   isLoading.value = false;
 }
@@ -254,7 +243,7 @@ async function supprimerProf(Professeur: Professeur) {
   if (confirm('Voulez vous vraiment supprimer ?')) {
     isLoading.value = true;
     await deleteProf(Professeur.id);
-    await fetchProfesseursByEtablissement(1);
+    await fetchProfByRoles('Admin');
     isLoading.value = false;
   }
 }
@@ -273,15 +262,8 @@ const closeBasic = () => {
 };
 
 onMounted(async () => {
-  if (isObjectEmpty(user.value)) {
-    router.push('/');
-  } else if (user.value.roles != 'Admin') {
-    redirectToHomePage();
-  } else {
-    isLoading.value = true;
-    await fetchProfesseursByEtablissement(etablissement.value.id);
-    console.log('prof', professeursByEtablissement.value);
-    isLoading.value = false;
-  }
+  isLoading.value = true;
+  await fetchProfByRoles('Admin');
+  isLoading.value = false;
 });
 </script>
