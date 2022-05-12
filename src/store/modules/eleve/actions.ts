@@ -25,7 +25,7 @@ export default {
 
   async fetchEleveByUser(context: ActionContext<EleveState, any>, payload: { idUser: number }) {
     const response = await EleveAPI.fetchEleveByUser(payload.idUser);
-    if (response.data) context.commit('setEleveByUser', response.data);
+    if (response.data) context.commit('setEleveByUser', response.data['hydra:member'][0]);
     else {
       context.commit('setEleveByUser', []);
       //throw new Error(response.data.message);

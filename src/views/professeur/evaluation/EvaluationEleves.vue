@@ -7,8 +7,8 @@
           <div class="p-5">
             <div class="text-center">
               <p class="text-dark mb-2">
-                Personnalisation de l'équipe EPS <br />
-                au
+                Outil d'évaluation <br />
+                pour l'établissement
               </p>
               <h4 class="text-dark mb-4">{{ etablissement.nom }}</h4>
             </div>
@@ -135,10 +135,13 @@ import { useRoute, useRouter } from 'vue-router';
 import UtilisateurService from '@/services/UtilisateurService';
 import ApsaRetenuService from '@/services/ApsaRetenuService';
 import ClasseService from '@/services/ClasseService';
+import UserService from '@/services/UserService';
 import EvaluationEleveService from '@/services/EvaluationEleveService';
 import ObjectUtils from '@/utils/ObjectUtils';
 import type { Critere, Eleve, Indicateur, Classe, ApsaRetenu, NiveauScolaire, APSA } from '@/models';
+import ProfesseurService from '@/services/ProfesseurService';
 
+const { fetchProfByUser, professeurByUser } = ProfesseurService();
 const route = useRoute();
 const router = useRouter();
 
@@ -146,6 +149,7 @@ const { apsasRetenusByEtablissementAndAnnee, fetchApsaRetenuByAnneeAndEtablissem
 const { classesByAnneeAndProfesseur, fetchClasseByAnneeAndProf } = ClasseService();
 const { saveEvaluationEleve } = EvaluationEleveService();
 const { etablissement, anneeEnCours } = UtilisateurService();
+const { user, token, redirectToHomePage } = UserService();
 const { isObjectEmpty } = ObjectUtils();
 const isLoading = ref(false);
 
@@ -247,10 +251,17 @@ watch(
 );
 
 onMounted(async () => {
-  isLoading.value = true;
-  await fetchClasseByAnneeAndProf(anneeEnCours.value.id, 1);
-  await fetchApsaRetenuByAnneeAndEtablissement(anneeEnCours.value.id, etablissement.value.id);
-  isLoading.value = false;
+  if (isObjectEmpty(user.value)) {
+    router.push('/');
+  } else if (user.value.roles != 'Professeur') {
+    redirectToHomePage();
+  } else {
+    isLoading.value = true;
+    await fetchProfByUser(user.value.id);
+    await fetchClasseByAnneeAndProf(anneeEnCours.value.id, professeurByUser.value.id);
+    await fetchApsaRetenuByAnneeAndEtablissement(anneeEnCours.value.id, etablissement.value.id);
+    isLoading.value = false;
+  }
 });
 
 function onClasseChange() {

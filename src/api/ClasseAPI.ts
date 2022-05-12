@@ -42,7 +42,7 @@ export default {
   },
 
   async fetchClasseByAnneeAndProf(idAnnee: number, idProfesseur: number): Promise<AxiosResponse<ResponseModel>> {
-    const paramsString = `professeurs.id=${idProfesseur.toString()}&Annee.id=${idAnnee.toString()}`;
+    const paramsString = `professeurs.id=${idProfesseur}&Annee.id=${idAnnee}`;
     const url = new URL(`${ApiURLClasse}/`);
     url.search = new URLSearchParams(paramsString).toString();
     return axios.get(`${url.toString()}`, apiConfig.value);

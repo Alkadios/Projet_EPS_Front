@@ -6,7 +6,7 @@
         <div id="ContentScreen" class="col-lg-10">
           <div class="p-5">
             <div class="text-center">
-              <p class="text-dark mb-2">Bienvenue sur votre tableau de bord</p>
+              <p class="text-dark mb-2">Bienvenue sur O.C.P.E.P.S</p>
               <h4 class="text-dark mb-4">{{ etablissement.nom }}</h4>
             </div>
           </div>
@@ -48,11 +48,15 @@
 import { ref, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import UtilisateurService from '@/services/UtilisateurService';
-import EleveService from '@/services/EleveService';
 import ApsaSelectAnneeService from '@/services/ApsaSelectAnneeService';
 import ObjectUtils from '@/utils/ObjectUtils';
 import type { Eleve, APSA } from '@/models';
+import UserService from '@/services/UserService';
+import EleveService from '@/services/EleveService';
 
+const { fetchEleveByUser, eleveByUser } = EleveService();
+const { isObjectEmpty } = ObjectUtils();
+const { user, redirectToHomePage } = UserService();
 const route = useRoute();
 const router = useRouter();
 
@@ -62,10 +66,15 @@ const { fetchEleveById, eleveById, apsaEvaluateByEleve, fetchAllApsaEvaluateByEl
 const isLoading = ref(false);
 
 onMounted(async () => {
-  isLoading.value = true;
+  if (isObjectEmpty(user.value)) {
+    router.push('/');
+  } else if (user.value.roles != 'Eleve') {
+    redirectToHomePage();
+  } else {
+    isLoading.value = true;
+  }
   await fetchEleveById(7);
   await fetchAllApsaEvaluateByEleve(7);
-  console.log('onMounted', apsaEvaluateByEleve.value);
   isLoading.value = false;
 });
 

@@ -3,6 +3,12 @@
     display: block !important;
   }
 }
+
+#imgLogin {
+  background-image: url('./../img/login2.jpg');
+  background-position: top;
+}
+
 @media screen and (max-width: 1200px) {
   #buttonSideBar,
   #monCompteSideBar,
@@ -19,6 +25,7 @@
   }
   #sidenav-main {
     display: none;
+    top: 8rem;
   }
 }
 

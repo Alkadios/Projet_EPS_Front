@@ -187,7 +187,9 @@ import ChoixAnneeService from '@/services/ChoixAnneeService';
 import ApsaRetenuService from '@/services/ApsaRetenuService';
 import ObjectUtils from '@/utils/ObjectUtils';
 import { useRoute, useRouter } from 'vue-router';
+import UserService from '@/services/UserService';
 
+const { user, redirectToHomePage } = UserService();
 //const router = useRouter();
 
 const { isObjectEmpty } = ObjectUtils();
@@ -237,21 +239,27 @@ const apsasRetenusFiltree = computed((): ApsaRetenu[] => {
 });
 
 onMounted(async () => {
-  isLoading.value = true;
-  await fetchAllAnnees();
-  if (isObjectEmpty(nouvelAnneeEnConfig.value)) {
-    const anneeLocal = localStorage.getItem('anneeEnConfig');
-    if (anneeLocal != undefined && anneeLocal != null) {
-      await fetchAnneeById(parseInt(anneeLocal));
-      storeAnneeEnConfig(annee.value);
-    } else {
-      await fetchAnneeEnCours();
-      storeAnneeEnConfig(anneeEnCours.value);
+  if (isObjectEmpty(user.value)) {
+    router.push('/');
+  } else if (user.value.roles != 'Admin') {
+    redirectToHomePage();
+  } else {
+    isLoading.value = true;
+    await fetchAllAnnees();
+    if (isObjectEmpty(nouvelAnneeEnConfig.value)) {
+      const anneeLocal = localStorage.getItem('anneeEnConfig');
+      if (anneeLocal != undefined && anneeLocal != null) {
+        await fetchAnneeById(parseInt(anneeLocal));
+        storeAnneeEnConfig(annee.value);
+      } else {
+        await fetchAnneeEnCours();
+        storeAnneeEnConfig(anneeEnCours.value);
+      }
+      nouvelAnneeEnConfig.value = anneeEnConfig.value;
     }
-    nouvelAnneeEnConfig.value = anneeEnConfig.value;
+    await fetchConfigAnnee();
+    isLoading.value = false;
   }
-  await fetchConfigAnnee();
-  isLoading.value = false;
 });
 
 async function fetchConfigAnnee() {

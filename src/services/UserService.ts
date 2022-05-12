@@ -2,6 +2,7 @@ import { computed } from 'vue';
 import { useStore } from 'vuex';
 import jwt_decode from 'jwt-decode';
 import { Eleve, Professeur, User } from '@/models';
+import router from '@/router';
 
 export default function UserService() {
   const store = useStore();
@@ -20,9 +21,19 @@ export default function UserService() {
   }
 
   async function deconnexion() {
-    console.log('avant la déco : ', user.value, token.value);
     await store.dispatch('UserModule/deconnexion', {});
-    console.log('après la déco : ', user.value, token.value);
+    router.push('/');
+    location.reload();
+  }
+
+  function redirectToHomePage() {
+    if (user.value.roles === 'Eleve') {
+      router.push('/Accueil');
+    } else if (user.value.roles === 'Professeur') {
+      router.push('/EvaluationEleves');
+    } else if (user.value.roles === 'Admin') {
+      router.push('/TableauDeBordConfig');
+    }
   }
 
   const token = computed((): string => {
@@ -72,5 +83,6 @@ export default function UserService() {
     checkLocalStorage,
     eleve,
     professeur,
+    redirectToHomePage,
   };
 }
