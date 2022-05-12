@@ -67,4 +67,8 @@ export default {
     url.search = new URLSearchParams(paramsString).toString();
     return axios.get(`${url.toString()}`, apiConfig.value);
   },
+
+  async fetchAllApsaEvaluateByEleve(idEleve: number): Promise<AxiosResponse<ResponseModel>> {
+    return axios.get(`${ApiURLEleve}/${idEleve}/apsaRetenu`, apiConfig.value);
+  },
 };
