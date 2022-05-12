@@ -1,7 +1,14 @@
 <template>
   <div class="card shadow-lg o-hidden border-0 m-5">
-    <div class="card-body p-0">
-      <DataTable :value="eleves" responsiveLayout="scroll" dataKey="id">
+    <div class="card-body p-5">
+      <DataTable
+        :value="eleves"
+        :paginator="true"
+        :rows="10"
+        :rowsPerPageOptions="[10, 20, 50]"
+        responsiveLayout="scroll"
+        dataKey="id"
+      >
         <Button label="Ajouter un Eleve" @click="openBasic" style="right: 1rem" icon="pi pi-plus" autofocus />
         <Column field="nom" header="nom" :sortable="true" style="min-width: 12rem"></Column>
         <Column field="prenom" header="prenom" :sortable="true" style="min-width: 12rem"></Column>
