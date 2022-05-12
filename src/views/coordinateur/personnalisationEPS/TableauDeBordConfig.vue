@@ -19,6 +19,7 @@
     </div>
     <div class="mb-3">
       <div>
+        <Button icon="pi pi-pencil" @click="printVar()" />
         <p>Configuration de la promotion :</p>
         <Dropdown
           v-model="nouvelAnneeEnConfig"
@@ -106,7 +107,12 @@
               @click="
                 router.push({
                   name: 'DeclinerAFRetenus',
-                  query: { idNiveau: slotProps.data.Niveau.id, idCa: slotProps.data.champApprentissage.id },
+                  query: {
+                    idChoixAnnee: slotProps.data.AfRetenu.ChoixAnnee.id,
+                    idCA: slotProps.data.AfRetenu.ChoixAnnee.champApprentissage.id,
+                    idApsa: slotProps.data.ApsaSelectAnnee.Apsa.id,
+                    idAfRetenu: slotProps.data.AfRetenu.id,
+                  },
                 })
               "
             />
@@ -126,6 +132,19 @@
             </Column>
             <Column field="description" header="Description">
               <template #body="slotProps"> <span v-html="slotProps.data.description"></span> </template>
+            </Column>
+            <Column headerStyle="width:4rem">
+              <template #body="slotProps">
+                <Button
+                  icon="pi pi-pencil"
+                  @click="
+                    router.push({
+                      name: 'Critere',
+                      query: { idApsaRetenu: slotProps.data.ApsaRetenu.id },
+                    })
+                  "
+                />
+              </template>
             </Column>
             <template #expansion="slotProps">
               <DataTable :value="slotProps.data.Indicateur" responsiveLayout="scroll">
@@ -208,8 +227,11 @@ const choixAnneeFiltree = computed((): ChoixAnnee[] => {
 });
 const apsasRetenusFiltree = computed((): ApsaRetenu[] => {
   if (!niveauScolaireSelectionne.value) {
+    console.log('niveau scolaire non filter', apsasRetenusByEtablissementAndAnnee.value);
     return apsasRetenusByEtablissementAndAnnee.value;
   } else {
+    console.log('niveau scolaire filter');
+
     return apsasRetenusByEtablissementAndAnnee.value.filter(
       (ar) => ar.AfRetenu.ChoixAnnee.Niveau.id === niveauScolaireSelectionne.value?.id
     );
@@ -246,6 +268,7 @@ async function fetchConfigAnnee() {
   await fetchAllApsaSelectAnneeByAnnee(nouvelAnneeEnConfig.value.id);
   await fetchAllChoixAnneeByAnneeAndEtablissement(nouvelAnneeEnConfig.value.id, etablissement.value.id);
   await fetchApsaRetenuByAnneeAndEtablissement(anneeEnConfig.value.id, etablissement.value.id);
+  console.log('on monted', apsasRetenusByEtablissementAndAnnee.value);
   isLoading.value = false;
 }
 
@@ -259,5 +282,9 @@ function getStringApsaByIdCa(idCa: number) {
 async function onAnneeEnConfigChange() {
   await storeAnneeEnConfig(nouvelAnneeEnConfig.value);
   await fetchConfigAnnee();
+}
+
+function printVar() {
+  console.log(apsasRetenusFiltree.value);
 }
 </script>
