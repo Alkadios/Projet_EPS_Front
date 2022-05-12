@@ -13,6 +13,7 @@ export default {
       eleveByUser: {} as Eleve,
       elevesByClasse: [] as Eleve[],
       elevesByAnneeAndEtablissement: [] as Eleve[],
+      apsaEvaluateByEleve: [],
     };
   },
   mutations,

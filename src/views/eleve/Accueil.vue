@@ -6,10 +6,7 @@
         <div id="ContentScreen" class="col-lg-10">
           <div class="p-5">
             <div class="text-center">
-              <p class="text-dark mb-2">
-                Personnalisation de l'équipe EPS <br />
-                au
-              </p>
+              <p class="text-dark mb-2">Bienvenue sur votre tableau de bord</p>
               <h4 class="text-dark mb-4">{{ etablissement.nom }}</h4>
             </div>
           </div>
@@ -61,12 +58,14 @@ const router = useRouter();
 
 const { fetchAllApsaSelectAnneeByAnnee, apsaSelectAnneeByAnnee } = ApsaSelectAnneeService();
 const { etablissement } = UtilisateurService();
-const { fetchEleveById, eleveById } = EleveService();
+const { fetchEleveById, eleveById, apsaEvaluateByEleve, fetchAllApsaEvaluateByEleve } = EleveService();
 const isLoading = ref(false);
 
 onMounted(async () => {
   isLoading.value = true;
   await fetchEleveById(3);
+  await fetchAllApsaEvaluateByEleve(7);
+  console.log('onMounted', apsaEvaluateByEleve.value);
   isLoading.value = false;
 });
 

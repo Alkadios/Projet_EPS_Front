@@ -293,7 +293,7 @@
     </div>
     <button class="btn-info" style="border-radius: 10px" @click="openBasic">
       <i class="m-3 pi pi-plus" style="cursor: pointer; border-radius: 50%; border: 0.2rem solid; font-size: 2em" />
-      <p>Ajouter un critère</p>
+      <p>Ajouter un indicateur</p>
     </button>
     <div class="container-fluid text-center mb-10 Pl-10">
       <Button label="Valider" style="right: 1rem" icon="pi pi-check" @click="onValid(false)" autofocus></Button>

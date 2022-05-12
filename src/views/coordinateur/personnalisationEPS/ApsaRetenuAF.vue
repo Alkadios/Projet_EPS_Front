@@ -226,6 +226,7 @@ async function ajouterAfsRetenus() {
         return { Af: af.id };
       });
       await saveAfRetenuInChoixAnnee(afR!.ChoixAnnee.id, idsAfForRequest);
+      choixAnnee.value.id = afR!.ChoixAnnee.id;
     } else {
       // Create
       let monNiveau = '/api/niveau_scolaires/' + niveauScolaireSelectionne.value?.id;

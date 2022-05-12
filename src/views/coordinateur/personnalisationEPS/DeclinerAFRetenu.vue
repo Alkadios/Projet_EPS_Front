@@ -181,6 +181,7 @@ onMounted(async () => {
     }
   });
 
+  console.log('OnMounted', afRetenus.value, route.query.idChoixAnnee);
   afRetenus.value.forEach((b) => {
     if (route.query.idChoixAnnee) {
       if (b.ChoixAnnee['@id'] === '/api/choix_annees/' + route.query.idChoixAnnee) {
