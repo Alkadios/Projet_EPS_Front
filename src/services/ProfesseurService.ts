@@ -50,8 +50,7 @@ export default function ProfesseurService() {
     password: string,
     nom: string,
     prenom: string,
-    telephone: string,
-    etablissements: string
+    telephone: string
   ) {
     await store.dispatch('ProfesseurModule/saveProfesseur', {
       email,
@@ -60,7 +59,6 @@ export default function ProfesseurService() {
       nom,
       prenom,
       telephone,
-      etablissements,
     });
   }
 

@@ -208,7 +208,6 @@ const nouveauProf = ref<Professeur>({
   nom: '',
   prenom: '',
   telephone: '',
-  etablissements: ['api/etablissements/' + user.value.profLastEtablissementId],
 });
 
 async function CreerProfesseur() {
@@ -218,8 +217,7 @@ async function CreerProfesseur() {
     nouveauUtilisateur.value.password,
     nouveauProf.value.nom,
     nouveauProf.value.prenom,
-    nouveauProf.value.telephone,
-    nouveauProf.value.etablissements
+    nouveauProf.value.telephone
   );
   alert('Votre Professeur à ete créer');
   displayBasic.value = false;

@@ -54,7 +54,6 @@ export default {
       nom: string;
       prenom: string;
       telephone: string;
-      etablissements: string;
     }
   ) {
     const response = await ProfesseurAPI.saveProf(payload);
