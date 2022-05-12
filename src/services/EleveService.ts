@@ -106,6 +106,16 @@ export default function EleveService() {
     });
   }
 
+  const apsaEvaluateByEleve = computed((): any[] => {
+    return store.getters['EleveModule/getApsaEvaluateByEleve'];
+  });
+
+  async function fetchAllApsaEvaluateByEleve(idEleve: number) {
+    await store.dispatch('EleveModule/fetchAllApsaEvaluateByEleve', {
+      idEleve: idEleve,
+    });
+  }
+
   return {
     saveEleve,
     fetchAllEleves,
@@ -120,5 +130,7 @@ export default function EleveService() {
     elevesByAnneeAndEtablissement,
     fetchElevesByClasse,
     fetchElevesByAnneeAndEtablissement,
+    apsaEvaluateByEleve,
+    fetchAllApsaEvaluateByEleve,
   };
 }

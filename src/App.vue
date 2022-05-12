@@ -107,6 +107,8 @@
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { useMeta } from 'vue-meta';
+
 import Sidebar from './views/Sidebar.vue';
 //import UtilisateurService from './services/UtilisateurService';
 import Authentification from './views/Authentification.vue';
@@ -115,13 +117,10 @@ import UtilisateurService from './services/UtilisateurService';
 import EleveService from './services/EleveService';
 import ProfesseurService from './services/ProfesseurService';
 import ObjectUtils from './utils/ObjectUtils';
-import router from './router';
+const router = useRouter();
 import UserService from './services/UserService';
 
-// const router = useRouter();
-
 const sidenavActive = ref(false);
-
 const { isObjectEmpty } = ObjectUtils();
 const { utilisateur, fetchAnneeEnCours, anneeEnCours, storeAnneeEnConfig, fetchEtablissementById } =
   UtilisateurService();

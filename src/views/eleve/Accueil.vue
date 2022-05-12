@@ -62,7 +62,7 @@ const router = useRouter();
 
 const { fetchAllApsaSelectAnneeByAnnee, apsaSelectAnneeByAnnee } = ApsaSelectAnneeService();
 const { etablissement } = UtilisateurService();
-const { fetchEleveById, eleveById } = EleveService();
+const { fetchEleveById, eleveById, apsaEvaluateByEleve, fetchAllApsaEvaluateByEleve } = EleveService();
 const isLoading = ref(false);
 
 onMounted(async () => {
@@ -72,10 +72,10 @@ onMounted(async () => {
     redirectToHomePage();
   } else {
     isLoading.value = true;
-    await fetchEleveByUser(user.value.id);
-    await fetchEleveById(eleveByUser.value.id);
-    isLoading.value = false;
   }
+  await fetchEleveById(7);
+  await fetchAllApsaEvaluateByEleve(7);
+  isLoading.value = false;
 });
 
 async function mesAPSAbyAnnee(idAnnee: number) {

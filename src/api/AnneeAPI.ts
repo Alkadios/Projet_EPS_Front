@@ -5,6 +5,7 @@ import { ApiURLAnnee } from '@/constants/ApiUrls';
 
 export default {
   async fetchAnneeEnCours(): Promise<AxiosResponse<ResponseModel>> {
+    console.log('année en cours', process.env.VUE_APP_OCPEPS_API_BASE_URL, ApiURLAnnee);
     return axios.get(`${ApiURLAnnee}?enCours=true`, apiConfig.value);
   },
   async fetchAnneeById(idAnnee: number): Promise<AxiosResponse<ResponseModel>> {
