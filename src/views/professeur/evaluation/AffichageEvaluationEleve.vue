@@ -162,7 +162,6 @@ const apsaSelectionner = ref<APSA>();
 const situationEvaluationSelectionner = ref<ApsaRetenu>();
 const eleveSelectionne = ref<Eleve>();
 const listeApsa = ref<APSA[]>([]);
-const listeCa = ref<ChampApprentissage[]>([]);
 const lightOptionsCammenbert = ref({
   plugins: {
     legend: {
@@ -276,12 +275,6 @@ function onClasseChange() {
     apsasRetenusByNiveauScolaire.value.forEach((ar) => {
       if (!listeApsa.value.find((a) => a.id === ar.ApsaSelectAnnee.Apsa.id)) {
         listeApsa.value.push(ar.ApsaSelectAnnee.Apsa);
-      }
-    });
-
-    apsasRetenusByNiveauScolaire.value.forEach((ar) => {
-      if (listeApsa.value.find((a) => a.id === ar.ApsaSelectAnnee.Apsa.id)) {
-        listeCa.value.push(ar.AfRetenu.ChoixAnnee.champApprentissage);
       }
     });
     isLoading.value = false;
