@@ -1,8 +1,15 @@
 <template>
   <div class="card shadow-lg o-hidden border-0 m-5">
-    <div class="card-body p-0">
+    <div class="card-body p-5">
       <h1>Gestion Coordonnateur</h1>
-      <DataTable :value="professeurByRoles" responsiveLayout="scroll" dataKey="id">
+      <DataTable
+        :value="professeurByRoles"
+        :paginator="true"
+        :rows="10"
+        :rowsPerPageOptions="[10, 20, 50]"
+        responsiveLayout="scroll"
+        dataKey="id"
+      >
         <Button label="Ajouter un Coordonateur" @click="openBasic" style="right: 1rem" icon="pi pi-plus" autofocus />
 
         <Column field="nom" header="nom" :sortable="true" style="min-width: 12rem"></Column>
@@ -189,10 +196,13 @@ import ProfesseurService from '@/services/ProfesseurService';
 import UserService from '@/services/UserService';
 import UtilisateurService from '@/services/UtilisateurService';
 import { ref, onMounted } from 'vue';
+import ObjectUtils from '@/utils/ObjectUtils';
+import router from '@/router';
 
+const { isObjectEmpty } = ObjectUtils();
 const { fetchProfByRoles, saveProfesseur, deleteProf, updateProf, fetchProfById, professeurById, professeurByRoles } =
   ProfesseurService();
-const { deleteUser, user } = UserService();
+const { redirectToHomePage, user } = UserService();
 
 const isLoading = ref(false);
 const profDialog = ref(false);
@@ -262,8 +272,14 @@ const closeBasic = () => {
 };
 
 onMounted(async () => {
-  isLoading.value = true;
-  await fetchProfByRoles('Admin');
-  isLoading.value = false;
+  if (isObjectEmpty(user.value)) {
+    router.push('/');
+  } else if (user.value.roles != 'Admin') {
+    redirectToHomePage();
+  } else {
+    isLoading.value = true;
+    await fetchProfByRoles('Admin');
+    isLoading.value = false;
+  }
 });
 </script>

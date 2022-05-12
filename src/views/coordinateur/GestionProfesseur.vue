@@ -2,7 +2,14 @@
   <div class="card shadow-lg o-hidden border-0 m-5">
     <div class="card-body p-5">
       <h1>GestionPROF</h1>
-      <DataTable :value="professeursByEtablissement" responsiveLayout="scroll" dataKey="id">
+      <DataTable
+        :paginator="true"
+        :rows="10"
+        :rowsPerPageOptions="[10, 20, 50]"
+        :value="professeursByEtablissement"
+        responsiveLayout="scroll"
+        dataKey="id"
+      >
         <Button label="Ajouter un Professeur" @click="openBasic" style="right: 1rem" icon="pi pi-plus" autofocus />
 
         <Column field="nom" header="nom" :sortable="true" style="min-width: 12rem"></Column>
