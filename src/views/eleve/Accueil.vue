@@ -20,6 +20,10 @@
                     <!-- <div v-for="sport in mesAPSAbyAnnee(classe.Annee.id)" :key="sport.length">
                       <div>{{ sport.length }}</div>
                     </div> -->
+                    <!-- <div v-for="apsaEvaluate of listeApsaByAnnee 
+" :key="apsaEvaluate.id" class="field-checkbox">
+          
+        </div> -->
                   </div>
                 </div>
               </div>
@@ -65,6 +69,20 @@ const { etablissement } = UtilisateurService();
 const { fetchEleveById, eleveById, apsaEvaluateByEleve, fetchAllApsaEvaluateByEleve } = EleveService();
 const isLoading = ref(false);
 
+interface customApsa {
+  id: number;
+  id_annee: number;
+  libelle_annee: string;
+  id_apsa: number;
+  libelle_apsa: string;
+  id_classe: number;
+  libelle_classe: string;
+  id_etablissement: number;
+  nom_etablissement: string;
+}
+
+const listeApsaByAnnee = ref<customApsa[]>();
+
 onMounted(async () => {
   if (isObjectEmpty(user.value)) {
     router.push('/');
@@ -75,6 +93,12 @@ onMounted(async () => {
   }
   await fetchEleveById(7);
   await fetchAllApsaEvaluateByEleve(7);
+  listeApsaByAnnee.value = apsaEvaluateByEleve.value
+    .map((a, index) => {
+      return { ...a, id: index };
+    })
+    .sort((a, b) => a.id_annee - b.id_annee);
+
   isLoading.value = false;
 });
 
