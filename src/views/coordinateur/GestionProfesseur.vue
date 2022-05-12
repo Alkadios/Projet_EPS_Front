@@ -219,6 +219,7 @@ const nouveauProf = ref<Professeur>({
   nom: '',
   prenom: '',
   telephone: '',
+  etablissements: user.value.currentEtablissement,
 });
 
 async function CreerProfesseur() {
@@ -228,11 +229,12 @@ async function CreerProfesseur() {
     nouveauUtilisateur.value.password,
     nouveauProf.value.nom,
     nouveauProf.value.prenom,
-    nouveauProf.value.telephone
+    nouveauProf.value.telephone,
+    nouveauProf.value.etablissements
   );
   alert('Votre Professeur à ete créer');
   displayBasic.value = false;
-  await fetchProfesseursByEtablissement(1);
+  await fetchProfesseursByEtablissement(user.value.currentEtablissement);
 }
 
 async function champsProf(idProf: number) {
@@ -254,7 +256,7 @@ async function supprimerProf(Professeur: Professeur) {
   if (confirm('Voulez vous vraiment supprimer ?')) {
     isLoading.value = true;
     await deleteProf(Professeur.id);
-    await fetchProfesseursByEtablissement(1);
+    await fetchProfesseursByEtablissement(user.value.currentEtablissement);
     isLoading.value = false;
   }
 }
@@ -279,8 +281,9 @@ onMounted(async () => {
     redirectToHomePage();
   } else {
     isLoading.value = true;
-    await fetchProfesseursByEtablissement(etablissement.value.id);
+    await fetchProfesseursByEtablissement(user.value.currentEtablissement);
     console.log('prof', professeursByEtablissement.value);
+    console.log('etablId', user.value.currentEtablissement);
     isLoading.value = false;
   }
 });

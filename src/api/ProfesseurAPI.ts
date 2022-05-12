@@ -51,6 +51,7 @@ export default {
     nom: string;
     prenom: string;
     telephone: string;
+    etablissements: string[];
   }): Promise<AxiosResponse> {
     return axios.post(`${ApiURLCreateProf}`, payload, apiConfig.value);
   },

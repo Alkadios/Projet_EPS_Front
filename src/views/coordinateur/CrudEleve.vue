@@ -249,17 +249,7 @@ import { useRoute, useRouter } from 'vue-router';
 const { isObjectEmpty } = ObjectUtils();
 const router = useRouter();
 const { user } = UserService();
-const {
-  fetchElevesByAnneeAndEtablissement,
-  elevesByAnneeAndEtablissement,
-  saveEleve,
-  eleves,
-  fetchAllEleves,
-  deleteEleve,
-  fetchEleveById,
-  eleveById,
-  updateEleve,
-} = EleveService();
+const { saveEleve, eleves, fetchAllEleves, deleteEleve, fetchEleveById, eleveById, updateEleve } = EleveService();
 
 const { deleteUser, redirectToHomePage } = UserService();
 const { etablissement, anneeEnCours } = UtilisateurService();

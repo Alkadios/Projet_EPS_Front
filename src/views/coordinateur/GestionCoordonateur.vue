@@ -208,6 +208,7 @@ const nouveauProf = ref<Professeur>({
   nom: '',
   prenom: '',
   telephone: '',
+  etablissements: user.value.currentEtablissement,
 });
 
 async function CreerProfesseur() {
@@ -217,7 +218,8 @@ async function CreerProfesseur() {
     nouveauUtilisateur.value.password,
     nouveauProf.value.nom,
     nouveauProf.value.prenom,
-    nouveauProf.value.telephone
+    nouveauProf.value.telephone,
+    nouveauProf.value.etablissements
   );
   alert('Votre Professeur à ete créer');
   displayBasic.value = false;

@@ -106,6 +106,7 @@ import { ref, onMounted, watch } from 'vue';
 import UserService from '@/services/UserService';
 import ObjectUtils from '@/utils/ObjectUtils';
 import { useRoute, useRouter } from 'vue-router';
+import UtilisateurService from '@/services/UtilisateurService';
 const router = useRouter();
 const { isObjectEmpty } = ObjectUtils();
 const { user, redirectToHomePage } = UserService();
@@ -113,6 +114,7 @@ const { fetchClasseByAnnee, classesByAnnee, saveClasse, deleteClasse, classesByI
 const { etablissements, fetchAllEtablissements } = EtablissementService();
 const { niveauxScolaires, fetchAllNiveauxScolaires } = NiveauScolaireService();
 const { annees, fetchAllAnnees } = AnneeService();
+const { anneeEnConfig } = UtilisateurService();
 
 const selectedNiveauScolaire = ref();
 const selectedAnnee = ref();
@@ -137,7 +139,7 @@ async function CreerClasse() {
   );
   alert('Votre Classe à ete créer');
   displayBasic.value = false;
-  await fetchClasseByAnnee(3);
+  await fetchClasseByAnnee(anneeEnConfig.value.id);
   isLoading.value = false;
 }
 
@@ -150,7 +152,7 @@ async function supprimerClasse(idClasse: number) {
   if (confirm('Voulez vous vraiment supprimer ?')) {
     isLoading.value = true;
     await deleteClasse(idClasse);
-    await fetchClasseByAnnee(3);
+    await fetchClasseByAnnee(anneeEnConfig.value.id);
     isLoading.value = false;
   }
 }
@@ -166,7 +168,7 @@ onMounted(async () => {
     redirectToHomePage();
   } else {
     isLoading.value = true;
-    await fetchClasseByAnnee(3);
+    await fetchClasseByAnnee(anneeEnConfig.value.id);
     await fetchAllEtablissements();
     await fetchAllNiveauxScolaires();
     await fetchAllAnnees();
