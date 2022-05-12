@@ -196,14 +196,15 @@ onMounted(async () => {
           mesAfRetenus.value.push(b);
         }
       }
-  });
-  if (route.query.idApsa) {
-    monAPSA.value = apsaSelects.value.find((asa) => (asa.Apsa.id = parseInt(route.query.idApsa!.toString())));
-
-  if (route.query.idAfRetenu) {
-    monAfRetenuSelected.value = mesAfRetenus.value.find(
-      (afr) => (afr.id = parseInt(route.query.idAfRetenu!.toString()))
-    );
+    });
+    if (route.query.idApsa) {
+      monAPSA.value = apsaSelects.value.find((asa) => (asa.Apsa.id = parseInt(route.query.idApsa!.toString())));
+    }
+    if (route.query.idAfRetenu) {
+      monAfRetenuSelected.value = mesAfRetenus.value.find(
+        (afr) => (afr.id = parseInt(route.query.idAfRetenu!.toString()))
+      );
+    }
   }
 });
 </script>
