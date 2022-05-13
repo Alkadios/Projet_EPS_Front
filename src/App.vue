@@ -90,7 +90,8 @@
               </div>
             </div>
           </div>
-          <router-view v-if="onMountedIsFinish && !isObjectEmpty(user)" />
+          <router-view v-if="onMountedIsFinish" />
+          <Authentification v-if="isObjectEmpty(user)" />
         </div>
       </div>
     </main>
@@ -147,14 +148,16 @@ onMounted(async () => {
   await fetchAnneeEnCours();
   storeAnneeEnConfig(anneeEnCours.value);
   await fetchEtablissementById(1);
-  onMountedIsFinish.value = true;
-  if (user.value.roles === 'Professeur') {
-    await fetchProfByUser(user.value.id);
-    nomAndPrenom.value = professeurByUser.value.nom + ' ' + professeurByUser.value.prenom;
-  } else if (user.value.roles === 'Eleve') {
-    await fetchEleveByUser(user.value.id);
-    nomAndPrenom.value = eleveByUser.value.nom + ' ' + eleveByUser.value.prenom;
-    sexeUser.value = eleveByUser.value.sexeEleve;
+  if (!isObjectEmpty(user)) {
+    onMountedIsFinish.value = true;
+    if (user.value.roles === 'Professeur') {
+      await fetchProfByUser(user.value.id);
+      nomAndPrenom.value = professeurByUser.value.nom + ' ' + professeurByUser.value.prenom;
+    } else if (user.value.roles === 'Eleve') {
+      await fetchEleveByUser(user.value.id);
+      nomAndPrenom.value = eleveByUser.value.nom + ' ' + eleveByUser.value.prenom;
+      sexeUser.value = eleveByUser.value.sexeEleve;
+    }
   }
 
   isLoading.value = false;
