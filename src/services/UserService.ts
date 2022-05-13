@@ -32,7 +32,7 @@ export default function UserService() {
     } else if (user.value.roles === 'Professeur') {
       router.push('/EvaluationEleves');
     } else if (user.value.roles === 'Admin') {
-      router.push('/TableauDeBordConfig');
+      router.push('/coordinateur/TableauDeBord');
     }
   }
 
