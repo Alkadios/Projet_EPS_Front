@@ -89,7 +89,7 @@
               </div>
             </div>
           </div>
-          <router-view v-if="onMountedIsFinish || !isObjectEmpty(user)" />
+          <router-view v-if="onMountedIsFinish && !isObjectEmpty(user)" />
         </div>
       </div>
     </main>
