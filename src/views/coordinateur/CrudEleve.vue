@@ -20,16 +20,6 @@
         <Column :exportable="false" style="min-width: 8rem">
           <template #body="slotProps">
             <Button
-              icon="pi pi-pencil"
-              class="p-button-rounded p-button-success mr-2"
-              @click="champsEleve(slotProps.data.id)"
-            />
-          </template>
-        </Column>
-
-        <Column :exportable="false" style="min-width: 8rem">
-          <template #body="slotProps">
-            <Button
               icon="pi pi-trash"
               class="p-button-rounded p-button-warning"
               @click="supprimerEleve(slotProps.data)"

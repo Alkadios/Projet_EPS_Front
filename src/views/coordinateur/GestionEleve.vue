@@ -203,6 +203,7 @@ const openBasic = () => {
 
 function filterElevesSansClasse() {
   mesElevesSansClasse.value = eleves.value.filter((e) => e.classe.length == 0);
+  console.log('MesElevessa', mesElevesSansClasse.value);
   isLoading.value = false;
 }
 
