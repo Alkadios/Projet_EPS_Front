@@ -8,5 +8,5 @@ export interface User {
   password: string;
   professeurs: number;
   etablissements: string[];
-  profLastEtablissementId: string;
+  currentEtablissement: number;
 }

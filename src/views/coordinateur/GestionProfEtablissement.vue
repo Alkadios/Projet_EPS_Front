@@ -83,10 +83,6 @@
         </Card>
       </div>
     </div>
-    <template #footer>
-      <Button label="No" icon="pi pi-times" @click="closeBasic" class="p-button-text" />
-      <Button label="Yes" icon="pi pi-check" autofocus />
-    </template>
   </Dialog>
 </template>
 
@@ -155,34 +151,38 @@ function onEtablissementChange() {
 }
 
 async function editEtablissement(idEtablissement: number) {
-  const idsProfsExistants = mesProfs.value.map((p: Professeur) => {
-    return p['@id'];
-  });
-  if (selectedProfs.value) {
-    const idsProfs = selectedProfs.value.map((p: Professeur) => {
+  if (confirm('Voulez vous vraiment ajouter ces professeurs à cette etablissement')) {
+    const idsProfsExistants = mesProfs.value.map((p: Professeur) => {
       return p['@id'];
     });
-    const arrayidProf = idsProfsExistants.concat(idsProfs);
+    if (selectedProfs.value) {
+      const idsProfs = selectedProfs.value.map((p: Professeur) => {
+        return p['@id'];
+      });
+      const arrayidProf = idsProfsExistants.concat(idsProfs);
 
-    if (idsProfs) await putEtablissementProfs(idEtablissement, arrayidProf);
+      if (idsProfs) await putEtablissementProfs(idEtablissement, arrayidProf);
+    }
+
+    alert('Vos professeurs ont été ajouté à cette établissement');
+    eleveDialog.value = false;
+    isLoading.value = true;
+    mesProfsByEtablissement(idEtablissement);
+    onEtablissementChange();
+    isLoading.value = false;
   }
-
-  alert('Votre Profs à ete ajouté à cette Etablissement');
-  eleveDialog.value = false;
-  isLoading.value = true;
-  mesProfsByEtablissement(idEtablissement);
-  onEtablissementChange();
-  isLoading.value = false;
 }
 
 async function deleteFromEtablissement(idEtablissement: number) {
-  const idProfsRetirer = mesProfs.value
-    .filter((e) => selectedProfesseurOnEtablissement.value?.findIndex((ec) => ec.id === e.id) === -1)
-    .map((e) => {
-      return toRaw(e['@id']);
-    });
-  await putEtablissementProfs(idEtablissement, idProfsRetirer);
-  alert('Votre ou vos profs on été supprimer de cette Etablissement');
-  mesProfsByEtablissement(idEtablissement);
+  if (confirm('Voulez vous vraiment retirer ces professeurs de cette etablissement?')) {
+    const idProfsRetirer = mesProfs.value
+      .filter((e) => selectedProfesseurOnEtablissement.value?.findIndex((ec) => ec.id === e.id) === -1)
+      .map((e) => {
+        return toRaw(e['@id']);
+      });
+    await putEtablissementProfs(idEtablissement, idProfsRetirer);
+    alert('Vos professeurs ont été à cette établissement');
+    mesProfsByEtablissement(idEtablissement);
+  }
 }
 </script>

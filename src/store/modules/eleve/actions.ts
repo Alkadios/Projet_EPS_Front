@@ -45,6 +45,16 @@ export default {
     }
   },
 
+  async fetchElevesByEtablissement(context: ActionContext<EleveState, any>, payload: { idEtablissement: number }) {
+    const response = await EleveAPI.fetchElevesByEtablissement(payload.idEtablissement);
+    if (response.data['hydra:totalItems'] > 0)
+      context.commit('setElevesByEtablissement', response.data['hydra:member']);
+    else {
+      context.commit('setElevesByEtablissement', []);
+      //throw new Error(response.data.message);
+    }
+  },
+
   async deleteEleve(context: ActionContext<EleveState, any>, payload: { idEleve: number }) {
     const response = await EleveAPI.deleteEleve(payload.idEleve);
     if (response.status === 204) {
@@ -69,6 +79,7 @@ export default {
       mailParent2: string;
       sexeEleve: string;
       etablissement: Etablissement;
+      dateNaiss: Date;
     }
   ) {
     const response = await EleveAPI.saveEleve(payload);

@@ -2,7 +2,7 @@
   <div class="card shadow-lg o-hidden border-0 m-5">
     <div class="card-body p-5">
       <DataTable
-        :value="classesByAnnee"
+        :value="classesByAnneeAndEtablissement"
         :paginator="true"
         :rows="10"
         :rowsPerPageOptions="[10, 20, 50]"
@@ -96,10 +96,6 @@
         </Card>
       </div>
     </div>
-    <template #footer>
-      <Button label="No" icon="pi pi-times" @click="closeBasic" class="p-button-text" />
-      <Button label="Yes" icon="pi pi-check" autofocus />
-    </template>
   </Dialog>
 </template>
 
@@ -113,13 +109,22 @@ import { ref, onMounted, watch } from 'vue';
 import UserService from '@/services/UserService';
 import ObjectUtils from '@/utils/ObjectUtils';
 import { useRoute, useRouter } from 'vue-router';
+import UtilisateurService from '@/services/UtilisateurService';
 const router = useRouter();
 const { isObjectEmpty } = ObjectUtils();
 const { user, redirectToHomePage } = UserService();
-const { fetchClasseByAnnee, classesByAnnee, saveClasse, deleteClasse, classesById, fetchClasseById } = ClasseService();
+const {
+  fetchClasseByAnneeAndEtablissement,
+  classesByAnneeAndEtablissement,
+  saveClasse,
+  deleteClasse,
+  classesById,
+  fetchClasseById,
+} = ClasseService();
 const { etablissements, fetchAllEtablissements } = EtablissementService();
 const { niveauxScolaires, fetchAllNiveauxScolaires } = NiveauScolaireService();
 const { annees, fetchAllAnnees } = AnneeService();
+const { anneeEnConfig } = UtilisateurService();
 
 const selectedNiveauScolaire = ref();
 const selectedAnnee = ref();
@@ -144,7 +149,7 @@ async function CreerClasse() {
   );
   alert('Votre Classe à ete créer');
   displayBasic.value = false;
-  await fetchClasseByAnnee(3);
+  await fetchClasseByAnneeAndEtablissement(anneeEnConfig.value.id, user.value.currentEtablissement);
   isLoading.value = false;
 }
 
@@ -154,10 +159,10 @@ const openBasic = () => {
 };
 
 async function supprimerClasse(idClasse: number) {
-  if (confirm('Voulez vous vraiment supprimer ?')) {
+  if (confirm('Voulez vous vraiment supprimer cette classe?')) {
     isLoading.value = true;
     await deleteClasse(idClasse);
-    await fetchClasseByAnnee(3);
+    await fetchClasseByAnneeAndEtablissement(anneeEnConfig.value.id, user.value.currentEtablissement);
     isLoading.value = false;
   }
 }
@@ -173,7 +178,7 @@ onMounted(async () => {
     redirectToHomePage();
   } else {
     isLoading.value = true;
-    await fetchClasseByAnnee(3);
+    await fetchClasseByAnneeAndEtablissement(anneeEnConfig.value.id, user.value.currentEtablissement);
     await fetchAllEtablissements();
     await fetchAllNiveauxScolaires();
     await fetchAllAnnees();

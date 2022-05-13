@@ -16,4 +16,8 @@ export default {
   getClassesByAnneeAndProfesseur(state: ClasseState) {
     return state.classesByAnneeAndProfesseur;
   },
+
+  getClassesByAnneeAndEtablissement(state: ClasseState) {
+    return state.classesByAnneeAndEtablissement;
+  },
 };

@@ -145,10 +145,6 @@
           </Card>
         </div>
       </div>
-      <template #footer>
-        <Button label="No" icon="pi pi-times" @click="closeBasic" class="p-button-text" />
-        <Button label="Yes" icon="pi pi-check" autofocus />
-      </template>
     </Dialog>
 
     <Dialog header="Modifier un Professeur" v-model:visible="profDialog" :style="{ width: '50vw' }">
@@ -218,6 +214,7 @@ const nouveauProf = ref<Professeur>({
   nom: '',
   prenom: '',
   telephone: '',
+  etablissements: user.value.currentEtablissement,
 });
 
 async function CreerProfesseur() {
@@ -227,7 +224,8 @@ async function CreerProfesseur() {
     nouveauUtilisateur.value.password,
     nouveauProf.value.nom,
     nouveauProf.value.prenom,
-    nouveauProf.value.telephone
+    nouveauProf.value.telephone,
+    nouveauProf.value.etablissements
   );
   alert('Votre Professeur à ete créer');
   displayBasic.value = false;
@@ -250,7 +248,7 @@ async function editProf(idProf: number) {
 }
 
 async function supprimerProf(Professeur: Professeur) {
-  if (confirm('Voulez vous vraiment supprimer ?')) {
+  if (confirm('Voulez vous vraiment supprimer ce coordonnateur ?')) {
     isLoading.value = true;
     await deleteProf(Professeur.id);
     await fetchProfByRoles('Admin');

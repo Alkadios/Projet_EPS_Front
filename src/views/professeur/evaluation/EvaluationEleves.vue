@@ -113,7 +113,7 @@
         </div>
       </div>
       <div class="mt-3 ms-3">
-        <Button label="Annuler" @click="router.push('TableauDeBordConfig')"></Button>
+        <Button label="Annuler" @click="router.push('/TableauDeBordConfig')"></Button>
         <Button label="Terminer l'évaluation" icon="pi pi-check" style="left: 1rem" @click="saveEvaluation()"></Button>
       </div>
       <div class="mb-3"></div>

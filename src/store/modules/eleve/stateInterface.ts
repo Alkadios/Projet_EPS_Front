@@ -6,5 +6,6 @@ export default interface EleveState {
   eleveByUser: Eleve;
   elevesByClasse: Eleve[];
   elevesByAnneeAndEtablissement: Eleve[];
+  elevesByEtablissement: Eleve[];
   apsaEvaluateByEleve: any[];
 }

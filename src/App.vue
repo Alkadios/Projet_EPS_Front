@@ -74,6 +74,7 @@
                       </li>
                       <li class="nav-item" @click="logout()" id="buttonLogout">
                         <a
+                          href="#"
                           class="nav-link mb-0 px-0 py-1 d-flex align-items-center justify-content-center"
                           data-bs-toggle="tab"
                           role="tab"
@@ -89,7 +90,8 @@
               </div>
             </div>
           </div>
-          <router-view v-if="onMountedIsFinish || !isObjectEmpty(user)" />
+          <router-view v-if="onMountedIsFinish && !isObjectEmpty(user)" />
+          <Authentification v-if="isObjectEmpty(user)" />
         </div>
       </div>
     </main>
@@ -117,9 +119,9 @@ import UtilisateurService from './services/UtilisateurService';
 import EleveService from './services/EleveService';
 import ProfesseurService from './services/ProfesseurService';
 import ObjectUtils from './utils/ObjectUtils';
-const router = useRouter();
-import UserService from './services/UserService';
+import UserService from '@/services/UserService';
 
+const router = useRouter();
 const sidenavActive = ref(false);
 const { isObjectEmpty } = ObjectUtils();
 const { utilisateur, fetchAnneeEnCours, anneeEnCours, storeAnneeEnConfig, fetchEtablissementById } =
@@ -146,17 +148,16 @@ onMounted(async () => {
   await fetchAnneeEnCours();
   storeAnneeEnConfig(anneeEnCours.value);
   await fetchEtablissementById(1);
-  onMountedIsFinish.value = true;
-  console.log('user : ', user.value);
-  if (user.value.roles === 'Professeur') {
-    await fetchProfByUser(user.value.id);
-    nomAndPrenom.value = professeurByUser.value.nom + ' ' + professeurByUser.value.prenom;
-    console.log('professeur By User : ', professeurByUser.value);
-  } else if (user.value.roles === 'Eleve') {
-    await fetchEleveByUser(user.value.id);
-    nomAndPrenom.value = eleveByUser.value.nom + ' ' + eleveByUser.value.prenom;
-    sexeUser.value = eleveByUser.value.sexeEleve;
-    console.log('eleveByUser : ', eleveByUser.value);
+  if (!isObjectEmpty(user)) {
+    onMountedIsFinish.value = true;
+    if (user.value.roles === 'Professeur') {
+      await fetchProfByUser(user.value.id);
+      nomAndPrenom.value = professeurByUser.value.nom + ' ' + professeurByUser.value.prenom;
+    } else if (user.value.roles === 'Eleve') {
+      await fetchEleveByUser(user.value.id);
+      nomAndPrenom.value = eleveByUser.value.nom + ' ' + eleveByUser.value.prenom;
+      sexeUser.value = eleveByUser.value.sexeEleve;
+    }
   }
 
   isLoading.value = false;
