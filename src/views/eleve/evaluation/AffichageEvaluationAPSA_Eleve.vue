@@ -188,7 +188,11 @@ onMounted(async () => {
     redirectToHomePage();
   } else {
     isLoading.value = true;
-    await fetchAllApsaSelectAnneeByApsaAndEtablissmenetAndAnnee(1, 1, 3);
+    await fetchAllApsaSelectAnneeByApsaAndEtablissmenetAndAnnee(3, 1, 1);
+    console.log(
+      'apsaSelectAnneeByApsaAndEtablissmenetAndAnnee : ',
+      apsaSelectAnneeByApsaAndEtablissmenetAndAnnee.value
+    );
     situationEvaluation.value = apsaSelectAnneeByApsaAndEtablissmenetAndAnnee.value.find(
       (asa) => asa.apsaRetenus
     )?.apsaRetenus;
