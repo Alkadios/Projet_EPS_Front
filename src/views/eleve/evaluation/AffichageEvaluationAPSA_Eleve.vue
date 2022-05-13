@@ -66,8 +66,7 @@
         </div>
       </div>
       <div class="mt-3 ms-3">
-        <Button label="Annuler" @click="router.push('/TableauDeBordConfig')"></Button>
-        <Button label="Terminer l'évaluation" icon="pi pi-check" style="left: 1rem"></Button>
+        <Button label="Retour vers mes évaluations" @click="router.push('/Accueil')"></Button>
       </div>
       <div class="mb-3"></div>
       <div style="position: fixed; bottom: 0; right: 2rem">
@@ -188,6 +187,7 @@ onMounted(async () => {
     redirectToHomePage();
   } else {
     isLoading.value = true;
+    //Année ; APSA ; Etablissement
     await fetchAllApsaSelectAnneeByApsaAndEtablissmenetAndAnnee(3, 1, 1);
     console.log(
       'apsaSelectAnneeByApsaAndEtablissmenetAndAnnee : ',
