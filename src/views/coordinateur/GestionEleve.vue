@@ -177,6 +177,7 @@ onMounted(async () => {
     await fetchAllEleves();
     await fetchAllClasses();
     await fetchClasseByAnneeAndEtablissement(anneeEnConfig.value.id, user.value.currentEtablissement);
+    console.log('classesByAnneeAndEtablissementv : ', classesByAnneeAndEtablissement.value);
     isLoading.value = false;
   }
 });

@@ -268,7 +268,6 @@ function onClasseChange() {
   if (classeSelectionner.value) {
     isLoading.value = true;
     elevesByClasse.value = getElevesByClasse(classeSelectionner.value)!;
-
     apsasRetenusByNiveauScolaire.value = getApsasRetenusByNiveauScolaire(classeSelectionner.value.NiveauScolaire);
     listeApsa.value = [];
     //Evite les doublons si une apsa à plusiers situation d'évaluation
@@ -297,8 +296,9 @@ function getElevesByClasse(uneClasse: Classe) {
   return classesByAnneeAndProfesseur.value.find((classeProf) => classeProf.id === uneClasse.id)?.eleves;
 }
 
-function getApsasRetenusByNiveauScolaire(unNiveauScolaire: string | NiveauScolaire) {
-  console.log('nuNIveau : ', unNiveauScolaire);
+function getApsasRetenusByNiveauScolaire(unNiveauScolaire: NiveauScolaire) {
+  console.log('unNiveauScolaire : ', unNiveauScolaire);
+  console.log('apsasRetenusByEtablissementAndAnnee : ', apsasRetenusByEtablissementAndAnnee.value);
   return apsasRetenusByEtablissementAndAnnee.value
     .filter((apsaRetenu) => apsaRetenu.AfRetenu.ChoixAnnee.Niveau['@id'] === unNiveauScolaire['@id'])
     .map((apsaR) => {
