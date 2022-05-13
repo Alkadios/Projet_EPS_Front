@@ -90,7 +90,7 @@
               </div>
             </div>
           </div>
-          <router-view v-if="onMountedIsFinish" />
+          <router-view v-if="onMountedIsFinish && !isObjectEmpty(user)" />
           <Authentification v-if="isObjectEmpty(user)" />
         </div>
       </div>
