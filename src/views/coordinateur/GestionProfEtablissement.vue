@@ -1,47 +1,58 @@
 <template>
-  <Dropdown
-    v-model="selectedEtablissement"
-    :options="etablissements"
-    optionLabel="nom"
-    dataKey="id"
-    placeholder="Selectionner un Etablissement"
-    @change="onEtablissementChange"
-  />
-
-  <div>
-    <div>
-      <Button label="Ajouter des profs" @click="openBasic" style="right: 1rem" icon="pi pi-plus" autofocus />
-      <Button
-        label="Retirer les Profs"
-        @click="deleteFromEtablissement(selectedEtablissement?.id)"
-        style="right: 1rem"
-        icon="pi pi-trash"
-        autofocus
+  <div class="card shadow-lg o-hidden border-0 m-5">
+    <div class="card-body p-5">
+      <Dropdown
+        v-model="selectedEtablissement"
+        :options="etablissements"
+        optionLabel="nom"
+        dataKey="id"
+        placeholder="Selectionner un Etablissement"
+        @change="onEtablissementChange"
       />
-    </div>
-    <DataTable
-      :value="mesProfs"
-      v-model:selection="selectedProfesseurOnEtablissement"
-      responsiveLayout="scroll"
-      dataKey="id"
-    >
-      <Column selectionMode="multiple"></Column>
 
-      <Column field="nom" header="nom" :sortable="true" style="min-width: 12rem"></Column>
-      <Column field="prenom" header="prenom" :sortable="true" style="min-width: 12rem"></Column>
-      <Column field="telephone" header="telephone" :sortable="true" style="min-width: 12rem"></Column>
-    </DataTable>
-    <div style="position: fixed; bottom: 0; right: 2rem">
-      <ProgressSpinner
-        v-if="isLoading"
-        style="float: right; width: 50px; height: 50px"
-        strokeWidth="8"
-        animationDuration=".5s"
-      />
+      <div>
+        <div>
+          <Button label="Ajouter des profs" @click="openBasic" style="right: 1rem" icon="pi pi-plus" autofocus />
+          <Button
+            label="Retirer les Profs"
+            @click="deleteFromEtablissement(selectedEtablissement?.id)"
+            style="right: 1rem"
+            icon="pi pi-trash"
+            autofocus
+          />
+        </div>
+        <DataTable
+          :value="mesProfs"
+          v-model:selection="selectedProfesseurOnEtablissement"
+          responsiveLayout="scroll"
+          dataKey="id"
+        >
+          <Column selectionMode="multiple"></Column>
+
+          <Column field="nom" header="nom" :sortable="true" style="min-width: 12rem"></Column>
+          <Column field="prenom" header="prenom" :sortable="true" style="min-width: 12rem"></Column>
+          <Column field="telephone" header="telephone" :sortable="true" style="min-width: 12rem"></Column>
+        </DataTable>
+        <div style="position: fixed; bottom: 0; right: 2rem">
+          <ProgressSpinner
+            v-if="isLoading"
+            style="float: right; width: 50px; height: 50px"
+            strokeWidth="8"
+            animationDuration=".5s"
+          />
+        </div>
+      </div>
     </div>
   </div>
 
-  <Dialog header="Ajouter un Profs" v-model:visible="displayBasic" :style="{ width: '50vw' }">
+  <Dialog
+    header="Ajouter un Profs"
+    :paginator="true"
+    :rows="10"
+    :rowsPerPageOptions="[10, 20, 50]"
+    v-model:visible="displayBasic"
+    :style="{ width: '50vw' }"
+  >
     <div class="row" style="place-content: center">
       <div class="col-8">
         <Card>
@@ -85,18 +96,30 @@ import ClasseService from '@/services/ClasseService';
 import EleveService from '@/services/EleveService';
 import EtablissementService from '@/services/EtablissementService';
 import ProfesseurService from '@/services/ProfesseurService';
+import UserService from '@/services/UserService';
 import UtilisateurService from '@/services/UtilisateurService';
 import eleve from '@/store/modules/eleve';
 import { ref, onMounted, toRaw } from 'vue';
+import ObjectUtils from '@/utils/ObjectUtils';
+import { useRoute, useRouter } from 'vue-router';
+const router = useRouter();
+const { isObjectEmpty } = ObjectUtils();
 
 const { fetchAllEtablissements, etablissements, putEtablissementProfs } = EtablissementService();
 const { fetchAllProfs, professeurs } = ProfesseurService();
+const { user, redirectToHomePage } = UserService();
 
 onMounted(async () => {
-  isLoading.value = true;
-  await fetchAllEtablissements();
-  await fetchAllProfs();
-  isLoading.value = false;
+  if (isObjectEmpty(user.value)) {
+    router.push('/');
+  } else if (user.value.roles != 'Admin') {
+    redirectToHomePage();
+  } else {
+    isLoading.value = true;
+    await fetchAllEtablissements();
+    await fetchAllProfs();
+    isLoading.value = false;
+  }
 });
 
 function mesProfsByEtablissement(idEtablissement: number) {

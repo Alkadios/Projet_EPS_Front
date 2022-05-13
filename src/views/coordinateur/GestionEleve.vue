@@ -1,16 +1,16 @@
 <template>
-  <div>
-    <Button label="Ajouter un Eleve" @click="openBasic" style="right: 1rem" icon="pi pi-plus" autofocus />
-    <Button
-      label="Retirer les Eleves"
-      @click="deleteFromClasse(selectedClasse?.id)"
-      style="right: 1rem"
-      icon="pi pi-trash"
-      autofocus
-    />
-  </div>
   <div class="card shadow-lg o-hidden border-0 m-5">
     <div class="card-body p-5">
+      <div>
+        <Button label="Ajouter un Eleve" @click="openBasic" style="right: 1rem" icon="pi pi-plus" autofocus />
+        <Button
+          label="Retirer les Eleves"
+          @click="deleteFromClasse(selectedClasse?.id)"
+          style="right: 1rem"
+          icon="pi pi-trash"
+          autofocus
+        />
+      </div>
       <Dropdown
         v-model="selectedClasse"
         :options="classesByAnneeAndEtablissement"
@@ -20,7 +20,15 @@
         @change="onClasseChange"
       />
     </div>
-    <DataTable :value="mesEleves" v-model:selection="selectedElevesOnClasse" responsiveLayout="scroll" dataKey="id">
+    <DataTable
+      :value="mesEleves"
+      :paginator="true"
+      :rows="10"
+      :rowsPerPageOptions="[10, 20, 50]"
+      v-model:selection="selectedElevesOnClasse"
+      responsiveLayout="scroll"
+      dataKey="id"
+    >
       <Column selectionMode="multiple"></Column>
 
       <Column field="nom" header="nom" :sortable="true" style="min-width: 12rem"></Column>

@@ -148,11 +148,18 @@ async function saveApsasSelectionnees() {
       Ca: number;
       Apsa: number;
       Annee: number;
+      Etablissement: number;
     }[] = [];
     caApsasSelectionnes.value.forEach((_, idCA) => {
       const ca: ChampApprentissage = champsApprentissages.value.find((ca) => ca.id === idCA)!;
       caApsasSelectionnes.value[idCA].forEach((caApsa: ChampsApprentissageApsa) => {
-        if (caApsa) listForRequest.push({ Ca: ca.id, Apsa: caApsa.Apsa.id, Annee: anneeEnConfig.value.id });
+        if (caApsa)
+          listForRequest.push({
+            Ca: ca.id,
+            Apsa: caApsa.Apsa.id,
+            Annee: anneeEnConfig.value.id,
+            Etablissement: etablissement.value.id,
+          });
       });
     });
 

@@ -19,7 +19,6 @@
     </div>
     <div class="mb-3">
       <div>
-        <Button icon="pi pi-pencil" @click="printVar()" />
         <p>Configuration de la promotion :</p>
         <Dropdown
           v-model="nouvelAnneeEnConfig"
@@ -282,9 +281,5 @@ function getStringApsaByIdCa(idCa: number) {
 async function onAnneeEnConfigChange() {
   await storeAnneeEnConfig(nouvelAnneeEnConfig.value);
   await fetchConfigAnnee();
-}
-
-function printVar() {
-  console.log(apsasRetenusFiltree.value);
 }
 </script>

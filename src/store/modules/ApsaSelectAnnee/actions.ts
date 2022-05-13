@@ -71,6 +71,7 @@ export default {
       Ca: number;
       Apsa: number;
       Annee: number;
+      Etablissement: number;
     }[]
   ) {
     const response = await ApsaSelectAnneeAPI.saveApsaSelectAnnee(payload);
