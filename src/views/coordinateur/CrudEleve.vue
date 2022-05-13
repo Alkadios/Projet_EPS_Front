@@ -2,7 +2,7 @@
   <div class="card shadow-lg o-hidden border-0 m-5">
     <div class="card-body p-5">
       <DataTable
-        :value="eleves"
+        :value="elevesByEtablissement"
         :paginator="true"
         :rows="10"
         :rowsPerPageOptions="[10, 20, 50]"
@@ -17,16 +17,6 @@
         <Column field="mailParent2" header="mailParent2" :sortable="true" style="min-width: 12rem"></Column>
         <Column field="sexeEleve" header="sexeEleve" :sortable="true" style="min-width: 12rem"></Column>
         <Column field="dateNaiss" header="dateNaiss" :sortable="true" style="min-width: 12rem"></Column>
-        <Column :exportable="false" style="min-width: 8rem">
-          <template #body="slotProps">
-            <Button
-              icon="pi pi-pencil"
-              class="p-button-rounded p-button-success mr-2"
-              @click="champsEleve(slotProps.data.id)"
-            />
-          </template>
-        </Column>
-
         <Column :exportable="false" style="min-width: 8rem">
           <template #body="slotProps">
             <Button
@@ -170,6 +160,16 @@
               <div class="row">
                 <div class="col-4">
                   <div class="mb-3">
+                    <label class="form-label" for="date"><strong>Date de Naissance</strong></label>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="mb-3">
+                    <input class="form-control" v-model="nouveauEleve.dateNaiss" type="date" id="date" name="date" />
+                  </div>
+                </div>
+                <div class="col-4">
+                  <div class="mb-3">
                     <label class="form-label" for="password"><strong>Mot de passe</strong></label>
                   </div>
                 </div>
@@ -253,11 +253,9 @@ const { isObjectEmpty } = ObjectUtils();
 const router = useRouter();
 const { user } = UserService();
 const {
-  fetchElevesByAnneeAndEtablissement,
-  elevesByAnneeAndEtablissement,
   saveEleve,
-  eleves,
-  fetchAllEleves,
+  elevesByEtablissement,
+  fetchElevesByEtablissement,
   deleteEleve,
   fetchEleveById,
   eleveById,
@@ -284,7 +282,8 @@ const nouveauEleve = ref<Eleve>({
   mailParent2: '',
   sexeEleve: '',
   user: '',
-  etablissement: etablissement.value.id,
+  etablissement: user.value.currentEtablissement,
+  dateNaiss: new Date(),
 });
 
 async function CreerEleve() {
@@ -299,11 +298,12 @@ async function CreerEleve() {
     nouveauEleve.value.mailParent1,
     nouveauEleve.value.mailParent2,
     nouveauEleve.value.sexeEleve,
-    nouveauEleve.value.etablissement
+    nouveauEleve.value.etablissement,
+    nouveauEleve.value.dateNaiss
   );
   alert('Votre Eleve à ete créer');
   displayBasic.value = false;
-  await fetchAllEleves();
+  await fetchElevesByEtablissement(user.value.currentEtablissement);
   isLoading.value = false;
 }
 
@@ -331,11 +331,11 @@ async function editEleve(Eleve: Eleve) {
 }
 
 async function supprimerEleve(Eleve: Eleve) {
-  if (confirm('Voulez vous vraiment supprimer ?')) {
+  if (confirm('Voulez vous vraiment supprimer cette eleve?')) {
     isLoading.value = true;
     await deleteEleve(Eleve.id);
     await deleteUser(Eleve.user.id);
-    await fetchAllEleves();
+    await fetchElevesByEtablissement(user.value.currentEtablissement);
     isLoading.value = false;
   }
 }
@@ -360,7 +360,7 @@ onMounted(async () => {
     redirectToHomePage();
   } else {
     isLoading.value = true;
-    await fetchAllEleves();
+    await fetchElevesByEtablissement(user.value.currentEtablissement);
     isLoading.value = false;
   }
 });

@@ -13,7 +13,7 @@
       </div>
       <Dropdown
         v-model="selectedClasse"
-        :options="classesByAnnee"
+        :options="classesByAnneeAndEtablissement"
         optionLabel="libelleClasse"
         dataKey="id"
         placeholder="Selectionner une classe"
@@ -158,8 +158,14 @@ import router from '@/router';
 const { isObjectEmpty } = ObjectUtils();
 const { user, redirectToHomePage } = UserService();
 const { fetchAllEleves, saveEleve, eleves, deleteEleve, fetchEleveById, eleveById, updateEleve } = EleveService();
-const { fetchAllClasses, fetchClasseByAnnee, classesByAnnee, addElevesInClasse, classes } = ClasseService();
-const { etablissement, anneeEnCours } = UtilisateurService();
+const {
+  fetchAllClasses,
+  fetchClasseByAnneeAndEtablissement,
+  classesByAnneeAndEtablissement,
+  addElevesInClasse,
+  classes,
+} = ClasseService();
+const { etablissement, anneeEnConfig } = UtilisateurService();
 
 onMounted(async () => {
   if (isObjectEmpty(user.value)) {
@@ -170,13 +176,13 @@ onMounted(async () => {
     isLoading.value = true;
     await fetchAllEleves();
     await fetchAllClasses();
-    await fetchClasseByAnnee(anneeEnCours.value.id);
+    await fetchClasseByAnneeAndEtablissement(anneeEnConfig.value.id, user.value.currentEtablissement);
     isLoading.value = false;
   }
 });
 
 function mesElevesByClasse(idClasse: number) {
-  mesEleves.value = classesByAnnee.value.find((a) => a.id === idClasse)!.eleves;
+  mesEleves.value = classesByAnneeAndEtablissement.value.find((a) => a.id === idClasse)!.eleves;
 }
 const closeBasic = () => {
   displayBasic.value = false;
@@ -197,6 +203,7 @@ const openBasic = () => {
 
 function filterElevesSansClasse() {
   mesElevesSansClasse.value = eleves.value.filter((e) => e.classe.length == 0);
+  console.log('MesElevessa', mesElevesSansClasse.value);
   isLoading.value = false;
 }
 
@@ -227,40 +234,43 @@ async function editEleve(idEleve: number) {
   );
   alert('Votre Eleve à ete modifié');
   eleveDialog.value = false;
-  await fetchClasseByAnnee(3);
+  await fetchClasseByAnneeAndEtablissement(anneeEnConfig.value.id, user.value.currentEtablissement);
   onClasseChange();
   isLoading.value = false;
 }
 
 async function editClasse(idClasse: number) {
-  const idsEleveExistant = mesEleves.value.map((e: Eleve) => {
-    return e['@id'];
-  });
-  if (selectedEleves.value) {
-    const idsEleve = selectedEleves.value.map((e: Eleve) => {
+  if (confirm('Voulez vous vraiment ajouter ces eleves à cette classe?')) {
+    const idsEleveExistant = mesEleves.value.map((e: Eleve) => {
       return e['@id'];
     });
-    const arrayidEleve = idsEleveExistant.concat(idsEleve);
+    if (selectedEleves.value) {
+      const idsEleve = selectedEleves.value.map((e: Eleve) => {
+        return e['@id'];
+      });
+      const arrayidEleve = idsEleveExistant.concat(idsEleve);
 
-    if (idsEleve) await addElevesInClasse(idClasse, arrayidEleve);
+      if (idsEleve) await addElevesInClasse(idClasse, arrayidEleve);
+    }
+    alert('Votre Eleve à ete ajouté à cette classe');
+    eleveDialog.value = false;
+    isLoading.value = true;
+    mesElevesByClasse(idClasse);
+    onClasseChange();
+    isLoading.value = false;
   }
-
-  alert('Votre Eleve à ete ajouté à cette classe');
-  eleveDialog.value = false;
-  isLoading.value = true;
-  mesElevesByClasse(idClasse);
-  onClasseChange();
-  isLoading.value = false;
 }
 
 async function deleteFromClasse(idClasse: number) {
-  const idElevesRetirer = mesEleves.value
-    .filter((e) => selectedElevesOnClasse.value?.findIndex((ec) => ec.id === e.id) === -1)
-    .map((e) => {
-      return toRaw(e['@id']);
-    });
-  await addElevesInClasse(idClasse, idElevesRetirer);
-  alert('Votre ou vos élèves on été supprimer de cette classe');
-  mesElevesByClasse(idClasse);
+  if (confirm('Voulez vous vraiment supprimer ces eleves à cette classe?')) {
+    const idElevesRetirer = mesEleves.value
+      .filter((e) => selectedElevesOnClasse.value?.findIndex((ec) => ec.id === e.id) === -1)
+      .map((e) => {
+        return toRaw(e['@id']);
+      });
+    await addElevesInClasse(idClasse, idElevesRetirer);
+    alert('Votre ou vos élèves on été supprimer de cette classe');
+    mesElevesByClasse(idClasse);
+  }
 }
 </script>

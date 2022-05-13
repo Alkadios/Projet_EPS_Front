@@ -15,6 +15,16 @@ export default {
     return axios.get(`${url.toString()}`, apiConfig.value);
   },
 
+  async fetchClasseByAnneeAndEtablissement(
+    idAnnee: number,
+    idEtablissement: number
+  ): Promise<AxiosResponse<ResponseModel>> {
+    const paramsString = `Annee.id=${idAnnee.toString()}&etablissement.id=${idEtablissement}`;
+    const url = new URL(`${ApiURLClasse}/`);
+    url.search = new URLSearchParams(paramsString).toString();
+    return axios.get(`${url.toString()}`, apiConfig.value);
+  },
+
   async fetchClasseById(idClasse: number): Promise<AxiosResponse<ResponseModel>> {
     return axios.get(`${ApiURLClasse}/` + idClasse, apiConfig.value);
   },

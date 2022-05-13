@@ -28,6 +28,12 @@ export default function EleveService() {
     });
   }
 
+  async function fetchElevesByEtablissement(idEtablissement: number) {
+    await store.dispatch('EleveModule/fetchElevesByEtablissement', {
+      idEtablissement: idEtablissement,
+    });
+  }
+
   const eleveById = computed((): Eleve => {
     return store.getters['EleveModule/getEleveById'];
   });
@@ -40,6 +46,10 @@ export default function EleveService() {
 
   const eleves = computed((): Eleve[] => {
     return store.getters['EleveModule/getEleves'];
+  });
+
+  const elevesByEtablissement = computed((): Eleve[] => {
+    return store.getters['EleveModule/getElevesByEtablissement'];
   });
 
   const elevesByAnneeAndEtablissement = computed((): Eleve[] => {
@@ -56,7 +66,8 @@ export default function EleveService() {
     mailParent1: string,
     mailParent2: string,
     sexeEleve: string,
-    etablissement: Etablissement
+    etablissement: Etablissement,
+    dateNaiss: Date
   ) {
     await store.dispatch('EleveModule/saveEleve', {
       email,
@@ -69,6 +80,7 @@ export default function EleveService() {
       mailParent2,
       sexeEleve,
       etablissement,
+      dateNaiss,
     });
   }
 
@@ -128,9 +140,11 @@ export default function EleveService() {
     eleveById,
     elevesByClasse,
     elevesByAnneeAndEtablissement,
+    elevesByEtablissement,
     fetchElevesByClasse,
     fetchElevesByAnneeAndEtablissement,
     apsaEvaluateByEleve,
     fetchAllApsaEvaluateByEleve,
+    fetchElevesByEtablissement,
   };
 }
