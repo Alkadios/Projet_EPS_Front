@@ -47,7 +47,7 @@
         <Card>
           <template #content>
             <DataTable
-              :value="classesByAnnee"
+              :value="classesByAnneeAndEtablissement"
               v-model:selection="selectedClassesForAdd"
               responsiveLayout="scroll"
               dataKey="id"
@@ -93,9 +93,14 @@ import ObjectUtils from '@/utils/ObjectUtils';
 import { useRoute, useRouter } from 'vue-router';
 const router = useRouter();
 const { isObjectEmpty } = ObjectUtils();
-const { fetchClasseByAnnee, classesByAnnee, fetchClasseByAnneeAndProf, classesByAnneeAndProfesseur, classes } =
-  ClasseService();
-const { anneeEnCours } = UtilisateurService();
+const {
+  fetchClasseByAnneeAndEtablissement,
+  classesByAnneeAndEtablissement,
+  fetchClasseByAnneeAndProf,
+  classesByAnneeAndProfesseur,
+  classes,
+} = ClasseService();
+const { anneeEnConfig } = UtilisateurService();
 const { user, redirectToHomePage } = UserService();
 const { putProfesseursClasse } = ProfesseurService();
 const selectedClasses = ref<Classe[]>();
@@ -120,8 +125,8 @@ onMounted(async () => {
     redirectToHomePage();
   } else {
     isLoading.value = true;
-    await fetchClasseByAnnee(anneeEnCours.value.id);
-    await fetchClasseByAnneeAndProf(anneeEnCours.value.id, user.value.professeurs);
+    await fetchClasseByAnneeAndEtablissement(anneeEnConfig.value.id, user.value.currentEtablissement);
+    await fetchClasseByAnneeAndProf(anneeEnConfig.value.id, user.value.professeurs);
     console.log('classeparprof', classesByAnneeAndProfesseur.value);
     console.log('userid', user.value.id);
     console.log('prof', user.value.professeurs);
@@ -140,6 +145,7 @@ async function editClasse() {
     const arrayidClasse = idsClassesExistant.concat(idsClasses);
 
     if (idsClasses) await putProfesseursClasse(user.value.professeurs, arrayidClasse);
+    window.location.reload;
   }
   alert('ces classes ont ete ajouter');
 }
@@ -151,7 +157,8 @@ async function deleteClasseOfProf() {
       return toRaw(cs['@id']);
     });
   await putProfesseursClasse(user.value.professeurs, idClassesRetirer);
-  alert('Votre ou vos élèves on été supprimer de cette classe');
+  location.reload;
+  alert('Votre ou vos classes ont été supprimer');
 }
 
 const isLoading = ref(false);

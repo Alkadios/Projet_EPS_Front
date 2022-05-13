@@ -242,7 +242,7 @@ async function editProf(idProf: number) {
 }
 
 async function supprimerProf(Professeur: Professeur) {
-  if (confirm('Voulez vous vraiment supprimer ?')) {
+  if (confirm('Voulez vous vraiment supprimer ce coordonnateur ?')) {
     isLoading.value = true;
     await deleteProf(Professeur.id);
     await fetchProfByRoles('Admin');

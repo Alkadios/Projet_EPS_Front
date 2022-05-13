@@ -1,7 +1,7 @@
 <template>
   <div class="card shadow-lg o-hidden border-0 m-5">
     <div class="card-body p-5">
-      <DataTable :value="classesByAnnee" responsiveLayout="scroll" dataKey="id">
+      <DataTable :value="classesByAnneeAndEtablissement" responsiveLayout="scroll" dataKey="id">
         <Button label="Ajouter une Classe" @click="openBasic" style="right: 1rem" icon="pi pi-plus" autofocus />
         <Column
           field="NiveauScolaire.libelle"
@@ -110,7 +110,14 @@ import UtilisateurService from '@/services/UtilisateurService';
 const router = useRouter();
 const { isObjectEmpty } = ObjectUtils();
 const { user, redirectToHomePage } = UserService();
-const { fetchClasseByAnnee, classesByAnnee, saveClasse, deleteClasse, classesById, fetchClasseById } = ClasseService();
+const {
+  fetchClasseByAnneeAndEtablissement,
+  classesByAnneeAndEtablissement,
+  saveClasse,
+  deleteClasse,
+  classesById,
+  fetchClasseById,
+} = ClasseService();
 const { etablissements, fetchAllEtablissements } = EtablissementService();
 const { niveauxScolaires, fetchAllNiveauxScolaires } = NiveauScolaireService();
 const { annees, fetchAllAnnees } = AnneeService();
@@ -139,7 +146,7 @@ async function CreerClasse() {
   );
   alert('Votre Classe à ete créer');
   displayBasic.value = false;
-  await fetchClasseByAnnee(anneeEnConfig.value.id);
+  await fetchClasseByAnneeAndEtablissement(anneeEnConfig.value.id, user.value.currentEtablissement);
   isLoading.value = false;
 }
 
@@ -149,10 +156,10 @@ const openBasic = () => {
 };
 
 async function supprimerClasse(idClasse: number) {
-  if (confirm('Voulez vous vraiment supprimer ?')) {
+  if (confirm('Voulez vous vraiment supprimer cette classe?')) {
     isLoading.value = true;
     await deleteClasse(idClasse);
-    await fetchClasseByAnnee(anneeEnConfig.value.id);
+    await fetchClasseByAnneeAndEtablissement(anneeEnConfig.value.id, user.value.currentEtablissement);
     isLoading.value = false;
   }
 }
@@ -168,7 +175,7 @@ onMounted(async () => {
     redirectToHomePage();
   } else {
     isLoading.value = true;
-    await fetchClasseByAnnee(anneeEnConfig.value.id);
+    await fetchClasseByAnneeAndEtablissement(anneeEnConfig.value.id, user.value.currentEtablissement);
     await fetchAllEtablissements();
     await fetchAllNiveauxScolaires();
     await fetchAllAnnees();

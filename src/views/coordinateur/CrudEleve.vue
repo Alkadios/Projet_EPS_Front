@@ -1,7 +1,7 @@
 <template>
   <div class="card shadow-lg o-hidden border-0 m-5">
     <div class="card-body p-0">
-      <DataTable :value="eleves" responsiveLayout="scroll" dataKey="id">
+      <DataTable :value="elevesByEtablissement" responsiveLayout="scroll" dataKey="id">
         <Button label="Ajouter un Eleve" @click="openBasic" style="right: 1rem" icon="pi pi-plus" autofocus />
         <Column field="nom" header="nom" :sortable="true" style="min-width: 12rem"></Column>
         <Column field="prenom" header="prenom" :sortable="true" style="min-width: 12rem"></Column>
@@ -163,6 +163,16 @@
               <div class="row">
                 <div class="col-4">
                   <div class="mb-3">
+                    <label class="form-label" for="date"><strong>Date de Naissance</strong></label>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="mb-3">
+                    <input class="form-control" v-model="nouveauEleve.dateNaiss" type="date" id="date" name="date" />
+                  </div>
+                </div>
+                <div class="col-4">
+                  <div class="mb-3">
                     <label class="form-label" for="password"><strong>Mot de passe</strong></label>
                   </div>
                 </div>
@@ -249,7 +259,15 @@ import { useRoute, useRouter } from 'vue-router';
 const { isObjectEmpty } = ObjectUtils();
 const router = useRouter();
 const { user } = UserService();
-const { saveEleve, eleves, fetchAllEleves, deleteEleve, fetchEleveById, eleveById, updateEleve } = EleveService();
+const {
+  saveEleve,
+  elevesByEtablissement,
+  fetchElevesByEtablissement,
+  deleteEleve,
+  fetchEleveById,
+  eleveById,
+  updateEleve,
+} = EleveService();
 
 const { deleteUser, redirectToHomePage } = UserService();
 const { etablissement, anneeEnCours } = UtilisateurService();
@@ -271,7 +289,8 @@ const nouveauEleve = ref<Eleve>({
   mailParent2: '',
   sexeEleve: '',
   user: '',
-  etablissement: etablissement.value.id,
+  etablissement: user.value.currentEtablissement,
+  dateNaiss: new Date(),
 });
 
 async function CreerEleve() {
@@ -286,11 +305,12 @@ async function CreerEleve() {
     nouveauEleve.value.mailParent1,
     nouveauEleve.value.mailParent2,
     nouveauEleve.value.sexeEleve,
-    nouveauEleve.value.etablissement
+    nouveauEleve.value.etablissement,
+    nouveauEleve.value.dateNaiss
   );
   alert('Votre Eleve à ete créer');
   displayBasic.value = false;
-  await fetchAllEleves();
+  await fetchElevesByEtablissement(user.value.currentEtablissement);
   isLoading.value = false;
 }
 
@@ -318,11 +338,11 @@ async function editEleve(Eleve: Eleve) {
 }
 
 async function supprimerEleve(Eleve: Eleve) {
-  if (confirm('Voulez vous vraiment supprimer ?')) {
+  if (confirm('Voulez vous vraiment supprimer cette eleve?')) {
     isLoading.value = true;
     await deleteEleve(Eleve.id);
     await deleteUser(Eleve.user.id);
-    await fetchAllEleves();
+    await fetchElevesByEtablissement(user.value.currentEtablissement);
     isLoading.value = false;
   }
 }
@@ -347,7 +367,7 @@ onMounted(async () => {
     redirectToHomePage();
   } else {
     isLoading.value = true;
-    await fetchAllEleves();
+    await fetchElevesByEtablissement(user.value.currentEtablissement);
     isLoading.value = false;
   }
 });
