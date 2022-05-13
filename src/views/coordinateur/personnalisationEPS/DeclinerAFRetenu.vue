@@ -205,6 +205,7 @@ onMounted(async () => {
         (afr) => (afr.id = parseInt(route.query.idAfRetenu!.toString()))
       );
     }
+    isLoading.value = false;
   }
 });
 </script>
