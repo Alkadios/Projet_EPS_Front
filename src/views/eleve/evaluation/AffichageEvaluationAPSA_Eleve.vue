@@ -90,6 +90,9 @@ import ApsaSelectAnneeService from '@/services/ApsaSelectAnneeService';
 import type { ApsaRetenu } from '@/models';
 import UserService from '@/services/UserService';
 import ObjectUtils from '@/utils/ObjectUtils';
+import EleveService from '@/services/EleveService';
+
+const { fetchEleveByUser, eleveByUser } = EleveService();
 const { isObjectEmpty } = ObjectUtils();
 const { user, redirectToHomePage } = UserService();
 const route = useRoute();
@@ -188,10 +191,18 @@ onMounted(async () => {
     redirectToHomePage();
   } else {
     isLoading.value = true;
-    await fetchAllApsaSelectAnneeByApsaAndEtablissmenetAndAnnee(1, 1, 3);
-    situationEvaluation.value = apsaSelectAnneeByApsaAndEtablissmenetAndAnnee.value.find(
-      (asa) => asa.apsaRetenus
-    )?.apsaRetenus;
+    await fetchAllApsaSelectAnneeByApsaAndEtablissmenetAndAnnee(3, 1, 1);
+    await fetchEleveByUser(user.value.id);
+    // situationEvaluation.value = apsaSelectAnneeByApsaAndEtablissmenetAndAnnee.value.find(
+    //   (asa) => asa.apsaRetenus
+    // )?.apsaRetenus;
+    apsaSelectAnneeByApsaAndEtablissmenetAndAnnee.value.forEach((asa) => {
+      if (!isObjectEmpty(asa.apsaRetenus)) {
+        asa.apsaRetenus.forEach((ar) => {
+          situationEvaluation.value.push(ar);
+        });
+      }
+    });
     libelleSport.value = apsaSelectAnneeByApsaAndEtablissmenetAndAnnee.value.find((asa) => asa)?.Apsa.libelle;
     isLoading.value = false;
   }
@@ -364,16 +375,16 @@ function onSituationEvaluationChange() {
       { type: 'line', label: libelleSport.value, data: [], borderColor: 'black', display: true },
     ];
     c.Indicateur.forEach((i) => {
-      if (i.evaluationEleves.find((f) => f.Eleve.id === 1)) {
+      if (i.evaluationEleves.find((f) => f.Eleve.id === eleveByUser.value.id)) {
         let nb = 0;
-        let date = i.evaluationEleves.find((f) => f.Eleve.id === 1)?.Evaluation.DateEval + '';
+        let date = i.evaluationEleves.find((f) => f.Eleve.id === eleveByUser.value.id)?.Evaluation.DateEval + '';
         let datefinal = date.split('T')[0];
         let dateFormat = datefinal.split('-')[2] + '/' + datefinal.split('-')[1] + '/' + datefinal.split('-')[0];
         monAffichageGraphiquePersonnel.value[indexGraphiqueClasseByCriterebyEleves].labels.unshift(dateFormat);
         i.evaluationEleves.forEach((ee) => {
-          if (ee.Eleve.id === 1) {
+          if (ee.Eleve.id === eleveByUser.value.id) {
             monAffichageGraphiquePersonnel.value[indexGraphiqueClasseByCriterebyEleves].datasets[1].data.unshift(
-              i.ordre - 0.5
+              i.ordre
             );
           }
         });

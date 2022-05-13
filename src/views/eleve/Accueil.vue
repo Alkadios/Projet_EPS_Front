@@ -16,7 +16,23 @@
                 <div class="d-flex justify-content-center">
                   <div v-for="classe in eleveById.classe" :key="classe.id">
                     <div>{{ classe.Annee.annee }} : {{ classe.libelleClasse }}</div>
-                    <div>{{ classe.NiveauScolaire }}</div>
+                    <span v-for="sport in listeApsaByAnnee?.filter((s) => s.id_classe === classe.id)" :key="sport.id">
+                      <Button
+                        :label="sport.libelle_apsa"
+                        @click="
+                          router.push({
+                            name: 'EvaluationEleve',
+                            params: {
+                              etablissement: sport.id_etablissement,
+                              apsa: sport.id_apsa,
+                              annee: sport.id_annee,
+                            },
+                          })
+                        "
+                      />
+
+                      {{ sport.libelle_annee + ' ' + sport.libelle_apsa + ' ' + sport.libelle_classe }}
+                    </span>
                     <!-- <div v-for="sport in mesAPSAbyAnnee(classe.Annee.id)" :key="sport.length">
                       <div>{{ sport.length }}</div>
                     </div> -->
@@ -49,7 +65,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch, toRaw } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import UtilisateurService from '@/services/UtilisateurService';
 import ApsaSelectAnneeService from '@/services/ApsaSelectAnneeService';
@@ -82,6 +98,7 @@ interface customApsa {
 }
 
 const listeApsaByAnnee = ref<customApsa[]>();
+const listeShow = ref();
 
 onMounted(async () => {
   if (isObjectEmpty(user.value)) {
@@ -93,12 +110,9 @@ onMounted(async () => {
   }
   await fetchEleveById(7);
   await fetchAllApsaEvaluateByEleve(7);
-  listeApsaByAnnee.value = apsaEvaluateByEleve.value
-    .map((a, index) => {
-      return { ...a, id: index };
-    })
-    .sort((a, b) => a.id_annee - b.id_annee);
 
+  console.log('onMounted', eleveById.value.classe, listeApsaByAnnee.value);
+  console.log(apsaEvaluateByEleve.value.filter((s) => s.id_classe == 10));
   isLoading.value = false;
 });
 
