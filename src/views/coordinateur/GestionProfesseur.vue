@@ -1,7 +1,7 @@
 <template>
   <div class="card shadow-lg o-hidden border-0 m-5">
     <div class="card-body p-5">
-      <h1>GestionPROF</h1>
+      <h1>Gestion des professeurs</h1>
       <DataTable
         :paginator="true"
         :rows="10"

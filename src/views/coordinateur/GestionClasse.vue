@@ -1,6 +1,7 @@
 <template>
   <div class="card shadow-lg o-hidden border-0 m-5">
     <div class="card-body p-5">
+      <h1>Gestion des classes</h1>
       <DataTable
         :value="classesByAnneeAndEtablissement"
         :paginator="true"

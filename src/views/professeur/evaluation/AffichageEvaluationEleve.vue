@@ -165,6 +165,7 @@ const listeApsa = ref<APSA[]>([]);
 const lightOptionsCammenbert = ref({
   plugins: {
     legend: {
+      display: false,
       labels: {
         color: '#495057',
       },

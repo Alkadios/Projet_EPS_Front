@@ -1,6 +1,7 @@
 <template>
   <div class="card shadow-lg o-hidden border-0 m-5">
     <div class="card-body p-5">
+      <h3>Attribution des professeurs dans un établissement</h3>
       <Dropdown
         v-model="selectedEtablissement"
         :options="etablissements"

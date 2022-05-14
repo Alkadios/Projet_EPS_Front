@@ -112,6 +112,7 @@ const monAffichageGraphique = ref<newAffichageGraphique[]>([
 const lightOptionsCammenbert = ref({
   plugins: {
     legend: {
+      display: false,
       labels: {
         color: '#495057',
       },
@@ -191,7 +192,7 @@ onMounted(async () => {
   } else {
     isLoading.value = true;
     //Année ; APSA ; Etablissement
-    await fetchAllApsaSelectAnneeByApsaAndEtablissmenetAndAnnee(3, 1, 1);
+    await fetchAllApsaSelectAnneeByApsaAndEtablissmenetAndAnnee(4, 25, 1);
     await fetchEleveByUser(user.value.id);
     // situationEvaluation.value = apsaSelectAnneeByApsaAndEtablissmenetAndAnnee.value.find(
     //   (asa) => asa.apsaRetenus
@@ -384,7 +385,7 @@ function onSituationEvaluationChange() {
         i.evaluationEleves.forEach((ee) => {
           if (ee.Eleve.id === eleveByUser.value.id) {
             monAffichageGraphiquePersonnel.value[indexGraphiqueClasseByCriterebyEleves].datasets[1].data.unshift(
-              i.ordre
+              i.ordre - 0.5
             );
           }
         });
