@@ -1,4 +1,5 @@
 import { NiveauScolaire } from './NiveauScolaire';
+import { Professeur } from './Professeur';
 
 export interface Etablissement {
   '@id': string;
@@ -11,4 +12,5 @@ export interface Etablissement {
   tel: string;
   mail: string;
   niveauScolaire: NiveauScolaire[];
+  Professeur: Professeur[];
 }

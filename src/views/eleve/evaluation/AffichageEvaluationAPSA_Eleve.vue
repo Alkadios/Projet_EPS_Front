@@ -1,15 +1,12 @@
 <template>
-  <div class="card shadow-lg o-hidden border-0 my-5">
+  <div class="card shadow-lg o-hidden border-0 m-5">
     <div class="card-body p-0">
       <div class="row">
         <div class="col-lg-1"></div>
         <div id="ContentScreen" class="col-lg-10">
           <div class="p-5">
             <div class="text-center">
-              <p class="text-dark mb-2">
-                Personnalisation de l'équipe EPS <br />
-                au
-              </p>
+              <p class="text-dark mb-2">Aperçu de mes évaluations</p>
               <h4 class="text-dark mb-4">{{ etablissement.nom }}</h4>
             </div>
           </div>
@@ -69,8 +66,7 @@
         </div>
       </div>
       <div class="mt-3 ms-3">
-        <Button label="Annuler" @click="router.push('/TableauDeBordConfig')"></Button>
-        <Button label="Terminer l'évaluation" icon="pi pi-check" style="left: 1rem"></Button>
+        <Button label="Retour vers mes évaluations" @click="router.push('/Accueil')"></Button>
       </div>
       <div class="mb-3"></div>
       <div style="position: fixed; bottom: 0; right: 2rem">
@@ -91,7 +87,13 @@ import { useRoute, useRouter } from 'vue-router';
 import UtilisateurService from '@/services/UtilisateurService';
 import ApsaSelectAnneeService from '@/services/ApsaSelectAnneeService';
 import type { ApsaRetenu } from '@/models';
+import UserService from '@/services/UserService';
+import ObjectUtils from '@/utils/ObjectUtils';
+import EleveService from '@/services/EleveService';
 
+const { fetchEleveByUser, eleveByUser } = EleveService();
+const { isObjectEmpty } = ObjectUtils();
+const { user, redirectToHomePage } = UserService();
 const route = useRoute();
 const router = useRouter();
 
@@ -110,6 +112,7 @@ const monAffichageGraphique = ref<newAffichageGraphique[]>([
 const lightOptionsCammenbert = ref({
   plugins: {
     legend: {
+      display: false,
       labels: {
         color: '#495057',
       },
@@ -182,13 +185,28 @@ interface EvaluationPersonnelle {
 }
 
 onMounted(async () => {
-  isLoading.value = true;
-  await fetchAllApsaSelectAnneeByApsaAndEtablissmenetAndAnnee(1, 1, 3);
-  situationEvaluation.value = apsaSelectAnneeByApsaAndEtablissmenetAndAnnee.value.find(
-    (asa) => asa.apsaRetenus
-  )?.apsaRetenus;
-  libelleSport.value = apsaSelectAnneeByApsaAndEtablissmenetAndAnnee.value.find((asa) => asa)?.Apsa.libelle;
-  isLoading.value = false;
+  if (isObjectEmpty(user.value)) {
+    router.push('/');
+  } else if (user.value.roles != 'Eleve') {
+    redirectToHomePage();
+  } else {
+    isLoading.value = true;
+    //Année ; APSA ; Etablissement
+    await fetchAllApsaSelectAnneeByApsaAndEtablissmenetAndAnnee(4, 25, 1);
+    await fetchEleveByUser(user.value.id);
+    // situationEvaluation.value = apsaSelectAnneeByApsaAndEtablissmenetAndAnnee.value.find(
+    //   (asa) => asa.apsaRetenus
+    // )?.apsaRetenus;
+    apsaSelectAnneeByApsaAndEtablissmenetAndAnnee.value.forEach((asa) => {
+      if (!isObjectEmpty(asa.apsaRetenus)) {
+        asa.apsaRetenus.forEach((ar) => {
+          situationEvaluation.value.push(ar);
+        });
+      }
+    });
+    libelleSport.value = apsaSelectAnneeByApsaAndEtablissmenetAndAnnee.value.find((asa) => asa)?.Apsa.libelle;
+    isLoading.value = false;
+  }
 });
 
 function onSituationEvaluationChange() {
@@ -358,14 +376,14 @@ function onSituationEvaluationChange() {
       { type: 'line', label: libelleSport.value, data: [], borderColor: 'black', display: true },
     ];
     c.Indicateur.forEach((i) => {
-      if (i.evaluationEleves.find((f) => f.Eleve.id === 1)) {
+      if (i.evaluationEleves.find((f) => f.Eleve.id === eleveByUser.value.id)) {
         let nb = 0;
-        let date = i.evaluationEleves.find((f) => f.Eleve.id === 1)?.Evaluation.DateEval + '';
+        let date = i.evaluationEleves.find((f) => f.Eleve.id === eleveByUser.value.id)?.Evaluation.DateEval + '';
         let datefinal = date.split('T')[0];
         let dateFormat = datefinal.split('-')[2] + '/' + datefinal.split('-')[1] + '/' + datefinal.split('-')[0];
         monAffichageGraphiquePersonnel.value[indexGraphiqueClasseByCriterebyEleves].labels.unshift(dateFormat);
         i.evaluationEleves.forEach((ee) => {
-          if (ee.Eleve.id === 1) {
+          if (ee.Eleve.id === eleveByUser.value.id) {
             monAffichageGraphiquePersonnel.value[indexGraphiqueClasseByCriterebyEleves].datasets[1].data.unshift(
               i.ordre - 0.5
             );

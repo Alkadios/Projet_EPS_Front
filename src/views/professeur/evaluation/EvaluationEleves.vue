@@ -1,5 +1,5 @@
 <template>
-  <div class="card shadow-lg o-hidden border-0 my-5">
+  <div class="card shadow-lg o-hidden border-0 m-5">
     <div class="card-body p-0">
       <div class="row">
         <div class="col-lg-1"></div>
@@ -7,8 +7,8 @@
           <div class="p-5">
             <div class="text-center">
               <p class="text-dark mb-2">
-                Personnalisation de l'équipe EPS <br />
-                au
+                Outil d'évaluation <br />
+                pour l'établissement
               </p>
               <h4 class="text-dark mb-4">{{ etablissement.nom }}</h4>
             </div>
@@ -113,7 +113,7 @@
         </div>
       </div>
       <div class="mt-3 ms-3">
-        <Button label="Annuler" @click="router.push('TableauDeBordConfig')"></Button>
+        <Button label="Annuler" @click="router.push('/TableauDeBordConfig')"></Button>
         <Button label="Terminer l'évaluation" icon="pi pi-check" style="left: 1rem" @click="saveEvaluation()"></Button>
       </div>
       <div class="mb-3"></div>
@@ -135,10 +135,13 @@ import { useRoute, useRouter } from 'vue-router';
 import UtilisateurService from '@/services/UtilisateurService';
 import ApsaRetenuService from '@/services/ApsaRetenuService';
 import ClasseService from '@/services/ClasseService';
+import UserService from '@/services/UserService';
 import EvaluationEleveService from '@/services/EvaluationEleveService';
 import ObjectUtils from '@/utils/ObjectUtils';
 import type { Critere, Eleve, Indicateur, Classe, ApsaRetenu, NiveauScolaire, APSA } from '@/models';
+import ProfesseurService from '@/services/ProfesseurService';
 
+const { fetchProfByUser, professeurByUser } = ProfesseurService();
 const route = useRoute();
 const router = useRouter();
 
@@ -146,6 +149,7 @@ const { apsasRetenusByEtablissementAndAnnee, fetchApsaRetenuByAnneeAndEtablissem
 const { classesByAnneeAndProfesseur, fetchClasseByAnneeAndProf } = ClasseService();
 const { saveEvaluationEleve } = EvaluationEleveService();
 const { etablissement, anneeEnCours } = UtilisateurService();
+const { user, token, redirectToHomePage } = UserService();
 const { isObjectEmpty } = ObjectUtils();
 const isLoading = ref(false);
 
@@ -247,17 +251,23 @@ watch(
 );
 
 onMounted(async () => {
-  isLoading.value = true;
-  await fetchClasseByAnneeAndProf(anneeEnCours.value.id, 1);
-  await fetchApsaRetenuByAnneeAndEtablissement(anneeEnCours.value.id, etablissement.value.id);
-  isLoading.value = false;
+  if (isObjectEmpty(user.value)) {
+    router.push('/');
+  } else if (user.value.roles != 'Professeur') {
+    redirectToHomePage();
+  } else {
+    isLoading.value = true;
+    await fetchProfByUser(user.value.id);
+    await fetchClasseByAnneeAndProf(anneeEnCours.value.id, professeurByUser.value.id);
+    await fetchApsaRetenuByAnneeAndEtablissement(anneeEnCours.value.id, etablissement.value.id);
+    isLoading.value = false;
+  }
 });
 
 function onClasseChange() {
   if (classeSelectionner.value) {
     isLoading.value = true;
     elevesByClasse.value = getElevesByClasse(classeSelectionner.value)!;
-
     apsasRetenusByNiveauScolaire.value = getApsasRetenusByNiveauScolaire(classeSelectionner.value.NiveauScolaire);
     listeApsa.value = [];
     //Evite les doublons si une apsa à plusiers situation d'évaluation
@@ -286,8 +296,9 @@ function getElevesByClasse(uneClasse: Classe) {
   return classesByAnneeAndProfesseur.value.find((classeProf) => classeProf.id === uneClasse.id)?.eleves;
 }
 
-function getApsasRetenusByNiveauScolaire(unNiveauScolaire: string | NiveauScolaire) {
-  console.log('nuNIveau : ', unNiveauScolaire);
+function getApsasRetenusByNiveauScolaire(unNiveauScolaire: NiveauScolaire) {
+  console.log('unNiveauScolaire : ', unNiveauScolaire);
+  console.log('apsasRetenusByEtablissementAndAnnee : ', apsasRetenusByEtablissementAndAnnee.value);
   return apsasRetenusByEtablissementAndAnnee.value
     .filter((apsaRetenu) => apsaRetenu.AfRetenu.ChoixAnnee.Niveau['@id'] === unNiveauScolaire['@id'])
     .map((apsaR) => {
@@ -315,7 +326,7 @@ async function saveEvaluation() {
     monEvaluation.value.evaluationEleve = getEvaluationEleveForRequest(indicateursEleveSelectionner.value);
     await saveEvaluationEleve(monEvaluation.value.Date, monEvaluation.value.evaluationEleve);
   }
-  router.push('TableauDeBordConfig');
+  router.push('/AffichageEvaluationEleve');
   isLoading.value = false;
 }
 

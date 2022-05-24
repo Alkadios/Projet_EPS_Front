@@ -1,43 +1,41 @@
 <template>
-  <div>
-    <DataTable :value="elevesByAnneeAndEtablissement" responsiveLayout="scroll" dataKey="id">
-      <Button label="Ajouter un Eleve" @click="openBasic" style="right: 1rem" icon="pi pi-plus" autofocus />
-      <Column selectionMode="single" style="width: 3rem" :exportable="false"></Column>
-
-      <Column field="nom" header="nom" :sortable="true" style="min-width: 12rem"></Column>
-      <Column field="prenom" header="prenom" :sortable="true" style="min-width: 12rem"></Column>
-      <Column field="telephone" header="telephone" :sortable="true" style="min-width: 12rem"></Column>
-      <Column field="mailParent1" header="mailParent1" :sortable="true" style="min-width: 12rem"></Column>
-      <Column field="mailParent2" header="mailParent2" :sortable="true" style="min-width: 12rem"></Column>
-      <Column field="sexeEleve" header="sexeEleve" :sortable="true" style="min-width: 12rem"></Column>
-      <Column field="dateNaiss" header="dateNaiss" :sortable="true" style="min-width: 12rem"></Column>
-      <Column :exportable="false" style="min-width: 8rem">
-        <template #body="slotProps">
-          <Button
-            icon="pi pi-pencil"
-            class="p-button-rounded p-button-success mr-2"
-            @click="champsEleve(slotProps.data.id)"
-          />
-        </template>
-      </Column>
-
-      <Column :exportable="false" style="min-width: 8rem">
-        <template #body="slotProps">
-          <Button
-            icon="pi pi-trash"
-            class="p-button-rounded p-button-warning"
-            @click="supprimerEleve(slotProps.data)"
-          />
-        </template>
-      </Column>
-    </DataTable>
-    <div style="position: fixed; bottom: 0; right: 2rem">
-      <ProgressSpinner
-        v-if="isLoading"
-        style="float: right; width: 50px; height: 50px"
-        strokeWidth="8"
-        animationDuration=".5s"
-      />
+  <div class="card shadow-lg o-hidden border-0 m-5">
+    <div class="card-body p-5">
+      <h1>Création des élèves</h1>
+      <DataTable
+        :value="elevesByEtablissement"
+        :paginator="true"
+        :rows="10"
+        :rowsPerPageOptions="[10, 20, 50]"
+        responsiveLayout="scroll"
+        dataKey="id"
+      >
+        <Button label="Ajouter un Eleve" @click="openBasic" style="right: 1rem" icon="pi pi-plus" autofocus />
+        <Column field="nom" header="nom" :sortable="true" style="min-width: 12rem"></Column>
+        <Column field="prenom" header="prenom" :sortable="true" style="min-width: 12rem"></Column>
+        <Column field="telephone" header="telephone" :sortable="true" style="min-width: 12rem"></Column>
+        <Column field="mailParent1" header="mailParent1" :sortable="true" style="min-width: 12rem"></Column>
+        <Column field="mailParent2" header="mailParent2" :sortable="true" style="min-width: 12rem"></Column>
+        <Column field="sexeEleve" header="sexeEleve" :sortable="true" style="min-width: 12rem"></Column>
+        <Column field="dateNaiss" header="dateNaiss" :sortable="true" style="min-width: 12rem"></Column>
+        <Column :exportable="false" style="min-width: 8rem">
+          <template #body="slotProps">
+            <Button
+              icon="pi pi-trash"
+              class="p-button-rounded p-button-warning"
+              @click="supprimerEleve(slotProps.data)"
+            />
+          </template>
+        </Column>
+      </DataTable>
+      <div style="position: fixed; bottom: 0; right: 2rem">
+        <ProgressSpinner
+          v-if="isLoading"
+          style="float: right; width: 50px; height: 50px"
+          strokeWidth="8"
+          animationDuration=".5s"
+        />
+      </div>
     </div>
   </div>
 
@@ -163,6 +161,16 @@
               <div class="row">
                 <div class="col-4">
                   <div class="mb-3">
+                    <label class="form-label" for="date"><strong>Date de Naissance</strong></label>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="mb-3">
+                    <input class="form-control" v-model="nouveauEleve.dateNaiss" type="date" id="date" name="date" />
+                  </div>
+                </div>
+                <div class="col-4">
+                  <div class="mb-3">
                     <label class="form-label" for="password"><strong>Mot de passe</strong></label>
                   </div>
                 </div>
@@ -187,10 +195,6 @@
         </Card>
       </div>
     </div>
-    <template #footer>
-      <Button label="No" icon="pi pi-times" @click="closeBasic" class="p-button-text" />
-      <Button label="Yes" icon="pi pi-check" autofocus />
-    </template>
   </Dialog>
 
   <Dialog header="Modifier un Eleve" v-model:visible="eleveDialog" :style="{ width: '50vw' }">
@@ -243,19 +247,23 @@ import EleveService from '@/services/EleveService';
 import UserService from '@/services/UserService';
 import UtilisateurService from '@/services/UtilisateurService';
 import { ref, onMounted } from 'vue';
+import ObjectUtils from '@/utils/ObjectUtils';
+import { useRoute, useRouter } from 'vue-router';
 
+const { isObjectEmpty } = ObjectUtils();
+const router = useRouter();
+const { user } = UserService();
 const {
-  fetchElevesByAnneeAndEtablissement,
-  elevesByAnneeAndEtablissement,
   saveEleve,
-  eleves,
+  elevesByEtablissement,
+  fetchElevesByEtablissement,
   deleteEleve,
   fetchEleveById,
   eleveById,
   updateEleve,
 } = EleveService();
 
-const { deleteUser } = UserService();
+const { deleteUser, redirectToHomePage } = UserService();
 const { etablissement, anneeEnCours } = UtilisateurService();
 
 const eleveDialog = ref(false);
@@ -275,7 +283,8 @@ const nouveauEleve = ref<Eleve>({
   mailParent2: '',
   sexeEleve: '',
   user: '',
-  etablissement: etablissement.value.id,
+  etablissement: user.value.currentEtablissement,
+  dateNaiss: new Date(),
 });
 
 async function CreerEleve() {
@@ -290,11 +299,12 @@ async function CreerEleve() {
     nouveauEleve.value.mailParent1,
     nouveauEleve.value.mailParent2,
     nouveauEleve.value.sexeEleve,
-    nouveauEleve.value.etablissement
+    nouveauEleve.value.etablissement,
+    nouveauEleve.value.dateNaiss
   );
   alert('Votre Eleve à ete créer');
   displayBasic.value = false;
-  await fetchElevesByAnneeAndEtablissement(etablissement.value.id, anneeEnCours.value.id);
+  await fetchElevesByEtablissement(user.value.currentEtablissement);
   isLoading.value = false;
 }
 
@@ -322,11 +332,11 @@ async function editEleve(Eleve: Eleve) {
 }
 
 async function supprimerEleve(Eleve: Eleve) {
-  if (confirm('Voulez vous vraiment supprimer ?')) {
+  if (confirm('Voulez vous vraiment supprimer cette eleve?')) {
     isLoading.value = true;
     await deleteEleve(Eleve.id);
     await deleteUser(Eleve.user.id);
-    await fetchElevesByAnneeAndEtablissement(etablissement.value.id, anneeEnCours.value.id);
+    await fetchElevesByEtablissement(user.value.currentEtablissement);
     isLoading.value = false;
   }
 }
@@ -345,8 +355,14 @@ const closeBasic = () => {
 };
 
 onMounted(async () => {
-  isLoading.value = true;
-  await fetchElevesByAnneeAndEtablissement(etablissement.value.id, anneeEnCours.value.id);
-  isLoading.value = false;
+  if (isObjectEmpty(user.value)) {
+    router.push('/');
+  } else if (user.value.roles != 'Admin') {
+    redirectToHomePage();
+  } else {
+    isLoading.value = true;
+    await fetchElevesByEtablissement(user.value.currentEtablissement);
+    isLoading.value = false;
+  }
 });
 </script>

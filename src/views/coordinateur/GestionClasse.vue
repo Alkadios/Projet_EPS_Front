@@ -1,30 +1,43 @@
 <template>
-  <div>
-    <DataTable :value="classesByAnnee" responsiveLayout="scroll" dataKey="id">
-      <Button label="Ajouter une Classe" @click="openBasic" style="right: 1rem" icon="pi pi-plus" autofocus />
-      <Column selectionMode="single" style="width: 3rem" :exportable="false"></Column>
-
-      <Column field="NiveauScolaire.libelle" header="NiveauScolaire" :sortable="true" style="min-width: 12rem"></Column>
-      <Column field="Annee.annee" header="Annee" :sortable="true" style="min-width: 12rem"></Column>
-      <Column field="etablissement.nom" header="etablissement" :sortable="true" style="min-width: 12rem"></Column>
-      <Column field="libelleClasse" header="libelleClasse" :sortable="true" style="min-width: 12rem"></Column>
-      <Column :exportable="false" style="min-width: 8rem">
-        <template #body="slotProps">
-          <Button
-            icon="pi pi-trash"
-            class="p-button-rounded p-button-success mr-2"
-            @click="supprimerClasse(slotProps.data.id)"
-          />
-        </template>
-      </Column>
-    </DataTable>
-    <div style="position: fixed; bottom: 0; right: 2rem">
-      <ProgressSpinner
-        v-if="isLoading"
-        style="float: right; width: 50px; height: 50px"
-        strokeWidth="8"
-        animationDuration=".5s"
-      />
+  <div class="card shadow-lg o-hidden border-0 m-5">
+    <div class="card-body p-5">
+      <h1>Gestion des classes</h1>
+      <DataTable
+        :value="classesByAnneeAndEtablissement"
+        :paginator="true"
+        :rows="10"
+        :rowsPerPageOptions="[10, 20, 50]"
+        responsiveLayout="scroll"
+        dataKey="id"
+      >
+        <Button label="Ajouter une Classe" @click="openBasic" style="right: 1rem" icon="pi pi-plus" autofocus />
+        <Column
+          field="NiveauScolaire.libelle"
+          header="NiveauScolaire"
+          :sortable="true"
+          style="min-width: 12rem"
+        ></Column>
+        <Column field="Annee.annee" header="Annee" :sortable="true" style="min-width: 12rem"></Column>
+        <Column field="etablissement.nom" header="etablissement" :sortable="true" style="min-width: 12rem"></Column>
+        <Column field="libelleClasse" header="libelleClasse" :sortable="true" style="min-width: 12rem"></Column>
+        <Column :exportable="false" style="min-width: 8rem">
+          <template #body="slotProps">
+            <Button
+              icon="pi pi-trash"
+              class="p-button-rounded p-button-success mr-2"
+              @click="supprimerClasse(slotProps.data.id)"
+            />
+          </template>
+        </Column>
+      </DataTable>
+      <div style="position: fixed; bottom: 0; right: 2rem">
+        <ProgressSpinner
+          v-if="isLoading"
+          style="float: right; width: 50px; height: 50px"
+          strokeWidth="8"
+          animationDuration=".5s"
+        />
+      </div>
     </div>
   </div>
 
@@ -84,10 +97,6 @@
         </Card>
       </div>
     </div>
-    <template #footer>
-      <Button label="No" icon="pi pi-times" @click="closeBasic" class="p-button-text" />
-      <Button label="Yes" icon="pi pi-check" autofocus />
-    </template>
   </Dialog>
 </template>
 
@@ -98,11 +107,25 @@ import ClasseService from '@/services/ClasseService';
 import EtablissementService from '@/services/EtablissementService';
 import NiveauScolaireService from '@/services/NiveauScolaireService';
 import { ref, onMounted, watch } from 'vue';
-
-const { fetchClasseByAnnee, classesByAnnee, saveClasse, deleteClasse, classesById, fetchClasseById } = ClasseService();
+import UserService from '@/services/UserService';
+import ObjectUtils from '@/utils/ObjectUtils';
+import { useRoute, useRouter } from 'vue-router';
+import UtilisateurService from '@/services/UtilisateurService';
+const router = useRouter();
+const { isObjectEmpty } = ObjectUtils();
+const { user, redirectToHomePage } = UserService();
+const {
+  fetchClasseByAnneeAndEtablissement,
+  classesByAnneeAndEtablissement,
+  saveClasse,
+  deleteClasse,
+  classesById,
+  fetchClasseById,
+} = ClasseService();
 const { etablissements, fetchAllEtablissements } = EtablissementService();
 const { niveauxScolaires, fetchAllNiveauxScolaires } = NiveauScolaireService();
 const { annees, fetchAllAnnees } = AnneeService();
+const { anneeEnConfig } = UtilisateurService();
 
 const selectedNiveauScolaire = ref();
 const selectedAnnee = ref();
@@ -127,7 +150,7 @@ async function CreerClasse() {
   );
   alert('Votre Classe à ete créer');
   displayBasic.value = false;
-  await fetchClasseByAnnee(3);
+  await fetchClasseByAnneeAndEtablissement(anneeEnConfig.value.id, user.value.currentEtablissement);
   isLoading.value = false;
 }
 
@@ -137,10 +160,10 @@ const openBasic = () => {
 };
 
 async function supprimerClasse(idClasse: number) {
-  if (confirm('Voulez vous vraiment supprimer ?')) {
+  if (confirm('Voulez vous vraiment supprimer cette classe?')) {
     isLoading.value = true;
     await deleteClasse(idClasse);
-    await fetchClasseByAnnee(3);
+    await fetchClasseByAnneeAndEtablissement(anneeEnConfig.value.id, user.value.currentEtablissement);
     isLoading.value = false;
   }
 }
@@ -150,11 +173,17 @@ const closeBasic = () => {
 };
 
 onMounted(async () => {
-  isLoading.value = true;
-  await fetchClasseByAnnee(3);
-  await fetchAllEtablissements();
-  await fetchAllNiveauxScolaires();
-  await fetchAllAnnees();
-  isLoading.value = false;
+  if (isObjectEmpty(user.value)) {
+    router.push('/');
+  } else if (user.value.roles != 'Admin') {
+    redirectToHomePage();
+  } else {
+    isLoading.value = true;
+    await fetchClasseByAnneeAndEtablissement(anneeEnConfig.value.id, user.value.currentEtablissement);
+    await fetchAllEtablissements();
+    await fetchAllNiveauxScolaires();
+    await fetchAllAnnees();
+    isLoading.value = false;
+  }
 });
 </script>

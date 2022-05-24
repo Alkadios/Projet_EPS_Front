@@ -1,36 +1,44 @@
 <template>
-  <div>
-    <div>
-      <Button label="Ajouter ces classes" @click="openBasic" style="right: 1rem" icon="pi pi-plus" autofocus />
-      <Button
-        label="Retirer les Classes"
-        @click="deleteClasseOfProf()"
-        style="right: 1rem"
-        icon="pi pi-trash"
-        autofocus
-      />
-    </div>
-    <DataTable
-      :value="classesByAnneeAndProfesseur"
-      v-model:selection="selectedClasses"
-      dynamic="true"
-      responsiveLayout="scroll"
-      dataKey="id"
-    >
-      <Column selectionMode="multiple"></Column>
-      <Column field="NiveauScolaire.libelle" header="NiveauScolaire" :sortable="true" style="min-width: 12rem"></Column>
-      <Column field="Annee.annee" header="Annee" :sortable="true" style="min-width: 12rem"></Column>
-      <Column field="etablissement.nom" header="etablissement" :sortable="true" style="min-width: 12rem"></Column>
-      <Column field="libelleClasse" header="libelleClasse" :sortable="true" style="min-width: 12rem"></Column>
-      <Column :exportable="false" style="min-width: 8rem"> </Column>
-    </DataTable>
-    <div style="position: fixed; bottom: 0; right: 2rem">
-      <ProgressSpinner
-        v-if="isLoading"
-        style="float: right; width: 50px; height: 50px"
-        strokeWidth="8"
-        animationDuration=".5s"
-      />
+  <div class="card shadow-lg o-hidden border-0 m-5">
+    <div class="card-body p-5">
+      <h3>Attribution de mes classes</h3>
+      <div>
+        <Button label="Ajouter ces classes" @click="openBasic" style="right: 1rem" icon="pi pi-plus" autofocus />
+        <Button
+          label="Retirer les Classes"
+          @click="deleteClasseOfProf()"
+          style="right: 1rem"
+          icon="pi pi-trash"
+          autofocus
+        />
+      </div>
+      <DataTable
+        :value="classesByAnneeAndProfesseur"
+        v-model:selection="selectedClasses"
+        dynamic="true"
+        responsiveLayout="scroll"
+        dataKey="id"
+      >
+        <Column selectionMode="multiple"></Column>
+        <Column
+          field="NiveauScolaire.libelle"
+          header="NiveauScolaire"
+          :sortable="true"
+          style="min-width: 12rem"
+        ></Column>
+        <Column field="Annee.annee" header="Annee" :sortable="true" style="min-width: 12rem"></Column>
+        <Column field="etablissement.nom" header="etablissement" :sortable="true" style="min-width: 12rem"></Column>
+        <Column field="libelleClasse" header="libelleClasse" :sortable="true" style="min-width: 12rem"></Column>
+        <Column :exportable="false" style="min-width: 8rem"> </Column>
+      </DataTable>
+      <div style="position: fixed; bottom: 0; right: 2rem">
+        <ProgressSpinner
+          v-if="isLoading"
+          style="float: right; width: 50px; height: 50px"
+          strokeWidth="8"
+          animationDuration=".5s"
+        />
+      </div>
     </div>
   </div>
 
@@ -40,7 +48,7 @@
         <Card>
           <template #content>
             <DataTable
-              :value="classesByAnnee"
+              :value="classesByAnneeAndEtablissement"
               v-model:selection="selectedClassesForAdd"
               responsiveLayout="scroll"
               dataKey="id"
@@ -67,10 +75,6 @@
         </Card>
       </div>
     </div>
-    <template #footer>
-      <Button label="No" icon="pi pi-times" @click="closeBasic" class="p-button-text" />
-      <Button label="Yes" icon="pi pi-check" autofocus />
-    </template>
   </Dialog>
 </template>
 
@@ -82,11 +86,19 @@ import UserService from '@/services/UserService';
 import UtilisateurService from '@/services/UtilisateurService';
 import eleve from '@/store/modules/eleve';
 import { ref, onMounted, toRaw } from 'vue';
-
-const { fetchClasseByAnnee, classesByAnnee, fetchClasseByAnneeAndProf, classesByAnneeAndProfesseur, classes } =
-  ClasseService();
-const { anneeEnCours } = UtilisateurService();
-const { user } = UserService();
+import ObjectUtils from '@/utils/ObjectUtils';
+import { useRoute, useRouter } from 'vue-router';
+const router = useRouter();
+const { isObjectEmpty } = ObjectUtils();
+const {
+  fetchClasseByAnneeAndEtablissement,
+  classesByAnneeAndEtablissement,
+  fetchClasseByAnneeAndProf,
+  classesByAnneeAndProfesseur,
+  classes,
+} = ClasseService();
+const { anneeEnConfig } = UtilisateurService();
+const { user, redirectToHomePage } = UserService();
 const { putProfesseursClasse } = ProfesseurService();
 const selectedClasses = ref<Classe[]>();
 const selectedClassesForAdd = ref<Classe[]>();
@@ -104,13 +116,19 @@ const openBasic = () => {
 };
 
 onMounted(async () => {
-  isLoading.value = true;
-  await fetchClasseByAnnee(anneeEnCours.value.id);
-  await fetchClasseByAnneeAndProf(anneeEnCours.value.id, user.value.professeurs);
-  console.log('classeparprof', classesByAnneeAndProfesseur.value);
-  console.log('userid', user.value.id);
-  console.log('prof', user.value.professeurs);
-  isLoading.value = false;
+  if (isObjectEmpty(user.value)) {
+    router.push('/');
+  } else if (user.value.roles != 'Professeur') {
+    redirectToHomePage();
+  } else {
+    isLoading.value = true;
+    await fetchClasseByAnneeAndEtablissement(anneeEnConfig.value.id, user.value.currentEtablissement);
+    await fetchClasseByAnneeAndProf(anneeEnConfig.value.id, user.value.professeurs);
+    console.log('classeparprof', classesByAnneeAndProfesseur.value);
+    console.log('userid', user.value.id);
+    console.log('prof', user.value.professeurs);
+    isLoading.value = false;
+  }
 });
 
 async function editClasse() {
@@ -124,6 +142,7 @@ async function editClasse() {
     const arrayidClasse = idsClassesExistant.concat(idsClasses);
 
     if (idsClasses) await putProfesseursClasse(user.value.professeurs, arrayidClasse);
+    window.location.reload;
   }
   alert('ces classes ont ete ajouter');
 }
@@ -135,7 +154,8 @@ async function deleteClasseOfProf() {
       return toRaw(cs['@id']);
     });
   await putProfesseursClasse(user.value.professeurs, idClassesRetirer);
-  alert('Votre ou vos élèves on été supprimer de cette classe');
+  location.reload;
+  alert('Votre ou vos classes ont été supprimer');
 }
 
 const isLoading = ref(false);

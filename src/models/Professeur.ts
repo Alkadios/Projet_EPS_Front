@@ -11,4 +11,5 @@ export interface Professeur {
   cours: string;
   user: User;
   etablissement: Etablissement;
+  etablissements: Etablissement[];
 }

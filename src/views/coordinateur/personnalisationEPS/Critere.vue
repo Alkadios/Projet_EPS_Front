@@ -162,7 +162,7 @@
       </Button>
     </template>
   </Dialog>
-  <div class="card shadow-lg o-hidden border-0 my-5">
+  <div class="card shadow-lg o-hidden border-0 m-5">
     <div class="card-body p-0">
       <div class="row">
         <div class="col-lg-1"></div>
@@ -188,17 +188,22 @@
       <div class="row">
         <div class="col-3" v-for="monCritere in criteresByApsaRetenu" v-bind:key="monCritere.id">
           <Card>
-            <template #title> {{ monCritere.titre }} </template>
+            <template #title>{{ monCritere.titre }} </template>
             <template #content>
-              <p v-html="monCritere.description" />
-              <a :href="monCritere.url_video" target="blank">{{ monCritere.url_video }}</a>
+              <strong
+                >Description:
+                <p v-html="monCritere.description"></p></strong
+              ><strong v-if="monCritere.url_video != ''"
+                >Vidéo: <a :href="monCritere.url_video" target="blank">{{ monCritere.url_video }}</a></strong
+              ><br />
+              <strong v-if="monCritere.image != ''"
+                >Image:<br /><img
+                  :src="`data:${nouvelleImageCritere.type};base64,` + monCritere.image"
+                  style="max-width: 10rem; max-height: 10rem" /></strong
+              ><br />
 
-              <img
-                :src="`data:${nouvelleImageCritere.type};base64,` + monCritere.image"
-                style="max-width: 10rem; max-height: 10rem"
-              />
               <Button
-                label="Ajouter des indicateurs"
+                label="Indicateur"
                 icon="pi pi-plus"
                 @click="
                   router.push({
@@ -255,7 +260,10 @@ import ObjectUtils from '@/utils/ObjectUtils';
 import UtilisateurService from '@/services/UtilisateurService';
 import ApsaRetenuService from '@/services/ApsaRetenuService';
 import { useRoute, useRouter } from 'vue-router';
+import critere from '@/store/modules/critere';
+import UserService from '@/services/UserService';
 
+const { user, redirectToHomePage } = UserService();
 const route = useRoute();
 const router = useRouter();
 
@@ -296,12 +304,18 @@ const imageCritereIsSelected = computed(() => {
 });
 
 onMounted(async () => {
-  isLoading.value = true;
-  if (route.query.idApsaRetenu) {
-    await fetchCriteresByApsaRetenu(parseInt(route.query.idApsaRetenu.toString()));
-    await fetchApsaRetenu(parseInt(route.query.idApsaRetenu.toString()));
+  if (isObjectEmpty(user.value)) {
+    router.push('/');
+  } else if (user.value.roles != 'Admin') {
+    redirectToHomePage();
+  } else {
+    isLoading.value = true;
+    if (route.query.idApsaRetenu) {
+      await fetchCriteresByApsaRetenu(parseInt(route.query.idApsaRetenu.toString()));
+      await fetchApsaRetenu(parseInt(route.query.idApsaRetenu.toString()));
+    }
+    isLoading.value = false;
   }
-  isLoading.value = false;
 });
 
 async function addCritere() {

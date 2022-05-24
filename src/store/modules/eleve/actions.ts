@@ -23,6 +23,15 @@ export default {
     }
   },
 
+  async fetchEleveByUser(context: ActionContext<EleveState, any>, payload: { idUser: number }) {
+    const response = await EleveAPI.fetchEleveByUser(payload.idUser);
+    if (response.data) context.commit('setEleveByUser', response.data['hydra:member'][0]);
+    else {
+      context.commit('setEleveByUser', []);
+      //throw new Error(response.data.message);
+    }
+  },
+
   async fetchElevesByAnneeAndEtablissement(
     context: ActionContext<EleveState, any>,
     payload: { idEtablissement: number; idAnnee: number }
@@ -32,6 +41,16 @@ export default {
       context.commit('setElevesByAnneeAndEtablissement', response.data['hydra:member']);
     else {
       context.commit('setEleves', []);
+      //throw new Error(response.data.message);
+    }
+  },
+
+  async fetchElevesByEtablissement(context: ActionContext<EleveState, any>, payload: { idEtablissement: number }) {
+    const response = await EleveAPI.fetchElevesByEtablissement(payload.idEtablissement);
+    if (response.data['hydra:totalItems'] > 0)
+      context.commit('setElevesByEtablissement', response.data['hydra:member']);
+    else {
+      context.commit('setElevesByEtablissement', []);
       //throw new Error(response.data.message);
     }
   },
@@ -60,6 +79,7 @@ export default {
       mailParent2: string;
       sexeEleve: string;
       etablissement: Etablissement;
+      dateNaiss: Date;
     }
   ) {
     const response = await EleveAPI.saveEleve(payload);
@@ -99,6 +119,15 @@ export default {
     if (response.data['hydra:totalItems'] > 0) context.commit('setElevesByClasse', response.data['hydra:member']);
     else {
       context.commit('setElevesByClasse', []);
+      //throw new Error(response.data.message);
+    }
+  },
+  async fetchAllApsaEvaluateByEleve(context: ActionContext<EleveState, any>, payload: { idEleve: number }) {
+    const response = await EleveAPI.fetchAllApsaEvaluateByEleve(payload.idEleve);
+    if (response.status === 200) {
+      context.commit('setApsaEvaluateByEleve', response.data);
+    } else {
+      context.commit('setApsaEvaluateByEleve', []);
       //throw new Error(response.data.message);
     }
   },

@@ -1,39 +1,51 @@
 <template>
-  <div>
-    <h1>GestionPROF</h1>
-    <DataTable :value="professeursByEtablissement" responsiveLayout="scroll" dataKey="id">
-      <Button label="Ajouter un Professeur" @click="openBasic" style="right: 1rem" icon="pi pi-plus" autofocus />
-      <Column selectionMode="single" style="width: 3rem" :exportable="false"></Column>
+  <div class="card shadow-lg o-hidden border-0 m-5">
+    <div class="card-body p-5">
+      <h1>Gestion des professeurs</h1>
+      <DataTable
+        :paginator="true"
+        :rows="10"
+        :rowsPerPageOptions="[10, 20, 50]"
+        :value="professeursByEtablissement"
+        responsiveLayout="scroll"
+        dataKey="id"
+      >
+        <Button label="Ajouter un Professeur" @click="openBasic" style="right: 1rem" icon="pi pi-plus" autofocus />
 
-      <Column field="nom" header="nom" :sortable="true" style="min-width: 12rem"></Column>
-      <Column field="prenom" header="prenom" :sortable="true" style="min-width: 12rem"></Column>
-      <Column field="telephone" header="telephone" :sortable="true" style="min-width: 12rem"></Column>
-      <Column :exportable="false" style="min-width: 8rem">
-        <template #body="slotProps">
-          <Button
-            icon="pi pi-pencil"
-            class="p-button-rounded p-button-success mr-2"
-            @click="champsProf(slotProps.data.id)"
-          />
-        </template>
-      </Column>
+        <Column field="nom" header="nom" :sortable="true" style="min-width: 12rem"></Column>
+        <Column field="prenom" header="prenom" :sortable="true" style="min-width: 12rem"></Column>
+        <Column field="telephone" header="telephone" :sortable="true" style="min-width: 12rem"></Column>
+        <Column :exportable="false" style="min-width: 8rem">
+          <template #body="slotProps">
+            <Button
+              icon="pi pi-pencil"
+              class="p-button-rounded p-button-success mr-2"
+              @click="champsProf(slotProps.data.id)"
+            />
+          </template>
+        </Column>
 
-      <Column :exportable="false" style="min-width: 8rem">
-        <template #body="slotProps">
-          <Button icon="pi pi-trash" class="p-button-rounded p-button-warning" @click="supprimerProf(slotProps.data)" />
-        </template>
-      </Column>
-    </DataTable>
-    <div style="position: fixed; bottom: 0; right: 2rem">
-      <ProgressSpinner
-        v-if="isLoading"
-        style="float: right; width: 50px; height: 50px"
-        strokeWidth="8"
-        animationDuration=".5s"
-      />
+        <Column :exportable="false" style="min-width: 8rem">
+          <template #body="slotProps">
+            <Button
+              icon="pi pi-trash"
+              class="p-button-rounded p-button-warning"
+              @click="supprimerProf(slotProps.data)"
+            />
+          </template>
+        </Column>
+      </DataTable>
+      <div style="position: fixed; bottom: 0; right: 2rem">
+        <ProgressSpinner
+          v-if="isLoading"
+          style="float: right; width: 50px; height: 50px"
+          strokeWidth="8"
+          animationDuration=".5s"
+        />
+      </div>
     </div>
 
-    <Dialog header="Ajouter un Eleve" v-model:visible="displayBasic" :style="{ width: '50vw' }">
+    <Dialog header="Ajouter un Professeur" v-model:visible="displayBasic" :style="{ width: '50vw' }">
       <div class="row" style="place-content: center">
         <div class="col-8">
           <Card>
@@ -116,6 +128,7 @@
                       <input
                         class="form-control"
                         v-model="nouveauUtilisateur.password"
+                        required
                         type="password"
                         id="password"
                         name="password"
@@ -132,10 +145,6 @@
           </Card>
         </div>
       </div>
-      <template #footer>
-        <Button label="No" icon="pi pi-times" @click="closeBasic" class="p-button-text" />
-        <Button label="Yes" icon="pi pi-check" autofocus />
-      </template>
     </Dialog>
 
     <Dialog header="Modifier un Professeur" v-model:visible="profDialog" :style="{ width: '50vw' }">
@@ -181,8 +190,14 @@
 import { Professeur, User } from '@/models';
 import ProfesseurService from '@/services/ProfesseurService';
 import UserService from '@/services/UserService';
+import UtilisateurService from '@/services/UtilisateurService';
 import { ref, onMounted } from 'vue';
-
+import ObjectUtils from '@/utils/ObjectUtils';
+import { useRoute, useRouter } from 'vue-router';
+const router = useRouter();
+const { isObjectEmpty } = ObjectUtils();
+const { user, redirectToHomePage } = UserService();
+const { etablissement } = UtilisateurService();
 const {
   fetchProfesseursByEtablissement,
   saveProfesseur,
@@ -198,7 +213,7 @@ const profDialog = ref(false);
 
 const nouveauUtilisateur = ref<User>({
   email: '',
-  roles: ['Eleve'],
+  roles: ['Professeur'],
   password: '',
 });
 
@@ -207,6 +222,7 @@ const nouveauProf = ref<Professeur>({
   nom: '',
   prenom: '',
   telephone: '',
+  etablissements: user.value.currentEtablissement,
 });
 
 async function CreerProfesseur() {
@@ -216,11 +232,12 @@ async function CreerProfesseur() {
     nouveauUtilisateur.value.password,
     nouveauProf.value.nom,
     nouveauProf.value.prenom,
-    nouveauProf.value.telephone
+    nouveauProf.value.telephone,
+    nouveauProf.value.etablissements
   );
   alert('Votre Professeur à ete créer');
   displayBasic.value = false;
-  await fetchProfesseursByEtablissement(1);
+  await fetchProfesseursByEtablissement(user.value.currentEtablissement);
 }
 
 async function champsProf(idProf: number) {
@@ -239,10 +256,10 @@ async function editProf(idProf: number) {
 }
 
 async function supprimerProf(Professeur: Professeur) {
-  if (confirm('Voulez vous vraiment supprimer ?')) {
+  if (confirm('Voulez vous vraiment supprimer ce professeur?')) {
     isLoading.value = true;
     await deleteProf(Professeur.id);
-    await fetchProfesseursByEtablissement(1);
+    await fetchProfesseursByEtablissement(user.value.currentEtablissement);
     isLoading.value = false;
   }
 }
@@ -261,9 +278,16 @@ const closeBasic = () => {
 };
 
 onMounted(async () => {
-  isLoading.value = true;
-  await fetchProfesseursByEtablissement(1);
-  console.log('prof', professeursByEtablissement.value);
-  isLoading.value = false;
+  if (isObjectEmpty(user.value)) {
+    router.push('/');
+  } else if (user.value.roles != 'Admin') {
+    redirectToHomePage();
+  } else {
+    isLoading.value = true;
+    await fetchProfesseursByEtablissement(user.value.currentEtablissement);
+    console.log('prof', professeursByEtablissement.value);
+    console.log('etablId', user.value.currentEtablissement);
+    isLoading.value = false;
+  }
 });
 </script>

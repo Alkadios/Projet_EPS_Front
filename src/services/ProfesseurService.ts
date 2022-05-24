@@ -1,4 +1,5 @@
 import { Eleve, Etablissement, Professeur } from '@/models';
+import etablissement from '@/store/modules/etablissement';
 import { computed } from 'vue';
 import { useStore } from 'vuex';
 
@@ -8,6 +9,26 @@ export default function ProfesseurService() {
   async function fetchProfesseursByEtablissement(idEtablissement: number) {
     await store.dispatch('ProfesseurModule/fetchProfesseursByEtablissement', {
       idEtablissement: idEtablissement,
+    });
+  }
+
+  const professeurByUser = computed((): Professeur => {
+    return store.getters['ProfesseurModule/getProfByUser'];
+  });
+
+  const professeurByRoles = computed((): Professeur[] => {
+    return store.getters['ProfesseurModule/getProfByRoles'];
+  });
+
+  async function fetchProfByUser(idUser: number) {
+    await store.dispatch('ProfesseurModule/fetchProfByUser', {
+      idUser: idUser,
+    });
+  }
+
+  async function fetchProfByRoles(roles: string) {
+    await store.dispatch('ProfesseurModule/fetchProfByRoles', {
+      roles: roles,
     });
   }
 
@@ -29,7 +50,8 @@ export default function ProfesseurService() {
     password: string,
     nom: string,
     prenom: string,
-    telephone: string
+    telephone: string,
+    etablissements: string[]
   ) {
     await store.dispatch('ProfesseurModule/saveProfesseur', {
       email,
@@ -38,6 +60,7 @@ export default function ProfesseurService() {
       nom,
       prenom,
       telephone,
+      etablissements,
     });
   }
 
@@ -46,6 +69,10 @@ export default function ProfesseurService() {
       idProf: idProf,
       classe,
     });
+  }
+
+  async function fetchAllProfs() {
+    await store.dispatch('ProfesseurModule/fetchAllProfs');
   }
 
   async function updateProf(idProf: number, nom: string, prenom: string, telephone: string) {
@@ -61,6 +88,10 @@ export default function ProfesseurService() {
     return store.getters['ProfesseurModule/getProfById'];
   });
 
+  const professeurs = computed((): Professeur[] => {
+    return store.getters['ProfesseurModule/getProfesseurs'];
+  });
+
   const professeursByEtablissement = computed((): Professeur[] => {
     return store.getters['ProfesseurModule/getProfesseursByEtablissement'];
   });
@@ -74,5 +105,11 @@ export default function ProfesseurService() {
     fetchProfById,
     professeurById,
     putProfesseursClasse,
+    professeurByUser,
+    fetchProfByUser,
+    fetchProfByRoles,
+    professeurByRoles,
+    fetchAllProfs,
+    professeurs,
   };
 }

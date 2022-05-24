@@ -228,7 +228,7 @@
       </Button>
     </template>
   </Dialog>
-  <div class="card shadow-lg o-hidden border-0 my-5">
+  <div class="card shadow-lg o-hidden border-0 m-5">
     <div class="card-body p-0">
       <div class="row">
         <div class="col-lg-1"></div>
@@ -266,17 +266,17 @@
                   >Description:
                   <p v-html="nouveauIndicateur.item.description"></p
                 ></strong>
-                <strong
+                <strong v-if="nouveauIndicateur.item.url_video != ''"
                   >Vidéo:
                   <a :href="nouveauIndicateur.item.url_video" target="blank">{{
                     nouveauIndicateur.item.url_video
                   }}</a></strong
                 ><br />
-                <strong>Image:</strong><br />
-                <img
-                  :src="`data:${nouvelleImageIndicateur.type};base64,` + nouveauIndicateur.item.image"
-                  style="max-width: 10rem; max-height: 10rem"
-                />
+                <strong v-if="nouveauIndicateur.item.image != ''"
+                  >Image:<br /><img
+                    :src="`data:${nouvelleImageIndicateur.type};base64,` + nouveauIndicateur.item.image"
+                    style="max-width: 10rem; max-height: 10rem" /></strong
+                ><br />
               </div>
               <div class="col-1 align-center mt-5">
                 <Button class="p-button-rounded p-button-info" @click="openEdit(nouveauIndicateur.item)">
@@ -291,12 +291,22 @@
         </template>
       </OrderList>
     </div>
-    <button class="btn-info" style="border-radius: 10px" @click="openBasic">
+    <button
+      class="btn"
+      style="border-radius: 10px; background-color: #6372e6; color: white; margin: 1rem"
+      @click="openBasic"
+    >
       <i class="m-3 pi pi-plus" style="cursor: pointer; border-radius: 50%; border: 0.2rem solid; font-size: 2em" />
-      <p>Ajouter un critère</p>
+      <p>Ajouter un indicateur</p>
     </button>
     <div class="container-fluid text-center mb-10 Pl-10">
-      <Button label="Valider" style="right: 1rem" icon="pi pi-check" @click="onValid(false)" autofocus></Button>
+      <Button
+        label="Enregistrer les indicateurs"
+        style="right: 1rem"
+        icon="pi pi-check"
+        @click="onValid(false)"
+        autofocus
+      ></Button>
       <Button label="Retour aux critères" icon="pi pi-backward" style="left: 1rem" autofocus @click="back()"></Button>
     </div>
     <div style="position: fixed; bottom: 0; right: 2rem">
@@ -319,7 +329,9 @@ import IndicateurService from '@/services/IndicateurService';
 import { useRoute, useRouter } from 'vue-router';
 import ObjectUtils from '@/utils/ObjectUtils';
 import { cloneDeep } from 'lodash-es';
+import UserService from '@/services/UserService';
 
+const { user, redirectToHomePage } = UserService();
 const route = useRoute();
 const router = useRouter();
 const { isObjectEmpty } = ObjectUtils();
@@ -370,13 +382,19 @@ const closeEdit = () => {
 };
 
 onMounted(async () => {
-  isLoading.value = true;
-  if (route.query.idCritere) {
-    await fetchIndicateursByCritere(parseInt(route.query.idCritere.toString()));
-    await fetchCritereById(parseInt(route.query.idCritere.toString()));
-    mesIndicateurs.value = cloneDeep(indicateursByCritere.value);
+  if (isObjectEmpty(user.value)) {
+    router.push('/');
+  } else if (user.value.roles != 'Admin') {
+    redirectToHomePage();
+  } else {
+    isLoading.value = true;
+    if (route.query.idCritere) {
+      await fetchIndicateursByCritere(parseInt(route.query.idCritere.toString()));
+      await fetchCritereById(parseInt(route.query.idCritere.toString()));
+      mesIndicateurs.value = cloneDeep(indicateursByCritere.value);
+    }
+    isLoading.value = false;
   }
-  isLoading.value = false;
 });
 
 async function addIndicateur() {

@@ -1,7 +1,7 @@
 import mutations from './mutations';
 import actions from './actions';
 import getters from './getters';
-import { User } from '@/models';
+import { Eleve, Professeur, User } from '@/models';
 import UserState from './stateInterface';
 
 export default {
@@ -10,6 +10,8 @@ export default {
     return {
       user: {} as User,
       token: '',
+      eleve: {} as Eleve,
+      professeur: {} as Professeur,
     };
   },
   mutations,

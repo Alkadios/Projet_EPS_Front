@@ -1,25 +1,35 @@
 <template>
-  <Dropdown
-    v-model="selectedClasse"
-    :options="classesByAnnee"
-    optionLabel="libelleClasse"
-    dataKey="id"
-    placeholder="Selectionner une classe"
-    @change="onClasseChange"
-  />
-
-  <div>
-    <div>
-      <Button label="Ajouter un Eleve" @click="openBasic" style="right: 1rem" icon="pi pi-plus" autofocus />
-      <Button
-        label="Retirer les Eleves"
-        @click="deleteFromClasse(selectedClasse?.id)"
-        style="right: 1rem"
-        icon="pi pi-trash"
-        autofocus
+  <div class="card shadow-lg o-hidden border-0 m-5">
+    <div class="card-body p-5">
+      <h1>Gestion des élèves</h1>
+      <div>
+        <Button label="Ajouter un Eleve" @click="openBasic" style="right: 1rem" icon="pi pi-plus" autofocus />
+        <Button
+          label="Retirer les Eleves"
+          @click="deleteFromClasse(selectedClasse?.id)"
+          style="right: 1rem"
+          icon="pi pi-trash"
+          autofocus
+        />
+      </div>
+      <Dropdown
+        v-model="selectedClasse"
+        :options="classesByAnneeAndEtablissement"
+        optionLabel="libelleClasse"
+        dataKey="id"
+        placeholder="Selectionner une classe"
+        @change="onClasseChange"
       />
     </div>
-    <DataTable :value="mesEleves" v-model:selection="selectedElevesOnClasse" responsiveLayout="scroll" dataKey="id">
+    <DataTable
+      :value="mesEleves"
+      :paginator="true"
+      :rows="10"
+      :rowsPerPageOptions="[10, 20, 50]"
+      v-model:selection="selectedElevesOnClasse"
+      responsiveLayout="scroll"
+      dataKey="id"
+    >
       <Column selectionMode="multiple"></Column>
 
       <Column field="nom" header="nom" :sortable="true" style="min-width: 12rem"></Column>
@@ -132,35 +142,49 @@
         />
       </div>
     </div>
-    <template #footer>
-      <Button label="No" icon="pi pi-times" @click="closeBasic" class="p-button-text" />
-      <Button label="Yes" icon="pi pi-check" autofocus />
-    </template>
   </Dialog>
 </template>
 
 <script lang="ts" setup>
+import { ref, onMounted, toRaw } from 'vue';
 import { Classe, Eleve } from '@/models';
 import ClasseService from '@/services/ClasseService';
 import EleveService from '@/services/EleveService';
 import UtilisateurService from '@/services/UtilisateurService';
+import UserService from '@/services/UserService';
 import eleve from '@/store/modules/eleve';
-import { ref, onMounted, toRaw } from 'vue';
+import ObjectUtils from '@/utils/ObjectUtils';
+import router from '@/router';
 
+const { isObjectEmpty } = ObjectUtils();
+const { user, redirectToHomePage } = UserService();
 const { fetchAllEleves, saveEleve, eleves, deleteEleve, fetchEleveById, eleveById, updateEleve } = EleveService();
-const { fetchAllClasses, fetchClasseByAnnee, classesByAnnee, addElevesInClasse, classes } = ClasseService();
-const { etablissement, anneeEnCours } = UtilisateurService();
+const {
+  fetchAllClasses,
+  fetchClasseByAnneeAndEtablissement,
+  classesByAnneeAndEtablissement,
+  addElevesInClasse,
+  classes,
+} = ClasseService();
+const { etablissement, anneeEnConfig } = UtilisateurService();
 
 onMounted(async () => {
-  isLoading.value = true;
-  await fetchAllEleves();
-  await fetchAllClasses();
-  await fetchClasseByAnnee(anneeEnCours.value.id);
-  isLoading.value = false;
+  if (isObjectEmpty(user.value)) {
+    router.push('/');
+  } else if (user.value.roles != 'Admin') {
+    redirectToHomePage();
+  } else {
+    isLoading.value = true;
+    await fetchAllEleves();
+    await fetchAllClasses();
+    await fetchClasseByAnneeAndEtablissement(anneeEnConfig.value.id, user.value.currentEtablissement);
+    console.log('classesByAnneeAndEtablissementv : ', classesByAnneeAndEtablissement.value);
+    isLoading.value = false;
+  }
 });
 
 function mesElevesByClasse(idClasse: number) {
-  mesEleves.value = classesByAnnee.value.find((a) => a.id === idClasse)!.eleves;
+  mesEleves.value = classesByAnneeAndEtablissement.value.find((a) => a.id === idClasse)!.eleves;
 }
 const closeBasic = () => {
   displayBasic.value = false;
@@ -181,6 +205,7 @@ const openBasic = () => {
 
 function filterElevesSansClasse() {
   mesElevesSansClasse.value = eleves.value.filter((e) => e.classe.length == 0);
+  console.log('MesElevessa', mesElevesSansClasse.value);
   isLoading.value = false;
 }
 
@@ -211,39 +236,43 @@ async function editEleve(idEleve: number) {
   );
   alert('Votre Eleve à ete modifié');
   eleveDialog.value = false;
-  await fetchClasseByAnnee(3);
+  await fetchClasseByAnneeAndEtablissement(anneeEnConfig.value.id, user.value.currentEtablissement);
   onClasseChange();
   isLoading.value = false;
 }
 
 async function editClasse(idClasse: number) {
-  const idsEleveExistant = mesEleves.value.map((e: Eleve) => {
-    return e['@id'];
-  });
-  if (selectedEleves.value) {
-    const idsEleve = selectedEleves.value.map((e: Eleve) => {
+  if (confirm('Voulez vous vraiment ajouter ces eleves à cette classe?')) {
+    const idsEleveExistant = mesEleves.value.map((e: Eleve) => {
       return e['@id'];
     });
-    const arrayidEleve = idsEleveExistant.concat(idsEleve);
+    if (selectedEleves.value) {
+      const idsEleve = selectedEleves.value.map((e: Eleve) => {
+        return e['@id'];
+      });
+      const arrayidEleve = idsEleveExistant.concat(idsEleve);
 
-    if (idsEleve) await addElevesInClasse(idClasse, arrayidEleve);
+      if (idsEleve) await addElevesInClasse(idClasse, arrayidEleve);
+    }
+    alert('Votre Eleve à ete ajouté à cette classe');
+    eleveDialog.value = false;
+    isLoading.value = true;
+    mesElevesByClasse(idClasse);
+    onClasseChange();
+    isLoading.value = false;
   }
-
-  alert('Votre Eleve à ete ajouté à cette classe');
-  eleveDialog.value = false;
-  isLoading.value = true;
-  await fetchAllEleves();
-  onClasseChange();
-  isLoading.value = false;
 }
 
 async function deleteFromClasse(idClasse: number) {
-  const idElevesRetirer = mesEleves.value
-    .filter((e) => selectedElevesOnClasse.value?.findIndex((ec) => ec.id === e.id) === -1)
-    .map((e) => {
-      return toRaw(e['@id']);
-    });
-  await addElevesInClasse(idClasse, idElevesRetirer);
-  alert('Votre ou vos élèves on été supprimer de cette classe');
+  if (confirm('Voulez vous vraiment supprimer ces eleves à cette classe?')) {
+    const idElevesRetirer = mesEleves.value
+      .filter((e) => selectedElevesOnClasse.value?.findIndex((ec) => ec.id === e.id) === -1)
+      .map((e) => {
+        return toRaw(e['@id']);
+      });
+    await addElevesInClasse(idClasse, idElevesRetirer);
+    alert('Votre ou vos élèves on été supprimer de cette classe');
+    mesElevesByClasse(idClasse);
+  }
 }
 </script>

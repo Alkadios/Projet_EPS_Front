@@ -12,6 +12,20 @@ export default {
     return axios.get(`${ApiURLEleve}/` + idEleve, apiConfig.value);
   },
 
+  async fetchEleveByUser(idUser: number): Promise<AxiosResponse<ResponseModel>> {
+    const paramsString = `user.id=${idUser.toString()}`;
+    const url = new URL(`${ApiURLEleve}/`);
+    url.search = new URLSearchParams(paramsString).toString();
+    return axios.get(`${url.toString()}`, apiConfig.value);
+  },
+
+  async fetchElevesByEtablissement(idEtablissement: number): Promise<AxiosResponse<ResponseModel>> {
+    const paramsString = `etablissement.id=${idEtablissement.toString()}`;
+    const url = new URL(`${ApiURLEleve}/`);
+    url.search = new URLSearchParams(paramsString).toString();
+    return axios.get(`${url.toString()}`, apiConfig.value);
+  },
+
   async fetchElevesByAnneeAndEtablissement(
     idEtablissement: number,
     idAnnee: number
@@ -37,6 +51,7 @@ export default {
     mailParent2: string;
     sexeEleve: string;
     etablissement: Etablissement;
+    dateNaiss: Date;
   }): Promise<AxiosResponse> {
     return axios.post(`${ApiURLCreateEleve}`, payload, apiConfig.value);
   },
@@ -59,5 +74,9 @@ export default {
     const url = new URL(`${ApiURLEleve}/`);
     url.search = new URLSearchParams(paramsString).toString();
     return axios.get(`${url.toString()}`, apiConfig.value);
+  },
+
+  async fetchAllApsaEvaluateByEleve(idEleve: number): Promise<AxiosResponse<ResponseModel>> {
+    return axios.get(`${ApiURLEleve}/${idEleve}/apsaRetenu`, apiConfig.value);
   },
 };

@@ -6,6 +6,7 @@ import { apiConfig } from '@/config/UtilisateurConfig';
 export default {
   async fetchAllApsaSelectAnneeByAnnee(idAnnee: number): Promise<AxiosResponse<ResponseModel>> {
     const paramsString = `Annee.id=${idAnnee.toString()}`;
+    // const url = new URL(`${ApiURLApsaSelect}/`);
     const url = new URL(`${ApiURLApsaSelect}/`);
     url.search = new URLSearchParams(paramsString).toString();
     return axios.get(`${url.toString()}`, apiConfig.value);
@@ -43,6 +44,7 @@ export default {
       Ca: number;
       Apsa: number;
       Annee: number;
+      Etablissement: number;
     }[]
   ): Promise<AxiosResponse> {
     return axios.post(`${ApiURLApsaSelect}/deleteAndReplace`, payload, apiConfig.value);

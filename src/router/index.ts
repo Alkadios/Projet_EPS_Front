@@ -8,11 +8,6 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     name: 'Login',
-    component: () => import('../views/authentification/Authentification.vue'),
-  },
-  {
-    path: '/auth',
-    name: 'Authentification',
     component: () => import('../views/Authentification.vue'),
   },
   {
@@ -66,9 +61,9 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('../views/eleve/evaluation/AffichageEvaluationAPSA_Eleve.vue'),
   },
   {
-    path: '/Acceuil',
-    name: 'Acceuil',
-    component: () => import('../views/eleve/Acceuil.vue'),
+    path: '/Accueil',
+    name: 'AccueilEleve',
+    component: () => import('../views/eleve/Accueil.vue'),
   },
   {
     path: '/Profil',
@@ -104,6 +99,16 @@ const routes: Array<RouteRecordRaw> = [
     path: '/GestionProfClasse',
     name: 'GestionProfClasse',
     component: () => import('../views/professeur/GestionProfClasse.vue'),
+  },
+  {
+    path: '/GestionCoordonateur',
+    name: 'GestionCoordonateur',
+    component: () => import('../views/coordinateur/GestionCoordonateur.vue'),
+  },
+  {
+    path: '/GestionProfEtablissement',
+    name: 'GestionProfEtablissement',
+    component: () => import('../views/coordinateur/GestionProfEtablissement.vue'),
   },
   {
     path: '/:notFound(.*)',
