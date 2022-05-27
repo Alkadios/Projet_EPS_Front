@@ -246,6 +246,7 @@ import { Eleve, User } from '@/models';
 import EleveService from '@/services/EleveService';
 import UserService from '@/services/UserService';
 import UtilisateurService from '@/services/UtilisateurService';
+import Role from '@/constants/Role';
 import { ref, onMounted } from 'vue';
 import ObjectUtils from '@/utils/ObjectUtils';
 import { useRoute, useRouter } from 'vue-router';
@@ -270,12 +271,12 @@ const eleveDialog = ref(false);
 const isLoading = ref(false);
 const nouveauUtilisateur = ref<User>({
   email: '',
-  roles: ['Eleve'],
+  roles: [Role.ELEVE, Role.USER],
   password: '',
-});
+} as User);
 
+//Une erreur TypeScript ? Bizarre le type est bon normalement... ah non 😅
 const nouveauEleve = ref<Eleve>({
-  id: '',
   nom: '',
   prenom: '',
   telephone: '',
@@ -285,10 +286,11 @@ const nouveauEleve = ref<Eleve>({
   user: '',
   etablissement: user.value.currentEtablissement,
   dateNaiss: new Date(),
-});
+} as Eleve);
 
 async function CreerEleve() {
   isLoading.value = true;
+  //Pourquoi utiliser un objet quand on peut passer les propriétés une par une ??? 😪 Bon courage pour la refacto 💪 perso j'ai la flemme
   await saveEleve(
     nouveauUtilisateur.value.email,
     nouveauUtilisateur.value.roles,
@@ -357,7 +359,7 @@ const closeBasic = () => {
 onMounted(async () => {
   if (isObjectEmpty(user.value)) {
     router.push('/');
-  } else if (user.value.roles != 'Admin') {
+  } else if (!user.value.roles.includes(Role.ADMIN)) {
     redirectToHomePage();
   } else {
     isLoading.value = true;

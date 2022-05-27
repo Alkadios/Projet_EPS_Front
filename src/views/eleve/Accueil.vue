@@ -73,6 +73,7 @@ import ObjectUtils from '@/utils/ObjectUtils';
 import type { Eleve, APSA } from '@/models';
 import UserService from '@/services/UserService';
 import EleveService from '@/services/EleveService';
+import Role from '@/constants/Role';
 
 const { fetchEleveByUser, eleveByUser } = EleveService();
 const { isObjectEmpty } = ObjectUtils();
@@ -103,7 +104,7 @@ const listeShow = ref();
 onMounted(async () => {
   if (isObjectEmpty(user.value)) {
     router.push('/');
-  } else if (user.value.roles != 'Eleve') {
+  } else if (!user.value.roles.includes(Role.ELEVE)) {
     redirectToHomePage();
   } else {
     isLoading.value = true;

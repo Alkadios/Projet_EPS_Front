@@ -195,6 +195,7 @@ import { Eleve, User, Utilisateur } from '@/models';
 import EleveService from '@/services/EleveService';
 import EtablissementService from '@/services/EtablissementService';
 import UserService from '@/services/UserService';
+import Role from '@/constants/Role';
 import { ref, onMounted } from 'vue';
 import ObjectUtils from '@/utils/ObjectUtils';
 import { useRoute, useRouter } from 'vue-router';
@@ -219,7 +220,7 @@ const NomEleve = 'Laura GUICHON';
 
 const nouveauUtilisateur = ref<User>({
   email: '',
-  roles: ['Eleve'],
+  roles: [Role.ELEVE, Role.USER],
   password: '',
 });
 
@@ -258,7 +259,7 @@ function onSubmitUtil() {
 onMounted(async () => {
   if (isObjectEmpty(user.value)) {
     router.push('/');
-  } else if (user.value.roles != 'Admin') {
+  } else if (!user.value.roles.includess(Role.ADMIN)) {
     redirectToHomePage();
   } else {
     await fetchAllEtablissements();

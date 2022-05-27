@@ -90,6 +90,7 @@ import type { ApsaRetenu } from '@/models';
 import UserService from '@/services/UserService';
 import ObjectUtils from '@/utils/ObjectUtils';
 import EleveService from '@/services/EleveService';
+import Role from '@/constants/Role';
 
 const { fetchEleveByUser, eleveByUser } = EleveService();
 const { isObjectEmpty } = ObjectUtils();
@@ -187,7 +188,7 @@ interface EvaluationPersonnelle {
 onMounted(async () => {
   if (isObjectEmpty(user.value)) {
     router.push('/');
-  } else if (user.value.roles != 'Eleve') {
+  } else if (!user.value.roles.includes(Role.ELEVE)) {
     redirectToHomePage();
   } else {
     isLoading.value = true;
@@ -231,7 +232,7 @@ function onSituationEvaluationChange() {
   monAffichageGraphiquePersonnel.value = [];
   let indexGraphiqueClasseByCriterebyEleves = 0;
   situationEvaluationSelectionner.value?.criteres.forEach((c) => {
-    const getOrCreateTooltip = (chart) => {
+    const getOrCreateTooltip = (chart: any) => {
       let tooltipEl = chart.canvas.parentNode.querySelector('div');
 
       if (!tooltipEl) {

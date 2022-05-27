@@ -187,6 +187,7 @@ import ApsaRetenuService from '@/services/ApsaRetenuService';
 import ObjectUtils from '@/utils/ObjectUtils';
 import { useRoute, useRouter } from 'vue-router';
 import UserService from '@/services/UserService';
+import Role from '@/constants/Role';
 
 const { user, redirectToHomePage } = UserService();
 //const router = useRouter();
@@ -238,10 +239,11 @@ const apsasRetenusFiltree = computed((): ApsaRetenu[] => {
 });
 
 onMounted(async () => {
+  console.log('onMonted Tableau de bord', isObjectEmpty(user.value), user.value.roles.includes(Role.ADMIN));
   if (isObjectEmpty(user.value)) {
     router.push('/');
-  } else if (user.value.roles != 'Admin') {
-    redirectToHomePage();
+  } else if (!user.value.roles.includes(Role.ADMIN)) {
+    //redirectToHomePage();
   } else {
     isLoading.value = true;
     await fetchAllAnnees();

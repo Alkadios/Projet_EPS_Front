@@ -143,6 +143,7 @@ import ObjectUtils from '@/utils/ObjectUtils';
 import type { Eleve, Classe, ApsaRetenu, NiveauScolaire, APSA, ChampApprentissage } from '@/models';
 import UserService from '@/services/UserService';
 import ProfesseurService from '@/services/ProfesseurService';
+import Role from '@/constants/Role';
 
 const { fetchProfByUser, professeurByUser } = ProfesseurService();
 const { user, redirectToHomePage } = UserService();
@@ -216,7 +217,7 @@ function verif() {}
 onMounted(async () => {
   if (isObjectEmpty(user.value)) {
     router.push('/');
-  } else if (user.value.roles != 'Professeur') {
+  } else if (!user.value.roles.includes(Role.PROF)) {
     redirectToHomePage();
   } else {
     isLoading.value = true;

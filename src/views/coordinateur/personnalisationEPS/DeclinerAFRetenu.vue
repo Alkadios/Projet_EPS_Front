@@ -84,6 +84,7 @@ import { useRoute } from 'vue-router';
 import router from '@/router';
 import ObjectUtils from '@/utils/ObjectUtils';
 import UserService from '@/services/UserService';
+import Role from '@/constants/Role';
 
 const { isObjectEmpty } = ObjectUtils();
 const { user, redirectToHomePage } = UserService();
@@ -175,7 +176,7 @@ function verifIsExistSituationEvaluation() {
 onMounted(async () => {
   if (isObjectEmpty(user.value)) {
     router.push('/');
-  } else if (user.value.roles != 'Admin') {
+  } else if (!user.value.roles.includes(Role.ADMIN)) {
     redirectToHomePage();
   } else {
     isLoading.value = true;

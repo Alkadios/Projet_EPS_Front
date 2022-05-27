@@ -19,10 +19,18 @@ export default function EtablissementService() {
       Professeur,
     });
   }
+  async function saveEtablissement(etablissement: Etablissement) {
+    await store.dispatch('EtablissementModule/saveEtablissement', { etablissement });
+  }
+  async function deleteEtablissement(idEtablissement: number) {
+    await store.dispatch('EtablissementModule/deleteEtablissement', { idEtablissement });
+  }
 
   return {
     fetchAllEtablissements,
     putEtablissementProfs,
     etablissements,
+    saveEtablissement,
+    deleteEtablissement,
   };
 }

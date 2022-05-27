@@ -70,7 +70,7 @@
               <Column field="libelleClasse" header="libelleClasse" :sortable="true" style="min-width: 12rem"></Column>
               <Column :exportable="false" style="min-width: 8rem"> </Column>
             </DataTable>
-            <button type="button" class="btn btn-primary" @click="editClasse(selectedClasse?.id)">Ajouter</button>
+            <button type="button" class="btn btn-primary" @click="editClasse()">Ajouter</button>
           </template>
         </Card>
       </div>
@@ -88,6 +88,8 @@ import eleve from '@/store/modules/eleve';
 import { ref, onMounted, toRaw } from 'vue';
 import ObjectUtils from '@/utils/ObjectUtils';
 import { useRoute, useRouter } from 'vue-router';
+import Role from '@/constants/Role';
+
 const router = useRouter();
 const { isObjectEmpty } = ObjectUtils();
 const {
@@ -118,7 +120,7 @@ const openBasic = () => {
 onMounted(async () => {
   if (isObjectEmpty(user.value)) {
     router.push('/');
-  } else if (user.value.roles != 'Professeur') {
+  } else if (!user.value.roles.includess(Role.PROF)) {
     redirectToHomePage();
   } else {
     isLoading.value = true;

@@ -99,6 +99,8 @@ import eleve from '@/store/modules/eleve';
 import { ref, onMounted, toRaw } from 'vue';
 import ObjectUtils from '@/utils/ObjectUtils';
 import { useRoute, useRouter } from 'vue-router';
+import Role from '@/constants/Role';
+
 const router = useRouter();
 const { isObjectEmpty } = ObjectUtils();
 
@@ -109,7 +111,7 @@ const { user, redirectToHomePage } = UserService();
 onMounted(async () => {
   if (isObjectEmpty(user.value)) {
     router.push('/');
-  } else if (user.value.roles != 'Admin') {
+  } else if (!user.value.roles.includess(Role.ADMIN)) {
     redirectToHomePage();
   } else {
     isLoading.value = true;

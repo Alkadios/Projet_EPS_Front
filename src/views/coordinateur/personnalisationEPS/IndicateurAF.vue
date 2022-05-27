@@ -330,6 +330,7 @@ import { useRoute, useRouter } from 'vue-router';
 import ObjectUtils from '@/utils/ObjectUtils';
 import { cloneDeep } from 'lodash-es';
 import UserService from '@/services/UserService';
+import Role from '@/constants/Role';
 
 const { user, redirectToHomePage } = UserService();
 const route = useRoute();
@@ -384,7 +385,7 @@ const closeEdit = () => {
 onMounted(async () => {
   if (isObjectEmpty(user.value)) {
     router.push('/');
-  } else if (user.value.roles != 'Admin') {
+  } else if (!user.value.roles.includess(Role.ADMIN)) {
     redirectToHomePage();
   } else {
     isLoading.value = true;

@@ -192,6 +192,7 @@ import ProfesseurService from '@/services/ProfesseurService';
 import UserService from '@/services/UserService';
 import UtilisateurService from '@/services/UtilisateurService';
 import { ref, onMounted } from 'vue';
+import Role from '@/constants/Role';
 import ObjectUtils from '@/utils/ObjectUtils';
 import { useRoute, useRouter } from 'vue-router';
 const router = useRouter();
@@ -213,7 +214,7 @@ const profDialog = ref(false);
 
 const nouveauUtilisateur = ref<User>({
   email: '',
-  roles: ['Professeur'],
+  roles: [Role.PROF, Role.USER],
   password: '',
 });
 
@@ -280,7 +281,7 @@ const closeBasic = () => {
 onMounted(async () => {
   if (isObjectEmpty(user.value)) {
     router.push('/');
-  } else if (user.value.roles != 'Admin') {
+  } else if (!user.value.roles.includess(Role.ADMIN)) {
     redirectToHomePage();
   } else {
     isLoading.value = true;

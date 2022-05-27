@@ -107,6 +107,7 @@ import ClasseService from '@/services/ClasseService';
 import EtablissementService from '@/services/EtablissementService';
 import NiveauScolaireService from '@/services/NiveauScolaireService';
 import { ref, onMounted, watch } from 'vue';
+import Role from '@/constants/Role';
 import UserService from '@/services/UserService';
 import ObjectUtils from '@/utils/ObjectUtils';
 import { useRoute, useRouter } from 'vue-router';
@@ -175,7 +176,7 @@ const closeBasic = () => {
 onMounted(async () => {
   if (isObjectEmpty(user.value)) {
     router.push('/');
-  } else if (user.value.roles != 'Admin') {
+  } else if (!user.value.roles.includess(Role.ADMIN)) {
     redirectToHomePage();
   } else {
     isLoading.value = true;

@@ -152,7 +152,7 @@
         <div class="col-8">
           <Card>
             <template #content>
-              <center><h1>Modifier un Coordonnateur</h1></center>
+              <h1>Modifier un Coordonnateur</h1>
               <form>
                 <div class="container">
                   <div class="row">
@@ -194,6 +194,7 @@ import UtilisateurService from '@/services/UtilisateurService';
 import { ref, onMounted } from 'vue';
 import ObjectUtils from '@/utils/ObjectUtils';
 import router from '@/router';
+import Role from '@/constants/Role';
 
 const { isObjectEmpty } = ObjectUtils();
 const { fetchProfByRoles, saveProfesseur, deleteProf, updateProf, fetchProfById, professeurById, professeurByRoles } =
@@ -205,7 +206,7 @@ const profDialog = ref(false);
 
 const nouveauUtilisateur = ref<User>({
   email: '',
-  roles: ['Admin'],
+  roles: [Role.ADMIN, Role.USER],
   password: '',
 });
 
@@ -251,7 +252,7 @@ async function supprimerProf(Professeur: Professeur) {
   if (confirm('Voulez vous vraiment supprimer ce coordonnateur ?')) {
     isLoading.value = true;
     await deleteProf(Professeur.id);
-    await fetchProfByRoles('Admin');
+    await fetchProfByRoles(Role.ADMIN);
     isLoading.value = false;
   }
 }
@@ -272,11 +273,11 @@ const closeBasic = () => {
 onMounted(async () => {
   if (isObjectEmpty(user.value)) {
     router.push('/');
-  } else if (user.value.roles != 'Admin') {
+  } else if (!user.value.roles.includes(Role.ADMIN)) {
     redirectToHomePage();
   } else {
     isLoading.value = true;
-    await fetchProfByRoles('Admin');
+    await fetchProfByRoles(Role.ADMIN);
     isLoading.value = false;
   }
 });

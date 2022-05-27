@@ -155,6 +155,7 @@ import UserService from '@/services/UserService';
 import eleve from '@/store/modules/eleve';
 import ObjectUtils from '@/utils/ObjectUtils';
 import router from '@/router';
+import Role from '@/constants/Role';
 
 const { isObjectEmpty } = ObjectUtils();
 const { user, redirectToHomePage } = UserService();
@@ -171,7 +172,7 @@ const { etablissement, anneeEnConfig } = UtilisateurService();
 onMounted(async () => {
   if (isObjectEmpty(user.value)) {
     router.push('/');
-  } else if (user.value.roles != 'Admin') {
+  } else if (!user.value.roles.includess(Role.ADMIN)) {
     redirectToHomePage();
   } else {
     isLoading.value = true;

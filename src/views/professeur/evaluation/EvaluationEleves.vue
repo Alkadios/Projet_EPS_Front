@@ -140,6 +140,7 @@ import EvaluationEleveService from '@/services/EvaluationEleveService';
 import ObjectUtils from '@/utils/ObjectUtils';
 import type { Critere, Eleve, Indicateur, Classe, ApsaRetenu, NiveauScolaire, APSA } from '@/models';
 import ProfesseurService from '@/services/ProfesseurService';
+import Role from '@/constants/Role';
 
 const { fetchProfByUser, professeurByUser } = ProfesseurService();
 const route = useRoute();
@@ -253,7 +254,7 @@ watch(
 onMounted(async () => {
   if (isObjectEmpty(user.value)) {
     router.push('/');
-  } else if (user.value.roles != 'Professeur') {
+  } else if (!user.value.roles.includes(Role.PROF)) {
     redirectToHomePage();
   } else {
     isLoading.value = true;

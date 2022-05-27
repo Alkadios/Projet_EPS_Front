@@ -111,6 +111,11 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('../views/coordinateur/GestionProfEtablissement.vue'),
   },
   {
+    path: '/GestionEtablissement',
+    name: 'GestionEtablissement',
+    component: () => import('../views/coordinateur/GestionEtablissement.vue'),
+  },
+  {
     path: '/:notFound(.*)',
     redirect: '/',
   },
