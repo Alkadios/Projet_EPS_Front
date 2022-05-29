@@ -202,7 +202,7 @@
       <div class="col-8">
         <Card>
           <template #content>
-            <center><h1>Modifier un Eleve</h1></center>
+            <h1>Modifier un Eleve</h1>
             <form>
               <div class="container">
                 <div class="row">

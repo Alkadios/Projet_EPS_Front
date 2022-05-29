@@ -79,16 +79,15 @@
 </template>
 
 <script lang="ts" setup>
-import { Classe, Eleve } from '@/models';
+import { ref, onMounted, toRaw } from 'vue';
+import { useRouter } from 'vue-router';
+import ObjectUtils from '@/utils/ObjectUtils';
+import Role from '@/constants/Role';
 import ClasseService from '@/services/ClasseService';
 import ProfesseurService from '@/services/ProfesseurService';
 import UserService from '@/services/UserService';
 import UtilisateurService from '@/services/UtilisateurService';
-import eleve from '@/store/modules/eleve';
-import { ref, onMounted, toRaw } from 'vue';
-import ObjectUtils from '@/utils/ObjectUtils';
-import { useRoute, useRouter } from 'vue-router';
-import Role from '@/constants/Role';
+import type { Classe, Eleve } from '@/models';
 
 const router = useRouter();
 const { isObjectEmpty } = ObjectUtils();
@@ -104,15 +103,9 @@ const { user, redirectToHomePage } = UserService();
 const { putProfesseursClasse } = ProfesseurService();
 const selectedClasses = ref<Classe[]>();
 const selectedClassesForAdd = ref<Classe[]>();
-const classesByProf = ref<Classe[]>();
 
-const closeBasic = () => {
-  displayBasic.value = false;
-};
-
-const selectedClasse = ref<Classe>();
-const selectedEleves = ref<Eleve[]>();
 const displayBasic = ref(false);
+
 const openBasic = () => {
   displayBasic.value = true;
 };
@@ -120,7 +113,7 @@ const openBasic = () => {
 onMounted(async () => {
   if (isObjectEmpty(user.value)) {
     router.push('/');
-  } else if (!user.value.roles.includess(Role.PROF)) {
+  } else if (!user.value.roles.includes(Role.PROF)) {
     redirectToHomePage();
   } else {
     isLoading.value = true;

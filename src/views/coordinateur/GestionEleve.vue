@@ -98,7 +98,7 @@
       <div class="col-8">
         <Card>
           <template #content>
-            <center><h1>Modifier un Eleve</h1></center>
+            <h1>Modifier un Eleve</h1>
             <form>
               <div class="container">
                 <div class="row">
@@ -172,7 +172,7 @@ const { etablissement, anneeEnConfig } = UtilisateurService();
 onMounted(async () => {
   if (isObjectEmpty(user.value)) {
     router.push('/');
-  } else if (!user.value.roles.includess(Role.ADMIN)) {
+  } else if (!user.value.roles.includes(Role.ADMIN)) {
     redirectToHomePage();
   } else {
     isLoading.value = true;

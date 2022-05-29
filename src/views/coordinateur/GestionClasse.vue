@@ -46,49 +46,47 @@
       <div class="col-8">
         <Card>
           <template #content>
-            <center><h1>Ajouter une Classe</h1></center>
+            <h1>Ajouter une Classe</h1>
             <form>
               <div class="container">
                 <div class="row">
-                  <center>
-                    <div class="col-lg-12 col-md-12 col-sm-12 mt-3">
-                      <input
-                        class="form-control"
-                        v-model="nouvelleClasse.libelleClasse"
-                        type="libelleClasse"
-                        id="libelleClasse"
-                        name="libelleClasse"
-                        placeholder="Nom Classe"
-                      />
-                    </div>
-                    <div class="col-lg-12 col-md-12 col-sm-12 mt-3">
-                      <Dropdown
-                        v-model="selectedNiveauScolaire"
-                        :options="niveauxScolaires"
-                        optionLabel="libelle"
-                        optionValue="id"
-                        placeholder="Selectionner un NiveauScolaire"
-                      />
-                    </div>
-                    <div class="col-lg-12 col-md-12 col-sm-12 mt-3">
-                      <Dropdown
-                        v-model="selectedAnnee"
-                        :options="annees"
-                        optionLabel="annee"
-                        optionValue="id"
-                        placeholder="Selectionner une Annee"
-                      />
-                    </div>
-                    <div class="col-lg-12 col-md-12 col-sm-12 mt-3">
-                      <Dropdown
-                        v-model="selectedEtablissement"
-                        :options="etablissements"
-                        optionLabel="nom"
-                        optionValue="id"
-                        placeholder="Selectionner un Etablissement"
-                      />
-                    </div>
-                  </center>
+                  <div class="col-lg-12 col-md-12 col-sm-12 mt-3">
+                    <input
+                      class="form-control"
+                      v-model="nouvelleClasse.libelleClasse"
+                      type="libelleClasse"
+                      id="libelleClasse"
+                      name="libelleClasse"
+                      placeholder="Nom Classe"
+                    />
+                  </div>
+                  <div class="col-lg-12 col-md-12 col-sm-12 mt-3">
+                    <Dropdown
+                      v-model="selectedNiveauScolaire"
+                      :options="niveauxScolaires"
+                      optionLabel="libelle"
+                      optionValue="id"
+                      placeholder="Selectionner un NiveauScolaire"
+                    />
+                  </div>
+                  <div class="col-lg-12 col-md-12 col-sm-12 mt-3">
+                    <Dropdown
+                      v-model="selectedAnnee"
+                      :options="annees"
+                      optionLabel="annee"
+                      optionValue="id"
+                      placeholder="Selectionner une Annee"
+                    />
+                  </div>
+                  <div class="col-lg-12 col-md-12 col-sm-12 mt-3">
+                    <Dropdown
+                      v-model="selectedEtablissement"
+                      :options="etablissements"
+                      optionLabel="nom"
+                      optionValue="id"
+                      placeholder="Selectionner un Etablissement"
+                    />
+                  </div>
                 </div>
                 <button type="button" class="btn btn-primary" @click="CreerClasse()">Créer</button>
               </div>
@@ -176,7 +174,7 @@ const closeBasic = () => {
 onMounted(async () => {
   if (isObjectEmpty(user.value)) {
     router.push('/');
-  } else if (!user.value.roles.includess(Role.ADMIN)) {
+  } else if (!user.value.roles.includes(Role.ADMIN)) {
     redirectToHomePage();
   } else {
     isLoading.value = true;

@@ -152,7 +152,7 @@
         <div class="col-8">
           <Card>
             <template #content>
-              <center><h1>Modifier un Prof</h1></center>
+              <h1>Modifier un Prof</h1>
               <form>
                 <div class="container">
                   <div class="row">
@@ -281,7 +281,7 @@ const closeBasic = () => {
 onMounted(async () => {
   if (isObjectEmpty(user.value)) {
     router.push('/');
-  } else if (!user.value.roles.includess(Role.ADMIN)) {
+  } else if (!user.value.roles.includes(Role.ADMIN)) {
     redirectToHomePage();
   } else {
     isLoading.value = true;

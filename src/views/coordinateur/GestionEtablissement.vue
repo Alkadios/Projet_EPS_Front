@@ -193,7 +193,7 @@ const titreModal = computed(() => {
 onMounted(async () => {
   if (isObjectEmpty(user.value)) {
     router.push('/');
-  } else if (!user.value.roles.includess(Role.ADMIN)) {
+  } else if (!user.value.roles.includes(Role.ADMIN)) {
     redirectToHomePage();
   } else {
     isLoading.value = true;
