@@ -5,9 +5,9 @@
       <div class="container">
         <div class="row justify-content-center">
           <div class="col-lg-5 text-center mx-auto">
-            <h1 class="text-white mb-2 mt-5">Bienvenue!</h1>
+            <h1 class="text-white mb-2 mt-5">Bienvenue !</h1>
             <p class="text-lead text-white">
-              Outil d'évaluation pour les professeurs et suivie des performances des élèves
+              Outil d'évaluation pour les professeurs et le suivi des performances des élèves
             </p>
           </div>
         </div>

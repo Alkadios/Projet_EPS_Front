@@ -1,6 +1,7 @@
 <template>
   <div class="card shadow-lg o-hidden border-0 m-5">
     <div class="card-body p-5">
+      <h3>Attribution des professeurs dans un établissement</h3>
       <Dropdown
         v-model="selectedEtablissement"
         :options="etablissements"
@@ -15,10 +16,10 @@
           <Button label="Ajouter des profs" @click="openBasic" style="right: 1rem" icon="pi pi-plus" autofocus />
           <Button
             label="Retirer les Profs"
-            @click="deleteFromEtablissement(selectedEtablissement?.id)"
+            @click="deleteFromEtablissement(selectedEtablissement!.id)"
             style="right: 1rem"
             icon="pi pi-trash"
-            autofocus
+            :disabled="!selectedProfesseurOnEtablissement || selectedProfesseurOnEtablissement?.length === 0"
           />
         </div>
         <DataTable
@@ -46,7 +47,7 @@
   </div>
 
   <Dialog
-    header="Ajouter un Profs"
+    header="Ajouter des professeurs dans l'établissement"
     :paginator="true"
     :rows="10"
     :rowsPerPageOptions="[10, 20, 50]"
@@ -54,29 +55,20 @@
     :style="{ width: '50vw' }"
   >
     <div class="row" style="place-content: center">
-      <div class="col-8">
+      <div class="col">
         <Card>
           <template #content>
             <DataTable
-              :value="mesProfsSansEtablissement"
+              :value="professeursNotInEtablissements"
               v-model:selection="selectedProfs"
               responsiveLayout="scroll"
               dataKey="id"
             >
               <Column selectionMode="multiple"></Column>
-              <Column field="nom" header="nom" :sortable="true" style="min-width: 12rem"></Column>
-              <Column field="prenom" header="prenom" :sortable="true" style="min-width: 12rem"></Column>
-              <Column field="telephone" header="telephone" :sortable="true" style="min-width: 12rem"></Column>
-              <Column field="mailParent1" header="mailParent1" :sortable="true" style="min-width: 12rem"></Column>
-              <Column field="mailParent2" header="mailParent2" :sortable="true" style="min-width: 12rem"></Column>
-              <Column :exportable="false" style="min-width: 8rem">
-                <template>
-                  <Button icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" />
-                  <Button icon="pi pi-trash" class="p-button-rounded p-button-warning" />
-                </template>
-              </Column>
+              <Column field="nom" header="Nom" :sortable="true" style="min-width: 12rem"></Column>
+              <Column field="prenom" header="Prenom" :sortable="true" style="min-width: 12rem"></Column>
             </DataTable>
-            <button type="button" class="btn btn-primary" @click="editEtablissement(selectedEtablissement?.id)">
+            <button type="button" class="btn btn-primary" @click="editEtablissement(selectedEtablissement!.id)">
               Ajouter
             </button>
           </template>
@@ -87,28 +79,37 @@
 </template>
 
 <script lang="ts" setup>
-import { Classe, Eleve, Etablissement, Professeur } from '@/models';
-import ClasseService from '@/services/ClasseService';
-import EleveService from '@/services/EleveService';
+import { ref, onMounted, toRaw } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { useToast } from 'primevue/usetoast';
+import Role from '@/constants/Role';
+import ObjectUtils from '@/utils/ObjectUtils';
 import EtablissementService from '@/services/EtablissementService';
 import ProfesseurService from '@/services/ProfesseurService';
 import UserService from '@/services/UserService';
-import UtilisateurService from '@/services/UtilisateurService';
-import eleve from '@/store/modules/eleve';
-import { ref, onMounted, toRaw } from 'vue';
-import ObjectUtils from '@/utils/ObjectUtils';
-import { useRoute, useRouter } from 'vue-router';
+import type { Classe, Eleve, Etablissement, Professeur } from '@/models';
+
 const router = useRouter();
+const toast = useToast();
+
 const { isObjectEmpty } = ObjectUtils();
 
 const { fetchAllEtablissements, etablissements, putEtablissementProfs } = EtablissementService();
 const { fetchAllProfs, professeurs } = ProfesseurService();
 const { user, redirectToHomePage } = UserService();
 
+const mesProfs = ref<Professeur[]>([]);
+const selectedEtablissement = ref<Etablissement>();
+const selectedProfs = ref<Professeur[]>();
+const selectedProfesseurOnEtablissement = ref<Professeur[]>();
+const professeursNotInEtablissements = ref<Professeur[]>([]);
+const displayBasic = ref(false);
+const isLoading = ref(false);
+
 onMounted(async () => {
   if (isObjectEmpty(user.value)) {
     router.push('/');
-  } else if (user.value.roles != 'Admin') {
+  } else if (!user.value.roles.includes(Role.ADMIN)) {
     redirectToHomePage();
   } else {
     isLoading.value = true;
@@ -120,27 +121,19 @@ onMounted(async () => {
 
 function mesProfsByEtablissement(idEtablissement: number) {
   mesProfs.value = etablissements.value.find((a) => a.id === idEtablissement)!.Professeur;
-  console.log('mesprofs', mesProfs.value);
 }
-const closeBasic = () => {
-  displayBasic.value = false;
-};
 
-const mesProfs = ref<Professeur[]>([]);
-const eleveDialog = ref(false);
-const selectedEtablissement = ref<Etablissement>();
-const selectedProfs = ref<Professeur[]>();
-const selectedProfesseurOnEtablissement = ref<Professeur[]>();
-const mesProfsSansEtablissement = ref<Professeur[]>([]);
-const displayBasic = ref(false);
-const isLoading = ref(false);
 const openBasic = () => {
   displayBasic.value = true;
-  filterProfsSansEtablissement();
+  filterProfsNotInEtablissement();
 };
 
-function filterProfsSansEtablissement() {
-  mesProfsSansEtablissement.value = professeurs.value.filter((p) => p.etablissements.length == 0);
+function filterProfsNotInEtablissement() {
+  professeursNotInEtablissements.value = professeurs.value
+    .filter((p: any) => !p.etablissements.includes(selectedEtablissement.value?.['@id']))
+    .map((p) => {
+      return toRaw(p);
+    });
   isLoading.value = false;
 }
 
@@ -151,37 +144,45 @@ function onEtablissementChange() {
 }
 
 async function editEtablissement(idEtablissement: number) {
-  if (confirm('Voulez vous vraiment ajouter ces professeurs à cette etablissement')) {
-    const idsProfsExistants = mesProfs.value.map((p: Professeur) => {
+  const idsProfsExistants = mesProfs.value.map((p: Professeur) => {
+    return p['@id'];
+  });
+  if (selectedProfs.value) {
+    const idsProfs = selectedProfs.value.map((p: Professeur) => {
       return p['@id'];
     });
-    if (selectedProfs.value) {
-      const idsProfs = selectedProfs.value.map((p: Professeur) => {
-        return p['@id'];
-      });
-      const arrayidProf = idsProfsExistants.concat(idsProfs);
+    const arrayidProf = idsProfsExistants.concat(idsProfs);
 
-      if (idsProfs) await putEtablissementProfs(idEtablissement, arrayidProf);
-    }
-
-    alert('Vos professeurs ont été ajouté à cette établissement');
-    eleveDialog.value = false;
-    isLoading.value = true;
-    mesProfsByEtablissement(idEtablissement);
-    onEtablissementChange();
-    isLoading.value = false;
+    if (idsProfs) await putEtablissementProfs(idEtablissement, arrayidProf);
   }
+  displayBasic.value = false;
+  toast.add({
+    severity: 'success',
+    summary: 'Succès',
+    detail: `Les professeurs ont bien été ajoutés à l'établissement`,
+    life: 4000,
+  });
+
+  isLoading.value = true;
+  mesProfsByEtablissement(idEtablissement);
+  onEtablissementChange();
+  isLoading.value = false;
 }
 
 async function deleteFromEtablissement(idEtablissement: number) {
-  if (confirm('Voulez vous vraiment retirer ces professeurs de cette etablissement?')) {
+  if (confirm('Voulez-vous vraiment retirer ces professeurs de cet etablissement ?')) {
     const idProfsRetirer = mesProfs.value
       .filter((e) => selectedProfesseurOnEtablissement.value?.findIndex((ec) => ec.id === e.id) === -1)
       .map((e) => {
         return toRaw(e['@id']);
       });
     await putEtablissementProfs(idEtablissement, idProfsRetirer);
-    alert('Vos professeurs ont été à cette établissement');
+    toast.add({
+      severity: 'success',
+      summary: 'Succès',
+      detail: `Les professeurs ont bien été retirés de l'établissement`,
+      life: 4000,
+    });
     mesProfsByEtablissement(idEtablissement);
   }
 }

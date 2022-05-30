@@ -1,4 +1,5 @@
 <template>
+  <Toast />
   <div class="bg-gray-100" :class="{ 'g-sidenav-show': sidenavActive }">
     <div class="min-height-300 bg-primary position-absolute w-100"></div>
     <Sidebar
@@ -31,7 +32,7 @@
                 <div class="col-auto my-auto">
                   <div class="h-100">
                     <h5 class="mb-1">{{ nomAndPrenom }}</h5>
-                    <p class="mb-0 font-weight-bold text-sm">{{ user.roles }}</p>
+                    <p class="mb-0 font-weight-bold text-sm">{{ roleUtilisateur }}</p>
                   </div>
                 </div>
                 <div class="col-lg-4 col-md-6 my-sm-auto ms-sm-auto me-sm-0 mx-auto mt-3">
@@ -107,7 +108,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useMeta } from 'vue-meta';
 
@@ -120,6 +121,7 @@ import EleveService from './services/EleveService';
 import ProfesseurService from './services/ProfesseurService';
 import ObjectUtils from './utils/ObjectUtils';
 import UserService from '@/services/UserService';
+import Role from '@/constants/Role';
 
 const router = useRouter();
 const sidenavActive = ref(false);
@@ -139,6 +141,15 @@ const nomAndPrenom = ref();
 const sexeUser = ref();
 const isLoading = ref(false);
 
+const roleUtilisateur = computed(() => {
+  if (user.value && user.value.roles) {
+    if (user.value.roles.includes(Role.ADMIN)) return 'Coordonateur';
+    else if (user.value.roles.includes(Role.PROF)) return 'Professeur';
+    else if (user.value.roles.includes(Role.ELEVE)) return 'Eleve';
+  }
+  return 'Utilisateur';
+});
+
 onMounted(async () => {
   // if (isObjectEmpty(utilisateur.value)) {
   //   router.push({ name: 'Authentification' });
@@ -148,20 +159,30 @@ onMounted(async () => {
   await fetchAnneeEnCours();
   storeAnneeEnConfig(anneeEnCours.value);
   await fetchEtablissementById(1);
-  if (!isObjectEmpty(user)) {
-    onMountedIsFinish.value = true;
-    if (user.value.roles === 'Professeur') {
-      await fetchProfByUser(user.value.id);
-      nomAndPrenom.value = professeurByUser.value.nom + ' ' + professeurByUser.value.prenom;
-    } else if (user.value.roles === 'Eleve') {
-      await fetchEleveByUser(user.value.id);
-      nomAndPrenom.value = eleveByUser.value.nom + ' ' + eleveByUser.value.prenom;
-      sexeUser.value = eleveByUser.value.sexeEleve;
-    }
-  }
 
+  onMountedIsFinish.value = true;
   isLoading.value = false;
 });
+
+watch(
+  () => user.value,
+  async (connectedUser) => {
+    if (!isObjectEmpty(connectedUser)) {
+      await fetchDonneeUtilisateur();
+    }
+  }
+);
+
+async function fetchDonneeUtilisateur() {
+  if (user.value.roles.includes(Role.PROF)) {
+    await fetchProfByUser(user.value.id);
+    nomAndPrenom.value = professeurByUser.value.nom + ' ' + professeurByUser.value.prenom;
+  } else if (user.value.roles.includes(Role.ELEVE)) {
+    await fetchEleveByUser(user.value.id);
+    nomAndPrenom.value = eleveByUser.value.nom + ' ' + eleveByUser.value.prenom;
+    sexeUser.value = eleveByUser.value.sexeEleve;
+  }
+}
 
 function reponsiveSideBar() {
   if (displaySidebar.value === 'none') {

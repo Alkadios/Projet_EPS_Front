@@ -246,6 +246,7 @@ import ProfesseurService from '@/services/ProfesseurService';
 import UserService from '@/services/UserService';
 import ObjectUtils from '@/utils/ObjectUtils';
 import { useRoute, useRouter } from 'vue-router';
+import Role from '@/constants/Role';
 
 const { isObjectEmpty } = ObjectUtils();
 const { user } = UserService();
@@ -261,15 +262,13 @@ onMounted(async () => {
   } else {
     isLoading.value = true;
 
-    if (user.value.roles === 'Professeur') {
+    if (!user.value.roles.includes(Role.PROF)) {
       await fetchProfByUser(user.value.id);
       nomAndPrenom.value = professeurByUser.value.nom + ' ' + professeurByUser.value.prenom;
-      console.log('professeur By User : ', professeurByUser.value);
-    } else if (user.value.roles === 'Eleve') {
+    } else if (!user.value.roles.includes(Role.ELEVE)) {
       await fetchEleveByUser(user.value.id);
       nomAndPrenom.value = eleveByUser.value.nom + ' ' + eleveByUser.value.prenom;
       sexeUser.value = eleveByUser.value.sexeEleve;
-      console.log('eleveByUser : ', eleveByUser.value);
     }
     isLoading.value = false;
   }

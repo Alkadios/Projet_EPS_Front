@@ -153,7 +153,6 @@ onMounted(async () => {
 });
 
 function reponsiveSideBar() {
-  console.log('ta ', props);
   // if (props.displaySideBar === 'none') {
   //   emit('update:displaySidebar', 'block');
   //   console.log('oui');

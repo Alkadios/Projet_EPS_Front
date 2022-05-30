@@ -83,18 +83,19 @@
 
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRouter } from 'vue-router';
+import Role from '@/constants/Role';
+import ObjectUtils from '@/utils/ObjectUtils';
 import UtilisateurService from '@/services/UtilisateurService';
 import ApsaSelectAnneeService from '@/services/ApsaSelectAnneeService';
-import type { ApsaRetenu } from '@/models';
 import UserService from '@/services/UserService';
-import ObjectUtils from '@/utils/ObjectUtils';
 import EleveService from '@/services/EleveService';
+import type { ApsaRetenu } from '@/models';
 
 const { fetchEleveByUser, eleveByUser } = EleveService();
 const { isObjectEmpty } = ObjectUtils();
 const { user, redirectToHomePage } = UserService();
-const route = useRoute();
+
 const router = useRouter();
 
 const { fetchAllApsaSelectAnneeByApsaAndEtablissmenetAndAnnee, apsaSelectAnneeByApsaAndEtablissmenetAndAnnee } =
@@ -112,6 +113,7 @@ const monAffichageGraphique = ref<newAffichageGraphique[]>([
 const lightOptionsCammenbert = ref({
   plugins: {
     legend: {
+      display: false,
       labels: {
         color: '#495057',
       },
@@ -186,12 +188,12 @@ interface EvaluationPersonnelle {
 onMounted(async () => {
   if (isObjectEmpty(user.value)) {
     router.push('/');
-  } else if (user.value.roles != 'Eleve') {
+  } else if (!user.value.roles.includes(Role.ELEVE)) {
     redirectToHomePage();
   } else {
     isLoading.value = true;
     //Année ; APSA ; Etablissement
-    await fetchAllApsaSelectAnneeByApsaAndEtablissmenetAndAnnee(3, 1, 1);
+    await fetchAllApsaSelectAnneeByApsaAndEtablissmenetAndAnnee(4, 25, 1);
     await fetchEleveByUser(user.value.id);
     // situationEvaluation.value = apsaSelectAnneeByApsaAndEtablissmenetAndAnnee.value.find(
     //   (asa) => asa.apsaRetenus
@@ -230,7 +232,7 @@ function onSituationEvaluationChange() {
   monAffichageGraphiquePersonnel.value = [];
   let indexGraphiqueClasseByCriterebyEleves = 0;
   situationEvaluationSelectionner.value?.criteres.forEach((c) => {
-    const getOrCreateTooltip = (chart) => {
+    const getOrCreateTooltip = (chart: any) => {
       let tooltipEl = chart.canvas.parentNode.querySelector('div');
 
       if (!tooltipEl) {
@@ -384,7 +386,7 @@ function onSituationEvaluationChange() {
         i.evaluationEleves.forEach((ee) => {
           if (ee.Eleve.id === eleveByUser.value.id) {
             monAffichageGraphiquePersonnel.value[indexGraphiqueClasseByCriterebyEleves].datasets[1].data.unshift(
-              i.ordre
+              i.ordre - 0.5
             );
           }
         });
