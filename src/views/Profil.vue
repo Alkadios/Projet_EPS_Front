@@ -265,12 +265,10 @@ onMounted(async () => {
     if (!user.value.roles.includes(Role.PROF)) {
       await fetchProfByUser(user.value.id);
       nomAndPrenom.value = professeurByUser.value.nom + ' ' + professeurByUser.value.prenom;
-      console.log('professeur By User : ', professeurByUser.value);
     } else if (!user.value.roles.includes(Role.ELEVE)) {
       await fetchEleveByUser(user.value.id);
       nomAndPrenom.value = eleveByUser.value.nom + ' ' + eleveByUser.value.prenom;
       sexeUser.value = eleveByUser.value.sexeEleve;
-      console.log('eleveByUser : ', eleveByUser.value);
     }
     isLoading.value = false;
   }

@@ -161,8 +161,6 @@ onMounted(async () => {
   await fetchEtablissementById(1);
 
   onMountedIsFinish.value = true;
-  console.log('uuser pas là', user.value);
-
   isLoading.value = false;
 });
 
@@ -176,7 +174,6 @@ watch(
 );
 
 async function fetchDonneeUtilisateur() {
-  console.log('utser présent', user.value);
   if (user.value.roles.includes(Role.PROF)) {
     await fetchProfByUser(user.value.id);
     nomAndPrenom.value = professeurByUser.value.nom + ' ' + professeurByUser.value.prenom;

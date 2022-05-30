@@ -163,7 +163,7 @@
         <li class="nav-item mt-3" id="monCompteSideBar" style="display: none">
           <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Mon compte</h6>
         </li>
-        <li class="nav-item" id="monProfilSideBar" style="display: none" @click="echo">
+        <li class="nav-item" id="monProfilSideBar" style="display: none">
           <router-link to="/Profil" class="nav-link">
             <div
               class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center"
@@ -216,10 +216,6 @@ const props = defineProps({
 
 async function logout() {
   await deconnexion();
-}
-
-function echo() {
-  console.log(props.displaySideBar, 'props', props.sidenavActive);
 }
 
 function displayAside() {

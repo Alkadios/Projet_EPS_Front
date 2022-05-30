@@ -238,7 +238,7 @@
       </div>
     </div>
     <div class="mb-3">
-      <Button label="Terminer" icon="pi pi-check" @click="verif()" autofocus></Button>
+      <Button label="Terminer" icon="pi pi-check" autofocus></Button>
       <Button label="Retour aux AF" icon="pi pi-backward" style="left: 1rem" @click="back()" autofocus></Button>
     </div>
     <div style="position: fixed; bottom: 0; right: 2rem">
@@ -254,21 +254,21 @@
 
 <script lang="ts" setup>
 import { ref, onMounted, computed } from 'vue';
-import { Critere } from '@/models';
-import CritereService from '@/services/CritereService';
+import { useRoute, useRouter } from 'vue-router';
+import { useToast } from 'primevue/usetoast';
+import Role from '@/constants/Role';
 import ObjectUtils from '@/utils/ObjectUtils';
+import CritereService from '@/services/CritereService';
 import UtilisateurService from '@/services/UtilisateurService';
 import ApsaRetenuService from '@/services/ApsaRetenuService';
-import { useRoute, useRouter } from 'vue-router';
-import critere from '@/store/modules/critere';
 import UserService from '@/services/UserService';
-import Role from '@/constants/Role';
+import type { Critere } from '@/models';
 
-const { user, redirectToHomePage } = UserService();
+const toast = useToast();
 const route = useRoute();
 const router = useRouter();
-
 const { isObjectEmpty } = ObjectUtils();
+const { user, redirectToHomePage } = UserService();
 const { etablissement } = UtilisateurService();
 const { saveCritere, fetchCriteres, fetchCriteresByApsaRetenu, deleteCritere, editCritere, criteresByApsaRetenu } =
   CritereService();
@@ -296,7 +296,7 @@ const closeBasic = () => {
 
 const closeEdit = () => {
   displayEdit.value = false;
-  window.alert('Le critère a bien été modifié !');
+  toast.add({ severity: 'success', summary: 'Succès', detail: `Le critère a bien été modifié !`, life: 4000 });
 };
 
 const imageCritereIsSelected = computed(() => {
@@ -328,7 +328,7 @@ async function addCritere() {
     apsaRetenu.value['@id']
   );
   closeBasic();
-  window.alert('Le critère a bien été ajouté !');
+  toast.add({ severity: 'success', summary: 'Succès', detail: `Le critère a bien été ajouté !`, life: 4000 });
 }
 
 async function changeCritere(monCritere: Critere) {
@@ -339,18 +339,12 @@ async function removeCritere(critereId: number) {
   let x = window.confirm('Voulez vous vraiment supprimer ce critère ?');
   if (x) {
     await deleteCritere(critereId);
-    window.alert('Le critère a bien été supprimé !');
+    toast.add({ severity: 'success', summary: 'Succès', detail: `Le critère a bien été supprimé !`, life: 4000 });
   }
 }
 
 function resetCritere() {
   nouveauCritere.value = { titre: '', description: '', url_video: '', image: '' } as Critere;
-}
-
-function verif() {}
-
-function toIndicateur() {
-  router.push('IndicateurAF');
 }
 
 function onPhotoChange(event: any) {
@@ -366,7 +360,6 @@ function onPhotoChange(event: any) {
     },
     false
   );
-
   reader.readAsDataURL(nouvelleImageCritere.value);
 }
 

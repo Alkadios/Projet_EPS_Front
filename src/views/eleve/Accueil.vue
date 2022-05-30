@@ -112,8 +112,6 @@ onMounted(async () => {
   await fetchEleveById(7);
   await fetchAllApsaEvaluateByEleve(7);
 
-  console.log('onMounted', eleveById.value.classe, listeApsaByAnnee.value);
-  console.log(apsaEvaluateByEleve.value.filter((s) => s.id_classe == 10));
   isLoading.value = false;
 });
 

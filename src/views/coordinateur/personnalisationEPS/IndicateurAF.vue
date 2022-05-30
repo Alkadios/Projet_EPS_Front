@@ -322,20 +322,23 @@
 
 <script lang="ts" setup>
 import { ref, onMounted, computed } from 'vue';
-import { Indicateur } from '@/models';
+import { useRoute, useRouter } from 'vue-router';
+import { useToast } from 'primevue/usetoast';
+import { cloneDeep } from 'lodash-es';
+import ObjectUtils from '@/utils/ObjectUtils';
+import Role from '@/constants/Role';
 import UtilisateurService from '@/services/UtilisateurService';
 import CritereService from '@/services/CritereService';
 import IndicateurService from '@/services/IndicateurService';
-import { useRoute, useRouter } from 'vue-router';
-import ObjectUtils from '@/utils/ObjectUtils';
-import { cloneDeep } from 'lodash-es';
 import UserService from '@/services/UserService';
-import Role from '@/constants/Role';
+import type { Indicateur } from '@/models';
 
-const { user, redirectToHomePage } = UserService();
+const toast = useToast();
 const route = useRoute();
 const router = useRouter();
+
 const { isObjectEmpty } = ObjectUtils();
+const { user, redirectToHomePage } = UserService();
 const { etablissement } = UtilisateurService();
 const { critere, fetchCriteres, fetchCritereById } = CritereService();
 const {
@@ -348,7 +351,7 @@ const {
   indicateur,
   indicateursByCritere,
 } = IndicateurService();
-const IndicateurByCritere = ref<Indicateur[]>([]);
+
 const nouvelleImageIndicateur = ref<File>({} as File);
 const nouveauIndicateur = ref<Indicateur>({
   libelle: '',
@@ -379,7 +382,7 @@ function openEdit(monIndicateur: Indicateur) {
 
 const closeEdit = () => {
   displayEdit.value = false;
-  window.alert('L\indicateur a bien été modifié !');
+  toast.add({ severity: 'success', summary: 'Succès', detail: `L'indicateur a bien été modifié !`, life: 4000 });
 };
 
 onMounted(async () => {
@@ -410,7 +413,7 @@ async function addIndicateur() {
   );
   mesIndicateurs.value.push(indicateur.value);
   closeBasic();
-  window.alert("L'indicateur a bien été ajouté !");
+  toast.add({ severity: 'success', summary: 'Succès', detail: `L'indicateur a bien été enregistré`, life: 4000 });
 }
 
 async function changeIndicateur(monIndicateur: Indicateur) {
@@ -431,7 +434,8 @@ async function removeIndicateur(indicateurId: number) {
   if (x) {
     await deleteIndicateur(indicateurId);
     mesIndicateurs.value = mesIndicateurs.value.filter((i: Indicateur) => i.id != indicateurId);
-    window.alert("L'indicateur a bien été supprimé !");
+
+    toast.add({ severity: 'success', summary: 'Succès', detail: `L'indicateur a bien été supprimé`, life: 4000 });
   }
 }
 

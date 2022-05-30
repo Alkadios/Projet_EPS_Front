@@ -298,8 +298,6 @@ function getElevesByClasse(uneClasse: Classe) {
 }
 
 function getApsasRetenusByNiveauScolaire(unNiveauScolaire: NiveauScolaire) {
-  console.log('unNiveauScolaire : ', unNiveauScolaire);
-  console.log('apsasRetenusByEtablissementAndAnnee : ', apsasRetenusByEtablissementAndAnnee.value);
   return apsasRetenusByEtablissementAndAnnee.value
     .filter((apsaRetenu) => apsaRetenu.AfRetenu.ChoixAnnee.Niveau['@id'] === unNiveauScolaire['@id'])
     .map((apsaR) => {

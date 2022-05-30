@@ -187,15 +187,19 @@
 </template>
 
 <script lang="ts" setup>
-import { Professeur, User } from '@/models';
+import { ref, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { useToast } from 'primevue/usetoast';
+import Role from '@/constants/Role';
+import ObjectUtils from '@/utils/ObjectUtils';
 import ProfesseurService from '@/services/ProfesseurService';
 import UserService from '@/services/UserService';
 import UtilisateurService from '@/services/UtilisateurService';
-import { ref, onMounted } from 'vue';
-import Role from '@/constants/Role';
-import ObjectUtils from '@/utils/ObjectUtils';
-import { useRoute, useRouter } from 'vue-router';
+import type { Professeur, User } from '@/models';
+
 const router = useRouter();
+const toast = useToast();
+
 const { isObjectEmpty } = ObjectUtils();
 const { user, redirectToHomePage } = UserService();
 const { etablissement } = UtilisateurService();
@@ -212,18 +216,30 @@ const { deleteUser } = UserService();
 const isLoading = ref(false);
 const profDialog = ref(false);
 
-const nouveauUtilisateur = ref<User>({
+const nouveauUtilisateur = ref({
   email: '',
-  roles: [Role.PROF, Role.USER],
+  roles: [Role.PROF],
   password: '',
 });
 
-const nouveauProf = ref<Professeur>({
+const nouveauProf = ref({
   id: '',
   nom: '',
   prenom: '',
   telephone: '',
   etablissements: user.value.currentEtablissement,
+});
+
+onMounted(async () => {
+  if (isObjectEmpty(user.value)) {
+    router.push('/');
+  } else if (!user.value.roles.includes(Role.ADMIN)) {
+    redirectToHomePage();
+  } else {
+    isLoading.value = true;
+    await fetchProfesseursByEtablissement(user.value.currentEtablissement);
+    isLoading.value = false;
+  }
 });
 
 async function CreerProfesseur() {
@@ -236,7 +252,7 @@ async function CreerProfesseur() {
     nouveauProf.value.telephone,
     nouveauProf.value.etablissements
   );
-  alert('Votre Professeur à ete créer');
+  toast.add({ severity: 'success', summary: 'Succès', detail: `Le professeur a bien été enregistré`, life: 4000 });
   displayBasic.value = false;
   await fetchProfesseursByEtablissement(user.value.currentEtablissement);
 }
@@ -251,13 +267,14 @@ async function champsProf(idProf: number) {
 async function editProf(idProf: number) {
   isLoading.value = true;
   await updateProf(idProf, professeurById.value.nom, professeurById.value.prenom, professeurById.value.telephone);
-  alert('Votre Prof à ete modifié');
+  toast.add({ severity: 'success', summary: 'Succès', detail: `Le professeur a bien été modifié`, life: 4000 });
+
   profDialog.value = false;
   isLoading.value = false;
 }
 
 async function supprimerProf(Professeur: Professeur) {
-  if (confirm('Voulez vous vraiment supprimer ce professeur?')) {
+  if (confirm('Voulez-vous vraiment supprimer ce professeur?')) {
     isLoading.value = true;
     await deleteProf(Professeur.id);
     await fetchProfesseursByEtablissement(user.value.currentEtablissement);
@@ -277,18 +294,4 @@ const openBasic = () => {
 const closeBasic = () => {
   displayBasic.value = false;
 };
-
-onMounted(async () => {
-  if (isObjectEmpty(user.value)) {
-    router.push('/');
-  } else if (!user.value.roles.includes(Role.ADMIN)) {
-    redirectToHomePage();
-  } else {
-    isLoading.value = true;
-    await fetchProfesseursByEtablissement(user.value.currentEtablissement);
-    console.log('prof', professeursByEtablissement.value);
-    console.log('etablId', user.value.currentEtablissement);
-    isLoading.value = false;
-  }
-});
 </script>

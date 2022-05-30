@@ -77,7 +77,6 @@ export default {
       const classe: Classe = response.data;
       const classes = ref<Classe[]>(context.getters.getClassesByAnneeAndEtablissement);
       classes.value.find((c) => c.id === classe.id)!.eleves = classe.eleves;
-      console.log('classeStore', classes.value, 'Response', response.data);
 
       // const indexEleve = elevesByClasse.value.findIndex((c) => c.classe.find((cl) => payload.idClasse === cl.id));
       // elevesByClasse.value[indexEleve] = response.data;

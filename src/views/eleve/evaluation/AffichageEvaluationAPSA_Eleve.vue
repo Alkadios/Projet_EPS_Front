@@ -83,19 +83,19 @@
 
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRouter } from 'vue-router';
+import Role from '@/constants/Role';
+import ObjectUtils from '@/utils/ObjectUtils';
 import UtilisateurService from '@/services/UtilisateurService';
 import ApsaSelectAnneeService from '@/services/ApsaSelectAnneeService';
-import type { ApsaRetenu } from '@/models';
 import UserService from '@/services/UserService';
-import ObjectUtils from '@/utils/ObjectUtils';
 import EleveService from '@/services/EleveService';
-import Role from '@/constants/Role';
+import type { ApsaRetenu } from '@/models';
 
 const { fetchEleveByUser, eleveByUser } = EleveService();
 const { isObjectEmpty } = ObjectUtils();
 const { user, redirectToHomePage } = UserService();
-const route = useRoute();
+
 const router = useRouter();
 
 const { fetchAllApsaSelectAnneeByApsaAndEtablissmenetAndAnnee, apsaSelectAnneeByApsaAndEtablissmenetAndAnnee } =

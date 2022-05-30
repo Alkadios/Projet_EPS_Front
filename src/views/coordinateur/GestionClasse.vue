@@ -99,28 +99,26 @@
 </template>
 
 <script lang="ts" setup>
-import { Classe } from '@/models';
+import { ref, onMounted, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { useToast } from 'primevue/usetoast';
+import ObjectUtils from '@/utils/ObjectUtils';
+import Role from '@/constants/Role';
 import AnneeService from '@/services/AnneeService';
 import ClasseService from '@/services/ClasseService';
 import EtablissementService from '@/services/EtablissementService';
 import NiveauScolaireService from '@/services/NiveauScolaireService';
-import { ref, onMounted, watch } from 'vue';
-import Role from '@/constants/Role';
 import UserService from '@/services/UserService';
-import ObjectUtils from '@/utils/ObjectUtils';
-import { useRoute, useRouter } from 'vue-router';
 import UtilisateurService from '@/services/UtilisateurService';
+import type { Classe } from '@/models';
+
 const router = useRouter();
+const toast = useToast();
+
 const { isObjectEmpty } = ObjectUtils();
 const { user, redirectToHomePage } = UserService();
-const {
-  fetchClasseByAnneeAndEtablissement,
-  classesByAnneeAndEtablissement,
-  saveClasse,
-  deleteClasse,
-  classesById,
-  fetchClasseById,
-} = ClasseService();
+const { fetchClasseByAnneeAndEtablissement, classesByAnneeAndEtablissement, saveClasse, deleteClasse } =
+  ClasseService();
 const { etablissements, fetchAllEtablissements } = EtablissementService();
 const { niveauxScolaires, fetchAllNiveauxScolaires } = NiveauScolaireService();
 const { annees, fetchAllAnnees } = AnneeService();
@@ -132,11 +130,26 @@ const selectedEtablissement = ref();
 const isLoading = ref(false);
 const classeDialog = ref(false);
 
-const nouvelleClasse = ref<Classe>({
+const nouvelleClasse = ref({
   libelleClasse: '',
   NiveauScolaire: '',
   Annee: '',
   etablissement: '',
+});
+
+onMounted(async () => {
+  if (isObjectEmpty(user.value)) {
+    router.push('/');
+  } else if (!user.value.roles.includes(Role.ADMIN)) {
+    redirectToHomePage();
+  } else {
+    isLoading.value = true;
+    await fetchClasseByAnneeAndEtablissement(anneeEnConfig.value.id, user.value.currentEtablissement);
+    await fetchAllEtablissements();
+    await fetchAllNiveauxScolaires();
+    await fetchAllAnnees();
+    isLoading.value = false;
+  }
 });
 
 async function CreerClasse() {
@@ -147,7 +160,8 @@ async function CreerClasse() {
     'api/annees/' + selectedAnnee.value,
     'api/etablissements/' + selectedEtablissement.value
   );
-  alert('Votre Classe à ete créer');
+
+  toast.add({ severity: 'success', summary: 'Succès', detail: `La classe a bien été enregistré`, life: 4000 });
   displayBasic.value = false;
   await fetchClasseByAnneeAndEtablissement(anneeEnConfig.value.id, user.value.currentEtablissement);
   isLoading.value = false;
@@ -170,19 +184,4 @@ async function supprimerClasse(idClasse: number) {
 const closeBasic = () => {
   displayBasic.value = false;
 };
-
-onMounted(async () => {
-  if (isObjectEmpty(user.value)) {
-    router.push('/');
-  } else if (!user.value.roles.includes(Role.ADMIN)) {
-    redirectToHomePage();
-  } else {
-    isLoading.value = true;
-    await fetchClasseByAnneeAndEtablissement(anneeEnConfig.value.id, user.value.currentEtablissement);
-    await fetchAllEtablissements();
-    await fetchAllNiveauxScolaires();
-    await fetchAllAnnees();
-    isLoading.value = false;
-  }
-});
 </script>

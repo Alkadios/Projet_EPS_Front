@@ -134,15 +134,7 @@
             </Column>
             <Column headerStyle="width:4rem">
               <template #body="slotProps">
-                <Button
-                  icon="pi pi-pencil"
-                  @click="
-                    router.push({
-                      name: 'Critere',
-                      query: { idApsaRetenu: slotProps.data.ApsaRetenu.id },
-                    })
-                  "
-                />
+                <Button icon="pi pi-pencil" @click="pushToEditCritere(slotProps.data)" />
               </template>
             </Column>
             <template #expansion="slotProps">
@@ -190,10 +182,8 @@ import UserService from '@/services/UserService';
 import Role from '@/constants/Role';
 
 const { user, redirectToHomePage } = UserService();
-//const router = useRouter();
 
 const { isObjectEmpty } = ObjectUtils();
-const route = useRoute();
 const router = useRouter();
 
 const {
@@ -227,11 +217,8 @@ const choixAnneeFiltree = computed((): ChoixAnnee[] => {
 });
 const apsasRetenusFiltree = computed((): ApsaRetenu[] => {
   if (!niveauScolaireSelectionne.value) {
-    console.log('niveau scolaire non filter', apsasRetenusByEtablissementAndAnnee.value);
     return apsasRetenusByEtablissementAndAnnee.value;
   } else {
-    console.log('niveau scolaire filter');
-
     return apsasRetenusByEtablissementAndAnnee.value.filter(
       (ar) => ar.AfRetenu.ChoixAnnee.Niveau.id === niveauScolaireSelectionne.value?.id
     );
@@ -239,11 +226,10 @@ const apsasRetenusFiltree = computed((): ApsaRetenu[] => {
 });
 
 onMounted(async () => {
-  console.log('onMonted Tableau de bord', isObjectEmpty(user.value), user.value.roles.includes(Role.ADMIN));
   if (isObjectEmpty(user.value)) {
     router.push('/');
   } else if (!user.value.roles.includes(Role.ADMIN)) {
-    //redirectToHomePage();
+    redirectToHomePage();
   } else {
     isLoading.value = true;
     await fetchAllAnnees();
@@ -269,10 +255,16 @@ async function fetchConfigAnnee() {
   await fetchAllApsaSelectAnneeByAnnee(nouvelAnneeEnConfig.value.id);
   await fetchAllChoixAnneeByAnneeAndEtablissement(nouvelAnneeEnConfig.value.id, etablissement.value.id);
   await fetchApsaRetenuByAnneeAndEtablissement(anneeEnConfig.value.id, etablissement.value.id);
-  console.log('on monted', apsasRetenusByEtablissementAndAnnee.value);
   isLoading.value = false;
 }
 
+function pushToEditCritere(data: { ApsaRetenu: string }) {
+  const idApsaRetenu = data.ApsaRetenu.split('/')[3];
+  router.push({
+    name: 'Critere',
+    query: { idApsaRetenu: idApsaRetenu },
+  });
+}
 function getStringApsaByIdCa(idCa: number) {
   return apsaSelectAnneeByAnnee.value
     .filter((asaba) => asaba.Ca.id === idCa)

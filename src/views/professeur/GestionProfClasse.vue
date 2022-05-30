@@ -81,6 +81,8 @@
 <script lang="ts" setup>
 import { ref, onMounted, toRaw } from 'vue';
 import { useRouter } from 'vue-router';
+import { useToast } from 'primevue/usetoast';
+
 import ObjectUtils from '@/utils/ObjectUtils';
 import Role from '@/constants/Role';
 import ClasseService from '@/services/ClasseService';
@@ -90,6 +92,8 @@ import UtilisateurService from '@/services/UtilisateurService';
 import type { Classe, Eleve } from '@/models';
 
 const router = useRouter();
+const toast = useToast();
+
 const { isObjectEmpty } = ObjectUtils();
 const {
   fetchClasseByAnneeAndEtablissement,
@@ -119,9 +123,6 @@ onMounted(async () => {
     isLoading.value = true;
     await fetchClasseByAnneeAndEtablissement(anneeEnConfig.value.id, user.value.currentEtablissement);
     await fetchClasseByAnneeAndProf(anneeEnConfig.value.id, user.value.professeurs);
-    console.log('classeparprof', classesByAnneeAndProfesseur.value);
-    console.log('userid', user.value.id);
-    console.log('prof', user.value.professeurs);
     isLoading.value = false;
   }
 });
@@ -139,7 +140,7 @@ async function editClasse() {
     if (idsClasses) await putProfesseursClasse(user.value.professeurs, arrayidClasse);
     window.location.reload;
   }
-  alert('ces classes ont ete ajouter');
+  toast.add({ severity: 'success', summary: 'Succès', detail: `Les classes ont bien été ajoutées`, life: 4000 });
 }
 
 async function deleteClasseOfProf() {
@@ -150,7 +151,8 @@ async function deleteClasseOfProf() {
     });
   await putProfesseursClasse(user.value.professeurs, idClassesRetirer);
   location.reload;
-  alert('Votre ou vos classes ont été supprimer');
+
+  toast.add({ severity: 'success', summary: 'Succès', detail: `Les classes ont bien été supprimé`, life: 4000 });
 }
 
 const isLoading = ref(false);

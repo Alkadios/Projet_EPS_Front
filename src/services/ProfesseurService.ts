@@ -46,7 +46,7 @@ export default function ProfesseurService() {
 
   async function saveProfesseur(
     email: string,
-    roles: string,
+    roles: any,
     password: string,
     nom: string,
     prenom: string,

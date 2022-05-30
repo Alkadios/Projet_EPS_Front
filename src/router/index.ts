@@ -1,8 +1,4 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
-//import store from '@/store';
-import ObjectUtils from '@/utils/ObjectUtils';
-
-const { isObjectEmpty } = ObjectUtils();
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -69,11 +65,6 @@ const routes: Array<RouteRecordRaw> = [
     path: '/Profil',
     name: 'Profil',
     component: () => import('../views/Profil.vue'),
-  },
-  {
-    path: '/CreerEleve',
-    name: 'CreerEleve',
-    component: () => import('../views/coordinateur/personnalisationEPS/CreerEleve.vue'),
   },
   {
     path: '/GestionClasse',

@@ -13,11 +13,12 @@
         <Button label="Ajouter un Eleve" @click="openBasic" style="right: 1rem" icon="pi pi-plus" autofocus />
         <Column field="nom" header="nom" :sortable="true" style="min-width: 12rem"></Column>
         <Column field="prenom" header="prenom" :sortable="true" style="min-width: 12rem"></Column>
-        <Column field="telephone" header="telephone" :sortable="true" style="min-width: 12rem"></Column>
-        <Column field="mailParent1" header="mailParent1" :sortable="true" style="min-width: 12rem"></Column>
-        <Column field="mailParent2" header="mailParent2" :sortable="true" style="min-width: 12rem"></Column>
-        <Column field="sexeEleve" header="sexeEleve" :sortable="true" style="min-width: 12rem"></Column>
-        <Column field="dateNaiss" header="dateNaiss" :sortable="true" style="min-width: 12rem"></Column>
+        <Column field="user.email" header="Email" :sortable="true" style="min-width: 12rem"></Column>
+        <Column :exportable="false" style="min-width: 8rem">
+          <template #body="slotProps">
+            <Button icon="pi pi-pencil" class="p-button-rounded" @click="onEditEleve(slotProps.data)" />
+          </template>
+        </Column>
         <Column :exportable="false" style="min-width: 8rem">
           <template #body="slotProps">
             <Button
@@ -39,201 +40,104 @@
     </div>
   </div>
 
-  <Dialog header="Ajouter un Eleve" v-model:visible="displayBasic" :style="{ width: '50vw' }">
+  <Dialog
+    :header="eleveEnCoursDeModif ? `Modifier un Eleve` : `Ajouter un Eleve`"
+    v-model:visible="displayBasic"
+    :style="{ width: '50vw' }"
+  >
     <div class="row" style="place-content: center">
       <div class="col-8">
         <Card>
           <template #content>
-            <form class="mt-4" @submit.prevent="onSubmitUtil">
-              <div class="row">
-                <div class="col-4">
-                  <div class="mb-3">
-                    <label class="form-label" for="username"><strong>Nom</strong></label>
-                  </div>
-                </div>
-                <div class="col">
-                  <div class="mb-3">
-                    <input class="form-control" v-model="nouveauEleve.nom" type="nom" id="nom" name="nom" />
-                  </div>
-                </div>
+            <div class="row">
+              <div class="col-12">
+                <label class="form-label mb-3" for="username"><strong>Nom</strong></label>
+                <input class="form-control mb-3" v-model="nouveauEleve.nom" type="nom" id="nom" name="nom" />
               </div>
-              <div class="row">
-                <div class="col-4">
-                  <div class="mb-3">
-                    <label class="form-label" for="username"><strong>Prenom</strong></label>
-                  </div>
-                </div>
-                <div class="col">
-                  <div class="mb-3">
-                    <input class="form-control" v-model="nouveauEleve.prenom" type="prenom" id="prenom" name="prenom" />
-                  </div>
-                </div>
+              <div class="col-12">
+                <label class="form-label mb-3" for="username"><strong>Prenom</strong></label>
+                <input
+                  class="form-control mb-3"
+                  v-model="nouveauEleve.prenom"
+                  type="prenom"
+                  id="prenom"
+                  name="prenom"
+                />
               </div>
-              <div class="row">
-                <div class="col-4">
-                  <div class="mb-3">
-                    <label class="form-label" for="telephone"><strong>telephone</strong></label>
-                  </div>
-                </div>
-                <div class="col">
-                  <div class="mb-3">
-                    <input
-                      class="form-control"
-                      v-model="nouveauEleve.telephone"
-                      type="telephone"
-                      id="telephone"
-                      name="telephone"
-                    />
-                  </div>
-                </div>
+              <div class="col-12">
+                <label class="form-label mb-3" for="telephone"><strong>Telephone</strong></label>
+                <input
+                  class="form-control mb-3"
+                  v-model="nouveauEleve.telephone"
+                  type="telephone"
+                  id="telephone"
+                  name="telephone"
+                />
               </div>
-              <div class="row">
-                <div class="col-4">
-                  <div class="mb-3">
-                    <label class="form-label" for="email"><strong>Email</strong></label>
-                  </div>
-                </div>
-                <div class="col">
-                  <div class="mb-3">
-                    <input
-                      class="form-control"
-                      v-model="nouveauUtilisateur.email"
-                      type="email"
-                      id="email"
-                      name="email"
-                    />
-                  </div>
-                </div>
+              <div class="col-12">
+                <label class="form-label mb-3" for="email"><strong>Email</strong></label>
+                <input
+                  v-if="!eleveEnCoursDeModif"
+                  class="form-control mb-3"
+                  v-model="nouveauUtilisateur.email"
+                  type="email"
+                  id="email"
+                  name="email"
+                />
+                <span v-else class="mb-3"> {{ nouveauUtilisateur.email }}</span>
               </div>
-              <div class="row">
-                <div class="col-4">
-                  <div class="mb-3">
-                    <label class="form-label" for="mailParent1"><strong>mailParent1</strong></label>
-                  </div>
-                </div>
-                <div class="col">
-                  <div class="mb-3">
-                    <input
-                      class="form-control"
-                      v-model="nouveauEleve.mailParent1"
-                      type="mailParent1"
-                      id="mailParent1"
-                      name="mailParent1"
-                    />
-                  </div>
-                </div>
+              <div class="col-12">
+                <label class="form-label mb-3" for="mailParent1"><strong>Mail du responsable légal n°1</strong></label>
+                <input
+                  class="form-control mb-3"
+                  v-model="nouveauEleve.mailParent1"
+                  type="mailParent1"
+                  id="mailParent1"
+                  name="mailParent1"
+                />
               </div>
-              <div class="row">
-                <div class="col-4">
-                  <div class="mb-3">
-                    <label class="form-label" for="mailParent2"><strong>mailParent2</strong></label>
-                  </div>
-                </div>
-                <div class="col">
-                  <div class="mb-3">
-                    <input
-                      class="form-control"
-                      v-model="nouveauEleve.mailParent2"
-                      type="mailParent2"
-                      id="mailParent2"
-                      name="mailParent2"
-                    />
-                  </div>
-                </div>
+              <div class="col-12">
+                <label class="form-label mb-3" for="mailParent2"><strong>Mail du responsable légal n°2</strong></label>
+                <input
+                  class="form-control mb-3"
+                  v-model="nouveauEleve.mailParent2"
+                  type="email"
+                  id="mailParent2"
+                  name="mailParent2"
+                />
               </div>
-              <div class="row">
-                <div class="col-4">
-                  <div class="mb-3">
-                    <label class="form-label" for="sexeEleve"><strong>sexeEleve</strong></label>
-                  </div>
-                </div>
-                <div class="col">
-                  <div class="mb-3">
-                    <input type="radio" id="M" value="M" name="sexeEleve" v-model="nouveauEleve.sexeEleve" />
-                    <label for="M">M</label>
-                    <br />
-                    <input type="radio" id="F" value="F" name="sexeEleve" v-model="nouveauEleve.sexeEleve" />
-                    <label for="F">F</label>
-                  </div>
-                </div>
+              <div class="col-6 mb-3">
+                <input type="radio" id="M" value="M" name="sexeEleve" v-model="nouveauEleve.sexeEleve" />
+                <label for="M">M</label>
+              </div>
+              <div class="col-6 mb-3">
+                <input type="radio" id="F" value="F" name="sexeEleve" v-model="nouveauEleve.sexeEleve" />
+                <label for="F">F</label>
               </div>
 
-              <div class="row">
-                <div class="col-4">
-                  <div class="mb-3">
-                    <label class="form-label" for="date"><strong>Date de Naissance</strong></label>
-                  </div>
-                </div>
-                <div class="col">
-                  <div class="mb-3">
-                    <input class="form-control" v-model="nouveauEleve.dateNaiss" type="date" id="date" name="date" />
-                  </div>
-                </div>
-                <div class="col-4">
-                  <div class="mb-3">
-                    <label class="form-label" for="password"><strong>Mot de passe</strong></label>
-                  </div>
-                </div>
-                <div class="col">
-                  <div class="mb-3">
-                    <input
-                      class="form-control"
-                      v-model="nouveauUtilisateur.password"
-                      type="password"
-                      id="password"
-                      name="password"
-                    />
-                  </div>
-                </div>
+              <div v-if="!eleveEnCoursDeModif" class="col-12">
+                <label class="form-label mb-3" for="date"><strong>Date de Naissance</strong></label>
+                <input class="form-control mb-3" v-model="nouveauEleve.dateNaiss" type="date" id="date" name="date" />
               </div>
-
-              <div class="mb-3" style="text-align: center">
-                <button class="btn btn-primary btn-sm" type="submit">Créer</button>
+              <div v-if="!eleveEnCoursDeModif" class="col-12">
+                <label class="form-label mb-3" for="password"><strong>Mot de passe</strong></label>
+                <input
+                  class="form-control mb-3"
+                  v-model="nouveauUtilisateur.password"
+                  type="password"
+                  id="password"
+                  name="password"
+                />
               </div>
-            </form>
-          </template>
-        </Card>
-      </div>
-    </div>
-  </Dialog>
-
-  <Dialog header="Modifier un Eleve" v-model:visible="eleveDialog" :style="{ width: '50vw' }">
-    <div class="row" style="place-content: center">
-      <div class="col-8">
-        <Card>
-          <template #content>
-            <h1>Modifier un Eleve</h1>
-            <form>
-              <div class="container">
-                <div class="row">
-                  <div class="mt-3 col-lg-12 col-md-12 col-sm-12">
-                    <label for="nom">Nom : </label>
-                    <InputText id="nom" v-model="eleveById.nom" required="true" autofocus />
-                  </div>
-                  <div class="mt-3 col-lg-12 col-md-12 col-sm-12">
-                    <label for="prenom">Prenom : </label>
-                    <InputText v-model="eleveById.prenom" id="prenom" required="true" autofocus />
-                  </div>
-                  <div class="mt-3 col-lg-12 col-md-12 col-sm-12">
-                    <label for="telephone">Telephone : </label>
-                    <InputText id="telephone" v-model="eleveById.telephone" required="true" autofocus />
-                  </div>
-                  <div class="mt-3 col-lg-12 col-md-12 col-sm-12">
-                    <label for="mailParent1">mail Parent 1 : </label>
-                    <InputText v-model="eleveById.mailParent1" id="mailParent1" required="true" autofocus />
-                  </div>
-                  <div class="mt-3 col-lg-12 col-md-12 col-sm-12">
-                    <label for="mailParent2">mail Parent 2 : </label>
-                    <InputText id="mailParent2" v-model="eleveById.mailParent2" required="true" autofocus />
-                  </div>
-                  <div class="mt-3 col-lg-12 col-md-12 col-sm-12">
-                    <label for="sexeEleve">sexe Eleve : </label>
-                    <InputText v-model="eleveById.sexeEleve" id="sexeEleve" required="true" autofocus />
-                  </div>
-                  <Button class="mt-4" label="Modifier" icon="pi pi-check" @click="editEleve(eleveById)" autofocus />
-                </div>
-              </div>
-            </form>
+            </div>
+            <div class="mb-3" style="text-align: center">
+              <button v-if="!eleveEnCoursDeModif" class="btn btn-primary btn-sm" type="submit" @click="onSubmitUtil">
+                Créer
+              </button>
+              <button v-else class="btn btn-primary btn-sm" type="submit" @click="onUpdateEleve(nouveauEleve)">
+                Modifier
+              </button>
+            </div>
           </template>
         </Card>
       </div>
@@ -242,17 +146,20 @@
 </template>
 
 <script lang="ts" setup>
-import { Eleve, User } from '@/models';
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import { useToast } from 'primevue/usetoast';
+import Role from '@/constants/Role';
+import ObjectUtils from '@/utils/ObjectUtils';
 import EleveService from '@/services/EleveService';
 import UserService from '@/services/UserService';
 import UtilisateurService from '@/services/UtilisateurService';
-import Role from '@/constants/Role';
-import { ref, onMounted } from 'vue';
-import ObjectUtils from '@/utils/ObjectUtils';
-import { useRoute, useRouter } from 'vue-router';
+import type { Eleve, User } from '@/models';
+
+const router = useRouter();
+const toast = useToast();
 
 const { isObjectEmpty } = ObjectUtils();
-const router = useRouter();
 const { user } = UserService();
 const {
   saveEleve,
@@ -267,15 +174,18 @@ const {
 const { deleteUser, redirectToHomePage } = UserService();
 const { etablissement, anneeEnCours } = UtilisateurService();
 
-const eleveDialog = ref(false);
+const displayBasic = ref(false);
 const isLoading = ref(false);
 const nouveauUtilisateur = ref<User>({
   email: '',
-  roles: [Role.ELEVE, Role.USER],
+  roles: [Role.ELEVE],
   password: '',
 } as User);
+const eleveEnCoursDeModif = ref(false);
 
-//Une erreur TypeScript ? Bizarre le type est bon normalement... ah non 😅
+/*
+Une erreur TypeScript ? Bizarre le typage est bon normalement... ah non 😅
+*/
 const nouveauEleve = ref<Eleve>({
   nom: '',
   prenom: '',
@@ -288,9 +198,23 @@ const nouveauEleve = ref<Eleve>({
   dateNaiss: new Date(),
 } as Eleve);
 
+onMounted(async () => {
+  if (isObjectEmpty(user.value)) {
+    router.push('/');
+  } else if (!user.value.roles.includes(Role.ADMIN)) {
+    redirectToHomePage();
+  } else {
+    isLoading.value = true;
+    await fetchElevesByEtablissement(user.value.currentEtablissement);
+    isLoading.value = false;
+  }
+});
+
 async function CreerEleve() {
   isLoading.value = true;
-  //Pourquoi utiliser un objet quand on peut passer les propriétés une par une ??? 😪 Bon courage pour la refacto 💪 perso j'ai la flemme
+  /*
+  Pourquoi utiliser un objet quand on peut passer les propriétés une par une ??? 😪 Bon courage pour la refacto 💪 perso j'ai la flemme
+  */
   await saveEleve(
     nouveauUtilisateur.value.email,
     nouveauUtilisateur.value.roles,
@@ -304,20 +228,21 @@ async function CreerEleve() {
     nouveauEleve.value.etablissement,
     nouveauEleve.value.dateNaiss
   );
-  alert('Votre Eleve à ete créer');
+  toast.add({ severity: 'success', summary: 'Succès', detail: `L'élève a bien été enregistré`, life: 4000 });
   displayBasic.value = false;
   await fetchElevesByEtablissement(user.value.currentEtablissement);
   isLoading.value = false;
 }
 
-async function champsEleve(idEleve: number) {
-  isLoading.value = true;
-  eleveDialog.value = true;
-  await fetchEleveById(idEleve);
-  isLoading.value = false;
+async function onEditEleve(eleve: Eleve) {
+  console.log(eleve);
+  eleveEnCoursDeModif.value = true;
+  nouveauEleve.value = eleve;
+  nouveauUtilisateur.value = eleve.user;
+  displayBasic.value = true;
 }
 
-async function editEleve(Eleve: Eleve) {
+async function onUpdateEleve(Eleve: Eleve) {
   isLoading.value = true;
   await updateEleve(
     Eleve.id,
@@ -328,9 +253,21 @@ async function editEleve(Eleve: Eleve) {
     eleveById.value.telephone,
     eleveById.value.sexeEleve
   );
-  eleveDialog.value = false;
+  displayBasic.value = false;
+  eleveEnCoursDeModif.value = false;
   isLoading.value = false;
-  alert('Votre Eleve à ete modifié');
+  toast.add({ severity: 'success', summary: 'Succès', detail: `L'élève a bien été enregistré`, life: 4000 });
+  nouveauEleve.value = {
+    id: undefined,
+    nom: '',
+    prenom: '',
+    telephone: '',
+    mailParent1: '',
+    mailParent2: '',
+    sexeEleve: '',
+    user: '',
+    etablissement: user.value.currentEtablissement,
+  } as Eleve;
 }
 
 async function supprimerEleve(Eleve: Eleve) {
@@ -347,7 +284,6 @@ function onSubmitUtil() {
   CreerEleve();
 }
 
-const displayBasic = ref(false);
 const openBasic = () => {
   displayBasic.value = true;
 };
@@ -355,16 +291,4 @@ const openBasic = () => {
 const closeBasic = () => {
   displayBasic.value = false;
 };
-
-onMounted(async () => {
-  if (isObjectEmpty(user.value)) {
-    router.push('/');
-  } else if (!user.value.roles.includes(Role.ADMIN)) {
-    redirectToHomePage();
-  } else {
-    isLoading.value = true;
-    await fetchElevesByEtablissement(user.value.currentEtablissement);
-    isLoading.value = false;
-  }
-});
 </script>
