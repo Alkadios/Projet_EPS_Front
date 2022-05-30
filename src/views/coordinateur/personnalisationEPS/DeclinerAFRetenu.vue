@@ -197,6 +197,7 @@ onMounted(async () => {
     }
     isLoading.value = false;
   }
+  isLoading.value = false;
 });
 
 function verifIsExistSituationEvaluation() {
