@@ -194,7 +194,7 @@ const nouveauEleve = ref<Eleve>({
   mailParent2: '',
   sexeEleve: '',
   user: '',
-  etablissement: user.value.currentEtablissement,
+  etablissement: etablissement.value.id,
   dateNaiss: new Date(),
 } as Eleve);
 
@@ -205,7 +205,7 @@ onMounted(async () => {
     redirectToHomePage();
   } else {
     isLoading.value = true;
-    await fetchElevesByEtablissement(user.value.currentEtablissement);
+    await fetchElevesByEtablissement(etablissement.value.id);
     isLoading.value = false;
   }
 });
@@ -230,7 +230,7 @@ async function CreerEleve() {
   );
   toast.add({ severity: 'success', summary: 'Succès', detail: `L'élève a bien été enregistré`, life: 4000 });
   displayBasic.value = false;
-  await fetchElevesByEtablissement(user.value.currentEtablissement);
+  await fetchElevesByEtablissement(etablissement.value.id);
   isLoading.value = false;
 }
 
@@ -266,7 +266,7 @@ async function onUpdateEleve(Eleve: Eleve) {
     mailParent2: '',
     sexeEleve: '',
     user: '',
-    etablissement: user.value.currentEtablissement,
+    etablissement: etablissement.value.id,
   } as Eleve;
 }
 
@@ -275,7 +275,7 @@ async function supprimerEleve(Eleve: Eleve) {
     isLoading.value = true;
     await deleteEleve(Eleve.id);
     await deleteUser(Eleve.user.id);
-    await fetchElevesByEtablissement(user.value.currentEtablissement);
+    await fetchElevesByEtablissement(etablissement.value.id);
     isLoading.value = false;
   }
 }

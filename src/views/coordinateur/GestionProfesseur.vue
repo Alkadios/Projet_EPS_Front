@@ -227,7 +227,7 @@ const nouveauProf = ref({
   nom: '',
   prenom: '',
   telephone: '',
-  etablissements: user.value.currentEtablissement,
+  etablissements: etablissement.value.id,
 });
 
 onMounted(async () => {
@@ -237,7 +237,7 @@ onMounted(async () => {
     redirectToHomePage();
   } else {
     isLoading.value = true;
-    await fetchProfesseursByEtablissement(user.value.currentEtablissement);
+    await fetchProfesseursByEtablissement(etablissement.value.id);
     isLoading.value = false;
   }
 });
@@ -254,7 +254,7 @@ async function CreerProfesseur() {
   );
   toast.add({ severity: 'success', summary: 'Succès', detail: `Le professeur a bien été enregistré`, life: 4000 });
   displayBasic.value = false;
-  await fetchProfesseursByEtablissement(user.value.currentEtablissement);
+  await fetchProfesseursByEtablissement(etablissement.value.id);
 }
 
 async function champsProf(idProf: number) {
@@ -277,7 +277,7 @@ async function supprimerProf(Professeur: Professeur) {
   if (confirm('Voulez-vous vraiment supprimer ce professeur?')) {
     isLoading.value = true;
     await deleteProf(Professeur.id);
-    await fetchProfesseursByEtablissement(user.value.currentEtablissement);
+    await fetchProfesseursByEtablissement(etablissement.value.id);
     isLoading.value = false;
   }
 }
