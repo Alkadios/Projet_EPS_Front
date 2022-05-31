@@ -1,8 +1,4 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
-//import store from '@/store';
-import ObjectUtils from '@/utils/ObjectUtils';
-
-const { isObjectEmpty } = ObjectUtils();
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -71,11 +67,6 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('../views/Profil.vue'),
   },
   {
-    path: '/CreerEleve',
-    name: 'CreerEleve',
-    component: () => import('../views/coordinateur/personnalisationEPS/CreerEleve.vue'),
-  },
-  {
     path: '/GestionClasse',
     name: 'GestionClasse',
     component: () => import('../views/coordinateur/GestionClasse.vue'),
@@ -109,6 +100,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/GestionProfEtablissement',
     name: 'GestionProfEtablissement',
     component: () => import('../views/coordinateur/GestionProfEtablissement.vue'),
+  },
+  {
+    path: '/GestionEtablissement',
+    name: 'GestionEtablissement',
+    component: () => import('../views/coordinateur/GestionEtablissement.vue'),
   },
   {
     path: '/:notFound(.*)',

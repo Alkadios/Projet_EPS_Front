@@ -1,6 +1,7 @@
 <template>
   <div class="card shadow-lg o-hidden border-0 m-5">
     <div class="card-body p-5">
+      <h3>Attribution de mes classes</h3>
       <div>
         <Button label="Ajouter ces classes" @click="openBasic" style="right: 1rem" icon="pi pi-plus" autofocus />
         <Button
@@ -69,7 +70,7 @@
               <Column field="libelleClasse" header="libelleClasse" :sortable="true" style="min-width: 12rem"></Column>
               <Column :exportable="false" style="min-width: 8rem"> </Column>
             </DataTable>
-            <button type="button" class="btn btn-primary" @click="editClasse(selectedClasse?.id)">Ajouter</button>
+            <button type="button" class="btn btn-primary" @click="editClasse()">Ajouter</button>
           </template>
         </Card>
       </div>
@@ -78,16 +79,21 @@
 </template>
 
 <script lang="ts" setup>
-import { Classe, Eleve } from '@/models';
+import { ref, onMounted, toRaw } from 'vue';
+import { useRouter } from 'vue-router';
+import { useToast } from 'primevue/usetoast';
+
+import ObjectUtils from '@/utils/ObjectUtils';
+import Role from '@/constants/Role';
 import ClasseService from '@/services/ClasseService';
 import ProfesseurService from '@/services/ProfesseurService';
 import UserService from '@/services/UserService';
 import UtilisateurService from '@/services/UtilisateurService';
-import eleve from '@/store/modules/eleve';
-import { ref, onMounted, toRaw } from 'vue';
-import ObjectUtils from '@/utils/ObjectUtils';
-import { useRoute, useRouter } from 'vue-router';
+import type { Classe, Eleve } from '@/models';
+
 const router = useRouter();
+const toast = useToast();
+
 const { isObjectEmpty } = ObjectUtils();
 const {
   fetchClasseByAnneeAndEtablissement,
@@ -101,15 +107,9 @@ const { user, redirectToHomePage } = UserService();
 const { putProfesseursClasse } = ProfesseurService();
 const selectedClasses = ref<Classe[]>();
 const selectedClassesForAdd = ref<Classe[]>();
-const classesByProf = ref<Classe[]>();
 
-const closeBasic = () => {
-  displayBasic.value = false;
-};
-
-const selectedClasse = ref<Classe>();
-const selectedEleves = ref<Eleve[]>();
 const displayBasic = ref(false);
+
 const openBasic = () => {
   displayBasic.value = true;
 };
@@ -117,15 +117,12 @@ const openBasic = () => {
 onMounted(async () => {
   if (isObjectEmpty(user.value)) {
     router.push('/');
-  } else if (user.value.roles != 'Professeur') {
+  } else if (!user.value.roles.includes(Role.PROF)) {
     redirectToHomePage();
   } else {
     isLoading.value = true;
     await fetchClasseByAnneeAndEtablissement(anneeEnConfig.value.id, user.value.currentEtablissement);
     await fetchClasseByAnneeAndProf(anneeEnConfig.value.id, user.value.professeurs);
-    console.log('classeparprof', classesByAnneeAndProfesseur.value);
-    console.log('userid', user.value.id);
-    console.log('prof', user.value.professeurs);
     isLoading.value = false;
   }
 });
@@ -143,7 +140,7 @@ async function editClasse() {
     if (idsClasses) await putProfesseursClasse(user.value.professeurs, arrayidClasse);
     window.location.reload;
   }
-  alert('ces classes ont ete ajouter');
+  toast.add({ severity: 'success', summary: 'Succès', detail: `Les classes ont bien été ajoutées`, life: 4000 });
 }
 
 async function deleteClasseOfProf() {
@@ -154,7 +151,8 @@ async function deleteClasseOfProf() {
     });
   await putProfesseursClasse(user.value.professeurs, idClassesRetirer);
   location.reload;
-  alert('Votre ou vos classes ont été supprimer');
+
+  toast.add({ severity: 'success', summary: 'Succès', detail: `Les classes ont bien été supprimé`, life: 4000 });
 }
 
 const isLoading = ref(false);

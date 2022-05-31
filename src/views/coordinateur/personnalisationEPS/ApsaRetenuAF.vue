@@ -79,6 +79,7 @@ import ApsaSelectAnneeService from '@/services/ApsaSelectAnneeService';
 import EnTetePersonalisation from './EnTetePersonalisation.vue';
 import ObjectUtils from '@/utils/ObjectUtils';
 import UserService from '@/services/UserService';
+import Role from '@/constants/Role';
 
 const { isObjectEmpty } = ObjectUtils();
 const { user, redirectToHomePage } = UserService();
@@ -104,7 +105,7 @@ const afEnErreur = ref(false);
 onMounted(async () => {
   if (isObjectEmpty(user.value)) {
     router.push('/');
-  } else if (user.value.roles != 'Admin') {
+  } else if (!user.value.roles.includes(Role.ADMIN)) {
     redirectToHomePage();
   } else {
     isLoading.value = true;
