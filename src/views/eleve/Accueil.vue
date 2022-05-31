@@ -12,27 +12,33 @@
           </div>
           <div id="mesClasses">
             <div class="row">
-              <div id="EvaluationClasse" class="col-md-5">
-                <div class="d-flex justify-content-center">
-                  <div v-for="classe in eleveById.classe" :key="classe.id">
+              <div id="EvaluationClasse">
+                <div>
+                  <div
+                    class="d-flex flex-column"
+                    style="margin-bottom: 2rem"
+                    v-for="classe in eleveById.classe"
+                    :key="classe.id"
+                  >
+                    <div>{{ classe.etablissement.nom }}</div>
                     <div>{{ classe.Annee.annee }} : {{ classe.libelleClasse }}</div>
-                    <span v-for="sport in listeApsaByAnnee?.filter((s) => s.id_classe === classe.id)" :key="sport.id">
-                      <Button
-                        :label="sport.libelle_apsa"
-                        @click="
-                          router.push({
-                            name: 'EvaluationEleve',
-                            params: {
-                              etablissement: sport.id_etablissement,
-                              apsa: sport.id_apsa,
-                              annee: sport.id_annee,
-                            },
-                          })
-                        "
-                      />
+                    <div class="justify-content-around">
+                      <div
+                        v-for="sport in apsaEvaluateByEleve?.filter(
+                          (s) =>
+                            s.libelle_annee == classe.Annee.annee &&
+                            s.nom_etablissement == classe.etablissement.nom &&
+                            s.libelle_classe == classe.libelleClasse
+                        )"
+                        :key="sport.id"
+                      >
+                        <Button
+                          :label="sport.libelle_apsa"
+                          @click="toEvaluationEleve(sport.id_etablissement, sport.id_apsa, sport.id_annne)"
+                        />
+                      </div>
+                    </div>
 
-                      {{ sport.libelle_annee + ' ' + sport.libelle_apsa + ' ' + sport.libelle_classe }}
-                    </span>
                     <!-- <div v-for="sport in mesAPSAbyAnnee(classe.Annee.id)" :key="sport.length">
                       <div>{{ sport.length }}</div>
                     </div> -->
@@ -48,8 +54,7 @@
         </div>
       </div>
       <div class="mt-3 ms-3">
-        <Button label="Annuler" @click="router.push('/TableauDeBordConfig')"></Button>
-        <Button label="Terminer l'évaluation" icon="pi pi-check" style="left: 1rem"></Button>
+        <Button label="Annuler" @click="test()"></Button>
       </div>
       <div class="mb-3"></div>
       <div style="position: fixed; bottom: 0; right: 2rem">
@@ -74,6 +79,7 @@ import type { Eleve, APSA } from '@/models';
 import UserService from '@/services/UserService';
 import EleveService from '@/services/EleveService';
 import Role from '@/constants/Role';
+import internal from 'stream';
 
 const { fetchEleveByUser, eleveByUser } = EleveService();
 const { isObjectEmpty } = ObjectUtils();
@@ -81,9 +87,8 @@ const { user, redirectToHomePage } = UserService();
 const route = useRoute();
 const router = useRouter();
 
-const { fetchAllApsaSelectAnneeByAnnee, apsaSelectAnneeByAnnee } = ApsaSelectAnneeService();
 const { etablissement } = UtilisateurService();
-const { fetchEleveById, eleveById, apsaEvaluateByEleve, fetchAllApsaEvaluateByEleve } = EleveService();
+const { fetchEleveById, eleveById, fetchAllApsaEvaluateByEleve, apsaEvaluateByEleve } = EleveService();
 const isLoading = ref(false);
 
 interface customApsa {
@@ -111,9 +116,25 @@ onMounted(async () => {
   }
   await fetchEleveById(7);
   await fetchAllApsaEvaluateByEleve(7);
-
   isLoading.value = false;
 });
+
+function test() {
+  console.log('eleveById : ', eleveById.value);
+  console.log('apsaEvaluateByEleve : ', apsaEvaluateByEleve.value);
+}
+
+function toEvaluationEleve(idEtablissement: number, idApsa: number, idAnnee: number) {
+  router.push({
+    name: 'EvaluationEleve',
+    query: {
+      etablissement: idEtablissement,
+      apsa: idApsa,
+      annee: idAnnee,
+    },
+  });
+  console.log('test');
+}
 
 async function mesAPSAbyAnnee(idAnnee: number) {
   isLoading.value = true;

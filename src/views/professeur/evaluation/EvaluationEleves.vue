@@ -99,7 +99,9 @@
                           v-for="indicateur of monCritere.Indicateur"
                           :key="indicateur.id"
                           :label="indicateur.libelle"
-                          :style="!checkIfIndicateurIsSelectionner(indicateur) ? 'background-color: bisque' : ''"
+                          :style="
+                            !checkIfIndicateurIsSelectionner(indicateur) ? 'background-color: ' + indicateur.color : ''
+                          "
                           :class="checkIfIndicateurIsSelectionner(indicateur) ? 'primary' : ''"
                           @click="addIndicateurInEvaluation(monCritere, indicateur)"
                         />

@@ -83,7 +83,7 @@
 
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import Role from '@/constants/Role';
 import ObjectUtils from '@/utils/ObjectUtils';
 import UtilisateurService from '@/services/UtilisateurService';
@@ -97,6 +97,7 @@ const { isObjectEmpty } = ObjectUtils();
 const { user, redirectToHomePage } = UserService();
 
 const router = useRouter();
+const route = useRoute();
 
 const { fetchAllApsaSelectAnneeByApsaAndEtablissmenetAndAnnee, apsaSelectAnneeByApsaAndEtablissmenetAndAnnee } =
   ApsaSelectAnneeService();
@@ -192,8 +193,14 @@ onMounted(async () => {
     redirectToHomePage();
   } else {
     isLoading.value = true;
-    //Année ; APSA ; Etablissement
-    await fetchAllApsaSelectAnneeByApsaAndEtablissmenetAndAnnee(4, 25, 1);
+    if (route.query.annee && route.query.apsa && route.query.etablissement) {
+      //Année ; APSA ; Etablissement
+      await fetchAllApsaSelectAnneeByApsaAndEtablissmenetAndAnnee(
+        parseInt(route.query.annee.toString()),
+        parseInt(route.query.apsa.toString()),
+        parseInt(route.query.etablissement.toString())
+      );
+    }
     await fetchEleveByUser(user.value.id);
     // situationEvaluation.value = apsaSelectAnneeByApsaAndEtablissmenetAndAnnee.value.find(
     //   (asa) => asa.apsaRetenus
