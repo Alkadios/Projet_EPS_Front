@@ -102,7 +102,7 @@ const {
   classesByAnneeAndProfesseur,
   classes,
 } = ClasseService();
-const { anneeEnConfig } = UtilisateurService();
+const { anneeEnConfig, etablissement } = UtilisateurService();
 const { user, redirectToHomePage } = UserService();
 const { putProfesseursClasse } = ProfesseurService();
 const selectedClasses = ref<Classe[]>();
@@ -121,7 +121,7 @@ onMounted(async () => {
     redirectToHomePage();
   } else {
     isLoading.value = true;
-    await fetchClasseByAnneeAndEtablissement(anneeEnConfig.value.id, user.value.currentEtablissement);
+    await fetchClasseByAnneeAndEtablissement(anneeEnConfig.value.id, etablissement.value.id);
     await fetchClasseByAnneeAndProf(anneeEnConfig.value.id, user.value.professeurs);
     isLoading.value = false;
   }

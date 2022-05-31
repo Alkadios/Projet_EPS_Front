@@ -189,7 +189,7 @@ onMounted(async () => {
     isLoading.value = true;
     await fetchAllEleves();
     await fetchAllClasses();
-    await fetchClasseByAnneeAndEtablissement(anneeEnConfig.value.id, user.value.currentEtablissement);
+    await fetchClasseByAnneeAndEtablissement(anneeEnConfig.value.id, etablissement.value.id);
     isLoading.value = false;
   }
 });
@@ -238,7 +238,7 @@ async function editEleve(idEleve: number) {
   );
   toast.add({ severity: 'success', summary: 'Succès', detail: `L'élève a bien été modifié`, life: 4000 });
   eleveDialog.value = false;
-  await fetchClasseByAnneeAndEtablissement(anneeEnConfig.value.id, user.value.currentEtablissement);
+  await fetchClasseByAnneeAndEtablissement(anneeEnConfig.value.id, etablissement.value.id);
   onClasseChange();
   isLoading.value = false;
 }

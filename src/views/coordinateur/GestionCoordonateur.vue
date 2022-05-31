@@ -192,6 +192,7 @@ import router from '@/router';
 import { useToast } from 'primevue/usetoast';
 import Role from '@/constants/Role';
 import ProfesseurService from '@/services/ProfesseurService';
+import UtilisateurService from '@/services/UtilisateurService';
 import UserService from '@/services/UserService';
 import ObjectUtils from '@/utils/ObjectUtils';
 import type { Professeur, User } from '@/models';
@@ -201,6 +202,7 @@ const { isObjectEmpty } = ObjectUtils();
 const { fetchProfByRoles, saveProfesseur, deleteProf, updateProf, fetchProfById, professeurById, professeurByRoles } =
   ProfesseurService();
 const { redirectToHomePage, user } = UserService();
+const { etablissement } = UtilisateurService();
 
 const isLoading = ref(false);
 const profDialog = ref(false);
@@ -217,7 +219,7 @@ const nouveauProf = ref({
   nom: '',
   prenom: '',
   telephone: '',
-  etablissements: user.value.currentEtablissement,
+  etablissements: etablissement.value.id,
 });
 
 onMounted(async () => {

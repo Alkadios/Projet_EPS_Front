@@ -122,7 +122,7 @@ const { fetchClasseByAnneeAndEtablissement, classesByAnneeAndEtablissement, save
 const { etablissements, fetchAllEtablissements } = EtablissementService();
 const { niveauxScolaires, fetchAllNiveauxScolaires } = NiveauScolaireService();
 const { annees, fetchAllAnnees } = AnneeService();
-const { anneeEnConfig } = UtilisateurService();
+const { anneeEnConfig, etablissement } = UtilisateurService();
 
 const selectedNiveauScolaire = ref();
 const selectedAnnee = ref();
@@ -144,7 +144,7 @@ onMounted(async () => {
     redirectToHomePage();
   } else {
     isLoading.value = true;
-    await fetchClasseByAnneeAndEtablissement(anneeEnConfig.value.id, user.value.currentEtablissement);
+    await fetchClasseByAnneeAndEtablissement(anneeEnConfig.value.id, etablissement.value.id);
     await fetchAllEtablissements();
     await fetchAllNiveauxScolaires();
     await fetchAllAnnees();
@@ -163,7 +163,7 @@ async function CreerClasse() {
 
   toast.add({ severity: 'success', summary: 'Succès', detail: `La classe a bien été enregistré`, life: 4000 });
   displayBasic.value = false;
-  await fetchClasseByAnneeAndEtablissement(anneeEnConfig.value.id, user.value.currentEtablissement);
+  await fetchClasseByAnneeAndEtablissement(anneeEnConfig.value.id, etablissement.value.id);
   isLoading.value = false;
 }
 
@@ -176,7 +176,7 @@ async function supprimerClasse(idClasse: number) {
   if (confirm('Voulez vous vraiment supprimer cette classe?')) {
     isLoading.value = true;
     await deleteClasse(idClasse);
-    await fetchClasseByAnneeAndEtablissement(anneeEnConfig.value.id, user.value.currentEtablissement);
+    await fetchClasseByAnneeAndEtablissement(anneeEnConfig.value.id, etablissement.value.id);
     isLoading.value = false;
   }
 }
