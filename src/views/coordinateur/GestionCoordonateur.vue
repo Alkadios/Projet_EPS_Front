@@ -152,7 +152,7 @@
         <div class="col-8">
           <Card>
             <template #content>
-              <center><h1>Modifier un Coordonnateur</h1></center>
+              <h1>Modifier un Coordonnateur</h1>
               <form>
                 <div class="container">
                   <div class="row">
@@ -187,14 +187,16 @@
 </template>
 
 <script lang="ts" setup>
-import { Professeur, User } from '@/models';
+import { ref, onMounted } from 'vue';
+import router from '@/router';
+import { useToast } from 'primevue/usetoast';
+import Role from '@/constants/Role';
 import ProfesseurService from '@/services/ProfesseurService';
 import UserService from '@/services/UserService';
-import UtilisateurService from '@/services/UtilisateurService';
-import { ref, onMounted } from 'vue';
 import ObjectUtils from '@/utils/ObjectUtils';
-import router from '@/router';
+import type { Professeur, User } from '@/models';
 
+const toast = useToast();
 const { isObjectEmpty } = ObjectUtils();
 const { fetchProfByRoles, saveProfesseur, deleteProf, updateProf, fetchProfById, professeurById, professeurByRoles } =
   ProfesseurService();
@@ -202,19 +204,32 @@ const { redirectToHomePage, user } = UserService();
 
 const isLoading = ref(false);
 const profDialog = ref(false);
+const displayBasic = ref(false);
 
-const nouveauUtilisateur = ref<User>({
+const nouveauUtilisateur = ref({
   email: '',
-  roles: ['Admin'],
+  roles: [Role.ADMIN],
   password: '',
 });
 
-const nouveauProf = ref<Professeur>({
+const nouveauProf = ref({
   id: '',
   nom: '',
   prenom: '',
   telephone: '',
   etablissements: user.value.currentEtablissement,
+});
+
+onMounted(async () => {
+  if (isObjectEmpty(user.value)) {
+    router.push('/');
+  } else if (!user.value.roles.includes(Role.ADMIN)) {
+    redirectToHomePage();
+  } else {
+    isLoading.value = true;
+    await fetchProfByRoles(Role.ADMIN);
+    isLoading.value = false;
+  }
 });
 
 async function CreerProfesseur() {
@@ -227,9 +242,9 @@ async function CreerProfesseur() {
     nouveauProf.value.telephone,
     nouveauProf.value.etablissements
   );
-  alert('Votre Professeur à ete créer');
+  toast.add({ severity: 'success', summary: 'Succès', detail: `Le coordonateur a bien été enregistré`, life: 4000 });
   displayBasic.value = false;
-  await fetchProfByRoles('Admin');
+  await fetchProfByRoles(Role.ADMIN);
 }
 
 async function champsProf(idProf: number) {
@@ -242,7 +257,7 @@ async function champsProf(idProf: number) {
 async function editProf(idProf: number) {
   isLoading.value = true;
   await updateProf(idProf, professeurById.value.nom, professeurById.value.prenom, professeurById.value.telephone);
-  alert('Votre Coordinateurs à ete modifié');
+  toast.add({ severity: 'success', summary: 'Succès', detail: `Le coordonateur a bien été enregistré`, life: 4000 });
   profDialog.value = false;
   isLoading.value = false;
 }
@@ -251,7 +266,7 @@ async function supprimerProf(Professeur: Professeur) {
   if (confirm('Voulez vous vraiment supprimer ce coordonnateur ?')) {
     isLoading.value = true;
     await deleteProf(Professeur.id);
-    await fetchProfByRoles('Admin');
+    await fetchProfByRoles(Role.ADMIN);
     isLoading.value = false;
   }
 }
@@ -260,24 +275,7 @@ function onSubmitUtil() {
   CreerProfesseur();
 }
 
-const displayBasic = ref(false);
 const openBasic = () => {
   displayBasic.value = true;
 };
-
-const closeBasic = () => {
-  displayBasic.value = false;
-};
-
-onMounted(async () => {
-  if (isObjectEmpty(user.value)) {
-    router.push('/');
-  } else if (user.value.roles != 'Admin') {
-    redirectToHomePage();
-  } else {
-    isLoading.value = true;
-    await fetchProfByRoles('Admin');
-    isLoading.value = false;
-  }
-});
 </script>
