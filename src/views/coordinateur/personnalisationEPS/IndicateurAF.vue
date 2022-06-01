@@ -255,7 +255,7 @@
     </div>
     <div class="card container">
       <OrderList v-model="mesIndicateurs" listStyle="height:auto" dataKey="id">
-        <template #header> Listes des indicateur </template>
+        <template #header> Listes des indicateur (par ordre croissant : Mauvais -> Bon) </template>
         <template #item="nouveauIndicateur">
           <div class="container col-12 text-white">
             <div class="p-3 row" :style="'background-color: ' + nouveauIndicateur.item.color + '; border-radius: 10px'">
