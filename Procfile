@@ -1,1 +1,1 @@
-web: go-vuejs-heroku
+web: '/'
