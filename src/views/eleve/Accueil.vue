@@ -7,7 +7,7 @@
           <div class="p-5">
             <div class="text-center">
               <p class="text-dark mb-2">Bienvenue sur O.C.P.E.P.S</p>
-              <h4 class="text-dark mb-4">{{ etablissement.nom }}</h4>
+              <!-- <h4 class="text-dark mb-4">{{ etablissement.nom }}</h4> -->
             </div>
           </div>
           <div id="mesClasses">
@@ -54,7 +54,7 @@
         </div>
       </div>
       <div class="mt-3 ms-3">
-        <Button label="Annuler" @click="test()"></Button>
+        <Button label="Annuler"></Button>
       </div>
       <div class="mb-3"></div>
       <div style="position: fixed; bottom: 0; right: 2rem">
@@ -114,15 +114,12 @@ onMounted(async () => {
   } else {
     isLoading.value = true;
   }
-  await fetchEleveById(7);
-  await fetchAllApsaEvaluateByEleve(7);
+
+  await fetchEleveByUser(user.value.id);
+  await fetchEleveById(eleveByUser.value.id);
+  await fetchAllApsaEvaluateByEleve(eleveByUser.value.id);
   isLoading.value = false;
 });
-
-function test() {
-  console.log('eleveById : ', eleveById.value);
-  console.log('apsaEvaluateByEleve : ', apsaEvaluateByEleve.value);
-}
 
 function toEvaluationEleve(idEtablissement: number, idApsa: number, idAnnee: number) {
   router.push({
@@ -133,7 +130,6 @@ function toEvaluationEleve(idEtablissement: number, idApsa: number, idAnnee: num
       annee: idAnnee,
     },
   });
-  console.log('test');
 }
 
 async function mesAPSAbyAnnee(idAnnee: number) {

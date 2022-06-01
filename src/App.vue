@@ -91,8 +91,12 @@
               </div>
             </div>
           </div>
-          <router-view v-if="onMountedIsFinish && !isObjectEmpty(user)" />
+          <router-view v-if="onMountedIsFinish && !isObjectEmpty(user) && !afficherSelectionEtablissement" />
           <Authentification v-if="isObjectEmpty(user)" />
+          <SelectionEtablissement
+            v-if="!isObjectEmpty(user)"
+            v-model:afficherSelectionEtablissement="afficherSelectionEtablissement"
+          ></SelectionEtablissement>
         </div>
       </div>
     </main>
@@ -113,9 +117,8 @@ import { useRouter } from 'vue-router';
 import { useMeta } from 'vue-meta';
 
 import Sidebar from './views/Sidebar.vue';
-//import UtilisateurService from './services/UtilisateurService';
+import SelectionEtablissement from '@/views/SelectionEtablissement.vue';
 import Authentification from './views/Authentification.vue';
-//import Head from './views/_Head.vue';
 import UtilisateurService from './services/UtilisateurService';
 import EleveService from './services/EleveService';
 import ProfesseurService from './services/ProfesseurService';
@@ -126,7 +129,7 @@ import Role from '@/constants/Role';
 const router = useRouter();
 const sidenavActive = ref(false);
 const { isObjectEmpty } = ObjectUtils();
-const { utilisateur, fetchAnneeEnCours, anneeEnCours, storeAnneeEnConfig, fetchEtablissementById } =
+const { utilisateur, fetchAnneeEnCours, anneeEnCours, storeAnneeEnConfig, fetchEtablissementById, etablissement } =
   UtilisateurService();
 
 const { fetchEleveByUser, eleveByUser } = EleveService();
@@ -140,6 +143,7 @@ const displaySidebar = ref('block');
 const nomAndPrenom = ref();
 const sexeUser = ref();
 const isLoading = ref(false);
+const afficherSelectionEtablissement = ref(false);
 
 const roleUtilisateur = computed(() => {
   if (user.value && user.value.roles) {
@@ -158,7 +162,6 @@ onMounted(async () => {
   await checkLocalStorage();
   await fetchAnneeEnCours();
   storeAnneeEnConfig(anneeEnCours.value);
-  await fetchEtablissementById(1);
 
   onMountedIsFinish.value = true;
   isLoading.value = false;
@@ -169,6 +172,11 @@ watch(
   async (connectedUser) => {
     if (!isObjectEmpty(connectedUser)) {
       await fetchDonneeUtilisateur();
+      if (isObjectEmpty(etablissement.value)) {
+        if (user.value.etablissements && user.value.etablissements.length === 1) {
+          await fetchEtablissementById(user.value.etablissements[0].id);
+        } else afficherSelectionEtablissement.value = true;
+      }
     }
   }
 );

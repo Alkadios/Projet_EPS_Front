@@ -1,4 +1,4 @@
-import { Professeur } from './Professeur';
+import { Etablissement } from './Etablissement';
 
 export interface User {
   '@id': string;
@@ -7,6 +7,5 @@ export interface User {
   roles: string[];
   password: string;
   professeurs: number;
-  etablissements: string[];
-  currentEtablissement: number;
+  etablissements: Etablissement[];
 }
