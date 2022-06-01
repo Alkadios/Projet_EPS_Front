@@ -35,7 +35,6 @@ export default {
     context.commit('setUser', user);
     console.log(user);
     context.commit('setToken', response.data.token);
-    console.log('monToken', response.data.token);
 
     if (response.status === 200) {
     } else {

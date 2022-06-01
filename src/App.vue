@@ -163,15 +163,6 @@ onMounted(async () => {
   await fetchAnneeEnCours();
   storeAnneeEnConfig(anneeEnCours.value);
 
-  if (isObjectEmpty(etablissement.value)) {
-    if (user.value.etablissements.length === 1) {
-      await fetchEtablissementById(user.value.etablissements[0].id);
-    } else afficherSelectionEtablissement.value = true;
-  }
-
-  console.log('afficherModal', afficherSelectionEtablissement.value);
-  //await fetchEtablissementById(1);
-
   onMountedIsFinish.value = true;
   isLoading.value = false;
 });
@@ -181,6 +172,11 @@ watch(
   async (connectedUser) => {
     if (!isObjectEmpty(connectedUser)) {
       await fetchDonneeUtilisateur();
+      if (isObjectEmpty(etablissement.value)) {
+        if (user.value.etablissements && user.value.etablissements.length === 1) {
+          await fetchEtablissementById(user.value.etablissements[0].id);
+        } else afficherSelectionEtablissement.value = true;
+      }
     }
   }
 );
