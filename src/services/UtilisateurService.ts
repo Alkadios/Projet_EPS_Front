@@ -1,7 +1,11 @@
 import { computed } from 'vue';
 import { useStore } from 'vuex';
-import { Etablissement, Utilisateur, Annee } from '@/models';
+import { Etablissement, Utilisateur, Annee, Eleve } from '@/models';
 
+/*
+Tu te demandes peut-être pourquoi il y a un UtilisateurService et un UserService ? 😅
+On m'a dit que c'était toujours bien de séparer en plusieurs fichiers ah mais peut-être pas comme ça 😅 désolé mais flemme de refacto 😉 
+*/
 export default function UtilisateurService() {
   const store = useStore();
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="card shadow-lg o-hidden border-0 my-5">
+  <div class="card shadow-lg o-hidden border-0 m-5">
     <EnTetePersonalisation />
     <div class="container-fluid">
       <div id="mesClasses">
@@ -77,7 +77,12 @@ import ChoixAnneeService from '@/services/ChoixAnneeService';
 import { useRoute, useRouter } from 'vue-router';
 import ApsaSelectAnneeService from '@/services/ApsaSelectAnneeService';
 import EnTetePersonalisation from './EnTetePersonalisation.vue';
+import ObjectUtils from '@/utils/ObjectUtils';
+import UserService from '@/services/UserService';
+import Role from '@/constants/Role';
 
+const { isObjectEmpty } = ObjectUtils();
+const { user, redirectToHomePage } = UserService();
 const route = useRoute();
 const router = useRouter();
 
@@ -98,18 +103,24 @@ const isLoading = ref(false);
 const afEnErreur = ref(false);
 
 onMounted(async () => {
-  isLoading.value = true;
-  await fetchChampsApprentissages();
-  await fetchAllAfs();
-  await fetchAllApsaSelectAnneeByAnnee(anneeEnConfig.value.id);
-  isLoading.value = false;
-  if (route.query.idNiveau) {
-    niveauScolaireSelectionne.value = etablissement.value.niveauScolaire.find(
-      (n) => n.id == parseInt(route.query.idNiveau!.toString())
-    );
-  }
-  if (route.query.idCa) {
-    selectedCa.value = champsApprentissages.value.find((ca) => ca.id == parseInt(route.query.idCa!.toString()));
+  if (isObjectEmpty(user.value)) {
+    router.push('/');
+  } else if (!user.value.roles.includes(Role.ADMIN)) {
+    redirectToHomePage();
+  } else {
+    isLoading.value = true;
+    await fetchChampsApprentissages();
+    await fetchAllAfs();
+    await fetchAllApsaSelectAnneeByAnnee(anneeEnConfig.value.id);
+    isLoading.value = false;
+    if (route.query.idNiveau) {
+      niveauScolaireSelectionne.value = etablissement.value.niveauScolaire.find(
+        (n) => n.id == parseInt(route.query.idNiveau!.toString())
+      );
+    }
+    if (route.query.idCa) {
+      selectedCa.value = champsApprentissages.value.find((ca) => ca.id == parseInt(route.query.idCa!.toString()));
+    }
   }
 });
 
@@ -226,6 +237,7 @@ async function ajouterAfsRetenus() {
         return { Af: af.id };
       });
       await saveAfRetenuInChoixAnnee(afR!.ChoixAnnee.id, idsAfForRequest);
+      choixAnnee.value.id = afR!.ChoixAnnee.id;
     } else {
       // Create
       let monNiveau = '/api/niveau_scolaires/' + niveauScolaireSelectionne.value?.id;

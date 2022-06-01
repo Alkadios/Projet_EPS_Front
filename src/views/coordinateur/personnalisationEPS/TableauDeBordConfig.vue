@@ -1,5 +1,5 @@
 <template>
-  <div class="card shadow-lg o-hidden border-0 my-5">
+  <div class="card shadow-lg o-hidden border-0 m-5">
     <div class="card-body p-0">
       <div class="row">
         <div class="col-lg-1"></div>
@@ -106,7 +106,12 @@
               @click="
                 router.push({
                   name: 'DeclinerAFRetenus',
-                  query: { idNiveau: slotProps.data.Niveau.id, idCa: slotProps.data.champApprentissage.id },
+                  query: {
+                    idChoixAnnee: slotProps.data.AfRetenu.ChoixAnnee.id,
+                    idCA: slotProps.data.AfRetenu.ChoixAnnee.champApprentissage.id,
+                    idApsa: slotProps.data.ApsaSelectAnnee.Apsa.id,
+                    idAfRetenu: slotProps.data.AfRetenu.id,
+                  },
                 })
               "
             />
@@ -126,6 +131,11 @@
             </Column>
             <Column field="description" header="Description">
               <template #body="slotProps"> <span v-html="slotProps.data.description"></span> </template>
+            </Column>
+            <Column headerStyle="width:4rem">
+              <template #body="slotProps">
+                <Button icon="pi pi-pencil" @click="pushToEditCritere(slotProps.data)" />
+              </template>
             </Column>
             <template #expansion="slotProps">
               <DataTable :value="slotProps.data.Indicateur" responsiveLayout="scroll">
@@ -168,11 +178,12 @@ import ChoixAnneeService from '@/services/ChoixAnneeService';
 import ApsaRetenuService from '@/services/ApsaRetenuService';
 import ObjectUtils from '@/utils/ObjectUtils';
 import { useRoute, useRouter } from 'vue-router';
+import UserService from '@/services/UserService';
+import Role from '@/constants/Role';
 
-//const router = useRouter();
+const { user, redirectToHomePage } = UserService();
 
 const { isObjectEmpty } = ObjectUtils();
-const route = useRoute();
 const router = useRouter();
 
 const {
@@ -215,21 +226,27 @@ const apsasRetenusFiltree = computed((): ApsaRetenu[] => {
 });
 
 onMounted(async () => {
-  isLoading.value = true;
-  await fetchAllAnnees();
-  if (isObjectEmpty(nouvelAnneeEnConfig.value)) {
-    const anneeLocal = localStorage.getItem('anneeEnConfig');
-    if (anneeLocal != undefined && anneeLocal != null) {
-      await fetchAnneeById(parseInt(anneeLocal));
-      storeAnneeEnConfig(annee.value);
-    } else {
-      await fetchAnneeEnCours();
-      storeAnneeEnConfig(anneeEnCours.value);
+  if (isObjectEmpty(user.value)) {
+    router.push('/');
+  } else if (!user.value.roles.includes(Role.ADMIN)) {
+    redirectToHomePage();
+  } else {
+    isLoading.value = true;
+    await fetchAllAnnees();
+    if (isObjectEmpty(nouvelAnneeEnConfig.value)) {
+      const anneeLocal = localStorage.getItem('anneeEnConfig');
+      if (anneeLocal != undefined && anneeLocal != null) {
+        await fetchAnneeById(parseInt(anneeLocal));
+        storeAnneeEnConfig(annee.value);
+      } else {
+        await fetchAnneeEnCours();
+        storeAnneeEnConfig(anneeEnCours.value);
+      }
+      nouvelAnneeEnConfig.value = anneeEnConfig.value;
     }
-    nouvelAnneeEnConfig.value = anneeEnConfig.value;
+    await fetchConfigAnnee();
+    isLoading.value = false;
   }
-  await fetchConfigAnnee();
-  isLoading.value = false;
 });
 
 async function fetchConfigAnnee() {
@@ -241,6 +258,13 @@ async function fetchConfigAnnee() {
   isLoading.value = false;
 }
 
+function pushToEditCritere(data: { ApsaRetenu: string }) {
+  const idApsaRetenu = data.ApsaRetenu.split('/')[3];
+  router.push({
+    name: 'Critere',
+    query: { idApsaRetenu: idApsaRetenu },
+  });
+}
 function getStringApsaByIdCa(idCa: number) {
   return apsaSelectAnneeByAnnee.value
     .filter((asaba) => asaba.Ca.id === idCa)

@@ -1,5 +1,5 @@
 <template>
-  <div class="card shadow-lg o-hidden border-0 my-5">
+  <div class="card shadow-lg o-hidden border-0 m-5">
     <div class="card-body p-0">
       <div class="row">
         <div class="col-lg-1"></div>
@@ -75,15 +75,22 @@
 
 <script lang="ts" setup>
 import { ref, onMounted, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { useToast } from 'primevue/usetoast';
+import ObjectUtils from '@/utils/ObjectUtils';
+import Role from '@/constants/Role';
 import AfRetenusService from '@/services/AfRetenusService';
 import ApsaRetenuService from '@/services/ApsaRetenuService';
 import ApsaSelectAnneeService from '@/services/ApsaSelectAnneeService';
 import UtilisateurService from '@/services/UtilisateurService';
-import { ApsaSelectAnnee, ApsaRetenu, AfRetenus } from '@/models';
-import { useRoute } from 'vue-router';
-import router from '@/router';
+import UserService from '@/services/UserService';
+import type { ApsaSelectAnnee, ApsaRetenu, AfRetenus } from '@/models';
 
+const toast = useToast();
 const route = useRoute();
+const router = useRouter();
+const { isObjectEmpty } = ObjectUtils();
+const { user, redirectToHomePage } = UserService();
 
 const { apsaSelectAnneeByAnnee, fetchAllApsaSelectAnneeByAnnee } = ApsaSelectAnneeService();
 const { afRetenus, fetchAllAfRetenus } = AfRetenusService();
@@ -113,7 +120,13 @@ async function changeApsaRetenu(monApsaRetenu: ApsaRetenu) {
       situationEvaluation.value,
       monAPSA.value?.['@id']
     );
-    window.alert('Le critère a bien été modifié !');
+    toast.add({
+      severity: 'success',
+      summary: 'Succès',
+      detail: `La situation d'évaluation a bien été modifié !`,
+      life: 4000,
+    });
+
     router.push({ name: 'Critere', query: { idApsaRetenu: apsaRetenu.value.id } });
   }
 }
@@ -123,9 +136,6 @@ watch(
   async () => {
     if (monAPSA.value) {
       isLoading.value = true;
-      //await fetchAllAfRetenuByAnneeAndNiveauScolaire(annee.value.id, niveauScolaireSelectionne.value?.id);
-
-      //Mettre fonction
       if (verifIsExistSituationEvaluation()) {
         situationEvaluation.value = monApsaRetenu.value?.SituationEvaluation!;
       } else {
@@ -152,6 +162,44 @@ watch(
   }
 );
 
+onMounted(async () => {
+  if (isObjectEmpty(user.value)) {
+    router.push('/');
+  } else if (!user.value.roles.includes(Role.ADMIN)) {
+    redirectToHomePage();
+  } else {
+    isLoading.value = true;
+    await fetchAllAfRetenus();
+    await fetchAllApsaRetenu();
+    await fetchAllApsaSelectAnneeByAnnee(anneeEnConfig.value.id);
+    apsaSelectAnneeByAnnee.value.forEach((a) => {
+      if (route.query.idCA) {
+        if (a.Ca.id === parseInt(route.query.idCA.toString())) {
+          apsaSelects.value.push(a);
+        }
+      }
+    });
+
+    afRetenus.value.forEach((b) => {
+      if (route.query.idChoixAnnee) {
+        if (b.ChoixAnnee['@id'] === '/api/choix_annees/' + route.query.idChoixAnnee) {
+          mesAfRetenus.value.push(b);
+        }
+      }
+    });
+    if (route.query.idApsa) {
+      monAPSA.value = apsaSelects.value.find((asa) => (asa.Apsa.id = parseInt(route.query.idApsa!.toString())));
+    }
+    if (route.query.idAfRetenu) {
+      monAfRetenuSelected.value = mesAfRetenus.value.find(
+        (afr) => (afr.id = parseInt(route.query.idAfRetenu!.toString()))
+      );
+    }
+    isLoading.value = false;
+  }
+  isLoading.value = false;
+});
+
 function verifIsExistSituationEvaluation() {
   if (monAfRetenuSelected.value && monAPSA.value) {
     if (
@@ -167,27 +215,4 @@ function verifIsExistSituationEvaluation() {
   }
   return false;
 }
-
-onMounted(async () => {
-  isLoading.value = true;
-  await fetchAllAfRetenus();
-  await fetchAllApsaRetenu();
-  await fetchAllApsaSelectAnneeByAnnee(anneeEnConfig.value.id);
-  apsaSelectAnneeByAnnee.value.forEach((a) => {
-    if (route.query.idCA) {
-      if (a.Ca.id === parseInt(route.query.idCA.toString())) {
-        apsaSelects.value.push(a);
-      }
-    }
-  });
-
-  afRetenus.value.forEach((b) => {
-    if (route.query.idChoixAnnee) {
-      if (b.ChoixAnnee['@id'] === '/api/choix_annees/' + route.query.idChoixAnnee) {
-        mesAfRetenus.value.push(b);
-      }
-    }
-  });
-  isLoading.value = false;
-});
 </script>

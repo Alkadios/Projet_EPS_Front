@@ -21,9 +21,20 @@ export default function ClasseService() {
     return store.getters['ClasseModule/getClasseById'];
   });
 
+  const classesByAnneeAndEtablissement = computed((): Classe[] => {
+    return store.getters['ClasseModule/getClassesByAnneeAndEtablissement'];
+  });
+
   async function fetchClasseByAnnee(idAnnee: number) {
     await store.dispatch('ClasseModule/fetchClasseByAnnee', {
       idAnnee: idAnnee,
+    });
+  }
+
+  async function fetchClasseByAnneeAndEtablissement(idAnnee: number, idEtablissement: number) {
+    await store.dispatch('ClasseModule/fetchClasseByAnneeAndEtablissement', {
+      idAnnee: idAnnee,
+      idEtablissement: idEtablissement,
     });
   }
 
@@ -77,6 +88,8 @@ export default function ClasseService() {
     saveClasse,
     deleteClasse,
     classesByAnneeAndProfesseur,
+    classesByAnneeAndEtablissement,
     fetchClasseByAnneeAndProf,
+    fetchClasseByAnneeAndEtablissement,
   };
 }

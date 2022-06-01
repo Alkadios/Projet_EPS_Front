@@ -4,6 +4,11 @@ import './assets/fonts/fontawesome-all.min.css';
 import './assets/fonts/font-awesome.min.css';
 import './assets/fonts/fontawesome5-overrides.min.css';
 import 'bootstrap';
+import './assets/js/core/popper.min.js';
+import './assets/js/plugins/perfect-scrollbar.min.js';
+import './assets/js/plugins/smooth-scrollbar.min.js';
+import './assets/js/argon-dashboard.js?v=2.0.2';
+import './assets/css/argon-dashboard.css?v=2.0.2';
 import '@/assets/css/theme.css';
 import 'primevue/resources/primevue.min.css';
 import PrimeVue from 'primevue/config';
@@ -58,6 +63,8 @@ import ToggleButton from 'primevue/togglebutton';
 import Chart from 'primevue/chart';
 import OrderList from 'primevue/orderlist';
 import './assets/css/monStyle.css';
+import { createMetaManager } from 'vue-meta';
+
 const { isObjectEmpty } = ObjectUtils();
 const { utilisateur } = UtilisateurService();
 
@@ -112,4 +119,6 @@ app.use(router);
 app.use(PrimeVue, { locale: Locale_FR });
 app.use(ToastService);
 app.use(ConfirmationService);
+app.use(createMetaManager()); // For manage meta data
+
 app.mount('#app');

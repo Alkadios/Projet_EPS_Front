@@ -13,8 +13,24 @@ export default function EtablissementService() {
     await store.dispatch('EtablissementModule/fetchAllEtablissements');
   }
 
+  async function putEtablissementProfs(idEtablissement: number, Professeur: string[]) {
+    await store.dispatch('EtablissementModule/putEtablissementProfs', {
+      idEtablissement: idEtablissement,
+      Professeur,
+    });
+  }
+  async function saveEtablissement(etablissement: Etablissement) {
+    await store.dispatch('EtablissementModule/saveEtablissement', { etablissement });
+  }
+  async function deleteEtablissement(idEtablissement: number) {
+    await store.dispatch('EtablissementModule/deleteEtablissement', { idEtablissement });
+  }
+
   return {
     fetchAllEtablissements,
+    putEtablissementProfs,
     etablissements,
+    saveEtablissement,
+    deleteEtablissement,
   };
 }

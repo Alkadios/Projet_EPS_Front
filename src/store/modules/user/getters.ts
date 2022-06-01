@@ -7,4 +7,10 @@ export default {
   getToken(state: UserState) {
     return state.token;
   },
+  getEleve(state: UserState) {
+    return state.eleve;
+  },
+  getProfesseur(state: UserState) {
+    return state.professeur;
+  },
 };

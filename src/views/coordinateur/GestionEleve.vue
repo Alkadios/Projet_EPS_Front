@@ -1,25 +1,35 @@
 <template>
-  <Dropdown
-    v-model="selectedClasse"
-    :options="classesByAnnee"
-    optionLabel="libelleClasse"
-    dataKey="id"
-    placeholder="Selectionner une classe"
-    @change="onClasseChange"
-  />
-
-  <div>
-    <div>
-      <Button label="Ajouter un Eleve" @click="openBasic" style="right: 1rem" icon="pi pi-plus" autofocus />
-      <Button
-        label="Retirer les Eleves"
-        @click="deleteFromClasse(selectedClasse?.id)"
-        style="right: 1rem"
-        icon="pi pi-trash"
-        autofocus
+  <div class="card shadow-lg o-hidden border-0 m-5">
+    <div class="card-body p-5">
+      <h1>Gestion des élèves</h1>
+      <div>
+        <Button label="Ajouter un Eleve" @click="openBasic" style="right: 1rem" icon="pi pi-plus" autofocus />
+        <Button
+          label="Retirer les Eleves"
+          @click="deleteFromClasse(selectedClasse!.id)"
+          style="right: 1rem"
+          icon="pi pi-trash"
+          autofocus
+        />
+      </div>
+      <Dropdown
+        v-model="selectedClasse"
+        :options="classesByAnneeAndEtablissement"
+        optionLabel="libelleClasse"
+        dataKey="id"
+        placeholder="Selectionner une classe"
+        @change="onClasseChange"
       />
     </div>
-    <DataTable :value="mesEleves" v-model:selection="selectedElevesOnClasse" responsiveLayout="scroll" dataKey="id">
+    <DataTable
+      :value="mesEleves"
+      :paginator="true"
+      :rows="10"
+      :rowsPerPageOptions="[10, 20, 50]"
+      v-model:selection="selectedElevesOnClasse"
+      responsiveLayout="scroll"
+      dataKey="id"
+    >
       <Column selectionMode="multiple"></Column>
 
       <Column field="nom" header="nom" :sortable="true" style="min-width: 12rem"></Column>
@@ -72,7 +82,7 @@
                 </template>
               </Column>
             </DataTable>
-            <button type="button" class="btn btn-primary" @click="editClasse(selectedClasse?.id)">Ajouter</button>
+            <button type="button" class="btn btn-primary" @click="editClasse(selectedClasse!.id)">Ajouter</button>
           </template>
         </Card>
       </div>
@@ -88,7 +98,7 @@
       <div class="col-8">
         <Card>
           <template #content>
-            <center><h1>Modifier un Eleve</h1></center>
+            <h1>Modifier un Eleve</h1>
             <form>
               <div class="container">
                 <div class="row">
@@ -132,39 +142,34 @@
         />
       </div>
     </div>
-    <template #footer>
-      <Button label="No" icon="pi pi-times" @click="closeBasic" class="p-button-text" />
-      <Button label="Yes" icon="pi pi-check" autofocus />
-    </template>
   </Dialog>
 </template>
 
 <script lang="ts" setup>
-import { Classe, Eleve } from '@/models';
+import { ref, onMounted, toRaw } from 'vue';
+import router from '@/router';
+import { useToast } from 'primevue/usetoast';
+import Role from '@/constants/Role';
+import ObjectUtils from '@/utils/ObjectUtils';
 import ClasseService from '@/services/ClasseService';
 import EleveService from '@/services/EleveService';
 import UtilisateurService from '@/services/UtilisateurService';
-import eleve from '@/store/modules/eleve';
-import { ref, onMounted, toRaw } from 'vue';
+import UserService from '@/services/UserService';
+import type { Classe, Eleve } from '@/models';
 
-const { fetchAllEleves, saveEleve, eleves, deleteEleve, fetchEleveById, eleveById, updateEleve } = EleveService();
-const { fetchAllClasses, fetchClasseByAnnee, classesByAnnee, addElevesInClasse, classes } = ClasseService();
-const { etablissement, anneeEnCours } = UtilisateurService();
+const toast = useToast();
+const { isObjectEmpty } = ObjectUtils();
+const { user, redirectToHomePage } = UserService();
+const { fetchAllEleves, eleves, fetchEleveById, eleveById, updateEleve } = EleveService();
+const {
+  fetchAllClasses,
+  fetchClasseByAnneeAndEtablissement,
+  classesByAnneeAndEtablissement,
+  addElevesInClasse,
+  classes,
+} = ClasseService();
+const { etablissement, anneeEnConfig } = UtilisateurService();
 
-onMounted(async () => {
-  isLoading.value = true;
-  await fetchAllEleves();
-  await fetchAllClasses();
-  await fetchClasseByAnnee(anneeEnCours.value.id);
-  isLoading.value = false;
-});
-
-function mesElevesByClasse(idClasse: number) {
-  mesEleves.value = classesByAnnee.value.find((a) => a.id === idClasse)!.eleves;
-}
-const closeBasic = () => {
-  displayBasic.value = false;
-};
 const mesEleves = ref<Eleve[]>([]);
 const eleveDialog = ref(false);
 const selectedClasse = ref<Classe>();
@@ -174,6 +179,28 @@ const mesElevesSansClasse = ref<Eleve[]>([]);
 const mesElevesRetirer = ref<Eleve[]>();
 const displayBasic = ref(false);
 const isLoading = ref(false);
+
+onMounted(async () => {
+  if (isObjectEmpty(user.value)) {
+    router.push('/');
+  } else if (!user.value.roles.includes(Role.ADMIN)) {
+    redirectToHomePage();
+  } else {
+    isLoading.value = true;
+    await fetchAllEleves();
+    await fetchAllClasses();
+    await fetchClasseByAnneeAndEtablissement(anneeEnConfig.value.id, etablissement.value.id);
+    isLoading.value = false;
+  }
+});
+
+function mesElevesByClasse(idClasse: number) {
+  mesEleves.value = classesByAnneeAndEtablissement.value.find((a) => a.id === idClasse)!.eleves;
+}
+const closeBasic = () => {
+  displayBasic.value = false;
+};
+
 const openBasic = () => {
   displayBasic.value = true;
   filterElevesSansClasse();
@@ -209,39 +236,52 @@ async function editEleve(idEleve: number) {
     eleveById.value.sexeEleve,
     eleveById.value.etablissement
   );
-  alert('Votre Eleve à ete modifié');
+  toast.add({ severity: 'success', summary: 'Succès', detail: `L'élève a bien été modifié`, life: 4000 });
   eleveDialog.value = false;
-  await fetchClasseByAnnee(3);
+  await fetchClasseByAnneeAndEtablissement(anneeEnConfig.value.id, etablissement.value.id);
   onClasseChange();
   isLoading.value = false;
 }
 
 async function editClasse(idClasse: number) {
-  const idsEleveExistant = mesEleves.value.map((e: Eleve) => {
-    return e['@id'];
-  });
-  if (selectedEleves.value) {
-    const idsEleve = selectedEleves.value.map((e: Eleve) => {
+  if (confirm('Voulez-vous vraiment ajouter ces eleves à cette classe?')) {
+    const idsEleveExistant = mesEleves.value.map((e: Eleve) => {
       return e['@id'];
     });
-    const arrayidEleve = idsEleveExistant.concat(idsEleve);
+    if (selectedEleves.value) {
+      const idsEleve = selectedEleves.value.map((e: Eleve) => {
+        return e['@id'];
+      });
+      const arrayidEleve = idsEleveExistant.concat(idsEleve);
 
-    if (idsEleve) await addElevesInClasse(idClasse, arrayidEleve);
+      if (idsEleve) await addElevesInClasse(idClasse, arrayidEleve);
+    }
+
+    toast.add({ severity: 'success', summary: 'Succès', detail: `L'élève a bien été ajouter à la classe`, life: 4000 });
+
+    eleveDialog.value = false;
+    isLoading.value = true;
+    mesElevesByClasse(idClasse);
+    onClasseChange();
+    isLoading.value = false;
   }
-  eleveDialog.value = false;
-  isLoading.value = true;
-  await fetchAllEleves();
-  onClasseChange();
-  isLoading.value = false;
 }
 
 async function deleteFromClasse(idClasse: number) {
-  const idElevesRetirer = mesEleves.value
-    .filter((e) => selectedElevesOnClasse.value?.findIndex((ec) => ec.id === e.id) === -1)
-    .map((e) => {
-      return toRaw(e['@id']);
+  if (confirm('Voulez-vous vraiment supprimer ces eleves de cette classe?')) {
+    const idElevesRetirer = mesEleves.value
+      .filter((e) => selectedElevesOnClasse.value?.findIndex((ec) => ec.id === e.id) === -1)
+      .map((e) => {
+        return toRaw(e['@id']);
+      });
+    await addElevesInClasse(idClasse, idElevesRetirer);
+    toast.add({
+      severity: 'success',
+      summary: 'Succès',
+      detail: `Les modifications ont bien été enregistrées`,
+      life: 4000,
     });
-  await addElevesInClasse(idClasse, idElevesRetirer);
-  alert('Votre ou vos élèves on été supprimer de cette classe');
+    mesElevesByClasse(idClasse);
+  }
 }
 </script>

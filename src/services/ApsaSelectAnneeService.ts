@@ -49,6 +49,7 @@ export default function ApsaSelectAnneeService() {
       Ca: number;
       Apsa: number;
       Annee: number;
+      Etablissement: number;
     }[]
   ) {
     await store.dispatch('ApsaSelectAnneeModule/saveApsaSelectAnnee', payload);

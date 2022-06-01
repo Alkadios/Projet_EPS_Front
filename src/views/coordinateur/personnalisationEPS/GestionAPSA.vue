@@ -14,7 +14,7 @@
       <Button label="Valider" icon="pi pi-check" @click="AjoutApsaInCa()" autofocus />
     </template>
   </Dialog>
-  <div class="card shadow-lg o-hidden border-0 my-5">
+  <div class="card shadow-lg o-hidden border-0 m-5">
     <div class="card-body p-0">
       <div class="row">
         <div class="col-lg-1"></div>
@@ -89,7 +89,12 @@ import UtilisateurService from '@/services/UtilisateurService';
 import ApsaSelectAnneeService from '@/services/ApsaSelectAnneeService';
 import { APSA, ChampApprentissage, ChampsApprentissageApsa } from '@/models';
 import { useRouter } from 'vue-router';
+import ObjectUtils from '@/utils/ObjectUtils';
+import UserService from '@/services/UserService';
+import Role from '@/constants/Role';
 
+const { isObjectEmpty } = ObjectUtils();
+const { user, redirectToHomePage } = UserService();
 const router = useRouter();
 
 const { champsApprentissages, fetchChampsApprentissages, saveApsaInCa } = ChampApprentissageService();
@@ -144,11 +149,18 @@ async function saveApsasSelectionnees() {
       Ca: number;
       Apsa: number;
       Annee: number;
+      Etablissement: number;
     }[] = [];
     caApsasSelectionnes.value.forEach((_, idCA) => {
       const ca: ChampApprentissage = champsApprentissages.value.find((ca) => ca.id === idCA)!;
       caApsasSelectionnes.value[idCA].forEach((caApsa: ChampsApprentissageApsa) => {
-        if (caApsa) listForRequest.push({ Ca: ca.id, Apsa: caApsa.Apsa.id, Annee: anneeEnConfig.value.id });
+        if (caApsa)
+          listForRequest.push({
+            Ca: ca.id,
+            Apsa: caApsa.Apsa.id,
+            Annee: anneeEnConfig.value.id,
+            Etablissement: etablissement.value.id,
+          });
       });
     });
 
@@ -169,23 +181,29 @@ function champsNonRempli() {
 }
 
 onMounted(async () => {
-  isLoading.value = true;
-  await fetchChampsApprentissages();
-  await fetchAllApsa();
+  if (isObjectEmpty(user.value)) {
+    router.push('/');
+  } else if (!user.value.roles.includes(Role.ADMIN)) {
+    redirectToHomePage();
+  } else {
+    isLoading.value = true;
+    await fetchChampsApprentissages();
+    await fetchAllApsa();
 
-  await fetchAllApsaSelectAnneeByAnnee(anneeEnConfig.value.id);
-  if (apsaSelectAnneeByAnnee.value.length > 0) {
-    champsApprentissages.value.forEach((ca) => {
-      caApsasSelectionnes.value[ca.id] = [];
-      apsaSelectAnneeByAnnee.value
-        .filter((apsaSelect) => apsaSelect.Ca.id === ca.id)
-        .forEach((as) => {
-          caApsasSelectionnes.value[as.Ca.id].push(
-            ca.champsApprentissageApsas.find((caa) => caa.Apsa.id === as.Apsa.id)
-          );
-        });
-    });
+    await fetchAllApsaSelectAnneeByAnnee(anneeEnConfig.value.id);
+    if (apsaSelectAnneeByAnnee.value.length > 0) {
+      champsApprentissages.value.forEach((ca) => {
+        caApsasSelectionnes.value[ca.id] = [];
+        apsaSelectAnneeByAnnee.value
+          .filter((apsaSelect) => apsaSelect.Ca.id === ca.id)
+          .forEach((as) => {
+            caApsasSelectionnes.value[as.Ca.id].push(
+              ca.champsApprentissageApsas.find((caa) => caa.Apsa.id === as.Apsa.id)
+            );
+          });
+      });
+    }
+    isLoading.value = false;
   }
-  isLoading.value = false;
 });
 </script>

@@ -228,7 +228,7 @@
       </Button>
     </template>
   </Dialog>
-  <div class="card shadow-lg o-hidden border-0 my-5">
+  <div class="card shadow-lg o-hidden border-0 m-5">
     <div class="card-body p-0">
       <div class="row">
         <div class="col-lg-1"></div>
@@ -291,12 +291,22 @@
         </template>
       </OrderList>
     </div>
-    <button class="btn-info" style="border-radius: 10px" @click="openBasic">
+    <button
+      class="btn"
+      style="border-radius: 10px; background-color: #6372e6; color: white; margin: 1rem"
+      @click="openBasic"
+    >
       <i class="m-3 pi pi-plus" style="cursor: pointer; border-radius: 50%; border: 0.2rem solid; font-size: 2em" />
-      <p>Ajouter un critère</p>
+      <p>Ajouter un indicateur</p>
     </button>
     <div class="container-fluid text-center mb-10 Pl-10">
-      <Button label="Valider" style="right: 1rem" icon="pi pi-check" @click="onValid(false)" autofocus></Button>
+      <Button
+        label="Enregistrer les indicateurs"
+        style="right: 1rem"
+        icon="pi pi-check"
+        @click="onValid(false)"
+        autofocus
+      ></Button>
       <Button label="Retour aux critères" icon="pi pi-backward" style="left: 1rem" autofocus @click="back()"></Button>
     </div>
     <div style="position: fixed; bottom: 0; right: 2rem">
@@ -312,17 +322,23 @@
 
 <script lang="ts" setup>
 import { ref, onMounted, computed } from 'vue';
-import { Indicateur } from '@/models';
+import { useRoute, useRouter } from 'vue-router';
+import { useToast } from 'primevue/usetoast';
+import { cloneDeep } from 'lodash-es';
+import ObjectUtils from '@/utils/ObjectUtils';
+import Role from '@/constants/Role';
 import UtilisateurService from '@/services/UtilisateurService';
 import CritereService from '@/services/CritereService';
 import IndicateurService from '@/services/IndicateurService';
-import { useRoute, useRouter } from 'vue-router';
-import ObjectUtils from '@/utils/ObjectUtils';
-import { cloneDeep } from 'lodash-es';
+import UserService from '@/services/UserService';
+import type { Indicateur } from '@/models';
 
+const toast = useToast();
 const route = useRoute();
 const router = useRouter();
+
 const { isObjectEmpty } = ObjectUtils();
+const { user, redirectToHomePage } = UserService();
 const { etablissement } = UtilisateurService();
 const { critere, fetchCriteres, fetchCritereById } = CritereService();
 const {
@@ -335,7 +351,7 @@ const {
   indicateur,
   indicateursByCritere,
 } = IndicateurService();
-const IndicateurByCritere = ref<Indicateur[]>([]);
+
 const nouvelleImageIndicateur = ref<File>({} as File);
 const nouveauIndicateur = ref<Indicateur>({
   libelle: '',
@@ -366,17 +382,23 @@ function openEdit(monIndicateur: Indicateur) {
 
 const closeEdit = () => {
   displayEdit.value = false;
-  window.alert('L\indicateur a bien été modifié !');
+  toast.add({ severity: 'success', summary: 'Succès', detail: `L'indicateur a bien été modifié !`, life: 4000 });
 };
 
 onMounted(async () => {
-  isLoading.value = true;
-  if (route.query.idCritere) {
-    await fetchIndicateursByCritere(parseInt(route.query.idCritere.toString()));
-    await fetchCritereById(parseInt(route.query.idCritere.toString()));
-    mesIndicateurs.value = cloneDeep(indicateursByCritere.value);
+  if (isObjectEmpty(user.value)) {
+    router.push('/');
+  } else if (!user.value.roles.includes(Role.ADMIN)) {
+    redirectToHomePage();
+  } else {
+    isLoading.value = true;
+    if (route.query.idCritere) {
+      await fetchIndicateursByCritere(parseInt(route.query.idCritere.toString()));
+      await fetchCritereById(parseInt(route.query.idCritere.toString()));
+      mesIndicateurs.value = cloneDeep(indicateursByCritere.value);
+    }
+    isLoading.value = false;
   }
-  isLoading.value = false;
 });
 
 async function addIndicateur() {
@@ -391,7 +413,7 @@ async function addIndicateur() {
   );
   mesIndicateurs.value.push(indicateur.value);
   closeBasic();
-  window.alert("L'indicateur a bien été ajouté !");
+  toast.add({ severity: 'success', summary: 'Succès', detail: `L'indicateur a bien été enregistré`, life: 4000 });
 }
 
 async function changeIndicateur(monIndicateur: Indicateur) {
@@ -412,7 +434,8 @@ async function removeIndicateur(indicateurId: number) {
   if (x) {
     await deleteIndicateur(indicateurId);
     mesIndicateurs.value = mesIndicateurs.value.filter((i: Indicateur) => i.id != indicateurId);
-    window.alert("L'indicateur a bien été supprimé !");
+
+    toast.add({ severity: 'success', summary: 'Succès', detail: `L'indicateur a bien été supprimé`, life: 4000 });
   }
 }
 

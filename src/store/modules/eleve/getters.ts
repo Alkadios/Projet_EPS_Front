@@ -7,10 +7,19 @@ export default {
   getEleveById(state: EleveState) {
     return state.eleveById;
   },
+  getEleveByUser(state: EleveState) {
+    return state.eleveByUser;
+  },
   getElevesByClasse(state: EleveState) {
     return state.elevesByClasse;
   },
   getElevesByAnneeAndEtablissement(state: EleveState) {
     return state.elevesByAnneeAndEtablissement;
+  },
+  getElevesByEtablissement(state: EleveState) {
+    return state.elevesByEtablissement;
+  },
+  getApsaEvaluateByEleve(state: EleveState) {
+    return state.apsaEvaluateByEleve;
   },
 };

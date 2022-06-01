@@ -5,4 +5,5 @@ export default interface ClasseState {
   classesByAnnee: Classe[];
   classesById: Classe;
   classesByAnneeAndProfesseur: Classe[];
+  classesByAnneeAndEtablissement: Classe[];
 }

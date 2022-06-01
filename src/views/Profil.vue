@@ -1,16 +1,35 @@
 <template>
-  <h3 style="text-align: center" class="text-dark mb-4">Profile {{ NomEleve }}</h3>
-  <div class="row mb-3">
+  <div class="row m-5">
     <div class="col-lg-4">
       <div class="card mb-3">
         <div class="card-body text-center shadow">
-          <img class="rounded-circle mb-3 mt-4" src="@/assets/img/man.png" width="160" height="160" />
+          <img
+            v-if="!isObjectEmpty(professeurByUser)"
+            class="rounded-circle mb-3 mt-4"
+            src="@/assets/img/professeur.png"
+            width="160"
+            height="160"
+          />
+          <img
+            v-if="sexeUser === 'M'"
+            class="rounded-circle mb-3 mt-4"
+            src="@/assets/img/man.png"
+            width="160"
+            height="160"
+          />
+          <img
+            v-if="sexeUser === 'F'"
+            class="rounded-circle mb-3 mt-4"
+            src="@/assets/img/woman.png"
+            width="160"
+            height="160"
+          />
           <div class="mb-3">
-            <button class="btn btn-primary btn-sm" type="button">Change Photo</button>
+            <h5 style="text-align: center" class="text-dark mb-4">{{ nomAndPrenom }}</h5>
           </div>
         </div>
       </div>
-      <div class="card shadow mb-4">
+      <!-- <div class="card shadow mb-4">
         <div class="card-header py-3">
           <h6 class="text-primary fw-bold m-0">Niveau Sports</h6>
         </div>
@@ -76,39 +95,9 @@
             </div>
           </div>
         </div>
-      </div>
+      </div>-->
     </div>
     <div class="col-lg-8">
-      <div class="row mb-3 d-none">
-        <div class="col">
-          <div class="card textwhite bg-primary text-white shadow">
-            <div class="card-body">
-              <div class="row mb-2">
-                <div class="col">
-                  <p class="m-0">Peformance</p>
-                  <p class="m-0"><strong>65.2%</strong></p>
-                </div>
-                <div class="col-auto"><i class="fas fa-rocket fa-2x"></i></div>
-              </div>
-              <p class="text-white-50 small m-0"><i class="fas fa-arrow-up"></i>&nbsp;5% since last month</p>
-            </div>
-          </div>
-        </div>
-        <div class="col">
-          <div class="card textwhite bg-success text-white shadow">
-            <div class="card-body">
-              <div class="row mb-2">
-                <div class="col">
-                  <p class="m-0">Peformance</p>
-                  <p class="m-0"><strong>65.2%</strong></p>
-                </div>
-                <div class="col-auto"><i class="fas fa-rocket fa-2x"></i></div>
-              </div>
-              <p class="text-white-50 small m-0"><i class="fas fa-arrow-up"></i>&nbsp;5% since last month</p>
-            </div>
-          </div>
-        </div>
-      </div>
       <div class="row">
         <div class="col">
           <div class="card shadow mb-3">
@@ -116,7 +105,7 @@
               <p class="text-primary m-0 fw-bold">Informations Professionnelles</p>
             </div>
             <div class="card-body">
-              <form>
+              <div v-if="!isObjectEmpty(eleveByUser)">
                 <div class="row">
                   <div class="col-4">
                     <div class="mb-3">
@@ -210,7 +199,39 @@
                 <div class="mb-3" style="text-align: center">
                   <button class="btn btn-primary btn-sm" type="submit">Modifier</button>
                 </div>
-              </form>
+              </div>
+              <div v-if="!isObjectEmpty(professeurByUser)">
+                <div class="row">
+                  <div class="col-4">
+                    <div class="mb-3">
+                      <label class="form-label" for="username"><strong>Nom</strong></label>
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="mb-3"><input class="form-control" type="email" id="email" name="email" /></div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-4">
+                    <div class="mb-3">
+                      <label class="form-label" for="username"><strong>Prénom</strong></label>
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="mb-3"><input class="form-control" type="email" id="email" name="email" /></div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-4">
+                    <div class="mb-3">
+                      <label class="form-label" for="username"><strong>Téléphone</strong></label>
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="mb-3"><input class="form-control" type="email" id="email" name="email" /></div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -220,17 +241,38 @@
 </template>
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue';
+import EleveService from '@/services/EleveService';
+import ProfesseurService from '@/services/ProfesseurService';
+import UserService from '@/services/UserService';
+import ObjectUtils from '@/utils/ObjectUtils';
+import { useRoute, useRouter } from 'vue-router';
+import Role from '@/constants/Role';
 
-const categories = ref([
-  { name: 'Accounting', key: 'A' },
-  { name: 'Marketing', key: 'M' },
-  { name: 'Production', key: 'P' },
-  { name: 'Research', key: 'R' },
-]);
+const { isObjectEmpty } = ObjectUtils();
+const { user } = UserService();
+const { fetchEleveByUser, eleveByUser } = EleveService();
+const { fetchProfByUser, professeurByUser } = ProfesseurService();
+const nomAndPrenom = ref();
+const sexeUser = ref();
+const isLoading = ref(false);
+const router = useRouter();
+onMounted(async () => {
+  if (isObjectEmpty(user.value)) {
+    router.push('/');
+  } else {
+    isLoading.value = true;
 
-const selectedCategories = ref([]);
-
-const NomEleve = 'Laura GUICHON';
+    if (!user.value.roles.includes(Role.PROF)) {
+      await fetchProfByUser(user.value.id);
+      nomAndPrenom.value = professeurByUser.value.nom + ' ' + professeurByUser.value.prenom;
+    } else if (!user.value.roles.includes(Role.ELEVE)) {
+      await fetchEleveByUser(user.value.id);
+      nomAndPrenom.value = eleveByUser.value.nom + ' ' + eleveByUser.value.prenom;
+      sexeUser.value = eleveByUser.value.sexeEleve;
+    }
+    isLoading.value = false;
+  }
+});
 </script>
 <style>
 .mb-3 {
