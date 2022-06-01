@@ -7,7 +7,7 @@
           <div class="p-5">
             <div class="text-center">
               <p class="text-dark mb-2">Aperçu de mes évaluations</p>
-              <h4 class="text-dark mb-4">{{ etablissement.nom }}</h4>
+              <!-- <h4 class="text-dark mb-4">{{ etablissement.nom }}</h4> -->
             </div>
           </div>
           <div>

@@ -1,9 +1,11 @@
 <template>
   <Dialog id="modalSelectionEtablissement" :visible="afficherSelectionEtablissement" :modal="true" :closable="false">
     <template #header>
-      <span class="titre">Choisissez un établissement</span>
+      <span v-if="userAvecEtablissement" class="titre">Choisissez un établissement</span>
+      <span v-else class="titre">L'utilisateur n'a aucun établissement </span>
     </template>
     <Listbox
+      v-if="userAvecEtablissement"
       v-model="etablissementSelectionne"
       :options="user.etablissements"
       optionLabel="nom"
@@ -11,6 +13,7 @@
       @change="selectionnerEtablissement"
     >
     </Listbox>
+    <span v-else> Accès refusé</span>
   </Dialog>
 </template>
 
@@ -45,6 +48,11 @@ const afficherSelectionEtablissement: WritableComputedRef<boolean> = computed({
 
 const afficherErreurAucunOrganisme = ref(false);
 const etablissementSelectionne = ref<Etablissement>(etablissement.value);
+
+const userAvecEtablissement = computed(() => {
+  if (user.value.etablissements && user.value.etablissements.length > 0) return true;
+  return false;
+});
 
 async function selectionnerEtablissement() {
   await fetchEtablissementById(etablissementSelectionne.value.id);
