@@ -253,7 +253,7 @@ async function editClasse(idClasse: number) {
       if (idsEleve) await addElevesInClasse(idClasse, arrayidEleve);
     }
 
-    toast.add({ severity: 'success', summary: 'Succès', detail: `L'élève a bien été ajouter à la classe`, life: 4000 });
+    toast.add({ severity: 'success', summary: 'Succès', detail: `L'élève a bien été ajouté à la classe`, life: 4000 });
 
     eleveDialog.value = false;
     isLoading.value = true;
