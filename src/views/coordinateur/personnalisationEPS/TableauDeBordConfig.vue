@@ -52,7 +52,7 @@
         <Column field="Niveau.libelle" header="Niveau scolaire"></Column>
 
         <Column
-          :field="(item: ChoixAnnee) =>'CA'+ item.id + ' - ' + item.champApprentissage.libelle"
+          :field="(item: ChoixAnnee) =>'CA'+ item.champApprentissage.id + ' - ' + item.champApprentissage.libelle"
           header="CA"
         ></Column>
         <Column headerStyle="width:4rem">
