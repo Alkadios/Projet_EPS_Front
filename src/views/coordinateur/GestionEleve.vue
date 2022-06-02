@@ -87,10 +87,6 @@
         </Card>
       </div>
     </div>
-    <template #footer>
-      <Button label="No" icon="pi pi-times" @click="closeBasic" class="p-button-text" />
-      <Button label="Yes" icon="pi pi-check" autofocus />
-    </template>
   </Dialog>
 
   <Dialog header="Modifier un Eleve" v-model:visible="eleveDialog" :style="{ width: '50vw' }">
@@ -278,7 +274,7 @@ async function deleteFromClasse(idClasse: number) {
     toast.add({
       severity: 'success',
       summary: 'Succès',
-      detail: `Les modifications ont bien été enregistrées`,
+      detail: `Les élèves ont bien été supprimés`,
       life: 4000,
     });
     mesElevesByClasse(idClasse);
