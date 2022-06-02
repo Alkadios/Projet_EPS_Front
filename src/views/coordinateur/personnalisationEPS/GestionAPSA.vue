@@ -65,6 +65,7 @@
           @click="saveApsasSelectionnees"
           autofocus
         />
+        <div class="mb-3"><h6 style="float: right;">Gestion des APSA</h6></div>
         <span v-if="apsaSelectAnneeEnErreur">
           <InlineMessage severity="error"> Veuillez sélectionnez au moins un APSA </InlineMessage>
         </span>
