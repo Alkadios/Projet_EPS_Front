@@ -472,6 +472,7 @@ function supprimerImageIndicateur() {
 async function onValid(redirectToCritere: boolean) {
   mesIndicateurs.value.forEach(async (i: Indicateur, index) => {
     await editIndicateur(i.id, i.libelle, i.description, i.image, i.url_video, i.color, index + 1);
+    toast.add({ severity: 'success', summary: 'Succès', detail: `Les indicateurs ont bien été enregistrés`, life: 4000 });
   });
   // if (redirectToCritere) {
   //   const splitApsaRetenu = critere.value.ApsaRetenu.toString().split('/');
