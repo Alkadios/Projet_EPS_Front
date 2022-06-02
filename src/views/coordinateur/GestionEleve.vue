@@ -274,7 +274,7 @@ async function deleteFromClasse(idClasse: number) {
     toast.add({
       severity: 'success',
       summary: 'Succès',
-      detail: `Les modifications ont bien été enregistrées`,
+      detail: `Les élèves ont bien été supprimés`,
       life: 4000,
     });
     mesElevesByClasse(idClasse);
