@@ -76,6 +76,7 @@
       </div>
     </div>
   </Dialog>
+ <div class="mb-3"><h6 style="float: right;">Gestion de mes classes</h6></div>
 </template>
 
 <script lang="ts" setup>

@@ -246,6 +246,7 @@
         >
       </Button>
       <Button label="Retour aux AF" icon="pi pi-backward" style="left: 1rem" @click="back()" autofocus></Button>
+      <div class="mb-3"><h6 style="float: right;">Critères d'évaluation</h6></div>
     </div>
     <div style="position: fixed; bottom: 0; right: 2rem">
       <ProgressSpinner

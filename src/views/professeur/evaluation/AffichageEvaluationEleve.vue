@@ -121,7 +121,7 @@
         <Button label="Annuler" @click="router.push('/TableauDeBordConfig')"></Button>
         <Button label="Terminer l'évaluation" icon="pi pi-check" style="left: 1rem" @click="verif()"></Button>
       </div>
-      <div class="mb-3"></div>
+      <div class="mb-3"><h6 style="float: right;">Évaluations réalisées</h6></div>
       <div style="position: fixed; bottom: 0; right: 2rem">
         <ProgressSpinner
           v-if="isLoading"

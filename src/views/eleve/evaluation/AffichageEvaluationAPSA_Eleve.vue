@@ -67,6 +67,7 @@
       </div>
       <div class="mt-3 ms-3">
         <Button label="Retour vers mes évaluations" @click="router.push('/Accueil')"></Button>
+         <div class="mb-3"><h6 style="float: right;">Mes évaluations</h6></div>
       </div>
       <div class="mb-3"></div>
       <div style="position: fixed; bottom: 0; right: 2rem">

@@ -61,6 +61,7 @@
         icon="pi pi-pencil"
         autofocus
       ></Button>
+      <div class="mb-3"><h6 style="float: right;">Situation d'évaluation pour les attendus finaux</h6></div>
     </div>
     <div style="position: fixed; bottom: 0; right: 0">
       <ProgressSpinner
