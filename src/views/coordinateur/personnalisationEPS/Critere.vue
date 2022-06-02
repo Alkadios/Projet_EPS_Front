@@ -238,7 +238,13 @@
       </div>
     </div>
     <div class="mb-3">
-      <Button label="Terminer" icon="pi pi-check" autofocus></Button>
+      <Button label="Terminer la configuration" icon="pi pi-check" autofocus 
+        @click="
+          router.push({
+          name: 'TableauDeBordConfig'
+        }), toastReturnDashBoard()"
+        >
+      </Button>
       <Button label="Retour aux AF" icon="pi pi-backward" style="left: 1rem" @click="back()" autofocus></Button>
     </div>
     <div style="position: fixed; bottom: 0; right: 2rem">
@@ -370,5 +376,9 @@ function supprimerImageCritere() {
 
 function back() {
   window.history.back();
+}
+
+function toastReturnDashBoard(){
+  toast.add({ severity: 'success', summary: 'Succès', detail: `La configuration a bien été enregistrée ! Vous avez été redirigé vers le tableau de configuration.`, life: 4000 });
 }
 </script>
