@@ -99,7 +99,9 @@
                           v-for="indicateur of monCritere.Indicateur"
                           :key="indicateur.id"
                           :label="indicateur.libelle"
-                          :style="!checkIfIndicateurIsSelectionner(indicateur) ? 'background-color: bisque' : ''"
+                          :style="
+                            !checkIfIndicateurIsSelectionner(indicateur) ? 'background-color: ' + indicateur.color : ''
+                          "
                           :class="checkIfIndicateurIsSelectionner(indicateur) ? 'primary' : ''"
                           @click="addIndicateurInEvaluation(monCritere, indicateur)"
                         />
@@ -113,7 +115,7 @@
         </div>
       </div>
       <div class="mt-3 ms-3">
-        <Button label="Annuler" @click="router.push('TableauDeBordConfig')"></Button>
+        <Button label="Annuler" @click="router.push('/TableauDeBordConfig')"></Button>
         <Button label="Terminer l'évaluation" icon="pi pi-check" style="left: 1rem" @click="saveEvaluation()"></Button>
       </div>
       <div class="mb-3"></div>
@@ -140,6 +142,7 @@ import EvaluationEleveService from '@/services/EvaluationEleveService';
 import ObjectUtils from '@/utils/ObjectUtils';
 import type { Critere, Eleve, Indicateur, Classe, ApsaRetenu, NiveauScolaire, APSA } from '@/models';
 import ProfesseurService from '@/services/ProfesseurService';
+import Role from '@/constants/Role';
 
 const { fetchProfByUser, professeurByUser } = ProfesseurService();
 const route = useRoute();
@@ -253,7 +256,7 @@ watch(
 onMounted(async () => {
   if (isObjectEmpty(user.value)) {
     router.push('/');
-  } else if (user.value.roles != 'Professeur') {
+  } else if (!user.value.roles.includes(Role.PROF)) {
     redirectToHomePage();
   } else {
     isLoading.value = true;
@@ -268,7 +271,6 @@ function onClasseChange() {
   if (classeSelectionner.value) {
     isLoading.value = true;
     elevesByClasse.value = getElevesByClasse(classeSelectionner.value)!;
-
     apsasRetenusByNiveauScolaire.value = getApsasRetenusByNiveauScolaire(classeSelectionner.value.NiveauScolaire);
     listeApsa.value = [];
     //Evite les doublons si une apsa à plusiers situation d'évaluation
@@ -297,8 +299,7 @@ function getElevesByClasse(uneClasse: Classe) {
   return classesByAnneeAndProfesseur.value.find((classeProf) => classeProf.id === uneClasse.id)?.eleves;
 }
 
-function getApsasRetenusByNiveauScolaire(unNiveauScolaire: string | NiveauScolaire) {
-  console.log('nuNIveau : ', unNiveauScolaire);
+function getApsasRetenusByNiveauScolaire(unNiveauScolaire: NiveauScolaire) {
   return apsasRetenusByEtablissementAndAnnee.value
     .filter((apsaRetenu) => apsaRetenu.AfRetenu.ChoixAnnee.Niveau['@id'] === unNiveauScolaire['@id'])
     .map((apsaR) => {
@@ -326,7 +327,7 @@ async function saveEvaluation() {
     monEvaluation.value.evaluationEleve = getEvaluationEleveForRequest(indicateursEleveSelectionner.value);
     await saveEvaluationEleve(monEvaluation.value.Date, monEvaluation.value.evaluationEleve);
   }
-  router.push('TableauDeBordConfig');
+  router.push('/AffichageEvaluationEleve');
   isLoading.value = false;
 }
 

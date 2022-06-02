@@ -16,6 +16,9 @@ export default {
   getElevesByAnneeAndEtablissement(state: EleveState) {
     return state.elevesByAnneeAndEtablissement;
   },
+  getElevesByEtablissement(state: EleveState) {
+    return state.elevesByEtablissement;
+  },
   getApsaEvaluateByEleve(state: EleveState) {
     return state.apsaEvaluateByEleve;
   },

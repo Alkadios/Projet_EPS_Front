@@ -3,6 +3,7 @@ import { useStore } from 'vuex';
 import jwt_decode from 'jwt-decode';
 import { Eleve, Professeur, User } from '@/models';
 import router from '@/router';
+import Role from '@/constants/Role';
 
 export default function UserService() {
   const store = useStore();
@@ -27,12 +28,12 @@ export default function UserService() {
   }
 
   function redirectToHomePage() {
-    if (user.value.roles === 'Eleve') {
+    if (user.value.roles.includes(Role.ELEVE)) {
       router.push('/Accueil');
-    } else if (user.value.roles === 'Professeur') {
+    } else if (user.value.roles.includes(Role.PROF)) {
       router.push('/EvaluationEleves');
-    } else if (user.value.roles === 'Admin') {
-      router.push('/TableauDeBordConfig');
+    } else if (user.value.roles.includes(Role.ADMIN)) {
+      router.push('/coordinateur/TableauDeBord');
     }
   }
 

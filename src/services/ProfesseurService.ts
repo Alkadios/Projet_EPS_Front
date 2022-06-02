@@ -46,11 +46,12 @@ export default function ProfesseurService() {
 
   async function saveProfesseur(
     email: string,
-    roles: string,
+    roles: any,
     password: string,
     nom: string,
     prenom: string,
-    telephone: string
+    telephone: string,
+    etablissements: string[]
   ) {
     await store.dispatch('ProfesseurModule/saveProfesseur', {
       email,
@@ -59,6 +60,7 @@ export default function ProfesseurService() {
       nom,
       prenom,
       telephone,
+      etablissements,
     });
   }
 

@@ -44,6 +44,7 @@ export default {
       Ca: number;
       Apsa: number;
       Annee: number;
+      Etablissement: number;
     }[]
   ): Promise<AxiosResponse> {
     return axios.post(`${ApiURLApsaSelect}/deleteAndReplace`, payload, apiConfig.value);

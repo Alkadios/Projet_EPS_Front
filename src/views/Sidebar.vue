@@ -19,7 +19,7 @@
     <hr class="horizontal dark mt-0" />
     <div class="collapse navbar-collapse w-auto" id="sidenav-collapse-main">
       <ul class="navbar-nav">
-        <div v-if="user.roles === 'Admin'">
+        <div v-if="user.roles.includes(Role.ADMIN)">
           <li class="nav-item mt-3">
             <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Coordonnateur</h6>
           </li>
@@ -78,6 +78,15 @@
             </router-link>
           </li>
           <li class="nav-item">
+            <router-link to="/GestionEtablissement" style="margin: unset" class="nav-link">
+              <div class="icon icon-shape icon-sm d-flex align-items-center justify-content-center">
+                <i class="ni ni-collection text-info text-sm opacity-10"></i>
+              </div>
+              <i class="fas fa-school"></i>
+              <span class="nav-link-text justify-content-center">Gestion des établissements</span>
+            </router-link>
+          </li>
+          <li class="nav-item">
             <router-link to="/GestionProfEtablissement" style="margin: unset" class="nav-link">
               <div class="icon icon-shape icon-sm d-flex align-items-center justify-content-center">
                 <i class="ni ni-collection text-info text-sm opacity-10"></i>
@@ -96,7 +105,7 @@
             </router-link>
           </li>
         </div>
-        <div v-if="user.roles === 'Professeur'">
+        <div v-if="user.roles.includes(Role.PROF)">
           <li class="nav-item mt-3">
             <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Professeur</h6>
           </li>
@@ -128,7 +137,7 @@
             </router-link>
           </li>
         </div>
-        <div v-if="user.roles === 'Eleve'">
+        <div v-if="user.roles.includes(Role.ELEVE)">
           <li class="nav-item mt-3">
             <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Eleve</h6>
           </li>
@@ -154,7 +163,7 @@
         <li class="nav-item mt-3" id="monCompteSideBar" style="display: none">
           <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Mon compte</h6>
         </li>
-        <li class="nav-item" id="monProfilSideBar" style="display: none" @click="echo">
+        <li class="nav-item" id="monProfilSideBar" style="display: none">
           <router-link to="/Profil" class="nav-link">
             <div
               class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center"
@@ -184,6 +193,7 @@
 import UserService from '@/services/UserService';
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
+import Role from '@/constants/Role';
 
 const router = useRouter();
 const displayMenu = ref(window.innerWidth >= 600);
@@ -208,16 +218,12 @@ async function logout() {
   await deconnexion();
 }
 
-function echo() {
-  console.log(props.displaySideBar, 'props', props.sidenavActive);
-}
-
 function displayAside() {
   let asideBar = document.getElementById('sidenav-main');
   if (asideBar?.style.display === 'none') {
     asideBar.style.display = 'block';
   } else {
-    asideBar.style.display = 'none';
+    asideBar!.style.display = 'none';
   }
 }
 </script>

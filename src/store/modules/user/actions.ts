@@ -35,7 +35,6 @@ export default {
     context.commit('setUser', user);
     console.log(user);
     context.commit('setToken', response.data.token);
-    console.log('monToken', response.data.token);
 
     if (response.status === 200) {
     } else {
@@ -53,13 +52,12 @@ export default {
   async checkLocalStorage(context: ActionContext<UserState, any>) {
     if (localStorage.getItem('user_access') != null) {
       const currentToken = jwt_decode(localStorage.getItem('user_access') || '{}');
-      console.log('currenttok', currentToken);
       context.commit('setToken', currentToken);
       context.commit('setUser', currentToken);
     }
   },
 
-  async deleteUser(context: ActionContext<UserState, any>, payload: { idUser: number }) {
+  async deleteUser(_: ActionContext<UserState, any>, payload: { idUser: number }) {
     const response = await UserAPI.deleteEleve(payload.idUser);
     if (response.status === 204) {
     }

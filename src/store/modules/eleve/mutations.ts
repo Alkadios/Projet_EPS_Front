@@ -17,6 +17,9 @@ export default {
   setElevesByAnneeAndEtablissement(state: EleveState, payload: Eleve[]) {
     state.elevesByAnneeAndEtablissement = payload;
   },
+  setElevesByEtablissement(state: EleveState, payload: Eleve[]) {
+    state.elevesByEtablissement = payload;
+  },
   setApsaEvaluateByEleve(state: EleveState, payload: any[]) {
     state.apsaEvaluateByEleve = payload;
   },

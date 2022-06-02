@@ -1,6 +1,7 @@
 import { ActionContext } from 'vuex';
 import ProfesseurAPI from '@/api/ProfesseurAPI';
 import ProfesseurState from './stateInterface';
+import ClasseState from '../classe/stateInterface';
 import { Classe, Professeur } from '@/models';
 import { ref } from 'vue';
 
@@ -54,6 +55,7 @@ export default {
       nom: string;
       prenom: string;
       telephone: string;
+      etablissements: string[];
     }
   ) {
     const response = await ProfesseurAPI.saveProf(payload);
@@ -71,7 +73,7 @@ export default {
   },
 
   async putProfesseursClasse(
-    context: ActionContext<ProfesseurState, any>,
+    context: ActionContext<ClasseState, any>,
     payload: {
       idProf: number;
       classe: string[];

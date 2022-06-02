@@ -75,19 +75,22 @@
 
 <script lang="ts" setup>
 import { ref, onMounted, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { useToast } from 'primevue/usetoast';
+import ObjectUtils from '@/utils/ObjectUtils';
+import Role from '@/constants/Role';
 import AfRetenusService from '@/services/AfRetenusService';
 import ApsaRetenuService from '@/services/ApsaRetenuService';
 import ApsaSelectAnneeService from '@/services/ApsaSelectAnneeService';
 import UtilisateurService from '@/services/UtilisateurService';
-import { ApsaSelectAnnee, ApsaRetenu, AfRetenus } from '@/models';
-import { useRoute } from 'vue-router';
-import router from '@/router';
-import ObjectUtils from '@/utils/ObjectUtils';
 import UserService from '@/services/UserService';
+import type { ApsaSelectAnnee, ApsaRetenu, AfRetenus } from '@/models';
 
+const toast = useToast();
+const route = useRoute();
+const router = useRouter();
 const { isObjectEmpty } = ObjectUtils();
 const { user, redirectToHomePage } = UserService();
-const route = useRoute();
 
 const { apsaSelectAnneeByAnnee, fetchAllApsaSelectAnneeByAnnee } = ApsaSelectAnneeService();
 const { afRetenus, fetchAllAfRetenus } = AfRetenusService();
@@ -117,7 +120,13 @@ async function changeApsaRetenu(monApsaRetenu: ApsaRetenu) {
       situationEvaluation.value,
       monAPSA.value?.['@id']
     );
-    window.alert('Le critère a bien été modifié !');
+    toast.add({
+      severity: 'success',
+      summary: 'Succès',
+      detail: `La situation d'évaluation a bien été modifié !`,
+      life: 4000,
+    });
+
     router.push({ name: 'Critere', query: { idApsaRetenu: apsaRetenu.value.id } });
   }
 }
@@ -127,9 +136,6 @@ watch(
   async () => {
     if (monAPSA.value) {
       isLoading.value = true;
-      //await fetchAllAfRetenuByAnneeAndNiveauScolaire(annee.value.id, niveauScolaireSelectionne.value?.id);
-
-      //Mettre fonction
       if (verifIsExistSituationEvaluation()) {
         situationEvaluation.value = monApsaRetenu.value?.SituationEvaluation!;
       } else {
@@ -156,26 +162,10 @@ watch(
   }
 );
 
-function verifIsExistSituationEvaluation() {
-  if (monAfRetenuSelected.value && monAPSA.value) {
-    if (
-      apsasRetenus.value.find(
-        (ar) => ar.AfRetenu.id === monAfRetenuSelected.value.id && ar.ApsaSelectAnnee['@id'] === monAPSA.value?.['@id']
-      )
-    ) {
-      monApsaRetenu.value = apsasRetenus.value.find(
-        (ar) => ar.AfRetenu.id === monAfRetenuSelected.value.id && ar.ApsaSelectAnnee['@id'] === monAPSA.value?.['@id']
-      );
-      return true;
-    }
-  }
-  return false;
-}
-
 onMounted(async () => {
   if (isObjectEmpty(user.value)) {
     router.push('/');
-  } else if (user.value.roles != 'Admin') {
+  } else if (!user.value.roles.includes(Role.ADMIN)) {
     redirectToHomePage();
   } else {
     isLoading.value = true;
@@ -199,13 +189,30 @@ onMounted(async () => {
     });
     if (route.query.idApsa) {
       monAPSA.value = apsaSelects.value.find((asa) => (asa.Apsa.id = parseInt(route.query.idApsa!.toString())));
+    }
+    if (route.query.idAfRetenu) {
+      monAfRetenuSelected.value = mesAfRetenus.value.find(
+        (afr) => (afr.id = parseInt(route.query.idAfRetenu!.toString()))
+      );
+    }
+    isLoading.value = false;
+  }
+  isLoading.value = false;
+});
 
-      if (route.query.idAfRetenu) {
-        monAfRetenuSelected.value = mesAfRetenus.value.find(
-          (afr) => (afr.id = parseInt(route.query.idAfRetenu!.toString()))
-        );
-      }
+function verifIsExistSituationEvaluation() {
+  if (monAfRetenuSelected.value && monAPSA.value) {
+    if (
+      apsasRetenus.value.find(
+        (ar) => ar.AfRetenu.id === monAfRetenuSelected.value.id && ar.ApsaSelectAnnee['@id'] === monAPSA.value?.['@id']
+      )
+    ) {
+      monApsaRetenu.value = apsasRetenus.value.find(
+        (ar) => ar.AfRetenu.id === monAfRetenuSelected.value.id && ar.ApsaSelectAnnee['@id'] === monAPSA.value?.['@id']
+      );
+      return true;
     }
   }
-});
+  return false;
+}
 </script>

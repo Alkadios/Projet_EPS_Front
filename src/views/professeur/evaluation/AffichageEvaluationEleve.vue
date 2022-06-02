@@ -118,7 +118,7 @@
         </div>
       </div>
       <div class="mt-3 ms-3">
-        <Button label="Annuler" @click="router.push('TableauDeBordConfig')"></Button>
+        <Button label="Annuler" @click="router.push('/TableauDeBordConfig')"></Button>
         <Button label="Terminer l'évaluation" icon="pi pi-check" style="left: 1rem" @click="verif()"></Button>
       </div>
       <div class="mb-3"></div>
@@ -143,6 +143,7 @@ import ObjectUtils from '@/utils/ObjectUtils';
 import type { Eleve, Classe, ApsaRetenu, NiveauScolaire, APSA, ChampApprentissage } from '@/models';
 import UserService from '@/services/UserService';
 import ProfesseurService from '@/services/ProfesseurService';
+import Role from '@/constants/Role';
 
 const { fetchProfByUser, professeurByUser } = ProfesseurService();
 const { user, redirectToHomePage } = UserService();
@@ -162,10 +163,10 @@ const apsaSelectionner = ref<APSA>();
 const situationEvaluationSelectionner = ref<ApsaRetenu>();
 const eleveSelectionne = ref<Eleve>();
 const listeApsa = ref<APSA[]>([]);
-const listeCa = ref<ChampApprentissage[]>([]);
 const lightOptionsCammenbert = ref({
   plugins: {
     legend: {
+      display: false,
       labels: {
         color: '#495057',
       },
@@ -216,7 +217,7 @@ function verif() {}
 onMounted(async () => {
   if (isObjectEmpty(user.value)) {
     router.push('/');
-  } else if (user.value.roles != 'Professeur') {
+  } else if (!user.value.roles.includes(Role.PROF)) {
     redirectToHomePage();
   } else {
     isLoading.value = true;
@@ -278,12 +279,6 @@ function onClasseChange() {
         listeApsa.value.push(ar.ApsaSelectAnnee.Apsa);
       }
     });
-
-    apsasRetenusByNiveauScolaire.value.forEach((ar) => {
-      if (listeApsa.value.find((a) => a.id === ar.ApsaSelectAnnee.Apsa.id)) {
-        listeCa.value.push(ar.AfRetenu.ChoixAnnee.champApprentissage);
-      }
-    });
     isLoading.value = false;
   }
 }
@@ -305,7 +300,7 @@ function getElevesByClasse(uneClasse: Classe) {
 
 function getApsasRetenusByNiveauScolaire(unNiveauScolaire: NiveauScolaire) {
   return apsasRetenusByEtablissementAndAnnee.value
-    .filter((apsaRetenu) => apsaRetenu.AfRetenu.ChoixAnnee.Niveau['@id'] === unNiveauScolaire)
+    .filter((apsaRetenu) => apsaRetenu.AfRetenu.ChoixAnnee.Niveau['@id'] === unNiveauScolaire['@id'])
     .map((apsaR) => {
       return toRaw(apsaR);
     });

@@ -91,6 +91,7 @@ import { APSA, ChampApprentissage, ChampsApprentissageApsa } from '@/models';
 import { useRouter } from 'vue-router';
 import ObjectUtils from '@/utils/ObjectUtils';
 import UserService from '@/services/UserService';
+import Role from '@/constants/Role';
 
 const { isObjectEmpty } = ObjectUtils();
 const { user, redirectToHomePage } = UserService();
@@ -148,11 +149,18 @@ async function saveApsasSelectionnees() {
       Ca: number;
       Apsa: number;
       Annee: number;
+      Etablissement: number;
     }[] = [];
     caApsasSelectionnes.value.forEach((_, idCA) => {
       const ca: ChampApprentissage = champsApprentissages.value.find((ca) => ca.id === idCA)!;
       caApsasSelectionnes.value[idCA].forEach((caApsa: ChampsApprentissageApsa) => {
-        if (caApsa) listForRequest.push({ Ca: ca.id, Apsa: caApsa.Apsa.id, Annee: anneeEnConfig.value.id });
+        if (caApsa)
+          listForRequest.push({
+            Ca: ca.id,
+            Apsa: caApsa.Apsa.id,
+            Annee: anneeEnConfig.value.id,
+            Etablissement: etablissement.value.id,
+          });
       });
     });
 
@@ -175,7 +183,7 @@ function champsNonRempli() {
 onMounted(async () => {
   if (isObjectEmpty(user.value)) {
     router.push('/');
-  } else if (user.value.roles != 'Admin') {
+  } else if (!user.value.roles.includes(Role.ADMIN)) {
     redirectToHomePage();
   } else {
     isLoading.value = true;

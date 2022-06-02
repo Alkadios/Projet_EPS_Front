@@ -75,13 +75,12 @@ export default {
     if (response.status === 200) {
       context.commit('setClassesById', response.data);
       const classe: Classe = response.data;
-      const classes = ref<Classe[]>(context.getters.getClassesByAnnee);
+      const classes = ref<Classe[]>(context.getters.getClassesByAnneeAndEtablissement);
       classes.value.find((c) => c.id === classe.id)!.eleves = classe.eleves;
-      console.log('classeStore', classes.value, 'Response', response.data);
 
       // const indexEleve = elevesByClasse.value.findIndex((c) => c.classe.find((cl) => payload.idClasse === cl.id));
       // elevesByClasse.value[indexEleve] = response.data;
-      context.commit('setClassesByAnnee', classes.value);
+      context.commit('setClassesByAnneeAndEtablissement', classes.value);
     } else {
       //throw new Error(response.data.message);
     }
@@ -97,6 +96,19 @@ export default {
       context.commit('setClassesByAnneeAndProfesseur', response.data['hydra:member']);
     else {
       context.commit('setClassesByAnneeAndProfesseur', []);
+      //throw new Error(response.data.message);
+    }
+  },
+
+  async fetchClasseByAnneeAndEtablissement(
+    context: ActionContext<ClasseState, any>,
+    payload: { idAnnee: number; idEtablissement: number }
+  ) {
+    const response = await ClasseAPI.fetchClasseByAnneeAndEtablissement(payload.idAnnee, payload.idEtablissement);
+    if (response.data['hydra:totalItems'] > 0)
+      context.commit('setClassesByAnneeAndEtablissement', response.data['hydra:member']);
+    else {
+      context.commit('setClassesByAnneeAndEtablissement', []);
       //throw new Error(response.data.message);
     }
   },

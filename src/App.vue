@@ -1,4 +1,5 @@
 <template>
+  <Toast />
   <div class="bg-gray-100" :class="{ 'g-sidenav-show': sidenavActive }">
     <div class="min-height-300 bg-primary position-absolute w-100"></div>
     <Sidebar
@@ -31,7 +32,7 @@
                 <div class="col-auto my-auto">
                   <div class="h-100">
                     <h5 class="mb-1">{{ nomAndPrenom }}</h5>
-                    <p class="mb-0 font-weight-bold text-sm">{{ user.roles }}</p>
+                    <p class="mb-0 font-weight-bold text-sm">{{ roleUtilisateur }}</p>
                   </div>
                 </div>
                 <div class="col-lg-4 col-md-6 my-sm-auto ms-sm-auto me-sm-0 mx-auto mt-3">
@@ -74,6 +75,7 @@
                       </li>
                       <li class="nav-item" @click="logout()" id="buttonLogout">
                         <a
+                          href="#"
                           class="nav-link mb-0 px-0 py-1 d-flex align-items-center justify-content-center"
                           data-bs-toggle="tab"
                           role="tab"
@@ -89,7 +91,12 @@
               </div>
             </div>
           </div>
-          <router-view v-if="onMountedIsFinish || !isObjectEmpty(user)" />
+          <router-view v-if="onMountedIsFinish && !isObjectEmpty(user) && !afficherSelectionEtablissement" />
+          <Authentification v-if="isObjectEmpty(user)" />
+          <SelectionEtablissement
+            v-if="!isObjectEmpty(user)"
+            v-model:afficherSelectionEtablissement="afficherSelectionEtablissement"
+          ></SelectionEtablissement>
         </div>
       </div>
     </main>
@@ -105,24 +112,24 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useMeta } from 'vue-meta';
 
 import Sidebar from './views/Sidebar.vue';
-//import UtilisateurService from './services/UtilisateurService';
+import SelectionEtablissement from '@/views/SelectionEtablissement.vue';
 import Authentification from './views/Authentification.vue';
-//import Head from './views/_Head.vue';
 import UtilisateurService from './services/UtilisateurService';
 import EleveService from './services/EleveService';
 import ProfesseurService from './services/ProfesseurService';
 import ObjectUtils from './utils/ObjectUtils';
-const router = useRouter();
-import UserService from './services/UserService';
+import UserService from '@/services/UserService';
+import Role from '@/constants/Role';
 
+const router = useRouter();
 const sidenavActive = ref(false);
 const { isObjectEmpty } = ObjectUtils();
-const { utilisateur, fetchAnneeEnCours, anneeEnCours, storeAnneeEnConfig, fetchEtablissementById } =
+const { utilisateur, fetchAnneeEnCours, anneeEnCours, storeAnneeEnConfig, fetchEtablissementById, etablissement } =
   UtilisateurService();
 
 const { fetchEleveByUser, eleveByUser } = EleveService();
@@ -136,6 +143,16 @@ const displaySidebar = ref('block');
 const nomAndPrenom = ref();
 const sexeUser = ref();
 const isLoading = ref(false);
+const afficherSelectionEtablissement = ref(false);
+
+const roleUtilisateur = computed(() => {
+  if (user.value && user.value.roles) {
+    if (user.value.roles.includes(Role.ADMIN)) return 'Coordonateur';
+    else if (user.value.roles.includes(Role.PROF)) return 'Professeur';
+    else if (user.value.roles.includes(Role.ELEVE)) return 'Eleve';
+  }
+  return 'Utilisateur';
+});
 
 onMounted(async () => {
   // if (isObjectEmpty(utilisateur.value)) {
@@ -145,22 +162,35 @@ onMounted(async () => {
   await checkLocalStorage();
   await fetchAnneeEnCours();
   storeAnneeEnConfig(anneeEnCours.value);
-  await fetchEtablissementById(1);
+
   onMountedIsFinish.value = true;
-  console.log('user : ', user.value);
-  if (user.value.roles === 'Professeur') {
+  isLoading.value = false;
+});
+
+watch(
+  () => user.value,
+  async (connectedUser) => {
+    if (!isObjectEmpty(connectedUser)) {
+      await fetchDonneeUtilisateur();
+      if (isObjectEmpty(etablissement.value)) {
+        if (user.value.etablissements && user.value.etablissements.length === 1) {
+          await fetchEtablissementById(user.value.etablissements[0].id);
+        } else afficherSelectionEtablissement.value = true;
+      }
+    }
+  }
+);
+
+async function fetchDonneeUtilisateur() {
+  if (user.value.roles.includes(Role.PROF)) {
     await fetchProfByUser(user.value.id);
     nomAndPrenom.value = professeurByUser.value.nom + ' ' + professeurByUser.value.prenom;
-    console.log('professeur By User : ', professeurByUser.value);
-  } else if (user.value.roles === 'Eleve') {
+  } else if (user.value.roles.includes(Role.ELEVE)) {
     await fetchEleveByUser(user.value.id);
     nomAndPrenom.value = eleveByUser.value.nom + ' ' + eleveByUser.value.prenom;
     sexeUser.value = eleveByUser.value.sexeEleve;
-    console.log('eleveByUser : ', eleveByUser.value);
   }
-
-  isLoading.value = false;
-});
+}
 
 function reponsiveSideBar() {
   if (displaySidebar.value === 'none') {
