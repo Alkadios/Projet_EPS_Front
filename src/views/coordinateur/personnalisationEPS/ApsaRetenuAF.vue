@@ -49,6 +49,7 @@
               >Vous devez sélectionner au moins 1 attendu final
             </InlineMessage>
           </div>
+          <div class="mb-3"><h6 style="float: right;">Sélection des attendus finaux par niveau scolaire et champs d'apprentissages</h6></div>
         </div>
         <InlineMessage v-else severity="info">
           Veuillez sélectionner un niveau scolaire et un champ d'apprentissage

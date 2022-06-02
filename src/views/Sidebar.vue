@@ -115,7 +115,7 @@
                 <i class="ni ni-single-02 text-dark text-sm opacity-10"></i>
               </div>
               <i class="fas fa-stopwatch"></i>
-              <span class="nav-link-text justify-content-center">Commencer l'évaluation</span>
+              <span class="nav-link-text justify-content-center">Commencer une évaluation</span>
             </router-link>
           </li>
           <li class="nav-item">

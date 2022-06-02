@@ -156,6 +156,7 @@
     </div>
     <div class="mb-3">
       <Button label="Valider" style="right: 1rem" icon="pi pi-check" autofocus></Button>
+      <div class="mb-3"><h6 style="float: right;">Tableau de configuration</h6></div>
     </div>
     <div style="position: fixed; bottom: 0; right: 0">
       <ProgressSpinner

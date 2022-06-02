@@ -308,6 +308,7 @@
         autofocus
       ></Button>
       <Button label="Retour aux critères" icon="pi pi-backward" style="left: 1rem" autofocus @click="back()"></Button>
+      <div class="mb-3"><h6 style="float: right;">Indicateurs du critère sélectionné</h6></div>
     </div>
     <div style="position: fixed; bottom: 0; right: 2rem">
       <ProgressSpinner
