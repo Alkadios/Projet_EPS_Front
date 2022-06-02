@@ -152,7 +152,7 @@ async function deleteClasseOfProf() {
   await putProfesseursClasse(user.value.professeurs, idClassesRetirer);
   location.reload;
 
-  toast.add({ severity: 'success', summary: 'Succès', detail: `Les classes ont bien été supprimé`, life: 4000 });
+  toast.add({ severity: 'success', summary: 'Succès', detail: `Les classes ont bien été supprimées`, life: 4000 });
 }
 
 const isLoading = ref(false);
