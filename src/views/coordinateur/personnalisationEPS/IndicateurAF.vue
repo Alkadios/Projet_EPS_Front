@@ -262,7 +262,7 @@
               <div class="col-11">
                 <strong class="mb-2">Titre: {{ nouveauIndicateur.item.libelle }}</strong>
                 <hr class="text-black" />
-                <strong
+                <strong v-if="nouveauIndicateur.item.description != ''"
                   >Description:
                   <p v-html="nouveauIndicateur.item.description"></p
                 ></strong>
