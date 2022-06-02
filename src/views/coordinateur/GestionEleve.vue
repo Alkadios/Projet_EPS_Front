@@ -87,10 +87,6 @@
         </Card>
       </div>
     </div>
-    <template #footer>
-      <Button label="No" icon="pi pi-times" @click="closeBasic" class="p-button-text" />
-      <Button label="Yes" icon="pi pi-check" autofocus />
-    </template>
   </Dialog>
 
   <Dialog header="Modifier un Eleve" v-model:visible="eleveDialog" :style="{ width: '50vw' }">
@@ -257,7 +253,7 @@ async function editClasse(idClasse: number) {
       if (idsEleve) await addElevesInClasse(idClasse, arrayidEleve);
     }
 
-    toast.add({ severity: 'success', summary: 'Succès', detail: `L'élève a bien été ajouter à la classe`, life: 4000 });
+    toast.add({ severity: 'success', summary: 'Succès', detail: `L'élève a bien été ajouté à la classe`, life: 4000 });
 
     eleveDialog.value = false;
     isLoading.value = true;
@@ -278,7 +274,7 @@ async function deleteFromClasse(idClasse: number) {
     toast.add({
       severity: 'success',
       summary: 'Succès',
-      detail: `Les modifications ont bien été enregistrées`,
+      detail: `Les élèves ont bien été supprimés`,
       life: 4000,
     });
     mesElevesByClasse(idClasse);
